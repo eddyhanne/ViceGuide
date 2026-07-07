@@ -1214,16 +1214,15 @@ maybeOpenAdmin();
 (function(){const el=document.getElementById('foot-secret');if(!el)return;let n=0,t=null;el.addEventListener('click',()=>{n++;clearTimeout(t);t=setTimeout(()=>n=0,900);if(n>=3){n=0;openAdmin();}});})();
 
 
-/* ---- Impressum / Datenschutz (Vorlage, bitte Platzhalter ausfuellen) ---- */
+/* ---- Impressum / Datenschutz ---- */
 const LEGAL={
  impressum:`<h3>Impressum</h3>
-   <p class="lg-note">Vorlage. Bitte die Platzhalter in eckigen Klammern durch deine echten Angaben ersetzen. Dies ist keine Rechtsberatung.</p>
    <h4>Angaben gemäß § 5 DDG</h4>
-   <p>[Vorname Nachname]<br>[Straße und Hausnummer]<br>[PLZ Ort]<br>[Land]</p>
+   <p>Eddy Hanné<br>Theresienweg 15<br>53125 Bonn<br>Deutschland</p>
    <h4>Kontakt</h4>
-   <p>E-Mail: [deine E-Mail-Adresse]<br>Telefon: [optional]</p>
+   <p>E-Mail: hanneeddy@gmail.com</p>
    <h4>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h4>
-   <p>[Vorname Nachname], Anschrift wie oben</p>
+   <p>Eddy Hanné, Anschrift wie oben</p>
    <h4>Haftung für Inhalte</h4>
    <p>Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. ViceGuide ist ein inoffizielles Fan-Projekt und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle genannten Marken und Namen gehören ihren jeweiligen Eigentümern.</p>
    <h4>Haftung für Links</h4>
@@ -1231,21 +1230,22 @@ const LEGAL={
    <h4>Urheberrecht</h4>
    <p>Die durch die Seitenbetreiber erstellten Inhalte unterliegen dem Urheberrecht. Bildmaterial Dritter ist, soweit vorhanden, mit einer Quelle gekennzeichnet und verbleibt im Eigentum der jeweiligen Rechteinhaber.</p>`,
  datenschutz:`<h3>Datenschutzerklärung</h3>
-   <p class="lg-note">Vorlage. Bitte an deine tatsächliche Nutzung anpassen und Platzhalter ausfüllen. Dies ist keine Rechtsberatung. Für eine rechtssichere Fassung empfiehlt sich ein Generator (z.B. eRecht24) oder rechtlicher Rat.</p>
    <h4>1. Verantwortlicher</h4>
-   <p>[Vorname Nachname], [Adresse], E-Mail: [deine E-Mail-Adresse]</p>
+   <p>Eddy Hanné, Theresienweg 15, 53125 Bonn, E-Mail: hanneeddy@gmail.com</p>
    <h4>2. Hosting</h4>
-   <p>Diese Website wird bei [Hosting-Anbieter, z.B. Hostinger] gehostet. Beim Aufruf werden technisch notwendige Daten (z.B. IP-Adresse, Zeitpunkt, aufgerufene Seite) in Server-Logfiles verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren Betrieb).</p>
+   <p>Diese Website wird bei Hostinger gehostet. Beim Aufruf werden technisch notwendige Daten (z.B. IP-Adresse, Zeitpunkt, aufgerufene Seite) in Server-Logfiles verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren Betrieb).</p>
    <h4>3. Schriftarten</h4>
-   <p>Diese Seite nutzt Web-Schriftarten. Werden sie über Google Fonts geladen, kann dabei deine IP-Adresse an Google übertragen werden. Zur Vermeidung können die Schriften lokal eingebunden werden. [Bitte angeben, welche Variante genutzt wird.]</p>
+   <p>Diese Seite nutzt die Schriftarten Oswald, Inter und Space Mono. Sie werden lokal von unserem eigenen Server ausgeliefert, nicht von Google Fonts geladen. Dabei findet keine Verbindung zu Servern von Google statt und es werden keine Daten an Google übertragen.</p>
    <h4>4. Eingebettete Videos (YouTube)</h4>
    <p>Im Bereich „Videos“ und teils in Artikeln werden YouTube-Videos eingebettet. Es wird der erweiterte Datenschutzmodus („youtube-nocookie“) genutzt. Erst beim Starten eines Videos werden Daten (u.a. deine IP-Adresse) an YouTube/Google übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Anbieter: Google Ireland Limited.</p>
    <h4>5. Kommentarfunktion</h4>
-   <p>Wenn du einen Kommentar hinterlässt, werden die von dir eingegebenen Daten (Name, Kommentartext, Zeitpunkt) verarbeitet und angezeigt. Sofern ein externer Kommentardienst [z.B. Name des Dienstes] eingebunden ist, gelten zusätzlich dessen Datenschutzhinweise. Rechtsgrundlage ist Art. 6 Abs. 1 lit. a und f DSGVO.</p>
-   <h4>6. Deine Rechte</h4>
+   <p>Die Kommentarfunktion befindet sich aktuell in der Vorschau-Phase. Eingegebene Kommentare werden ausschließlich lokal in deinem Browser für die laufende Sitzung angezeigt, nicht an einen Server übertragen und nicht dauerhaft gespeichert. Sobald eine echte, dauerhafte Kommentarfunktion oder ein externer Kommentardienst eingebunden wird, wird dieser Abschnitt vor der Aktivierung entsprechend aktualisiert.</p>
+   <h4>6. Werbung und Affiliate-Links</h4>
+   <p>Aktuell sind auf dieser Seite keine Werbeanzeigen und keine Affiliate-Links aktiv. Sollten künftig Angebote wie Google AdSense oder Partnerprogramme (z.B. das Amazon-Partnerprogramm) eingebunden werden, wird diese Datenschutzerklärung vor der Aktivierung entsprechend ergänzt.</p>
+   <h4>7. Deine Rechte</h4>
    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie ein Beschwerderecht bei einer Aufsichtsbehörde.</p>
-   <h4>7. Kontakt</h4>
-   <p>Bei Fragen zum Datenschutz: [deine E-Mail-Adresse].</p>`
+   <h4>8. Kontakt</h4>
+   <p>Bei Fragen zum Datenschutz: hanneeddy@gmail.com.</p>`
 };
 function openLegal(k){ $('legal-content').innerHTML=LEGAL[k]||''; $('legal').classList.add('show'); }
 function closeLegal(){ $('legal').classList.remove('show'); }
