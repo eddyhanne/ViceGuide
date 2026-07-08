@@ -409,6 +409,8 @@
   .card.editing .cv{cursor:pointer}
   .edit-badge{position:absolute;top:8px;right:8px;z-index:4;font-family:'Space Mono';font-size:10px;font-weight:700;background:var(--accent);color:var(--btn-text);padding:4px 8px;border-radius:7px;pointer-events:none}
   .card{position:relative}
+  .tile-del{position:absolute;top:8px;left:8px;z-index:5;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:15px;font-weight:700;line-height:1;border:0;cursor:pointer}
+  .tile-del:hover{background:#e0355f}
   /* Bild-Editor */
   .ie-frame{position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--surface-2);border:2px dashed var(--line);margin:12px 0;display:grid;place-items:center;cursor:pointer;user-select:none}
   .ie-frame.drag{border-color:var(--accent);background:var(--bg-2)}
@@ -521,6 +523,8 @@
   .dbrow-ct{font-family:'Space Mono';font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-soft);background:var(--surface-2);padding:4px 9px;border-radius:6px;flex-shrink:0}
   .dbrow-edit{color:var(--accent);font-weight:700;flex-shrink:0}
   .dbrow.editing{outline:2px dashed var(--accent);outline-offset:-2px}
+  .dbrow-del{color:#e0355f;font-weight:700;flex-shrink:0;font-size:16px;line-height:1;padding:3px 7px;border-radius:7px;cursor:pointer}
+  .dbrow-del:hover{background:rgba(224,53,95,.12)}
 
   /* Phasen-Text klickbar */
   .ph-line.clickable{cursor:pointer;border-radius:6px;padding:2px 4px;transition:.15s}
@@ -821,7 +825,8 @@ function renderHome(){
       const dt=o.x.date?fmtDShort(o.x.date):'';
       const au=o.x.author||'ViceGuide Redaktion';
       const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
-      return `<div class="ncard ${editMode?'editing':''}" onclick="${editMode?`openImgEd('guide',null,${o.idx})`:`openArticle(${o.idx})`}">${vis}${nb}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></div>`;
+      const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
+      return `<div class="ncard ${editMode?'editing':''}" onclick="${editMode?`openImgEd('guide',null,${o.idx})`:`openArticle(${o.idx})`}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></div>`;
     }).join('');
   const phase1 = newsView==='cards'
     ? `<div class="news-grid">${cards||'<div class="empty">Noch keine Artikel.</div>'}</div>`
@@ -902,21 +907,51 @@ function drawDB(sec){
       const gi=data.indexOf(d);
       const thumb=d.img?`<span class="dbrow-thumb" style="${fitStyle(d)}"></span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
       const badge=editMode?`<span class="dbrow-edit">✎</span>`:'';
+      const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
       return `<div class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" onclick="cardClick('${sec.id}',${gi})" onkeydown="if(event.key==='Enter'){cardClick('${sec.id}',${gi})}">
-        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${d.cat}</span>${badge}</div>`;
+        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${d.cat}</span>${badge}${delBtn}</div>`;
     }).join('');
   } else {
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
       const editBadge = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
+      const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</button>` : '';
       return `<div class="card ${editMode?'editing':''}" tabindex="0" role="button" onclick="cardClick('${sec.id}',${gi})" onkeydown="if(event.key==='Enter'){cardClick('${sec.id}',${gi})}">
-        ${cardVisual(sec,d)}${editBadge}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></div>`;
+        ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></div>`;
     }).join('');
     revealCards();
   }
 }
 function setDbView(v){ dbView=v; const sec=SECTIONS.find(s=>s.id===current); if(sec) renderDB(sec); }
 function cardClick(secId,i){ if(editMode){ openImgEd('db',secId,i); } else { openModal(secId,i); } }
+async function deleteGuide(idx,ev){
+  if(ev) ev.stopPropagation();
+  const g=GUIDES[idx]; if(!g) return;
+  if(!confirm(`"${g.title}" wirklich unwiderruflich löschen?`)) return;
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  try{
+    const res=await fetch('api/articles.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    GUIDES.splice(idx,1);
+    renderView();
+    toast('Artikel gelöscht.');
+  }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
+async function deleteDbEntry(secId,i,ev){
+  if(ev) ev.stopPropagation();
+  const d=DB[secId]&&DB[secId][i]; if(!d) return;
+  if(!confirm(`"${d.name}" wirklich unwiderruflich löschen?`)) return;
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  try{
+    const res=await fetch('api/db_entries.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d._id})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    DB[secId].splice(i,1);
+    renderView();
+    toast('Eintrag gelöscht.');
+  }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
 async function checkAdminSession(){
   try{
     const res=await fetch('api/auth.php',{cache:'no-store'});

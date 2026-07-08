@@ -5,6 +5,7 @@
  * GET          -> alle Eintraege, gruppiert nach section (wie database.json)
  * PUT {id,...} -> bestehenden Eintrag aktualisieren (Admin), id ist die
  *                 interne Datenbank-Zeilen-ID (_id im GET-Ergebnis)
+ * DELETE {id}  -> Eintrag loeschen (Admin)
  */
 
 require __DIR__ . '/db.php';
@@ -74,6 +75,17 @@ if ($method === 'PUT') {
     $vals[] = $id;
     $stmt = $pdo->prepare('UPDATE db_entries SET ' . implode(', ', $sets) . ' WHERE id = ?');
     $stmt->execute($vals);
+    vg_out3(['ok' => true]);
+}
+
+if ($method === 'DELETE') {
+    vg_require_admin($cfg);
+    $b = vg_body3();
+    $id = (int)($b['id'] ?? 0);
+    if (!$id) vg_out3(['error' => 'id erforderlich'], 400);
+
+    $stmt = $pdo->prepare('DELETE FROM db_entries WHERE id = ?');
+    $stmt->execute([$id]);
     vg_out3(['ok' => true]);
 }
 

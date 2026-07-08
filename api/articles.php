@@ -5,6 +5,7 @@
  * GET            -> Liste aller Artikel (wie articles.json, aber aus der Datenbank)
  * POST   {...}   -> neuen Artikel anlegen (Admin), gibt die vergebene id zurueck
  * PUT    {id,...}-> bestehenden Artikel aktualisieren (Admin)
+ * DELETE {id}    -> Artikel und seine Kommentare loeschen (Admin)
  */
 
 require __DIR__ . '/db.php';
@@ -117,6 +118,18 @@ if ($method === 'PUT') {
     $vals[] = $id;
     $stmt = $pdo->prepare('UPDATE articles SET ' . implode(', ', $sets) . ' WHERE id = ?');
     $stmt->execute($vals);
+    vg_out2(['ok' => true]);
+}
+
+if ($method === 'DELETE') {
+    vg_require_admin($cfg);
+    $b = vg_body2();
+    $id = trim($b['id'] ?? '');
+    if ($id === '') vg_out2(['error' => 'id erforderlich'], 400);
+
+    $stmt = $pdo->prepare('DELETE FROM articles WHERE id = ?');
+    $stmt->execute([$id]);
+    $pdo->prepare('DELETE FROM comments WHERE article_id = ?')->execute([$id]);
     vg_out2(['ok' => true]);
 }
 
