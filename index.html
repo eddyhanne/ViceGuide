@@ -789,9 +789,19 @@ function renderView(){
 
 /* ---- HOME / GUIDES ---- */
 function guidesIn(c){return GUIDES.filter(g=>g.cat===c);}
-function fmtDT(iso){if(!iso)return"";const d=new Date(iso);if(isNaN(d))return"";const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+', '+p(d.getHours())+':'+p(d.getMinutes())+' Uhr';}
-function fmtDShort(iso){const d=new Date(iso);if(isNaN(d))return'';const p=n=>String(n).padStart(2,'0');const M=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];return p(d.getDate())+'. '+M[d.getMonth()]+' '+d.getFullYear();}
-function latestFmt(c){const ds=GUIDES.filter(g=>g.cat===c&&g.date).map(g=>new Date(g.date)).filter(d=>!isNaN(d)).sort((a,b)=>b-a);return ds.length?fmtDT(ds[0].toISOString()):"";}
+/* Datum/Uhrzeit werden als wortwoertliche Uhrzeit gespeichert (deutsche Ortszeit,
+   wie im Admin-Panel eingegeben), nicht als absoluter Zeitpunkt mit Zeitzone.
+   Deshalb wird hier bewusst nicht ueber new Date()/getHours() gegangen, das
+   wuerde je nach Zeitzone des Besucher-Browsers eine andere Uhrzeit anzeigen
+   als eingetragen. Stattdessen werden die Ziffern direkt aus dem String gelesen. */
+function parseLocalDT(iso){
+  const m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+  if(!m) return null;
+  return {y:+m[1],mo:+m[2],d:+m[3],h:m[4]?+m[4]:0,mi:m[5]?+m[5]:0};
+}
+function fmtDT(iso){const p=parseLocalDT(iso);if(!p)return"";const z=n=>String(n).padStart(2,'0');return z(p.d)+'.'+z(p.mo)+'.'+p.y+', '+z(p.h)+':'+z(p.mi)+' Uhr';}
+function fmtDShort(iso){const p=parseLocalDT(iso);if(!p)return'';const z=n=>String(n).padStart(2,'0');const M=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];return z(p.d)+'. '+M[p.mo-1]+' '+p.y;}
+function latestFmt(c){const list=GUIDES.filter(g=>g.cat===c&&g.date);if(!list.length)return"";const newest=list.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];return fmtDT(newest.date);}
 function renderHome(){
   const g1=GROUPS[0], g2=GROUPS[1];
   // Phase 1 als Liste (Akkordeon)
@@ -1610,6 +1620,23 @@ function renderAipvHero(){
     if(!file) return;
     openImgEd('draftpreview',null,0);
     setTimeout(()=>ieLoadFile(file),50);
+  });
+})();
+/* Auto-Scroll waehrend ein Bild (z.B. aus einer Google/Bing-Bildersuche in
+   einem anderen Tab) ueber das Admin-Fenster gezogen wird: die Maustaste
+   muss beim Ziehen gehalten bleiben, ohne Auto-Scroll koennte man dann nicht
+   zur weiter oben liegenden Bild-Dropzone scrollen. */
+(function(){
+  const edge=70, maxSpeed=16;
+  document.addEventListener('dragover',e=>{
+    const adm=$('adm');
+    if(!adm||!adm.classList.contains('show')) return;
+    const modal=adm.querySelector('.modal'); if(!modal) return;
+    const r=modal.getBoundingClientRect();
+    if(e.clientY<r.top||e.clientY>r.bottom) return;
+    const distTop=e.clientY-r.top, distBottom=r.bottom-e.clientY;
+    if(distTop<edge) modal.scrollTop-=maxSpeed*(1-distTop/edge);
+    else if(distBottom<edge) modal.scrollTop+=maxSpeed*(1-distBottom/edge);
   });
 })();
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
