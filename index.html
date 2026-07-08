@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
 <head>
+<script>(function(){try{var t=localStorage.getItem('vg-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ViceGuide - GTA 6 News, Guides & Datenbank (Deutsch)</title>
@@ -674,7 +675,7 @@ let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=nul
 (function(){for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}})();
 
 const $=id=>document.getElementById(id);
-function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);$('tico').textContent=n==='dark'?'☾':'☀';}
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';}
 function toggleSidebar(force){
   const sb=$('sidebar'), bd=$('sbBackdrop'), b=$('burger');
   const open = (force===undefined) ? !sb.classList.contains('mobileopen') : force;
@@ -1371,6 +1372,7 @@ window.addEventListener('popstate', restoreFromLocation);
 /* init */
 newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 dbView = newsView;
+$('tico').textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
 restoreFromLocation();
 loadExternal().then(restoreFromLocation);
 </script>
