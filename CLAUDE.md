@@ -1,20 +1,28 @@
 # CLAUDE.md — ViceGuide
 
-> Arbeitsanweisung und Projektgedächtnis für Claude Code. Diese Datei ist so geschrieben, dass ein Claude auf einem anderen Account oder Rechner sofort produktiv weiterarbeiten kann, ohne die bisherige Chat-Historie zu kennen. Alles Wichtige steht hier direkt drin.
+> Arbeitsanweisung und Projektgedächtnis für Claude. Diese Datei ist so geschrieben, dass ein Claude auf einem anderen Account, Rechner oder in einem separaten Chat (z. B. einem eigenen Chat nur für Artikel-Erstellung) sofort produktiv weiterarbeiten kann, ohne die bisherige Chat-Historie zu kennen. Alles Wichtige steht hier direkt drin.
 
 ---
 
-## 0. Wichtigste Regel zuerst
+## 0. Wichtigste Regeln zuerst
 
-**Keine Gedankenstriche.** Weder "–" (Halbgeviert) noch "—" (Geviert) dürfen irgendwo auftauchen: nicht im Website-Text, nicht im Code, nicht in Commit-Messages, nicht in den KI-Prompts, die die Seite an die API schickt, nicht in KI-generierten Artikeln. Ersetze sie durch Komma, Doppelpunkt oder Punkt. Normale Bindestriche in zusammengesetzten Wörtern (z. B. "Schritt-für-Schritt", "Money-Methods") sind erlaubt. Diese Regel gilt ausnahmslos für das gesamte Projekt.
+**Regel 1, keine Gedankenstriche.** Weder "–" (Halbgeviert) noch "—" (Geviert) dürfen irgendwo auftauchen: nicht im Website-Text, nicht im Code, nicht in Commit-Messages, nicht in KI-Prompts, nicht in KI-generierten Artikeln. Ersetze sie durch Komma, Doppelpunkt oder Punkt. Normale Bindestriche in zusammengesetzten Wörtern (z. B. "Schritt-für-Schritt", "Money-Methods") sind erlaubt. Diese Regel gilt ausnahmslos für das gesamte Projekt.
+
+**Regel 2, natürlicher Redaktions-Ton, nicht generisch KI-klingend.** Jeder Artikel, jede Beschreibung, jeder Text auf der Seite soll klingen, als hätte ihn ein ausgebildeter Redakteur geschrieben, der sich mit GTA auskennt und Spaß am Thema hat, nicht wie eine austauschbare KI-Zusammenfassung. Konkret heißt das:
+- Keine leeren Füllfloskeln ("Es ist wichtig zu beachten, dass...", "Zusammenfassend lässt sich sagen...", "Tauche ein in die Welt von...").
+- Keine übertriebene Marketing-Sprache oder Ausrufezeichen-Enthusiasmus. Sachlich-locker statt reißerisch.
+- Variabler Satzbau statt gleichförmiger Drei-Punkte-Aufzählungsrhythmus in jedem Absatz.
+- Konkrete Fakten und Details statt vager Verallgemeinerungen. Lieber eine spezifische Quelle nennen als "Berichten zufolge".
+- Ein Artikel darf eine eigene Position/Einordnung haben ("wirkt eher wie ein Gerücht, weil..."), das ist genau der USP von ViceGuide gegenüber reinem Leak-Kopieren.
+- Das gilt für alle Texte: Artikel-Inhalte, Teaser, Datenbank-Beschreibungen, Meta-Texte.
 
 ---
 
 ## 1. Projektzweck, Ziel, Zielgruppe
 
-**ViceGuide** ist ein inoffizielles, deutschsprachiges Fan-Portal rund um **GTA 6 (Grand Theft Auto VI)**. Domain: **viceguide.de**.
+**ViceGuide** ist ein inoffizielles, deutschsprachiges Fan-Portal rund um **GTA 6 (Grand Theft Auto VI)**. Domain: **viceguide.de**, live und erreichbar.
 
-**Geschäftsidee:** Ein Content-Hub, der als zweites Standbein Einnahmen generieren soll (Nebeneinkommen, langfristiger Aufbau, kein Vollzeit-Ersatz). Monetarisierung geplant über Display-Ads (AdSense, später Premium-Netzwerke) und Affiliate-Marketing (der Betreiber hat beruflichen Hintergrund in Cost-per-Sale und Amazon-Affiliate, das ist der Wettbewerbsvorteil gegenüber typischen Fanseiten).
+**Geschäftsidee:** Ein Content-Hub, der als zweites Standbein Einnahmen generieren soll (Nebeneinkommen, langfristiger Aufbau, kein Vollzeit-Ersatz). Monetarisierung geplant über Display-Ads (AdSense, später Premium-Netzwerke) und Affiliate-Marketing (der Betreiber hat beruflichen Hintergrund in Cost-per-Sale und Amazon-Affiliate, das ist der Wettbewerbsvorteil gegenüber typischen Fanseiten). Aktuell (Stand dieser Datei) sind noch keine Ads oder Affiliate-Links live geschaltet.
 
 **Strategischer Ankerpunkt:** GTA-6-Release am **19. November 2026**. Davor Traffic über News und Leaks aufbauen, danach mit immergrünen In-Game-Guides nachhaltig monetarisieren. News und Leaks bringen Traffic, monetarisieren aber schlecht. Guides nach Release bringen dauerhaften Long-Tail-Umsatz.
 
@@ -28,199 +36,232 @@
 
 > ViceGuide ist ein inoffizielles, von Fans erstelltes Guide-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.
 
+Impressum und Datenschutzerklärung sind mit echten Betreiberdaten befüllt (Eddy Hanné, Privatperson, kein Gewerbe, Stand dieser Datei). Sobald echte Werbeeinnahmen fließen, mit nachhaltiger Gewinnerzielungsabsicht, wird in der Regel eine Gewerbeanmeldung nötig, unabhängig vom Impressum-Text, das rechtzeitig prüfen.
+
 ---
 
 ## 2. Tech-Stack, Architektur, Ordnerstruktur
 
 ### Tech-Stack
-- **Frontend:** Eine einzige, in sich geschlossene **HTML-Datei** (`viceguide.html`). Kein Framework, kein Build-Bundler. Vanilla HTML, CSS (CSS Custom Properties für Theming), Vanilla JavaScript. Alles inline in der einen Datei.
-- **Build:** Ein **Python-Skript** (`build_site.py`) erzeugt die finale `viceguide.html`, indem es Platzhalter im HTML-Template durch Daten ersetzt. Kein npm-Build.
-- **Fonts:** Google Fonts, per `<link>` geladen: **Anton** (Display/Headlines), **Outfit** (Fließtext, Gewichte 300 bis 700), **Space Mono** (Labels, Mono-Akzente).
-- **KI-Funktion:** Direkter `fetch` auf die Anthropic Messages API (siehe Abschnitt 7). Im Live-Betrieb über ein kleines Backend mit eigenem API-Key vorgesehen.
-- **Hosting:** Domain viceguide.de bei **Hostinger** (Verfügbarkeit bestätigt). Als statische Seite deploybar.
+- **Frontend:** Eine einzige, in sich geschlossene **HTML-Datei** (`index.html`, nicht `viceguide.html`, kein Build-Skript, kein `build_site.py`, direkt editieren). Kein Framework, kein Bundler. Vanilla HTML, CSS (CSS Custom Properties für Theming), Vanilla JavaScript, alles inline in der einen Datei.
+- **Backend:** Kleine **PHP-Skripte** im Ordner `api/`, laufen direkt auf dem Hostinger-Webspace (PHP ist dort standardmäßig verfügbar, kein extra Setup). Sprechen mit einer **MySQL-Datenbank**, ebenfalls bei Hostinger. Siehe Abschnitt "Backend / API" unten.
+- **Fonts:** **Selbst gehostet**, nicht mehr von Google geladen (DSGVO-Grund). Oswald, Inter, Space Mono, liegen als `.woff2` unter `assets/fonts/` und werden per `@font-face` im `<style>`-Block eingebunden. Oswald und Inter sind Variable Fonts (je eine Datei deckt alle genutzten Schnitte ab), Space Mono liegt als zwei statische Dateien vor (400/700).
+- **Hosting:** Domain viceguide.de bei **Hostinger**, Premium Web Hosting, per Git mit dem GitHub-Repo `eddyhanne/ViceGuide` verbunden (Root ist `public_html`). Deployment: Auto-Deploy ist aktiv, ein Push auf `main` zieht sich automatisch auf den Server.
 
 ### Architektur
-Die Seite ist eine Single-Page-Anwendung ohne echtes Routing: mehrere "Ansichten" (Startseite, Artikel-Detail, Datenbank-Detail-Modal, Admin-Overlay) werden per JavaScript-Sichtwechsel ein- und ausgeblendet.
+Die Seite ist eine Single-Page-Anwendung mit echtem URL-Routing über `location.hash` (siehe `buildHash()`/`restoreFromLocation()`/`syncHash()` im Script). Jede Ansicht (Sektion, offener Artikel, offenes Datenbank-Detail) spiegelt sich in der URL, dadurch bleibt ein Reload auf derselben Ansicht und der Browser-Zurück-Button navigiert innerhalb der Seite statt sie zu verlassen.
 
-`build_site.py` injiziert Daten in das HTML-Template über String-Platzhalter. Im generierten JS stehen am Anfang des `<script>`-Blocks die Datenobjekte, z. B.:
+**Datenfluss (wichtig, hat sich grundlegend geändert):** Früher lebten alle Inhalte nur in `articles.json`/`database.json`, die manuell hoch- und heruntergeladen wurden. Jetzt ist die **MySQL-Datenbank die Quelle der Wahrheit**. Der Ladevorgang (`loadExternal()`) fragt zuerst `api/articles.php` und `api/db_entries.php` ab, und fällt nur zurück auf die statischen JSON-Dateien, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync-Mechanismus). `articles.json`/`database.json` im Repo sind seitdem nur noch ein eingefrorener Stand von der Migration, keine laufend gepflegte Datenquelle mehr.
 
-```javascript
-const SECTIONS   = __SECTIONS__;   // Seitenstruktur/Navigation
-const DB         = __DB__;         // Datenbank-Einträge (Detail-Modals)
-const MAP_POINTS = __MAP__;        // Punkte für die Map/Setting-Ansicht
-let   GUIDES     = __GUIDES__;     // Artikel/Guides
-```
+**Hauptbereiche der Seite (`SECTIONS`):** News & Gerüchte (`home`, Typ `guides`), Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten, Orte (alle Typ `db`), Karte (Typ `map`), Videos (Typ `videos`), Community (Typ `community`). Phase-2-Kategorien sind gesperrt dargestellt.
 
-`build_site.py` ersetzt diese Platzhalter durch echtes JSON aus den Datenquellen und schreibt die fertige `viceguide.html`.
+1. **Startseite / Guides:** Akkordeon-Struktur, zwei Phasen-Gruppen (`GROUPS`: `pre`/`rel`).
+2. **Artikel-Detailseite:** Titel, Lead, Content-Absätze, optionale Quellenliste, Kommentarbereich, Inline-Disclaimer. Charakternamen im Text werden automatisch zu Links auf deren Charakter-Detail verlinkt (siehe `linkifyChars()`).
+3. **Datenbank:** Detail-Modals aus `DB` (Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten, Orte).
+4. **Karte:** Kartenansicht mit Kartenpunkten.
+5. **Radio, Aktivitäten:** eigene Datenbank-Kategorien mit Detail-Modals.
+6. **Videos:** eingebettete YouTube-Videos (nocookie-Modus).
+7. **Community:** Freitextbereich/Hinweise für Besucher.
+8. **Kommentare:** pro Artikel, dauerhaft in der Datenbank, mit Antworten (eine Ebene, mit Zitat der Elternantwort), Upvote/Downvote (ein Vote pro Browser, per `localStorage` gemerkt), Löschen nur im Editiermodus mit Admin-Login.
+9. **Admin-Panel / Redaktion (intern, versteckt):** Overlay, erreichbar über `Shift+Alt+R`, die URL `#redaktion`/`#admin`, oder dreifachen Klick auf einen versteckten Footer-Bereich (`foot-secret`). Für Besucher unsichtbar. Enthält: Claude-Entwurf veröffentlichen (siehe unten), Editiermodus, JSON-Sicherungsexport.
+10. **Editiermodus:** Schalter im Admin-Panel, fragt beim ersten Einschalten pro Browser das Admin-Passwort ab (serverseitig geprüft, Session hält 90 Tage). Danach macht Kachel-Klick den Bild- und Text-Editor auf (`openImgEd()`), Speichern (`ieApply()`) schreibt sofort und dauerhaft in die Datenbank, kein Datei-Umweg mehr.
 
-**Hauptbereiche der Seite:**
-1. **Startseite / Guides:** Akkordeon-Struktur, zwei Phasen-Gruppen (`GROUPS`: `pre` und `rel`). Pro Kategorie ein aufklappbarer Akkordeon-Block mit animiertem Expand/Collapse. Phase-2-Kategorien sind mit `locked:true` gesperrt dargestellt.
-2. **Artikel-Detailseite:** Öffnet den vollen Artikel (Titel, Lead, Content-Absätze, optionale Quellenliste, Inline-Disclaimer).
-3. **Datenbank:** Detail-Modals aus `DB` (z. B. Charaktere, Fahrzeuge, Orte).
-4. **Map und Setting:** Kartenansicht mit `MAP_POINTS`.
-5. **Admin-Panel (intern, versteckt):** Overlay, erreichbar über einen dezenten Footer-Link "⚙ Redaktion". Nur für den Betreiber, für Besucher unsichtbar. Erzeugt KI-Guides (siehe Abschnitt 5 und 7).
-
-**Datenmodell eines Guides/Artikels (JSON):**
+### Guide-/Artikel-Datenmodell (JSON, wie es die API liefert und erwartet)
 ```json
 {
+  "id": "stabiler-slug-aus-dem-titel",
   "cat": "news",
-  "tag": "News",
   "title": "prägnanter Titel, max. 8 Wörter",
+  "date": "2026-01-01T00:00",
   "summary": "1 Satz Teaser, max. 20 Wörter",
   "meta": "kurzes Label, z. B. Analyse oder News",
   "lead": "1 einleitender Satz",
   "content": ["Absatz 1", "Absatz 2", "Absatz 3"],
   "sources": [{ "title": "Quellenname", "url": "https://..." }],
-  "ai": true
+  "img": "data:image/webp;base64,...",
+  "imgfit": { "zoom": 1, "x": 50, "y": 50 },
+  "credit": "optionale Bildquelle",
+  "image_queries": ["Suchbegriff 1", "Suchbegriff 2", "Suchbegriff 3"]
 }
 ```
-`cat` ist die interne Kategorie-ID (Zuordnung zur Akkordeon-Gruppe), `tag` das sichtbare Label. Erlaubte Tags: News, Charaktere und Story, Map, Money Methods, Fahrzeuge, Waffen, Secrets und Easter Eggs, Online, Anfänger.
+`cat` ist eine von: `news`, `leaks`, `trailer`, `story`, `map`, `community` (Phase 1) bzw. `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner` (Phase 2, aktuell gesperrt). Es gibt **kein** `tag`-Feld mehr, das sichtbare Label kommt aus `GCAT[cat].name` im Code. `id` wird beim Anlegen einmalig aus dem Titel generiert (Slug) und bleibt danach fix, auch wenn der Titel später bearbeitet wird, damit Kommentare nicht verwaisen. `image_queries` ist optional, nur für die Bildsuche-Vorschläge im Admin-Panel, wird nicht mit gespeichert wenn nicht vorhanden.
 
-### Ordnerstruktur (Arbeitsstand aus der Historie, gegen echtes Repo prüfen)
+### Datenbank-Eintrag-Datenmodell (Charaktere, Fahrzeuge, usw.)
+```json
+{
+  "name": "Jason Duval",
+  "sub": "Protagonist",
+  "cat": "Hauptfiguren",
+  "src": "Trailer 1-2",
+  "desc": "Beschreibungstext.",
+  "fields": { "Rolle": "Protagonist", "Erstmals": "Trailer 1" },
+  "img": "data:image/webp;base64,...",
+  "imgfit": { "zoom": 1, "x": 50, "y": 50 },
+  "credit": "optional"
+}
+```
+Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Updates gebraucht, nicht redaktionell relevant).
+
+### Ordnerstruktur (verifiziert gegen echtes Repo)
 ```
 /                       Projektwurzel
 ├─ CLAUDE.md            Diese Datei
-├─ build_site.py        Build-Skript: injiziert Daten, schreibt viceguide.html
-├─ viceguide.html       Generierte, deploybare Single-File-Seite (Build-Artefakt)
-├─ articles.json        Artikel-/Guide-Daten (vom Admin-Panel-Workflow befüllt)
-└─ assets/              Bild-Assets
-   ├─ img_1.jpg         Palmen-Wallpaper (Hero-Hintergrund)
-   └─ logo*.*           Eigene Logo-Dateien (ersetzen die frühere CSS-Sonne)
+├─ SOCIAL.md            Social-Media-Strategie und Status
+├─ index.html           Die komplette, deploybare Seite (direkt editieren)
+├─ articles.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
+├─ database.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
+├─ .gitignore           Schliesst api/config.php und lokale *.sqlite aus
+├─ assets/
+│  ├─ img_1.jpg         Palmen-Wallpaper (als base64 in index.html eingebettet)
+│  ├─ logo*.*           Eigene Logo-Dateien (als base64 eingebettet)
+│  └─ fonts/            Selbst gehostete .woff2 Schriftdateien
+└─ api/
+   ├─ config.sample.php Vorlage fuer Datenbank-Zugangsdaten und Admin-Passwort-Hash
+   ├─ config.php         Echte Zugangsdaten, NICHT im Git (siehe .gitignore), liegt nur auf dem Server
+   ├─ db.php             Gemeinsame PDO-Verbindung, legt Tabellen automatisch an (CREATE TABLE IF NOT EXISTS)
+   ├─ auth.php           Login/Logout/Status, session-basiert, 90 Tage
+   ├─ articles.php       GET/POST/PUT fuer Artikel
+   ├─ db_entries.php     GET/PUT fuer Datenbank-Eintraege
+   └─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
 ```
-Hinweis: Logo und Palmen-Wallpaper werden als **base64-Data-URIs** direkt in die HTML eingebettet, damit die Seite eine echte Single-File-Auslieferung bleibt. Die Roh-Assets liegen zusätzlich in `assets/`. `articles.json` als separate Datenquelle ergibt sich aus dem Admin-Workflow ("In articles.json einfügen"), der genaue Dateiname sollte gegen das echte Repo verifiziert werden.
+Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank, nicht als separate Bild-Dateien im Repo (Ausnahme: Fonts, die liegen als echte Dateien in `assets/fonts/`, weil das fuers Caching besser ist und Fonts sich nicht staendig aendern).
 
 ---
 
 ## 3. Konventionen
 
 ### Code-Stil
-- **Single-File-Prinzip:** Die ausgelieferte Seite bleibt eine eigenständige HTML-Datei. CSS und JS inline, keine externen lokalen Dateien außer Google Fonts. Assets als base64-Data-URI einbetten.
-- **Theming ausschließlich über CSS Custom Properties.** Niemals feste Farbwerte hart in Regeln schreiben, immer die `--variable` nutzen, damit Dark und Light Mode automatisch mitziehen. Dark Mode ist die Basis (`:root`), Light Mode überschreibt (`:root[data-theme="light"]`).
-- **Kein `localStorage`/`sessionStorage` in der Claude.ai-Vorschau** (dort gesperrt, führt zu Fehlern). Für die Live-Seite ist die Theme-Persistenz eine Ein-Zeilen-Ergänzung, die dort ergänzt werden kann.
-- Vanilla JS, keine Build-Time-Transpilation. Funktionsnamen sprechend (`openAdmin`, `generateGuide`, `renderGrid`, `renderOrganized`, `toggleTheme`).
-- **Keine Gedankenstriche** (siehe Abschnitt 0).
+- CSS und JS bleiben inline in `index.html`. Assets als base64-Data-URI, ausser Fonts (siehe oben).
+- **Theming ausschließlich über CSS Custom Properties.** Niemals feste Farbwerte hart in Regeln schreiben, immer die `--variable` nutzen. Dark Mode ist die Basis (`:root`), Light Mode überschreibt (`:root[data-theme="light"]`). Light Mode ist Standard-Theme, wird per `localStorage` (`vg-theme`) über Reloads hinweg gemerkt.
+- Vanilla JS, keine Build-Time-Transpilation. Funktionsnamen sprechend (`openAdmin`, `toggleEdit`, `ieApply`, `renderView`, `toggleTheme`).
+- **Keine Gedankenstriche** und **kein generischer KI-Ton** (siehe Abschnitt 0).
+- PHP-Dateien: einfache, kleine Skripte pro Endpunkt, PDO mit Prepared Statements (nie String-Konkatenation fuer SQL), `vg_require_admin($cfg)` als Gate vor jeder schreibenden Aktion.
 
 ### Naming
 - Kategorie-IDs klein und knapp: `news`, `leaks`, `trailer`, `story`, `map`, `community`, `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner`.
+- DB-Sektionen: `characters`, `vehicles`, `weapons`, `wildlife`, `gangs`, `radio`, `activities`, `locations`.
 - Sichtbare Labels deutsch und ausgeschrieben ("Gerüchte und Leaks", "Trailer-Analysen").
-- Datenkonstanten in JS in GROSSBUCHSTABEN (`SECTIONS`, `DB`, `MAP_POINTS`, `GUIDES`, `GROUPS`, `CATEGORIES`).
+- Datenkonstanten in JS in GROSSBUCHSTABEN (`SECTIONS`, `DB`, `GUIDES`, `GROUPS`, `GCAT`).
 
 ### Branch-, Commit-, Test-Regeln
-Aus der Historie ist **kein Git-Workflow, keine Branch-Strategie und keine Test-Suite dokumentiert.** Bis der Betreiber etwas anderes festlegt, gilt als pragmatischer Standard:
-- Commit-Messages: kurz, deutsch oder englisch, sachlich, **ohne Gedankenstriche**. Beispiel: `Dark Mode Farbverlauf angepasst` oder `Akkordeon Animation gefixt`.
-- Kleine, thematisch getrennte Commits pro Änderung.
-- Vor jeder Änderung an `viceguide.html`: prüfen, ob die Änderung eigentlich in `build_site.py` gehört (siehe Stolperfalle in Abschnitt 6).
-- Tests: keine automatisierten Tests vorhanden. Manueller Test = Datei im Browser öffnen, beide Themes durchklicken, Akkordeon auf/zu, Admin-Panel öffnen, einen KI-Guide generieren. Vor Auslieferung immer beide Modi und Mobile-Breite prüfen.
+- Branch für laufende Arbeit: `claude/viceguide-gta6-portal-z49wib`, wird nach Bestätigung durch den Betreiber per Fast-Forward (oder Cherry-Pick bei parallelen Datenänderungen) nach `main` gemergt. `main` ist der Deploy-Branch.
+- Commit-Messages: kurz, deutsch, sachlich, **ohne Gedankenstriche**.
+- Reine Datenänderungen (`database.json`/`articles.json` Uploads vom Betreiber) werden automatisch validiert (JSON gueltig, keine Gedankenstriche, keine verlorenen Eintraege), committed und gemergt, ohne Rückfrage. Code-/Design-Änderungen werden vorher als Vorschau (Zip zum lokalen Öffnen oder Screenshots) gezeigt, erst nach Bestätigung gemergt.
+- Tests: keine automatisierten Tests. Vor dem Commit lokal mit `php -S localhost:PORT -t .` und Playwright/Chromium gegentesten, besonders bei Backend-Aenderungen (Login-Zustand, Speichern, Persistenz nach Reload).
 
 ---
 
 ## 4. Wichtige Befehle
 
-Es gibt keinen npm-basierten Build. Der Build läuft über Python.
+Kein Build-Schritt. `index.html` ist direkt die ausgelieferte Datei.
 
-**Seite bauen (Platzhalter befüllen, `viceguide.html` erzeugen):**
-```bash
-python3 build_site.py
-```
-
-**Seite lokal ansehen:** `viceguide.html` einfach im Browser öffnen. Alternativ ein simpler lokaler Server:
+**Lokal ansehen (nur Frontend, ohne Backend-Funktionen):**
 ```bash
 python3 -m http.server 8000
-# dann http://localhost:8000/viceguide.html
+# dann http://localhost:8000/index.html
 ```
 
-**Zeilenzahl / schneller Sanity-Check der generierten Datei:**
+**Lokal mit Backend testen (Login, Kommentare, Speichern):** braucht PHP mit PDO/SQLite, `api/config.php` lokal auf SQLite zeigen lassen (siehe `config.sample.php` fuer die Struktur, `db_dsn` auf `sqlite:...` statt `mysql:...` setzen):
 ```bash
-wc -l viceguide.html
+php -S localhost:8000 -t .
+# dann http://localhost:8000/index.html
 ```
+`api/db.php` legt die Tabellen beim ersten Aufruf automatisch an.
 
-**Deploy:** Statisches Hosting bei Hostinger. `viceguide.html` (und `assets/`, falls nicht vollständig eingebettet) auf den Webspace laden, als `index.html` bzw. unter viceguide.de bereitstellen. Für die KI-Funktion im Live-Betrieb zusätzlich ein kleines Backend, das den API-Key hält (siehe Abschnitt 7). Ein konkreter automatisierter Deploy-Befehl ist bisher nicht eingerichtet.
+**Deploy:** Push nach `main` auf GitHub, Hostinger Auto-Deploy zieht sich das automatisch (kann im Hostinger-Dashboard unter "Letzte Bereitstellung" geprüft werden). `api/config.php` liegt **nicht** im Git und muss einmalig manuell über den Hostinger-Dateimanager im Ordner `api/` angelegt werden (Vorlage: `config.sample.php`).
 
 ---
 
 ## 5. Getroffene Entscheidungen und Begründung
 
-- **Single-File-HTML statt Framework.** Begründung: einfach zu hosten, sofort lauffähig, kein Build-Toolchain-Overhead. Der Betreiber baut iterativ mit Claude, eine Datei ist dafür am handlichsten.
-- **Zwei-Phasen-Struktur (pre / rel), Phase 2 gesperrt.** Begründung: an den Spiel-Lebenszyklus gekoppelt. Vor Release Hype und SEO aufbauen, zum Release-Day die echten Guides freischalten und den Traffic-Peak abgreifen.
-- **Dual-Theme mit Umschalter.** Dark Mode im Rockstar-VI-Stil (dunkles Violett zu Magenta zu Koralle, Creme-Überschriften, Hot-Pink-Buttons), Light Mode "Miami by Day" (warme Creme-/Sand-Palette). Begründung: VI-Wiedererkennung plus heller Miami-Vibe, ohne geschützte Assets. Der **Light Mode wurde als Standard** gesetzt (ursprünglich war Dark der Default). Der Toggle zeigt jeweils das Zielmodus-Icon.
-- **Eigene Grafik statt Rockstar-Material.** Palmen-Silhouetten als selbst gezeichnetes SVG, später ergänzt/ersetzt durch das eigene Palmen-Wallpaper und die eigenen Logo-Dateien des Betreibers (rechtlich sauber, weil eigenes Material). Rockstar-Key-Art wurde bewusst nicht eingebunden.
-- **Logo statt CSS-Sonne.** Die frühere gezeichnete Retro-Sonne wurde durch die echten Logo-Dateien ersetzt. Der Logo-Schatten wurde für die Light-Mode-Lesbarkeit auf ein dunkles, fast violettes Grau umgefärbt.
-- **Akkordeon statt flachem Karten-Raster.** Begründung: bessere Übersicht bei vielen Kategorien, animiertes Auf-/Zuklappen wirkt hochwertiger.
-- **Dezente rosa Akzentlinie beim Hover** statt der früheren Regenbogen-Gradient-Balken. Ruhigerer, edlerer Look.
-- **Zeitstempel** auf Kategorie-Headern und pro Artikel (zeigt Datum/Uhrzeit des neuesten Inhalts), wirkt aktuell und gepflegt.
-- **Verstecktes Admin-Panel statt sichtbarem Editor.** Begründung: Besucher sollen nur fertige Inhalte sehen, nie das interne Tooling. Der KI-Generator ist der interne Redaktions-Workflow des Betreibers.
-- **KI-On-Demand statt Voll-Automatik.** Eine reine HTML-Seite kann nicht selbstständig im Hintergrund das Web durchsuchen und posten (dafür bräuchte es Server plus Scheduler). Entschieden wurde die On-Demand-Variante: Button drücken, Claude recherchiert live und liefert einen fertigen Guide als JSON, das der Betreiber in die Datenquelle übernimmt. Voll-Automatik (Backend plus täglicher Auto-Post) bleibt als spätere Ausbaustufe offen.
-- **SEO von Anfang an.** `<title>`, Meta-Description, Keywords, Canonical, Open Graph, Twitter Cards und JSON-LD (Schema.org `WebSite` mit SearchAction und `Organization`) sind eingebaut. Sprache `de-DE`.
-- **Content-Reihenfolge:** Vor Launch Grundstock von 20 bis 30 geprüften Artikeln aufbauen, damit die Seite lebendig wirkt und Google sie ernst nimmt. Danach laufend nachlegen, besonders bei jeder News. Zum Release die gesperrten Kategorien freischalten und echte In-Game-Guides produzieren.
+- **Single-File-HTML statt Framework.** Einfach zu hosten, sofort lauffähig, kein Build-Toolchain-Overhead.
+- **Zwei-Phasen-Struktur (pre/rel), Phase 2 gesperrt.** An den Spiel-Lebenszyklus gekoppelt.
+- **Dual-Theme mit Umschalter**, Light Mode als Standard, per `localStorage` gemerkt.
+- **Eigene Grafik statt Rockstar-Material.** Logo, Palmen-Wallpaper, alle Artikel-/Datenbankbilder sind eigenes oder KI-generiertes Material.
+- **Fonts selbst gehostet statt Google Fonts.** DSGVO-Grund (keine Datenübertragung an Google), zusätzlich Performance-Vorteil durch Browser-Caching separater Dateien.
+- **Bilder automatisch komprimiert.** Jedes im Editiermodus hochgeladene Bild wird clientseitig per Canvas auf max. 1100px Kantenlänge verkleinert und als WebP kodiert (Fallback JPEG falls ein Browser kein WebP-Encoding kann), ohne dass die Redaktion daran denken muss. Grund: eine fruehe Version ohne Kompression liess `database.json` auf ueber 40 MB anwachsen.
+- **Direktes Speichern in die Datenbank statt JSON-Download/Upload.** Ab dem Punkt, wo eine MySQL-Datenbank sowieso fuer Kommentare noetig war, wurde dieselbe Infrastruktur auch fuer Artikel und Datenbank-Eintraege genutzt. Ergebnis: Editiermodus speichert sofort und dauerhaft, auch vom Handy aus, ohne Datei-Umweg.
+- **Echtes Login statt reinem Client-Schalter.** Der Editiermodus-Knopf allein war nie eine echte Sperre (nur ein JS-Flag). Sobald echte Schreibzugriffe auf eine gemeinsame Datenbank moeglich wurden, wurde ein serverseitig geprueftes Passwort-Login (PHP-Session, 90 Tage) noetig, sonst haette theoretisch jeder Besucher mit Entwicklertools schreiben koennen.
+- **KI-Artikel ueber Copy-Paste-JSON statt eigenem Anthropic-API-Schluessel (aktueller Stand).** Der Betreiber wollte die KI-Recherche/Texterstellung weiterhin kostenlos ueber einen normalen Claude-Chat laufen lassen, statt einen bezahlten eigenen API-Key auf dem Server einzurichten. Deshalb: Ergebnis aus dem Chat als JSON ins Admin-Panel einfuegen ("Claude-Entwurf veroeffentlichen"), Vorschau pruefen und bei Bedarf bearbeiten (Titel, Teaser, Text, **und Bild direkt per Klick/Einfuegen/Drag&Drop mit Zoom und Ausschnitt**), dann freigeben. Die Variante mit direkter Live-Recherche gegen die Anthropic-API bleibt als Code-Pfad bestehen (`generateGuide()`), ist aber ohne eigenen Schluessel in `config.php` (`anthropic_api_key`, noch nicht angelegt) nicht nutzbar. Falls die Seite waechst und der Betreiber die volle Handy-Unabhaengigkeit will, kann das jederzeit nachgeruestet werden.
+- **Automatische Charakter-Verlinkung in Texten.** Charakternamen (und deren deutscher Genitiv, "Jasons") werden in Datenbank-Beschreibungen und Artikeltexten automatisch klickbar zum jeweiligen Charakter-Profil verlinkt (`linkifyChars()`), inklusive einer kleinen Ausschlussliste fuer Namensueberschneidungen mit normalen Woertern (z. B. "Leonida", der Bundesstaat, vs. der Nebencharakter "Leonida Joker").
+- **URL-Routing per Hash.** Reload behaelt die aktuelle Ansicht, Browser-Zurueck navigiert innerhalb der Seite statt sie zu verlassen.
+- **Inline-Texteditor im Editiermodus.** Titel/Name, Unterzeile/Teaser und Beschreibung/Text sind direkt im selben Dialog wie der Bild-Editor bearbeitbar, kein separates JSON-Handling fuer kleine Korrekturen mehr noetig.
 
 ---
 
 ## 6. Aktueller Stand, offene Aufgaben, Stolperfallen
 
-### Aktueller Stand
-- Kern-Architektur steht: Single-File-Seite mit Dual-Theme, Akkordeon-Struktur, Zwei-Phasen-Kategorien, Datenbank-Modals, Map-Ansicht, verstecktes Admin-Panel mit KI-Generator, SEO-Grundausstattung.
-- Eigene Logo-Dateien und Palmen-Wallpaper sind als base64 eingebettet.
-- Light Mode ist Standard-Theme.
-- Die Seite läuft in der Claude.ai-Vorschau inklusive live funktionierendem KI-Button (ohne eigenen API-Key, über die Vorschau-Umgebung).
+### Aktueller Stand (Stand dieser Datei)
+- Seite ist live auf viceguide.de, technisch voll funktionsfaehig, Datenbank-Backend inklusive Login, Kommentare, direktes Speichern.
+- Impressum und Datenschutzerklaerung sind mit echten Daten befuellt.
+- Fonts selbst gehostet, Bildkompression automatisch, Altlast-Bilder nachtraeglich komprimiert.
+- Grundstock an Artikeln existiert, wird laufend per Claude-Entwurf-Workflow erweitert.
+- Getrennter Chat/Session-Vorschlag fuer reine Artikel-Erstellung, damit diese Coding-Session nicht mit Content-Arbeit vollgestopft wird. Diese Datei sollte in einem solchen Chat als Projekt-Wissen hinterlegt sein.
 
 ### Offene Aufgaben
-1. Domain viceguide.de bei Hostinger final sichern und die Seite live deployen.
-2. Speicher-/Backend-Frage klären: einfache statische Auslieferung mit manuell gepflegtem `articles.json` versus kleines Backend, das den Anthropic-API-Key hält und generierte Guides dauerhaft speichert.
-3. Grundstock von 20 bis 30 Artikeln erzeugen und gegenlesen (vor Launch).
-4. Google Search Console einrichten, Sitemap einreichen.
-5. Echtes OG-Image (`og-image.jpg`) erstellen und unter viceguide.de bereitstellen (aktuell nur referenziert).
-6. Theme-Persistenz für die Live-Seite ergänzen (Ein-Zeilen-`localStorage`-Logik, in der Vorschau bewusst weggelassen).
-7. Social-Kanal(e) bespielen (Instagram bereits aktiv, siehe Abschnitt 7), Website-Link erst nach offiziellem Launch in die Bio.
-8. Impressum und Kontaktangaben ergänzen (erst zum offiziellen Launch, DE-Pflicht beachten).
-9. Rechtliche Absicherung im Blick behalten, je kommerzieller die Seite wird: Das an die Marke angelehnte "VI" im Logo und der Wortstamm "Vice" (Nähe zu VICE Media und zu Rockstars "Vice City") sind Grauzonen. DPMA und EUIPO auf "Vice"/"ViceGuide" prüfen, wenn es ernst wird.
+1. Grundstock an Artikeln weiter ausbauen (laufend).
+2. Google Search Console einrichten, Sitemap einreichen.
+3. Echtes OG-Image (`og-image.jpg`) erstellen und bereitstellen.
+4. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
+5. Rechtliche Absicherung im Blick behalten: "VI" im Logo und der Wortstamm "Vice" sind Markenrecht-Grauzonen (Naehe zu VICE Media, zu Rockstars "Vice City"). DPMA/EUIPO pruefen, wenn es kommerziell ernster wird.
+6. Gewerbeanmeldung pruefen, sobald echte Werbe-/Affiliate-Einnahmen fliessen.
+7. Neue Datenbank-Eintraege komplett neu anlegen (z. B. ein bisher unbekanntes Fahrzeug) geht aktuell noch nicht ueber den Editiermodus, nur bestehende Eintraege bearbeiten. Bei Bedarf nachruesten (weiterer API-Endpunkt plus UI).
+8. Optional: eigener Anthropic-API-Schluessel fuer echte Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` müsste auf einen serverseitigen Proxy-Endpunkt umgestellt werden statt direkt gegen die Anthropic-API zu fetchen), falls der Copy-Paste-Workflow irgendwann zu langsam wird.
 
 ### Stolperfallen
-- **Nie direkt an der generierten `viceguide.html` editieren, wenn die Änderung eigentlich ins Template gehört.** Der Build läuft über `build_site.py`, das per String-Replace arbeitet. Änderungen an der Ausgabe werden beim nächsten Build überschrieben. Erst prüfen: Datenänderung (dann Datenquelle/`articles.json`) oder Struktur-/Design-Änderung (dann `build_site.py`)?
-- **`build_site.py` nutzt exakte String-Ersetzungen.** Wenn du eine Codezeile im Template umformulierst, brechen `str.replace`-Aufrufe, die auf den alten Wortlaut zielen, stillschweigend. Nach Änderungen immer neu bauen und im Browser gegenchecken.
-- **Kein Browser-Storage in der Vorschau.** `localStorage`/`sessionStorage` schlagen in der Claude.ai-Vorschau fehl. Theme-Persistenz nur für die Live-Umgebung einbauen, nicht in der Vorschau testen.
-- **Gedankenstriche schleichen sich leicht ein**, besonders in KI-generierten Artikeln und in Prompts. Nach jeder KI-Generierung prüfen. Der Prompt an die API sollte "keine Gedankenstriche" explizit fordern.
-- **KI-Key nie ins Frontend.** Der API-Key darf nicht öffentlich in der ausgelieferten HTML stehen. Live läuft der Aufruf über ein Backend.
-- **Rockstar-Assets sind tabu.** Nur eigenes, KI-generiertes oder lizenziertes Material. Farbwelt nachbauen ist okay, Original-Artwork nicht.
+- **Gedankenstriche schleichen sich leicht ein**, besonders in KI-generierten Texten. Nach jeder Generierung prüfen.
+- **Generischer KI-Ton schleicht sich ein**, siehe Regel 2 in Abschnitt 0. Vor dem Veroeffentlichen laut vorlesen: klingt das wie ein Mensch mit Ahnung, oder wie eine KI-Zusammenfassung?
+- **`api/config.php` nie committen.** Steht in `.gitignore`, muss nach jedem frischen Server-Setup manuell im Hostinger-Dateimanager angelegt werden.
+- **Einmal-Werkzeuge (z. B. ein Passwort-Hash-Generator oder ein Migrations-Skript) gehoeren nach Gebrauch nicht nur vom Server geloescht, sondern auch aus dem Git-Repo entfernt (`git rm`).** Sonst kommen sie beim naechsten Deploy automatisch zurueck, weil Hostinger den kompletten Ordner aus dem Repo-Stand wiederherstellt.
+- **Artikel-`id` ist fix, der Titel nicht.** Beim Bearbeiten eines Artikeltitels bleibt die zugrunde liegende `id` (und damit die Kommentar-Zuordnung) unveraendert, das ist Absicht.
+- **`database.json`/`articles.json` sind kein Live-Speicher mehr.** Falls doch mal jemand denkt, dort etwas aendern zu muessen: es hat keinen Effekt auf die echte Seite, die Datenbank ist massgeblich.
+- **Ich (Claude) habe keinen direkten Netzwerkzugriff auf viceguide.de, Google Drive oder die Hostinger-Datenbank** aus dieser Umgebung heraus (Sandbox-Netzwerkrichtlinie blockt fremde Domains). Grosse Dateien oder Live-Checks laufen über den Betreiber, der Ergebnisse/Screenshots zurückmeldet.
+- **Content-Aenderungen, die der Betreiber direkt im Browser macht (ohne mich), sind mir in einer neuen Chat-Session nicht automatisch bekannt.** Bei Bedarf kurz nachfragen oder zeigen lassen.
 
 ---
 
-## 7. Externe Anbindungen
+## 7. Backend / API (Details)
 
-### Anthropic Messages API (KI-Guide-Generator)
-Der Admin-Button `generateGuide()` ruft direkt die Anthropic API auf:
-- **Endpoint:** `https://api.anthropic.com/v1/messages`
-- **Modell:** `claude-sonnet-4-6`
-- **max_tokens:** 1500
-- **Tools:** Web Search, Typ `web_search_20250305`, Name `web_search`
-- **In der Claude.ai-Vorschau:** funktioniert ohne mitgelieferten Key (die Umgebung stellt die Auth bereit, es wird bewusst kein Key im Code übergeben).
-- **Auf der Live-Seite (viceguide.de):** Dieser `fetch` muss gegen ein eigenes Backend laufen, das den API-Key serverseitig hält und die generierten Guides dauerhaft speichert. So bleibt der Key geheim und Artikel überstehen einen Reload.
+### Authentifizierung
+- `api/auth.php`: `GET` gibt `{loggedIn:bool}` zurueck, `POST {password}` prueft gegen den in `config.php` hinterlegten bcrypt-Hash (`admin_hash`) und startet bei Erfolg eine PHP-Session (Cookie, 90 Tage, HttpOnly, Secure). `DELETE` beendet die Session.
+- Jeder schreibende Endpunkt ruft `vg_require_admin($cfg)` auf (in `db.php` definiert), das ohne gueltige Session mit HTTP 403 abbricht.
+- Passwort-Hash aendern: kein dauerhaftes Tool im Repo (bewusst geloescht, siehe Stolperfallen). Bei Bedarf lokal `password_hash('neuesPasswort', PASSWORD_BCRYPT)` in PHP ausfuehren (oder Claude fragen) und den Wert in `config.php` eintragen.
 
-**Der Prompt** (deutsch) weist Claude an: einen deutschsprachigen Fan-Guide-Artikel für ViceGuide zu recherchieren, Gerüchte und Leaks klar als unbestätigt zu kennzeichnen und **ausschließlich ein JSON-Objekt** zurückzugeben (kein Markdown, keine Backticks, kein Text davor oder danach) im Guide-Datenmodell aus Abschnitt 2. Die Antwort wird geparst: Text-Blöcke filtern, ` ```json `-Fences entfernen, vom ersten `{` bis zum letzten `}` schneiden, `JSON.parse`. Ungültige `tag`-Werte werden auf "News" gesetzt.
+### Endpunkte
+- `api/articles.php`: `GET` alle Artikel, `POST` neuer Artikel (admin), `PUT {id,...}` Update (admin).
+- `api/db_entries.php`: `GET` alle Eintraege gruppiert nach `section`, `PUT {id,...}` Update (admin), `id` ist hier die interne Zeilen-ID (`_id` im GET-Ergebnis), nicht der Name.
+- `api/comments.php`: `GET ?article=<id>` Kommentarbaum, `POST {article,name,text,parentId?,quote?}` neuer Kommentar/Antwort, `PATCH {id,dir}` Upvote/Downvote, `DELETE {id}` loeschen (admin).
 
-**Response-Handling:** Nur Blöcke mit `type === "text"` einsammeln und joinen. Bei Fehlern Toast anzeigen und Button zurücksetzen.
+### KI-Guide-Generator, aktueller Stand
+**Primärer Weg (aktiv genutzt):** Ein separater Claude-Chat (idealerweise mit dieser Datei als Projekt-Wissen) recherchiert und schreibt den Artikel als JSON im oben stehenden Format. Der Betreiber fuegt das JSON im Admin-Panel unter "Claude-Entwurf veroeffentlichen" ein (`submitDraftJson()`), bekommt eine editierbare Vorschau (Titel, Teaser, Text, Bild per Klick/Einfuegen/Drag&Drop mit Zoom/Ausschnitt), und veroeffentlicht direkt in die Datenbank ueber die bestehende Admin-Session. Kein API-Schluessel, keine Zusatzkosten.
 
-**Admin-Workflow (Redaktion):** Footer-Link "⚙ Redaktion" öffnet das Overlay. Thema eingeben, "Recherchieren und erstellen". In einer Variante wird der Guide sofort in `GUIDES` eingefügt und angezeigt, in einer anderen wird das JSON zum Kopieren ausgegeben ("In articles.json einfügen") und dann in die Datenquelle übernommen. Besucher sehen von all dem nichts.
+**Sekundärer, aktuell inaktiver Weg:** `generateGuide()` ruft direkt `https://api.anthropic.com/v1/messages` auf (Modell `claude-sonnet-4-6`, `web_search_20250305` Tool). Das funktioniert nur, wenn ein eigener Anthropic-API-Key vorhanden und (noch zu bauen) serverseitig ueber einen `api/`-Endpunkt eingebunden ist, niemals direkt im Frontend, das waere ein Sicherheitsproblem. Aktuell nicht eingerichtet, im Admin-Panel entsprechend als "braucht eigenen API-Schluessel" gekennzeichnet.
 
 ### Fonts
-Google Fonts per `<link>`: Anton, Outfit (300 bis 700), Space Mono. Preconnect auf `fonts.googleapis.com` und `fonts.gstatic.com`.
+Selbst gehostet unter `assets/fonts/`, per `@font-face` im `<style>`-Block referenziert. Keine Verbindung zu Google mehr.
 
 ### Domain und Hosting
-- **Domain:** viceguide.de, Verfügbarkeit bei **Hostinger** bestätigt.
+- **Domain:** viceguide.de, bei Hostinger, live.
 - **Kanonische URL:** `https://viceguide.de/`
+- **Datenbank:** MySQL bei Hostinger, ueber den Dateimanager/Datenbank-Bereich im Hostinger-Dashboard verwaltet.
 
 ### Social
-- **Instagram/Threads:** Handle **@viceguide** gesichert (der Handle gilt für Instagram und Threads geteilt). Als Professional-/Creator-Konto eingerichtet, Insights aktiv. Marken-Hashtag **#viceguide** auf jedem Post. Website-Link kommt erst nach offiziellem Launch in die Bio. Content-Strategie: eigenständige Teaser-Posts (Karussells, Reels), die für sich Wert liefern, mit Verweis auf die Seite als Vertiefung. Kadenz 3 bis 4 Posts pro Woche, wiederkehrende Countdown-Posts. Geplante Story-Highlights: Trailer, Map, Charaktere, Leaks, FAQ.
-- **Weitere Handles:** @viceguide für YouTube, TikTok und X frühzeitig sichern, um Namensklau zu verhindern (Bespielung später).
+- **Instagram/Threads:** Handle **@viceguide**. Details siehe `SOCIAL.md`.
+- **Weitere Handles:** @viceguide fuer YouTube, TikTok, X fruehzeitig gesichert.
 
-### Verifizierte GTA-6-Eckdaten (Stand der letzten Recherche, bei neuen Artikeln immer frisch prüfen)
+### Verifizierte GTA-6-Eckdaten (bei neuen Artikeln immer frisch pruefen)
 - **Release:** 19. November 2026.
 - **Vorbesteller:** seit 25. Juni.
-- **Protagonisten:** Jason und Lucia (erstes spielbares Duo der Reihe, Bonnie-und-Clyde-Dynamik).
+- **Protagonisten:** Jason und Lucia (erstes spielbares Duo der Reihe).
 - **Setting:** Bundesstaat Leonida, Vice City (Miami-Analog).
-- **Trailer 3:** wurde erwartet, bei jedem News-Artikel Aktualität über Web-Suche verifizieren.
+- Bei jedem News-Artikel Aktualitaet ueber Web-Suche verifizieren, GTA-6-Berichterstattung aendert sich schnell.
 
 ---
 
 ## Für den nächsten Claude: Arbeitsweise mit dem Betreiber
 
-Der Betreiber (Eddy) kommuniziert direkt und iterativ, gibt pro Runde konkretes visuelles Feedback plus geschäftliche Begründung. Duzen, deutsch. Ehrlich gegenhalten statt nur zustimmen, wenn etwas fachlich oder rechtlich schiefliegt (z. B. bei Urheberrecht oder unrealistischen Technik-Versprechen). Produkt-Vision beachten: internes Tooling bleibt für Besucher unsichtbar, Struktur ist an den Spiel-Lebenszyklus gekoppelt, alles bleibt im sauberen Fan-Rahmen. Und: **keine Gedankenstriche.**
+Der Betreiber (Eddy) kommuniziert direkt und iterativ, gibt pro Runde konkretes Feedback. Duzen, deutsch. Ehrlich gegenhalten statt nur zustimmen, wenn etwas fachlich oder rechtlich schiefliegt. Produkt-Vision beachten: internes Tooling bleibt fuer Besucher unsichtbar, Struktur ist an den Spiel-Lebenszyklus gekoppelt, alles bleibt im sauberen Fan-Rahmen.
+
+**Zwei absolute Regeln: keine Gedankenstriche, und jeder Text klingt nach einem echten Redakteur, nicht nach KI (siehe Abschnitt 0).**
+
+**Falls dies ein separater Chat nur fuer Artikel-Erstellung ist:** Du musst kein Git, keine Deploys und kein Code anfassen. Deine Aufgabe ist, auf Zuruf ein Thema zu recherchieren (Web-Suche nutzen, GTA-6-Infos aendern sich schnell) und einen Artikel im oben stehenden JSON-Format zu liefern, fertig zum Copy-Paste in den Admin-Panel-Workflow. Kein Talk drumherum noetig, das JSON in einem Codeblock reicht.
