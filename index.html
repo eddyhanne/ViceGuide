@@ -1034,8 +1034,10 @@ function ieEncode(canvas){
   if(webp.startsWith('data:image/webp')) return webp;
   return canvas.toDataURL('image/jpeg', IE_JPEG_QUALITY);
 }
-function ieLoadFile(file){
-  if(!file || !file.type.startsWith('image/')){toast('Bitte eine Bilddatei wählen.');return;}
+/* Gemeinsame Kompressions-Pipeline (Resize + WebP), von ieLoadFile und vom
+   direkten Einfuegen eines zusaetzlichen Bildes mitten im Artikeltext genutzt. */
+function compressImageFile(file,cb){
+  if(!file || !file.type || !file.type.startsWith('image/')){ cb(null); return; }
   const r=new FileReader();
   r.onload=()=>{
     const img=new Image();
@@ -1046,15 +1048,21 @@ function ieLoadFile(file){
       }
       const c=document.createElement('canvas'); c.width=w; c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
-      ieState.img=ieEncode(c);
-      ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender();
-      const kb=Math.round(ieState.img.length*0.75/1024);
-      toast('Bild optimiert (~'+kb+' KB)');
+      cb(ieEncode(c));
     };
-    img.onerror=()=>{ toast('Bild konnte nicht gelesen werden.'); };
+    img.onerror=()=>cb(null);
     img.src=r.result;
   };
+  r.onerror=()=>cb(null);
   r.readAsDataURL(file);
+}
+function ieLoadFile(file){
+  compressImageFile(file,dataUrl=>{
+    if(!dataUrl){ toast('Bitte eine Bilddatei wählen.'); return; }
+    ieState.img=dataUrl; ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender();
+    const kb=Math.round(dataUrl.length*0.75/1024);
+    toast('Bild optimiert (~'+kb+' KB)');
+  });
 }
 function iePickFile(){ const inp=$('ie-file'); if(inp) inp.click(); }
 async function iePaste(){
@@ -1668,15 +1676,94 @@ function renderAipvHero(){
    zur weiter oben liegenden Bild-Dropzone scrollen. */
 (function(){
   const edge=70, maxSpeed=16;
+  let dragActiveTs=0;
   document.addEventListener('dragover',e=>{
     const adm=$('adm');
     if(!adm||!adm.classList.contains('show')) return;
+    dragActiveTs=Date.now();
     const modal=adm.querySelector('.modal'); if(!modal) return;
     const r=modal.getBoundingClientRect();
     if(e.clientY<r.top||e.clientY>r.bottom) return;
     const distTop=e.clientY-r.top, distBottom=r.bottom-e.clientY;
     if(distTop<edge) modal.scrollTop-=maxSpeed*(1-distTop/edge);
     else if(distBottom<edge) modal.scrollTop+=maxSpeed*(1-distBottom/edge);
+  });
+  /* Mausrad soll waehrend des Ziehens (Maustaste gehalten) ebenfalls scrollen
+     koennen, das ist oft schneller als bis zum Rand ziehen. Waehrend eines
+     aktiven Drags unterdruecken Browser das normale Scrollen oft, deshalb
+     hier manuell nachgeholt. Nur innerhalb von ~250ms nach dem letzten
+     dragover aktiv, damit normales Scrollen (ohne Drag) nicht doppelt so
+     schnell wird, das uebernimmt der Browser dort schon selbst. */
+  document.addEventListener('wheel',e=>{
+    if(Date.now()-dragActiveTs>250) return;
+    const adm=$('adm');
+    if(!adm||!adm.classList.contains('show')) return;
+    const modal=adm.querySelector('.modal'); if(!modal||!modal.contains(e.target)) return;
+    modal.scrollTop+=e.deltaY;
+  },{passive:true});
+})();
+/* Zusaetzliches Bild direkt mitten im Artikeltext per Drag&Drop oder
+   Einfuegen (Strg+V) einsetzen, z.B. aus der Google/Bing-Bildersuche.
+   Wird als eigenstaendige Bild-Insel (contenteditable=false) an der
+   Cursor-/Drop-Position eingefuegt, inklusive Breiten-Umschalter, genau
+   wie ein "img:"-Block aus dem eingefuegten JSON. */
+function buildInlineFigure(dataUrl){
+  const fig=document.createElement('figure');
+  fig.className='art-fig'; fig.dataset.size='full'; fig.setAttribute('contenteditable','false');
+  fig.innerHTML=`<img src="${dataUrl}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"><button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">Schmaler</button>`;
+  return fig;
+}
+function caretRangeFromEvent(evt){
+  if(!evt||typeof evt.clientX!=='number') return null;
+  if(document.caretRangeFromPoint) return document.caretRangeFromPoint(evt.clientX,evt.clientY);
+  if(document.caretPositionFromPoint){
+    const pos=document.caretPositionFromPoint(evt.clientX,evt.clientY);
+    if(pos){ const r=document.createRange(); r.setStart(pos.offsetNode,pos.offset); r.collapse(true); return r; }
+  }
+  return null;
+}
+function insertIntoContent(container,node,evt){
+  let range=caretRangeFromEvent(evt);
+  if(!range){
+    const sel=window.getSelection();
+    if(sel&&sel.rangeCount&&container.contains(sel.anchorNode)) range=sel.getRangeAt(0);
+  }
+  const spacer=document.createElement('p'); spacer.innerHTML='<br>';
+  if(range&&container.contains(range.startContainer)){
+    range.collapse(false); range.insertNode(spacer); range.insertNode(node);
+  } else {
+    container.appendChild(node); container.appendChild(spacer);
+  }
+}
+(function(){
+  document.body.addEventListener('dragover',e=>{ if(e.target.closest('#aipv-content')) e.preventDefault(); });
+  document.body.addEventListener('drop',e=>{
+    const content=e.target.closest('#aipv-content'); if(!content) return;
+    const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+    if(!file) return;
+    e.preventDefault();
+    compressImageFile(file,dataUrl=>{
+      if(!dataUrl){ toast('Bitte eine Bilddatei ziehen.'); return; }
+      insertIntoContent(content,buildInlineFigure(dataUrl),e);
+      toast('Bild eingefügt.');
+    });
+  });
+  document.addEventListener('paste',e=>{
+    const content=document.getElementById('aipv-content');
+    if(!content||!content.contains(e.target)) return;
+    const items=e.clipboardData&&e.clipboardData.items; if(!items) return;
+    for(const it of items){
+      if(it.type&&it.type.startsWith('image/')){
+        const blob=it.getAsFile(); if(!blob) return;
+        e.preventDefault();
+        compressImageFile(blob,dataUrl=>{
+          if(!dataUrl) return;
+          insertIntoContent(content,buildInlineFigure(dataUrl),null);
+          toast('Bild eingefügt.');
+        });
+        return;
+      }
+    }
   });
 })();
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
