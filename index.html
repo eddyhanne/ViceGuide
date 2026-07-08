@@ -371,6 +371,8 @@
   .cm-act.voted-down{border-color:var(--text-soft);color:var(--text);background:var(--bg-2)}
   .cm-act.locked{cursor:default;opacity:.75}
   .cm-act.locked:hover{border-color:var(--line);color:var(--text-soft)}
+  .cm-act.cm-del{margin-left:auto;color:#e0355f}
+  .cm-act.cm-del:hover{border-color:#e0355f;color:#e0355f;background:rgba(224,53,95,.1)}
   .cm-act.voted-up.locked:hover{border-color:var(--accent);color:var(--accent)}
 
   /* CLEAN Platzhalter (neutral, kein Farbverlauf) */
@@ -882,6 +884,7 @@ function toggleEdit(){
   closeAdmin();
   toast(editMode?'Editiermodus aktiv: Kachel anklicken, um Bild und Text zu bearbeiten.':'Editiermodus aus.');
   if(!gquery.trim()) renderView();
+  if($('article').classList.contains('show') && curArticle!=null) renderComments(curArticle);
 }
 function downloadDB(){
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
@@ -1117,68 +1120,130 @@ function renderMap(){
 }
 /* ---- ARTICLE VIEW ---- */
 /* ---- KOMMENTARE ----
-   Vorschau: lokaler Demomodus (im Speicher, pro Sitzung, nur zum Zeigen).
-   Live auf viceguide.de: COMMENTS_EMBED auf den Einbettungscode eines Dienstes
-   setzen (z.B. Cusdis, Hyvor Talk, Giscus, Disqus). Dann erscheinen echte,
-   dauerhafte Kommentare, ueber die sich Besucher austauschen koennen. */
-const COMMENTS_EMBED=""; // hier spaeter den Embed-Code deines Kommentardienstes einsetzen
-const demoComments={}; // {articleIndex:[{id,name,text,ts,likes,dislikes,replies:[]}]}
-let cmSeq=1;
+   Dauerhaft gespeichert ueber api/comments.php in der Hostinger-Datenbank.
+   Jeder Artikel hat eine feste id (g.id), Kommentare haengen an dieser id,
+   nicht am Titel, damit spaetere Titel-Aenderungen sie nicht verwaisen lassen. */
 function esc(t){return (t||'').replace(/[<>&]/g,x=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[x]));}
-function nowStr(){const d=new Date();const p=x=>String(x).padStart(2,'0');return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
-function findC(list,id){for(const c of list){if(c.id===id)return c;if(c.replies){const f=findC(c.replies,id);if(f)return f;}}return null;}
+function slugify(s){
+  return (s||'')
+    .replace(/[äöüÄÖÜß]/g,c=>({ä:'ae',ö:'oe',ü:'ue',Ä:'Ae',Ö:'Oe',Ü:'Ue',ß:'ss'}[c]))
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)/g,'')
+    .slice(0,180);
+}
 function countC(list){let n=0;for(const c of list){n++;if(c.replies)n+=countC(c.replies);}return n;}
-function renderComments(i){
+function fmtCommentDate(s){
+  if(!s) return '';
+  const d=new Date(s.replace(' ','T'));
+  if(isNaN(d)) return s;
+  const p=x=>String(x).padStart(2,'0');
+  return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+let votedIds=new Set();
+try{ votedIds=new Set(JSON.parse(localStorage.getItem('vg-voted')||'[]')); }catch(e){}
+function saveVoted(){ try{ localStorage.setItem('vg-voted', JSON.stringify([...votedIds])); }catch(e){} }
+let adminPass=null;
+let cmIndex={};
+function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
+async function renderComments(i){
   const box=$('a-comments');
-  if(COMMENTS_EMBED){ box.innerHTML=`<h3 class="cm-h">Kommentare</h3>`+COMMENTS_EMBED; return; }
-  const list=demoComments[i]||[];
+  const g=GUIDES[i]; const artId=g.id||slugify(g.title);
+  box.innerHTML=`<h3 class="cm-h">Kommentare</h3><div class="cm-note">Kommentare werden geladen…</div>`;
+  try{
+    const res=await fetch('api/comments.php?article='+encodeURIComponent(artId));
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    const list=data.comments||[];
+    cmIndex={}; indexComments(list);
+    renderCommentsUI(i,artId,list);
+  }catch(e){
+    box.innerHTML=`<h3 class="cm-h">Kommentare</h3><div class="cm-note">Kommentare konnten gerade nicht geladen werden.</div>`;
+  }
+}
+function renderCommentsUI(i,artId,list){
+  const box=$('a-comments');
   box.innerHTML=`<h3 class="cm-h">Kommentare <span class="cm-c">${countC(list)}</span></h3>
     <div class="cm-form">
       <input id="cm-name" class="cm-in" type="text" placeholder="Dein Name" maxlength="40">
       <textarea id="cm-text" class="cm-ta" rows="3" placeholder="Schreib etwas Nettes oder Schlaues…" maxlength="800"></textarea>
-      <button class="cm-btn" onclick="addComment(${i})">Kommentar posten</button>
-      <div class="cm-note">Vorschau-Modus: Kommentare bleiben nur in dieser Sitzung. Auf der Live-Seite tauschen sich echte Besucher aus.</div>
+      <button class="cm-btn" onclick="addComment('${artId}',${i})">Kommentar posten</button>
     </div>
-    <div class="cm-list">${list.length?list.map(c=>cmHtml(i,c,0)).join(''):'<div class="cm-empty">Sei der oder die Erste, die hier kommentiert.</div>'}</div>`;
+    <div class="cm-list">${list.length?list.map(c=>cmHtml(artId,i,c,0)).join(''):'<div class="cm-empty">Sei der oder die Erste, die hier kommentiert.</div>'}</div>`;
 }
-function cmHtml(i,c,depth){
-  const replies=(c.replies||[]).map(r=>cmHtml(i,r,depth+1)).join('');
-  const quote=c.quote?`<div class="cm-quote">${c.quote}</div>`:'';
-  const voted=(c.userVote||0)!==0;
-  const upCls='cm-act'+(c.userVote===1?' voted-up':'')+(voted?' locked':'');
-  const dnCls='cm-act'+(c.userVote===-1?' voted-down':'')+(voted?' locked':'');
+function cmHtml(artId,i,c,depth){
+  const replies=(c.replies||[]).map(r=>cmHtml(artId,i,r,depth+1)).join('');
+  const quote=c.quote?`<div class="cm-quote">${esc(c.quote)}</div>`:'';
+  const voted=votedIds.has(c.id);
+  const upCls='cm-act'+(voted?' locked':'');
+  const dnCls='cm-act'+(voted?' locked':'');
   const dis=voted?'disabled':'';
+  const delBtn=editMode?`<button class="cm-act cm-del" onclick="deleteComment('${artId}',${i},${c.id})">🗑 Löschen</button>`:'';
   return `<div class="cm-item ${depth?'cm-reply':''}">
-    <div class="cm-top"><span class="cm-name">${c.name}</span><span class="cm-ts">${c.ts}</span></div>
-    ${quote}<div class="cm-body">${c.text}</div>
+    <div class="cm-top"><span class="cm-name">${esc(c.name)}</span><span class="cm-ts">${fmtCommentDate(c.created_at)}</span></div>
+    ${quote}<div class="cm-body">${esc(c.text)}</div>
     <div class="cm-actions">
-      <button class="${upCls}" ${dis} onclick="voteC(${i},${c.id},1)">▲ <span>${c.likes}</span></button>
-      <button class="${dnCls}" ${dis} onclick="voteC(${i},${c.id},-1)">▼ <span>${c.dislikes}</span></button>
-      <button class="cm-act cm-reply-btn" onclick="toggleReply(${i},${c.id})">↩ Antworten</button>
+      <button class="${upCls}" ${dis} onclick="voteC('${artId}',${i},${c.id},1)">▲ <span>${c.likes}</span></button>
+      <button class="${dnCls}" ${dis} onclick="voteC('${artId}',${i},${c.id},-1)">▼ <span>${c.dislikes}</span></button>
+      <button class="cm-act cm-reply-btn" onclick="toggleReply(${c.id})">↩ Antworten</button>
+      ${delBtn}
     </div>
     <div class="cm-replybox" id="rb-${c.id}" style="display:none">
       <input class="cm-in" id="rn-${c.id}" type="text" placeholder="Dein Name" maxlength="40">
       <textarea class="cm-ta" id="rt-${c.id}" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
-      <button class="cm-btn cm-btn-sm" onclick="addReply(${i},${c.id})">Antwort posten</button>
+      <button class="cm-btn cm-btn-sm" onclick="addReply('${artId}',${i},${c.id})">Antwort posten</button>
     </div>
     ${replies?`<div class="cm-children">${replies}</div>`:''}
   </div>`;
 }
-function addComment(i){
-  const n=esc($('cm-name').value.trim())||'Gast', t=esc($('cm-text').value.trim());
+async function addComment(artId,i){
+  const n=($('cm-name').value||'').trim()||'Gast', t=($('cm-text').value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
-  (demoComments[i]=demoComments[i]||[]).unshift({id:cmSeq++,name:n,text:t,ts:nowStr(),likes:0,dislikes:0,userVote:0,replies:[]});
-  renderComments(i); toast('Kommentar gepostet ✦');
+  try{
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t})});
+    if(!res.ok) throw new Error();
+    toast('Kommentar gepostet ✦');
+    renderComments(i);
+  }catch(e){ toast('Kommentar konnte nicht gespeichert werden.'); }
 }
-function voteC(i,id,dir){const c=findC(demoComments[i]||[],id);if(!c)return;if((c.userVote||0)!==0){toast('Du hast bereits abgestimmt.');return;}c.userVote=dir;if(dir>0)c.likes++;else c.dislikes++;renderComments(i);}
-function toggleReply(i,id){renderComments(i);const rb=$('rb-'+id);if(rb){rb.style.display='block';const el=$('rt-'+id);if(el)el.focus();}}
-function addReply(i,id){
-  const parent=findC(demoComments[i]||[],id);if(!parent)return;
-  const n=esc(($('rn-'+id).value||'').trim())||'Gast', t=esc(($('rt-'+id).value||'').trim());
+async function voteC(artId,i,id,dir){
+  if(votedIds.has(id)){ toast('Du hast bereits abgestimmt.'); return; }
+  try{
+    const res=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,dir:dir>0?'up':'down'})});
+    if(!res.ok) throw new Error();
+    votedIds.add(id); saveVoted();
+    renderComments(i);
+  }catch(e){ toast('Abstimmen fehlgeschlagen.'); }
+}
+function toggleReply(id){
+  const rb=$('rb-'+id); if(!rb) return;
+  const show=rb.style.display==='none';
+  rb.style.display=show?'block':'none';
+  if(show){ const el=$('rt-'+id); if(el) el.focus(); }
+}
+async function addReply(artId,i,parentId){
+  const n=(($('rn-'+parentId)||{}).value||'').trim()||'Gast', t=(($('rt-'+parentId)||{}).value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
-  const q=parent.name+': '+(parent.text.length>90?parent.text.slice(0,90)+'…':parent.text);
-  parent.replies=parent.replies||[]; parent.replies.push({id:cmSeq++,name:n,text:t,ts:nowStr(),likes:0,dislikes:0,userVote:0,replies:[],quote:q});
-  renderComments(i); toast('Antwort gepostet ✦');
+  const p=cmIndex[parentId];
+  const quote=p?(p.name+': '+(p.text.length>90?p.text.slice(0,90)+'…':p.text)):'';
+  try{
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote})});
+    if(!res.ok) throw new Error();
+    toast('Antwort gepostet ✦');
+    renderComments(i);
+  }catch(e){ toast('Antwort konnte nicht gespeichert werden.'); }
+}
+async function deleteComment(artId,i,id){
+  let pw=adminPass;
+  if(!pw){ pw=prompt('Admin-Passwort zum Löschen von Kommentaren:'); if(!pw) return; }
+  try{
+    const res=await fetch('api/comments.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pw})});
+    if(res.status===403){ toast('Falsches Passwort.'); adminPass=null; return; }
+    if(!res.ok) throw new Error();
+    adminPass=pw;
+    toast('Kommentar gelöscht.');
+    renderComments(i);
+  }catch(e){ toast('Löschen fehlgeschlagen.'); }
 }
 function renderContentBlock(p){
   if(typeof p!=='string') return '';
@@ -1301,7 +1366,11 @@ function showAiPreview(g){
 }
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
 function approveAi(){
-  if(!aiDraft)return; GUIDES.unshift(aiDraft);
+  if(!aiDraft)return;
+  const base=slugify(aiDraft.title); let slug=base, n=2;
+  while(GUIDES.some(g=>g.id===slug)){ slug=base+'-'+n; n++; }
+  aiDraft.id=slug;
+  GUIDES.unshift(aiDraft);
   const cat=aiDraft.cat; aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
   closeAdmin(); go('home'); newsView='cards'; renderView();
   toast('✦ Artikel veröffentlicht. Zum Sichern „articles.json herunterladen“.');

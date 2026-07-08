@@ -44,7 +44,8 @@
       "zoom": 1.11,
       "x": 0,
       "y": 52
-    }
+    },
+    "id": "release-preis-editionen-der-komplette-ueberblick"
   },
   {
     "cat": "news",
@@ -83,7 +84,8 @@
       "zoom": 1,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "plattformen-pc-version-gesichert-und-offen"
   },
   {
     "cat": "news",
@@ -117,7 +119,8 @@
       "x": 50,
       "y": 50
     },
-    "credit": "https://www.fr.de/ratgeber/games/gta-6-online-release-fakten-geruechte-und-prognosen-zr-93753043.html"
+    "credit": "https://www.fr.de/ratgeber/games/gta-6-online-release-fakten-geruechte-und-prognosen-zr-93753043.html",
+    "id": "gta-online-zu-gta-6-der-stand-zum-online-modus"
   },
   {
     "cat": "leaks",
@@ -151,7 +154,8 @@
       "x": 50,
       "y": 50
     },
-    "credit": "youtube.com/watch?v=wzy9_0KnLFk&themeRefresh=1"
+    "credit": "youtube.com/watch?v=wzy9_0KnLFk&themeRefresh=1",
+    "id": "kommt-ein-dritter-trailer-das-spricht-dafuer"
   },
   {
     "cat": "leaks",
@@ -185,7 +189,8 @@
       "zoom": 1,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "der-gta-6-leak-von-2022-die-ganze-geschichte"
   },
   {
     "cat": "leaks",
@@ -218,7 +223,8 @@
       "zoom": 1.11,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "rumored-voice-cast-wer-spricht-jason-und-lucia"
   },
   {
     "cat": "leaks",
@@ -251,7 +257,8 @@
       "zoom": 1.07,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "geld-verdienen-in-gta-6-realistische-vorschau"
   },
   {
     "cat": "trailer",
@@ -289,7 +296,8 @@
       "zoom": 1.12,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "trailer-1-trailer-2-die-komplette-chronik"
   },
   {
     "cat": "trailer",
@@ -331,7 +339,8 @@
       "zoom": 1.1,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "alle-easter-eggs-versteckten-details-der-trailer"
   },
   {
     "cat": "trailer",
@@ -371,7 +380,8 @@
       "zoom": 1.11,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "fahrzeuge-waffen-gameplay-hinweise-der-trailer"
   },
   {
     "cat": "story",
@@ -405,7 +415,8 @@
       "zoom": 1,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "jason-lucia-die-hauptfiguren-im-detail"
   },
   {
     "cat": "story",
@@ -442,7 +453,8 @@
       "zoom": 1,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "die-nebencharaktere-von-gta-6-wer-ist-wer"
   },
   {
     "cat": "map",
@@ -487,7 +499,8 @@
       "zoom": 0.4,
       "x": 50,
       "y": 50
-    }
+    },
+    "id": "die-karte-von-gta-6-alle-regionen-von-leonida"
   },
   {
     "cat": "community",
@@ -522,6 +535,7 @@
       "x": 50,
       "y": 50
     },
-    "credit": "https://in.ign.com/grand-theft-auto-6/249642/news/gta-6-former-rockstar-dev-thinks-that-the-hype-around-the-game-will-die-down-almost-completely-after"
+    "credit": "https://in.ign.com/grand-theft-auto-6/249642/news/gta-6-former-rockstar-dev-thinks-that-the-hype-around-the-game-will-die-down-almost-completely-after",
+    "id": "neu-bei-gta-dein-einstieg-vor-dem-release"
   }
 ]
