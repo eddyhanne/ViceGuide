@@ -400,6 +400,7 @@
   .ie-hint{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin:8px 0}
   .ie-creditlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-top:6px}
   .ie-textfields{margin-bottom:14px}
+  #imged.imgonly .ie-textfields{display:none}
   .ie-tlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
   .ie-textfields .cm-ta{resize:vertical;font-family:'Inter'}
   .ie-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
@@ -933,28 +934,33 @@ function downloadArticles(){
 let ieState=null; let ieMoved=false; // {kind,sec,i,name,img,zoom,x,y,credit}
 function ieTarget(){ return ieState.kind==='guide' ? GUIDES[ieState.i] : DB[ieState.sec][ieState.i]; }
 function openImgEd(kind,secId,i){
-  const d = kind==='guide' ? GUIDES[i] : DB[secId][i]; const f=d.imgfit||{};
-  const name = kind==='guide' ? d.title : d.name;
+  const isDraft = kind==='draftpreview';
+  const d = isDraft ? aiDraft : (kind==='guide' ? GUIDES[i] : DB[secId][i]);
+  const f=d.imgfit||{};
+  const name = isDraft ? (d.title||'Neuer Artikel') : (kind==='guide' ? d.title : d.name);
   ieState={kind,sec:secId,i,name,img:d.img||null,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
   $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
   ieBuildSearch(name);
   ieRender();
-  if(kind==='guide'){
-    $('ie-name-label').textContent='Titel';
-    $('ie-t-name').value=d.title||'';
-    $('ie-sub-label').textContent='Teaser (1 Satz)';
-    $('ie-t-sub').value=d.summary||'';
-    $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
-    $('ie-t-desc').value=(d.content||[]).join('\n\n');
-  } else {
-    $('ie-name-label').textContent='Name';
-    $('ie-t-name').value=d.name||'';
-    $('ie-sub-label').textContent='Unterzeile';
-    $('ie-t-sub').value=d.sub||'';
-    $('ie-desc-label').textContent='Beschreibung';
-    $('ie-t-desc').value=d.desc||'';
+  $('imged').classList.toggle('imgonly', isDraft);
+  if(!isDraft){
+    if(kind==='guide'){
+      $('ie-name-label').textContent='Titel';
+      $('ie-t-name').value=d.title||'';
+      $('ie-sub-label').textContent='Teaser (1 Satz)';
+      $('ie-t-sub').value=d.summary||'';
+      $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
+      $('ie-t-desc').value=(d.content||[]).join('\n\n');
+    } else {
+      $('ie-name-label').textContent='Name';
+      $('ie-t-name').value=d.name||'';
+      $('ie-sub-label').textContent='Unterzeile';
+      $('ie-t-sub').value=d.sub||'';
+      $('ie-desc-label').textContent='Beschreibung';
+      $('ie-t-desc').value=d.desc||'';
+    }
   }
   $('imged').classList.add('show');
 }
@@ -1029,9 +1035,12 @@ document.addEventListener('paste',e=>{ if(!ieState)return; const items=e.clipboa
 function ieZoom(v){ if(!ieState)return; ieState.zoom=parseFloat(v); ieRender(); }
 function ieRemove(){ if(!ieState)return; ieState.img=null; ieRender(); }
 async function ieApply(){
-  if(!ieState)return; const d=ieTarget();
+  if(!ieState)return;
+  const isDraft=ieState.kind==='draftpreview';
+  const d=isDraft?aiDraft:ieTarget();
   if(ieState.img){ d.img=ieState.img; d.imgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)}; const cr=$('ie-credit').value.trim(); if(cr)d.credit=cr; else delete d.credit; }
   else { delete d.img; delete d.imgfit; }
+  if(isDraft){ closeImgEd(); renderAipvImgFrame(); return; }
   const nameVal=$('ie-t-name').value.trim();
   const subVal=$('ie-t-sub').value.trim();
   const descVal=$('ie-t-desc').value;
@@ -1410,16 +1419,41 @@ function showAiPreview(g){
       <input type="text" id="aipv-title" class="cm-in" value="${esc(g.title||'')}">
       <label class="ie-tlabel">Teaser (1 Satz)</label>
       <input type="text" id="aipv-summary" class="cm-in" value="${esc(g.summary||'')}">
+      <label class="ie-tlabel">Bild</label>
+      <div class="ie-frame" id="aipv-imgframe" onclick="openImgEd('draftpreview',null,0)"></div>
       <label class="ie-tlabel">Text (Absätze durch Leerzeile trennen)</label>
       <textarea id="aipv-content" class="cm-ta" rows="8">${esc((g.content||[]).join('\n\n'))}</textarea>
     </div>
-    ${imgs?`<div class="ai-imgsug"><div class="ai-sug-h">Bildvorschläge (öffnet Suche, dann herunterladen und im Editiermodus einfügen):</div>${imgs}</div>`:''}
+    ${imgs?`<div class="ai-imgsug"><div class="ai-sug-h">Bild-Suchbegriffe zur Inspiration (Bild dann oben per Klick, Einfügen oder Drag&Drop ergänzen):</div>${imgs}</div>`:''}
     <div class="ai-pv-actions">
       <button class="ie-del" onclick="discardAi()">Verwerfen</button>
       <button class="ie-apply" onclick="approveAi()">Freigeben & veröffentlichen</button>
     </div>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Freigeben erscheint der Artikel sofort und dauerhaft.</div>`;
+  renderAipvImgFrame();
 }
+function renderAipvImgFrame(){
+  const frame=$('aipv-imgframe'); if(!frame||!aiDraft) return;
+  if(aiDraft.img){
+    const f=aiDraft.imgfit||{zoom:1,x:50,y:50};
+    frame.innerHTML=`<div class="ie-imgbox" style="display:block;background-image:url('${aiDraft.img}');background-repeat:no-repeat;background-position:${f.x}% ${f.y}%;background-size:${f.zoom*100}% auto"></div>`;
+    frame.classList.add('has');
+  } else {
+    frame.innerHTML=`<div class="ie-empty">Bild hierher ziehen<br>oder klicken zum Auswählen</div>`;
+    frame.classList.remove('has');
+  }
+}
+(function(){
+  document.body.addEventListener('dragover',e=>{ if(e.target.closest('#aipv-imgframe')) e.preventDefault(); });
+  document.body.addEventListener('drop',e=>{
+    const frame=e.target.closest('#aipv-imgframe'); if(!frame) return;
+    e.preventDefault();
+    const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+    if(!file) return;
+    openImgEd('draftpreview',null,0);
+    setTimeout(()=>ieLoadFile(file),50);
+  });
+})();
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
 async function approveAi(){
   if(!aiDraft)return;
