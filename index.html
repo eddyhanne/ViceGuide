@@ -1581,6 +1581,9 @@ function revealCards(){
 function openAdmin(){$('adm').classList.add('show');setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
+/* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
+   Geraets (wird von fmtDT unveraendert, ohne Zeitzonen-Umrechnung angezeigt). */
+function nowStamp(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
 function submitDraftJson(){
   const raw=$('draft-json').value.trim();
   if(!raw){ toast('Bitte JSON einfügen.'); return; }
@@ -1593,7 +1596,7 @@ function submitDraftJson(){
   }catch(err){ toast('Das sieht nicht nach gültigem JSON aus.'); return; }
   if(!g.title || !g.content){ toast('Es fehlen title oder content.'); return; }
   if(!GCAT[g.cat]) g.cat='news';
-  if(!g.date){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); g.date=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+  if(!g.date) g.date=nowStamp();
   aiDraft=g;
   $('draft-json').value='';
   showAiPreview(g);
@@ -1676,14 +1679,9 @@ function renderAipvHero(){
    zur weiter oben liegenden Bild-Dropzone scrollen. */
 (function(){
   const edge=70, maxSpeed=16;
-  let dragActiveTs=0;
-  const markDragActive=()=>{ dragActiveTs=Date.now(); };
-  document.addEventListener('dragenter',markDragActive);
-  document.addEventListener('drop',markDragActive,true);
   document.addEventListener('dragover',e=>{
     const adm=$('adm');
     if(!adm||!adm.classList.contains('show')) return;
-    markDragActive();
     const modal=adm.querySelector('.modal'); if(!modal) return;
     const r=modal.getBoundingClientRect();
     if(e.clientY<r.top||e.clientY>r.bottom) return;
@@ -1691,22 +1689,6 @@ function renderAipvHero(){
     if(distTop<edge) modal.scrollTop-=maxSpeed*(1-distTop/edge);
     else if(distBottom<edge) modal.scrollTop+=maxSpeed*(1-distBottom/edge);
   });
-  /* Mausrad soll waehrend des Ziehens (Maustaste gehalten) ebenfalls scrollen
-     koennen, das ist oft schneller als bis zum Rand ziehen. Waehrend eines
-     aktiven Drags unterdruecken Browser das normale Scrollen oft, deshalb
-     hier manuell nachgeholt. Browser feuern dragover bei einem gehaltenen,
-     aber nicht bewegten Drag nur etwa alle 350ms erneut, das Zeitfenster
-     hier muss also deutlich groesser sein als dieser Abstand, sonst faellt
-     es zwischen zwei dragover-Events immer wieder zu. Ausserhalb eines
-     Drags bleibt das Fenster inaktiv, damit normales Scrollen nicht
-     doppelt so schnell wird (das uebernimmt der Browser dort schon selbst). */
-  document.addEventListener('wheel',e=>{
-    if(Date.now()-dragActiveTs>700) return;
-    const adm=$('adm');
-    if(!adm||!adm.classList.contains('show')) return;
-    const modal=adm.querySelector('.modal'); if(!modal||!modal.contains(e.target)) return;
-    modal.scrollTop+=e.deltaY;
-  },{passive:true});
 })();
 /* Zusaetzliches Bild direkt mitten im Artikeltext per Drag&Drop oder
    Einfuegen (Strg+V) einsetzen, z.B. aus der Google/Bing-Bildersuche.
@@ -1792,6 +1774,7 @@ async function approveAi(){
   draft.summary=summaryVal;
   draft.lead=leadVal;
   draft.content=contentVal;
+  draft.date=nowStamp();
   aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
   closeAdmin();
   try{
