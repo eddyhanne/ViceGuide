@@ -667,6 +667,10 @@
   <div class="ie-textfields">
     <label class="ie-tlabel" id="ie-name-label">Titel</label>
     <input type="text" id="ie-t-name" class="cm-in">
+    <div id="ie-cat-wrap" style="display:none">
+      <label class="ie-tlabel">Kategorie</label>
+      <select id="ie-t-cat" class="cm-in"></select>
+    </div>
     <label class="ie-tlabel" id="ie-sub-label">Unterzeile</label>
     <input type="text" id="ie-t-sub" class="cm-in">
   </div>
@@ -932,7 +936,7 @@ async function deleteGuide(idx,ev){
   try{
     const res=await fetch('api/articles.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
-    if(res.status===404){ toast('Artikel wurde serverseitig nicht gefunden.'); return; }
+    if(res.status===404){ toast('Nicht gefunden (id: '+g.id+').'); console.warn('Artikel-Loeschung: id nicht gefunden ->',g.id,g); return; }
     if(!res.ok) throw new Error();
     GUIDES.splice(idx,1);
     renderView();
@@ -947,7 +951,7 @@ async function deleteDbEntry(secId,i,ev){
   try{
     const res=await fetch('api/db_entries.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d._id})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
-    if(res.status===404){ toast('Eintrag wurde serverseitig nicht gefunden.'); return; }
+    if(res.status===404){ toast('Nicht gefunden (id: '+d._id+').'); console.warn('Eintrag-Loeschung: id nicht gefunden ->',d._id,d); return; }
     if(!res.ok) throw new Error();
     DB[secId].splice(i,1);
     renderView();
@@ -1024,11 +1028,15 @@ function openImgEd(kind,secId,i){
     if(kind==='guide'){
       $('ie-name-label').textContent='Titel';
       $('ie-t-name').value=d.title||'';
+      $('ie-cat-wrap').style.display='block';
+      $('ie-t-cat').innerHTML=GROUPS.map(gr=>`<optgroup label="${gr.label}">${gr.cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</optgroup>`).join('');
+      $('ie-t-cat').value=d.cat||'news';
       $('ie-sub-label').textContent='Teaser (1 Satz)';
       $('ie-t-sub').value=d.summary||'';
       $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
       $('ie-t-desc').value=(d.content||[]).join('\n\n');
     } else {
+      $('ie-cat-wrap').style.display='none';
       $('ie-name-label').textContent='Name';
       $('ie-t-name').value=d.name||'';
       $('ie-sub-label').textContent='Unterzeile';
@@ -1132,6 +1140,7 @@ async function ieApply(){
     if(nameVal) d.title=nameVal;
     d.summary=subVal;
     d.content=descVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+    const catVal=$('ie-t-cat').value; if(catVal) d.cat=catVal;
   } else {
     if(nameVal) d.name=nameVal;
     d.sub=subVal;
