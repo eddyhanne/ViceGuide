@@ -86,6 +86,14 @@ Die Seite ist eine Single-Page-Anwendung mit echtem URL-Routing über `location.
 ```
 `cat` ist eine von: `news`, `leaks`, `trailer`, `story`, `map`, `community` (Phase 1) bzw. `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner` (Phase 2, aktuell gesperrt). Es gibt **kein** `tag`-Feld mehr, das sichtbare Label kommt aus `GCAT[cat].name` im Code. `id` wird beim Anlegen einmalig aus dem Titel generiert (Slug) und bleibt danach fix, auch wenn der Titel später bearbeitet wird, damit Kommentare nicht verwaisen. `image_queries` ist optional, nur für die Bildsuche-Vorschläge im Admin-Panel, wird nicht mit gespeichert wenn nicht vorhanden.
 
+**Strukturelemente innerhalb von `content` (bei Bedarf, nicht in jedem Artikel nötig).** Jeder Eintrag im `content`-Array ist normalerweise ein normaler Absatz (String). Zusaetzlich werden folgende Praefixe erkannt und speziell dargestellt:
+- `"### Zwischenüberschrift"` , eigene Zwischenüberschrift im Artikel.
+- `"img:https://bild-url|Bildunterschrift"` , weiteres Bild mitten im Artikeltext (Bildunterschrift optional, dann einfach `"img:https://bild-url"`).
+- `"- Ein Punkt"` , Aufzählungspunkt. Mehrere aufeinanderfolgende `"- ..."`-Zeilen ergeben automatisch eine gemeinsame Bulletpoint-Liste.
+- `"faq:Frage?|Antworttext"` , ein aufklappbarer FAQ-Eintrag (Akkordeon). Mehrere aufeinanderfolgende `"faq:..."`-Zeilen ergeben automatisch einen gemeinsamen FAQ-Block.
+
+Diese Elemente sind Werkzeuge fuer mehr Struktur (siehe Vorbild-Artikel wie bei GIGA: Bulletpoints, Zwischenueberschriften, aufklappbares FAQ), nicht Pflicht. Bei kurzen News-Meldungen reichen normale Absaetze, bei laenglichen Guides/Erklaerartikeln lohnt sich die Gliederung.
+
 ### Datenbank-Eintrag-Datenmodell (Charaktere, Fahrzeuge, usw.)
 ```json
 {

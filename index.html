@@ -250,6 +250,16 @@
   .art-date{font-family:'Space Mono';font-size:12px;color:var(--text-soft);margin-bottom:16px}
   .article .lead{font-size:18px;color:var(--text-soft);font-weight:500;margin-bottom:24px;padding-bottom:22px;border-bottom:2px solid var(--line)}
   .article .content p{margin-bottom:16px;font-size:16px} .article .content h3{font-family:'Oswald';font-weight:600;font-size:22px;margin:26px 0 10px;color:var(--heading)}
+  .art-list{margin:0 0 18px;padding-left:22px}
+  .art-list li{margin-bottom:9px;font-size:16px;line-height:1.5}
+  .art-list li::marker{color:var(--accent)}
+  .art-faq{margin:22px 0;border-top:1px solid var(--line)}
+  .art-faq details{border-bottom:1px solid var(--line)}
+  .art-faq summary{cursor:pointer;list-style:none;padding:15px 26px 15px 0;font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading);position:relative}
+  .art-faq summary::-webkit-details-marker{display:none}
+  .art-faq summary::after{content:'+';position:absolute;right:2px;top:13px;font-size:20px;color:var(--accent);transition:.2s}
+  .art-faq details[open] summary::after{content:'−'}
+  .art-faq .faq-a{padding:0 0 16px;font-size:15px;color:var(--text-soft);line-height:1.55}
   .article .sources{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);opacity:.75}
   .article .sources b{font-family:'Space Mono';font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-soft);display:block;margin-bottom:7px;font-weight:700}
   .article .sources a{display:inline-block;font-size:12.5px;color:var(--text-soft);margin:0 14px 5px 0;word-break:break-word;text-decoration:underline;text-decoration-color:var(--line)}
@@ -1302,6 +1312,59 @@ function renderContentBlock(p){
   if(p.startsWith('img:')){const parts=p.slice(4).split('|');const src=parts[0].trim();const cr=(parts[1]||'').trim();return `<figure class="art-fig"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;}
   return `<p>${linkifyChars(p)}</p>`;
 }
+/* Baut den Artikeltext aus dem content-Array. Aufzaehlungspunkte ("- Text")
+   und FAQ-Eintraege ("faq:Frage|Antwort") werden ueber aufeinanderfolgende
+   Zeilen hinweg zu einer gemeinsamen Liste bzw. einem Akkordeon gruppiert. */
+function renderContent(arr){
+  const blocks=Array.isArray(arr)?arr:[];
+  let html=''; let i=0;
+  while(i<blocks.length){
+    const p=blocks[i];
+    if(typeof p==='string'&&p.startsWith('- ')){
+      let items='';
+      while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('- ')){
+        items+=`<li>${linkifyChars(blocks[i].slice(2).trim())}</li>`; i++;
+      }
+      html+=`<ul class="art-list">${items}</ul>`; continue;
+    }
+    if(typeof p==='string'&&p.startsWith('faq:')){
+      let items='';
+      while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('faq:')){
+        const parts=blocks[i].slice(4).split('|'); const q=(parts[0]||'').trim(); const a=(parts[1]||'').trim();
+        items+=`<details><summary>${linkifyChars(q)}</summary><div class="faq-a">${linkifyChars(a)}</div></details>`; i++;
+      }
+      html+=`<div class="art-faq">${items}</div>`; continue;
+    }
+    html+=renderContentBlock(p); i++;
+  }
+  return html;
+}
+/* Gegenstueck zu renderContent: liest die editierbare Vorschau wieder in das
+   flache content-Array zurueck, Listen/FAQ/Bilder werden dabei wieder in
+   ihre "- ", "faq:" bzw. "img:" Zeilen aufgeloest. */
+function extractContentBlocks(container){
+  const out=[];
+  Array.from(container.children).forEach(node=>{
+    if(node.tagName==='H3'){
+      const t=(node.textContent||'').trim(); if(t) out.push('### '+t);
+    }else if(node.tagName==='UL'){
+      Array.from(node.children).forEach(li=>{ const t=(li.textContent||'').trim(); if(t) out.push('- '+t); });
+    }else if(node.classList&&node.classList.contains('art-faq')){
+      Array.from(node.children).forEach(det=>{
+        const q=(det.querySelector('summary')?.textContent||'').trim();
+        const a=(det.querySelector('.faq-a')?.textContent||'').trim();
+        if(q||a) out.push('faq:'+q+'|'+a);
+      });
+    }else if(node.tagName==='FIGURE'){
+      const img=node.querySelector('img'); const cap=node.querySelector('figcaption');
+      const src=img?img.getAttribute('src'):'';
+      if(src) out.push('img:'+src+(cap&&cap.textContent.trim()?'|'+cap.textContent.trim():''));
+    }else{
+      const t=(node.textContent||'').trim(); if(t) out.push(t);
+    }
+  });
+  return out;
+}
 function renderArticleFields(g,p){
   const tag=$(p+'tag'); if(tag) tag.textContent=GCAT[g.cat]?.name||'';
   const title=$(p+'title'); if(title) title.textContent=g.title||'';
@@ -1313,7 +1376,7 @@ function renderArticleFields(g,p){
     else hero.style.display='none';
   }
   const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
-  const content=$(p+'content'); if(content) content.innerHTML=(g.content||[]).map(renderContentBlock).join('');
+  const content=$(p+'content'); if(content) content.innerHTML=renderContent(g.content);
   const sb=$(p+'sources');
   if(sb){
     if(g.sources&&g.sources.length){sb.style.display="block";$(p+'src').innerHTML=g.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a>`).join('');}else sb.style.display="none";
@@ -1483,11 +1546,7 @@ async function approveAi(){
   const summaryVal=($('aipv-summary').value||'').trim();
   const leadVal=($('aipv-lead').textContent||'').trim();
   const contentEl=$('aipv-content');
-  let contentVal=Array.from(contentEl.children).map(node=>{
-    const t=(node.textContent||'').trim();
-    if(!t) return null;
-    return node.tagName==='H3' ? '### '+t : t;
-  }).filter(Boolean);
+  let contentVal=extractContentBlocks(contentEl);
   if(!contentVal.length){ const t=(contentEl.textContent||'').trim(); if(t) contentVal=[t]; }
   if(titleVal) draft.title=titleVal;
   draft.summary=summaryVal;
