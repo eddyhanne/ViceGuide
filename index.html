@@ -1125,7 +1125,7 @@ function closeModal(){$('ov').classList.remove('show');curModal=null;syncHash();
 
 /* ---- MAP ---- */
 const COMMUNITY={
-  discordInvite:"",      // z.B. "https://discord.gg/deincode"
+  discordInvite:"https://discord.gg/MNmMG3xNfA",
   discordServerId:"",    // Server-ID fuer das eingebettete Widget (Servereinstellungen > Widget)
   redditUrl:""           // z.B. "https://www.reddit.com/r/deinsubreddit"
 };
@@ -1155,7 +1155,7 @@ function renderCommunity(){
     :`<div class="cm-placeholder"><div class="cm-ph-ic">${secIcon('community')}</div><div><b>Live-Chat folgt</b><p>Hier entsteht unser Community-Chat. Bis dahin findest du oben die Wege, wie du dabei sein kannst.</p></div></div>`;
   $('view').innerHTML=`
    <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('community')}</span>Community</div>
-     <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Discord und Subreddit sind aktuell noch in Bearbeitung und folgen in Kürze.</div></div>
+     <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Unser Discord ist bereits live, der Subreddit folgt in Kürze.</div></div>
    <div class="cm-ctas">${discordBtn}${redditBtn}</div>
    ${widget}
    <div class="cm-forum">
