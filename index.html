@@ -1214,16 +1214,51 @@ function linkifyChars(text,excludeKey,seen){
     return `<a class="ent-link" onclick="event.stopPropagation();openModal('${found[1]}',${found[2]})">${m}</a>`;
   });
 }
+/* Artikel-Verweise im Fliesstext: "[[artikel-id|Anzeigetext]]" wird zu
+   einem klickbaren Link auf den Artikel mit dieser (stabilen) id. Existiert
+   die id nicht (mehr), bleibt nur der reine Anzeigetext stehen, ohne Link.
+   Laeuft als eigener Durchgang vor linkifyChars, ueber Platzhalter-Tokens,
+   damit linkifyChars() den bereits eingefuegten <a>-Tag nicht nochmal
+   anfasst (kein verschachteltes Link-Markup). */
+function linkifyArticleRefs(text,tokens){
+  if(!text) return text||'';
+  return text.replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g,(m,id,label)=>{
+    const clean=esc(label.trim());
+    const exists=(GUIDES||[]).some(g=>g.id===id);
+    const token='\uE000'+tokens.length+'\uE001';
+    tokens.push(exists?`<a class="ent-link" data-article-id="${id}" onclick="event.stopPropagation();goToArticleId('${id}')">${clean}</a>`:clean);
+    return token;
+  });
+}
+function restoreArticleRefs(html,tokens){
+  return html.replace(/\uE000(\d+)\uE001/g,(m,i)=>tokens[+i]!=null?tokens[+i]:'');
+}
+/* Gemeinsamer Textbaustein fuer Artikel-Absaetze, Listenpunkte, FAQ-Text,
+   Ueberschriften und Datenbank-Beschreibungen: erst Artikel-Verweise, dann
+   Charakter/Entitaeten-Verlinkung, damit sich beides nicht in die Quere
+   kommt. excludeKey wie bei linkifyChars (eigener Datenbank-Eintrag soll
+   sich nicht selbst verlinken). */
+function renderText(s,seen,excludeKey){
+  const tokens=[];
+  const pre=linkifyArticleRefs(s,tokens);
+  const linked=linkifyChars(pre,excludeKey,seen);
+  return restoreArticleRefs(linked,tokens);
+}
+function goToArticleId(id){
+  const idx=(GUIDES||[]).findIndex(g=>g.id===id);
+  if(idx<0){ toast('Verlinkter Artikel wurde nicht gefunden.'); return; }
+  openArticle(idx);
+}
 function openModal(secId,i){
   curModal={sec:secId,i};
   const sec=SECTIONS.find(s=>s.id===secId); const d=DB[secId][i];
   const selfKey=secId+':'+i;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${linkifyChars(d.sub||'',selfKey)}</div>
+  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
-    <div class="mabout">Beschreibung</div><div class="mdesc">${linkifyChars(d.desc||'',selfKey)}</div></div>`;
+    <div class="mabout">Beschreibung</div><div class="mdesc">${renderText(d.desc||'',null,selfKey)}</div></div>`;
   $('ov').classList.add('show');
   syncHash();
 }
@@ -1412,7 +1447,7 @@ function renderContentBlock(p,editable,seen){
     const toggle=editable?`<button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">${narrow?'Volle Breite':'Schmaler'}</button>`:'';
     return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
   }
-  return `<p>${linkifyChars(p,null,seen)}</p>`;
+  return `<p>${renderText(p,seen)}</p>`;
 }
 function toggleFigSize(e){
   e.preventDefault(); e.stopPropagation();
@@ -1438,7 +1473,7 @@ function renderContent(arr,outHeads,outFaqs,editable,seen){
     if(typeof p==='string'&&p.startsWith('- ')){
       let items='';
       while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('- ')){
-        items+=`<li>${linkifyChars(blocks[i].slice(2).trim(),null,seen)}</li>`; i++;
+        items+=`<li>${renderText(blocks[i].slice(2).trim(),seen)}</li>`; i++;
       }
       html+=`<ul class="art-list">${items}</ul>`; continue;
     }
@@ -1446,7 +1481,7 @@ function renderContent(arr,outHeads,outFaqs,editable,seen){
       let items='';
       while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('faq:')){
         const parts=blocks[i].slice(4).split('|'); const q=(parts[0]||'').trim(); const a=(parts[1]||'').trim();
-        items+=`<details><summary>${linkifyChars(q,null,seen)}</summary><div class="faq-a">${linkifyChars(a,null,seen)}</div></details>`;
+        items+=`<details><summary>${renderText(q,seen)}</summary><div class="faq-a">${renderText(a,seen)}</div></details>`;
         if(outFaqs&&(q||a)) outFaqs.push({q,a});
         i++;
       }
@@ -1457,7 +1492,7 @@ function renderContent(arr,outHeads,outFaqs,editable,seen){
       let id=slugify(text)||'abschnitt';
       if(used[id]){ used[id]++; id=id+'-'+used[id]; } else used[id]=1;
       if(outHeads&&text) outHeads.push({text,id});
-      html+=`<h3 id="${id}">${linkifyChars(text,null,seen)}</h3>`; i++; continue;
+      html+=`<h3 id="${id}">${renderText(text,seen)}</h3>`; i++; continue;
     }
     html+=renderContentBlock(p,editable,seen); i++;
   }
@@ -1491,7 +1526,7 @@ function renderTldr(g,p,seen){
   const ul=$(p+'tldr-list');
   if(!list.length){ box.style.display='none'; return; }
   box.style.display='block';
-  if(ul) ul.innerHTML=list.map(t=>`<li>${linkifyChars(t,null,seen)}</li>`).join('');
+  if(ul) ul.innerHTML=list.map(t=>`<li>${renderText(t,seen)}</li>`).join('');
 }
 function renderToc(p,heads){
   const box=$(p+'toc'); if(!box) return;
@@ -1512,17 +1547,34 @@ function renderFaqSchema(faqs){
 /* Gegenstueck zu renderContent: liest die editierbare Vorschau wieder in das
    flache content-Array zurueck, Listen/FAQ/Bilder werden dabei wieder in
    ihre "- ", "faq:" bzw. "img:" Zeilen aufgeloest. */
+/* Liest den Text eines gerenderten Knotens zurueck, rekonstruiert dabei
+   Artikel-Verweise als "[[id|Anzeigetext]]" (statt sie als reinen Link-Text
+   zu verlieren). Charakter/Entitaeten-Links werden bewusst nur als reiner
+   Name zurueckgelesen, die entstehen ja automatisch wieder beim naechsten
+   Rendern und sind keine vom Redakteur getippte Syntax. */
+function extractTextPreservingRefs(node){
+  let out='';
+  node.childNodes.forEach(c=>{
+    if(c.nodeType===3){ out+=c.textContent; }
+    else if(c.nodeType===1){
+      if(c.tagName==='A'&&c.dataset&&c.dataset.articleId) out+='[['+c.dataset.articleId+'|'+c.textContent+']]';
+      else out+=c.textContent;
+    }
+  });
+  return out;
+}
 function extractContentBlocks(container){
   const out=[];
   Array.from(container.children).forEach(node=>{
     if(node.tagName==='H3'){
-      const t=(node.textContent||'').trim(); if(t) out.push('### '+t);
+      const t=extractTextPreservingRefs(node).trim(); if(t) out.push('### '+t);
     }else if(node.tagName==='UL'){
-      Array.from(node.children).forEach(li=>{ const t=(li.textContent||'').trim(); if(t) out.push('- '+t); });
+      Array.from(node.children).forEach(li=>{ const t=extractTextPreservingRefs(li).trim(); if(t) out.push('- '+t); });
     }else if(node.classList&&node.classList.contains('art-faq')){
       Array.from(node.children).forEach(det=>{
-        const q=(det.querySelector('summary')?.textContent||'').trim();
-        const a=(det.querySelector('.faq-a')?.textContent||'').trim();
+        const summaryEl=det.querySelector('summary'); const answerEl=det.querySelector('.faq-a');
+        const q=summaryEl?extractTextPreservingRefs(summaryEl).trim():'';
+        const a=answerEl?extractTextPreservingRefs(answerEl).trim():'';
         if(q||a) out.push('faq:'+q+'|'+a);
       });
     }else if(node.tagName==='FIGURE'){
@@ -1532,7 +1584,7 @@ function extractContentBlocks(container){
       const narrow=node.dataset.size==='narrow';
       if(src) out.push('img:'+src+'|'+capTxt+(narrow?'|narrow':''));
     }else{
-      const t=(node.textContent||'').trim(); if(t) out.push(t);
+      const t=extractTextPreservingRefs(node).trim(); if(t) out.push(t);
     }
   });
   return out;
