@@ -446,7 +446,7 @@
 
   /* KI-Vorschau */
   .ai-pv-h{font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-  .ai-pv{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:14px;max-height:260px;overflow:auto}
+  .ai-pv{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:14px;max-height:440px;overflow:auto}
   .ai-pv-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--btn-text);background:var(--accent);padding:3px 9px;border-radius:6px}
   .ai-pv-title{font-family:'Oswald';font-weight:600;font-size:20px;color:var(--heading);margin:8px 0 4px;line-height:1.2}
   .ai-pv-lead{font-size:14px;color:var(--text-soft);margin-bottom:8px}
@@ -1403,12 +1403,15 @@ function showAiPreview(g){
   const box=$('ai-result'); box.style.display='block';
   const imgs=(g.image_queries||[]).map(q=>{const e=encodeURIComponent('GTA 6 '+q);return `<div class="ai-imgrow"><span class="ai-q">${q}</span><a class="ie-sbtn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=${e}">Google</a><a class="ie-sbtn" target="_blank" rel="noopener" href="https://www.bing.com/images/search?q=${e}">Bing</a></div>`;}).join('');
   box.innerHTML=`
-    <div class="ai-pv-h">Vorschau · bitte prüfen und freigeben</div>
+    <div class="ai-pv-h">Vorschau · bitte prüfen, bei Bedarf bearbeiten, dann freigeben</div>
     <div class="ai-pv">
       <div class="ai-pv-tag">${GCAT[g.cat]?.name||g.cat}</div>
-      <div class="ai-pv-title">${g.title||''}</div>
-      <div class="ai-pv-lead">${g.lead||g.summary||''}</div>
-      <div class="ai-pv-body">${(g.content||[]).map(x=>`<p>${x}</p>`).join('')}</div>
+      <label class="ie-tlabel">Titel</label>
+      <input type="text" id="aipv-title" class="cm-in" value="${esc(g.title||'')}">
+      <label class="ie-tlabel">Teaser (1 Satz)</label>
+      <input type="text" id="aipv-summary" class="cm-in" value="${esc(g.summary||'')}">
+      <label class="ie-tlabel">Text (Absätze durch Leerzeile trennen)</label>
+      <textarea id="aipv-content" class="cm-ta" rows="8">${esc((g.content||[]).join('\n\n'))}</textarea>
     </div>
     ${imgs?`<div class="ai-imgsug"><div class="ai-sug-h">Bildvorschläge (öffnet Suche, dann herunterladen und im Editiermodus einfügen):</div>${imgs}</div>`:''}
     <div class="ai-pv-actions">
@@ -1422,6 +1425,12 @@ async function approveAi(){
   if(!aiDraft)return;
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const draft=aiDraft;
+  const titleVal=($('aipv-title').value||'').trim();
+  const summaryVal=($('aipv-summary').value||'').trim();
+  const contentVal=$('aipv-content').value;
+  if(titleVal) draft.title=titleVal;
+  draft.summary=summaryVal;
+  draft.content=contentVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
   aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
   closeAdmin();
   try{
