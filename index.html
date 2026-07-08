@@ -605,14 +605,16 @@
 <!-- Admin -->
 <div class="ov" id="adm" onclick="if(event.target.id==='adm')closeAdmin()"><div class="modal" style="max-width:480px"><div class="mbody">
   <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)">✦ Redaktion · intern</div>
-  <h3 style="margin:4px 0 6px">Guide mit KI erstellen</h3>
-  <p style="font-size:14px;color:var(--text-soft);margin-bottom:14px">Sucht live im Web nach aktuellen GTA-6-Infos und erstellt einen Guide-Artikel für den News-Bereich.</p>
-  <input id="ai-topic" type="text" placeholder="Thema, z.B. „neuester Trailer“" style="width:100%;font-family:'Inter';font-size:15px;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:12px">
-  <button id="ai-btn" onclick="generateGuide()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Recherchieren & erstellen</button>
-  <div id="ai-result" style="display:none;margin-top:14px">
-    <div style="font-family:'Space Mono';font-size:11px;text-transform:uppercase;color:var(--text-soft);margin-bottom:6px">In articles.json einfügen:</div>
-    <textarea id="ai-json" readonly rows="7" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text)"></textarea>
-    <button onclick="copyAiJson()" style="width:100%;margin-top:8px;font-weight:700;padding:11px;border-radius:10px;color:var(--btn-text);background:var(--btn-bg)">Kopieren</button>
+  <h3 style="margin:4px 0 6px">Claude-Entwurf veröffentlichen</h3>
+  <p style="font-size:14px;color:var(--text-soft);margin-bottom:14px">Lass Claude im Chat recherchieren und einen Artikel als JSON schreiben, dann hier einfügen und veröffentlichen. Kostet nichts extra, läuft über deine Anmeldung.</p>
+  <textarea id="draft-json" rows="6" placeholder="JSON von Claude hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
+  <button id="draft-btn" onclick="submitDraftJson()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Entwurf prüfen</button>
+  <div id="ai-result" style="display:none;margin-top:14px"></div>
+  <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
+    <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">KI-Recherche direkt hier (optional)</div>
+    <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin bitte den Weg oben benutzen.</p>
+    <input id="ai-topic" type="text" placeholder="Thema, z.B. „neuester Trailer“" style="width:100%;font-family:'Inter';font-size:15px;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:12px">
+    <button id="ai-btn" onclick="generateGuide()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Recherchieren & erstellen</button>
   </div>
   <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
     <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
@@ -623,7 +625,6 @@
     <button onclick="downloadDB()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">database.json herunterladen</button>
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
   </div>
-  <div style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);border-top:1px dashed var(--line);padding-top:12px;margin-top:14px;line-height:1.6">ℹ︎ KI-Recherche läuft live in der Vorschau. Auf viceguide.de an ein Backend mit eigenem API-Schlüssel hängen.</div>
 </div></div></div>
 
 <!-- Bild-Editor (Admin) -->
@@ -1362,10 +1363,26 @@ function revealCards(){
 }
 
 /* Admin / KI */
-function openAdmin(){$('adm').classList.add('show');setTimeout(()=>$('ai-topic').focus(),80);}
+function openAdmin(){$('adm').classList.add('show');setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
-function copyAiJson(){const t=$('ai-json');t.select();try{navigator.clipboard?navigator.clipboard.writeText(t.value):document.execCommand('copy');}catch(e){}toast("JSON kopiert");}
+function submitDraftJson(){
+  const raw=$('draft-json').value.trim();
+  if(!raw){ toast('Bitte JSON einfügen.'); return; }
+  let g;
+  try{
+    let clean=raw.replace(/```json|```/g,'').trim();
+    const s=clean.indexOf('{'), e=clean.lastIndexOf('}');
+    if(s>=0) clean=clean.slice(s,e+1);
+    g=JSON.parse(clean);
+  }catch(err){ toast('Das sieht nicht nach gültigem JSON aus.'); return; }
+  if(!g.title || !g.content){ toast('Es fehlen title oder content.'); return; }
+  if(!GCAT[g.cat]) g.cat='news';
+  if(!g.date){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); g.date=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+  aiDraft=g;
+  $('draft-json').value='';
+  showAiPreview(g);
+}
 async function generateGuide(){
   const btn=$('ai-btn'), topic=$('ai-topic').value.trim()||"aktuelle GTA 6 News";
   btn.disabled=true;btn.textContent="Recherchiere…";
@@ -1398,7 +1415,7 @@ function showAiPreview(g){
       <button class="ie-del" onclick="discardAi()">Verwerfen</button>
       <button class="ie-apply" onclick="approveAi()">Freigeben & veröffentlichen</button>
     </div>
-    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Freigeben erscheint der Artikel sofort. Zum dauerhaften Sichern „articles.json herunterladen“.</div>`;
+    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Freigeben erscheint der Artikel sofort und dauerhaft.</div>`;
 }
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
 async function approveAi(){
