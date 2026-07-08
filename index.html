@@ -1842,7 +1842,7 @@ async function loadExternal(){
     const r=await fetch('api/articles.php',{cache:'no-store'});
     if(r.ok){
       const data=await r.json();
-      if(Array.isArray(data.articles)&&data.articles.length){
+      if(Array.isArray(data.articles)){
         GUIDES=data.articles; openCats.clear();
         for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}
         gotArticles=true;
@@ -1853,7 +1853,7 @@ async function loadExternal(){
     const r=await fetch('api/db_entries.php',{cache:'no-store'});
     if(r.ok){
       const data=await r.json();
-      if(data.sections&&Object.keys(data.sections).length){ Object.assign(DB,data.sections); gotDb=true; }
+      if(data.sections&&typeof data.sections==='object'){ Object.assign(DB,data.sections); gotDb=true; }
     }
   }catch(e){}
   if(!gotArticles){
