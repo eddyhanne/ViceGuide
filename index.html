@@ -1677,10 +1677,13 @@ function renderAipvHero(){
 (function(){
   const edge=70, maxSpeed=16;
   let dragActiveTs=0;
+  const markDragActive=()=>{ dragActiveTs=Date.now(); };
+  document.addEventListener('dragenter',markDragActive);
+  document.addEventListener('drop',markDragActive,true);
   document.addEventListener('dragover',e=>{
     const adm=$('adm');
     if(!adm||!adm.classList.contains('show')) return;
-    dragActiveTs=Date.now();
+    markDragActive();
     const modal=adm.querySelector('.modal'); if(!modal) return;
     const r=modal.getBoundingClientRect();
     if(e.clientY<r.top||e.clientY>r.bottom) return;
@@ -1691,11 +1694,14 @@ function renderAipvHero(){
   /* Mausrad soll waehrend des Ziehens (Maustaste gehalten) ebenfalls scrollen
      koennen, das ist oft schneller als bis zum Rand ziehen. Waehrend eines
      aktiven Drags unterdruecken Browser das normale Scrollen oft, deshalb
-     hier manuell nachgeholt. Nur innerhalb von ~250ms nach dem letzten
-     dragover aktiv, damit normales Scrollen (ohne Drag) nicht doppelt so
-     schnell wird, das uebernimmt der Browser dort schon selbst. */
+     hier manuell nachgeholt. Browser feuern dragover bei einem gehaltenen,
+     aber nicht bewegten Drag nur etwa alle 350ms erneut, das Zeitfenster
+     hier muss also deutlich groesser sein als dieser Abstand, sonst faellt
+     es zwischen zwei dragover-Events immer wieder zu. Ausserhalb eines
+     Drags bleibt das Fenster inaktiv, damit normales Scrollen nicht
+     doppelt so schnell wird (das uebernimmt der Browser dort schon selbst). */
   document.addEventListener('wheel',e=>{
-    if(Date.now()-dragActiveTs>250) return;
+    if(Date.now()-dragActiveTs>700) return;
     const adm=$('adm');
     if(!adm||!adm.classList.contains('show')) return;
     const modal=adm.querySelector('.modal'); if(!modal||!modal.contains(e.target)) return;
@@ -1713,24 +1719,29 @@ function buildInlineFigure(dataUrl){
   fig.innerHTML=`<img src="${dataUrl}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"><button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">Schmaler</button>`;
   return fig;
 }
-function caretRangeFromEvent(evt){
-  if(!evt||typeof evt.clientX!=='number') return null;
-  if(document.caretRangeFromPoint) return document.caretRangeFromPoint(evt.clientX,evt.clientY);
-  if(document.caretPositionFromPoint){
-    const pos=document.caretPositionFromPoint(evt.clientX,evt.clientY);
-    if(pos){ const r=document.createRange(); r.setStart(pos.offsetNode,pos.offset); r.collapse(true); return r; }
-  }
-  return null;
+/* Findet das direkte Kind von container, in dem sich die gegebene Stelle
+   befindet (z.B. der Absatz, in dem der Cursor steht). Wird gebraucht,
+   damit ein neu eingefuegtes Bild immer auf oberster Ebene landet, nicht
+   verschachtelt innerhalb eines <p>, sonst uebersieht extractContentBlocks
+   es beim Veroeffentlichen (es liest nur direkte Kinder). */
+function topLevelChildAt(container,node){
+  let n=node;
+  while(n && n!==container && n.parentNode!==container) n=n.parentNode;
+  return (n && n!==container && n.parentNode===container) ? n : null;
 }
 function insertIntoContent(container,node,evt){
-  let range=caretRangeFromEvent(evt);
-  if(!range){
+  let anchor=null;
+  if(evt && typeof evt.clientX==='number' && document.elementFromPoint){
+    const el=document.elementFromPoint(evt.clientX,evt.clientY);
+    if(el) anchor=topLevelChildAt(container,el);
+  }
+  if(!anchor){
     const sel=window.getSelection();
-    if(sel&&sel.rangeCount&&container.contains(sel.anchorNode)) range=sel.getRangeAt(0);
+    if(sel&&sel.rangeCount) anchor=topLevelChildAt(container,sel.anchorNode);
   }
   const spacer=document.createElement('p'); spacer.innerHTML='<br>';
-  if(range&&container.contains(range.startContainer)){
-    range.collapse(false); range.insertNode(spacer); range.insertNode(node);
+  if(anchor){
+    anchor.after(node); node.after(spacer);
   } else {
     container.appendChild(node); container.appendChild(spacer);
   }
