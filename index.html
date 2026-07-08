@@ -819,7 +819,7 @@ function renderHome(){
   const listHtml=g1.cats.map(c=>{
     const gl=guidesIn(c.id), isOpen=openCats.has(c.id), latest=latestFmt(c.id);
     const subs=gl.map(gd=>{const i=GUIDES.indexOf(gd);return `<div class="sub" onclick="openArticle(${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></div>`;}).join('');
-    return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${gl.length} ${gl.length===1?'Guide':'Guides'}</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${latest?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
+    return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${gl.length} Artikel</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${latest?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
   }).join('');
   // Phase 1 als Kacheln (alle Artikel, neueste zuerst)
   const cards=GUIDES.map((x,idx)=>({x,idx})).filter(o=>g1.cats.some(c=>c.id===o.x.cat))
