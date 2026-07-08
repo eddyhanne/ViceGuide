@@ -615,12 +615,13 @@
     <button onclick="copyAiJson()" style="width:100%;margin-top:8px;font-weight:700;padding:11px;border-radius:10px;color:var(--btn-text);background:var(--btn-bg)">Kopieren</button>
   </div>
   <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
-    <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Bilder-Editiermodus</div>
-    <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um ein Bild hochzuladen und den Ausschnitt anzupassen.</p>
+    <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
+    <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um Bild und Text zu bearbeiten. Änderungen werden sofort dauerhaft gespeichert, keine Datei-Uploads mehr nötig.</p>
     <button id="edit-btn" onclick="toggleEdit()" style="width:100%;font-weight:700;font-size:15px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Editiermodus einschalten</button>
+    <button id="logout-btn" onclick="adminLogout()" style="display:none;width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Abmelden</button>
+    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Optionale Sicherungskopie, für die normale Bearbeitung nicht mehr nötig:</div>
     <button onclick="downloadDB()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">database.json herunterladen</button>
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
-    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Einfügen der Bilder „database.json herunterladen“ und die Datei auf den Webspace legen. So bleiben die Bilder dauerhaft.</div>
   </div>
   <div style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);border-top:1px dashed var(--line);padding-top:12px;margin-top:14px;line-height:1.6">ℹ︎ KI-Recherche läuft live in der Vorschau. Auf viceguide.de an ein Backend mit eigenem API-Schlüssel hängen.</div>
 </div></div></div>
@@ -686,7 +687,7 @@ const CATICON={news:'home',leaks:'weapons',trailer:'activities',story:'character
 function catIcon(id){return secIcon(CATICON[id]||'home');}
 const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", editMode=false, isRestoringRoute=false;
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", editMode=false, isRestoringRoute=false, isAdmin=false;
 (function(){for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}})();
 
 const $=id=>document.getElementById(id);
@@ -876,7 +877,36 @@ function drawDB(sec){
 }
 function setDbView(v){ dbView=v; const sec=SECTIONS.find(s=>s.id===current); if(sec) renderDB(sec); }
 function cardClick(secId,i){ if(editMode){ openImgEd('db',secId,i); } else { openModal(secId,i); } }
-function toggleEdit(){
+async function checkAdminSession(){
+  try{
+    const res=await fetch('api/auth.php',{cache:'no-store'});
+    if(res.ok){ const data=await res.json(); isAdmin=!!data.loggedIn; }
+  }catch(e){}
+  const lb=$('logout-btn'); if(lb) lb.style.display=isAdmin?'block':'none';
+}
+async function adminLogin(){
+  const pw=prompt('Admin-Passwort:');
+  if(!pw) return false;
+  try{
+    const res=await fetch('api/auth.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    if(!res.ok){ toast('Falsches Passwort.'); return false; }
+    isAdmin=true;
+    const lb=$('logout-btn'); if(lb) lb.style.display='block';
+    return true;
+  }catch(e){ toast('Anmeldung fehlgeschlagen.'); return false; }
+}
+async function adminLogout(){
+  try{ await fetch('api/auth.php',{method:'DELETE'}); }catch(e){}
+  isAdmin=false;
+  const lb=$('logout-btn'); if(lb) lb.style.display='none';
+  if(editMode) toggleEdit();
+  toast('Abgemeldet.');
+}
+async function toggleEdit(){
+  if(!editMode && !isAdmin){
+    const ok=await adminLogin();
+    if(!ok) return;
+  }
   editMode=!editMode;
   const b=$('edit-btn'); if(b){b.textContent=editMode?'Editiermodus ausschalten':'Editiermodus einschalten';}
   document.body.classList.toggle('editmode',editMode);
@@ -997,7 +1027,7 @@ async function iePaste(){
 document.addEventListener('paste',e=>{ if(!ieState)return; const items=e.clipboardData&&e.clipboardData.items; if(!items)return; for(const it of items){ if(it.type&&it.type.startsWith('image/')){ const blob=it.getAsFile(); if(blob){ ieLoadFile(blob); e.preventDefault(); } return; } } });
 function ieZoom(v){ if(!ieState)return; ieState.zoom=parseFloat(v); ieRender(); }
 function ieRemove(){ if(!ieState)return; ieState.img=null; ieRender(); }
-function ieApply(){
+async function ieApply(){
   if(!ieState)return; const d=ieTarget();
   if(ieState.img){ d.img=ieState.img; d.imgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)}; const cr=$('ie-credit').value.trim(); if(cr)d.credit=cr; else delete d.credit; }
   else { delete d.img; delete d.imgfit; }
@@ -1015,7 +1045,17 @@ function ieApply(){
     d.desc=descVal.trim();
   }
   closeImgEd(); if(!gquery.trim()) renderView();
-  toast(wasGuide?'Gespeichert. Zum Sichern „articles.json herunterladen“.':'Gespeichert. Zum Sichern „database.json herunterladen“.');
+  try{
+    let res;
+    if(wasGuide){
+      res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    } else {
+      res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d._id,name:d.name,sub:d.sub,desc:d.desc,img:d.img,imgfit:d.imgfit,credit:d.credit})});
+    }
+    if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
+    if(!res.ok) throw new Error();
+    toast('Gespeichert.');
+  }catch(e){ toast('Speichern fehlgeschlagen.'); }
 }
 /* Drag zum Verschieben des Ausschnitts */
 (function(){
@@ -1143,7 +1183,6 @@ function fmtCommentDate(s){
 let votedIds=new Set();
 try{ votedIds=new Set(JSON.parse(localStorage.getItem('vg-voted')||'[]')); }catch(e){}
 function saveVoted(){ try{ localStorage.setItem('vg-voted', JSON.stringify([...votedIds])); }catch(e){} }
-let adminPass=null;
 let cmIndex={};
 function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
 async function renderComments(i){
@@ -1234,13 +1273,10 @@ async function addReply(artId,i,parentId){
   }catch(e){ toast('Antwort konnte nicht gespeichert werden.'); }
 }
 async function deleteComment(artId,i,id){
-  let pw=adminPass;
-  if(!pw){ pw=prompt('Admin-Passwort zum Löschen von Kommentaren:'); if(!pw) return; }
   try{
-    const res=await fetch('api/comments.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pw})});
-    if(res.status===403){ toast('Falsches Passwort.'); adminPass=null; return; }
+    const res=await fetch('api/comments.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
     if(!res.ok) throw new Error();
-    adminPass=pw;
     toast('Kommentar gelöscht.');
     renderComments(i);
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
@@ -1365,21 +1401,52 @@ function showAiPreview(g){
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Freigeben erscheint der Artikel sofort. Zum dauerhaften Sichern „articles.json herunterladen“.</div>`;
 }
 function discardAi(){ aiDraft=null; $('ai-result').style.display='none'; toast('Entwurf verworfen.'); }
-function approveAi(){
+async function approveAi(){
   if(!aiDraft)return;
-  const base=slugify(aiDraft.title); let slug=base, n=2;
-  while(GUIDES.some(g=>g.id===slug)){ slug=base+'-'+n; n++; }
-  aiDraft.id=slug;
-  GUIDES.unshift(aiDraft);
-  const cat=aiDraft.cat; aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
-  closeAdmin(); go('home'); newsView='cards'; renderView();
-  toast('✦ Artikel veröffentlicht. Zum Sichern „articles.json herunterladen“.');
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const draft=aiDraft;
+  aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
+  closeAdmin();
+  try{
+    const res=await fetch('api/articles.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    draft.id=data.id;
+    GUIDES.unshift(draft);
+    go('home'); newsView='cards'; renderView();
+    toast('✦ Artikel veröffentlicht.');
+  }catch(e){ toast('Veröffentlichen fehlgeschlagen.'); }
 }
 
 /* externe Daten laden (falls vorhanden) */
 async function loadExternal(){
-  try{const r=await fetch('articles.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){GUIDES=d;openCats.clear();for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}}}}catch(e){}
-  try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
+  let gotArticles=false, gotDb=false;
+  try{
+    const r=await fetch('api/articles.php',{cache:'no-store'});
+    if(r.ok){
+      const data=await r.json();
+      if(Array.isArray(data.articles)&&data.articles.length){
+        GUIDES=data.articles; openCats.clear();
+        for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}
+        gotArticles=true;
+      }
+    }
+  }catch(e){}
+  try{
+    const r=await fetch('api/db_entries.php',{cache:'no-store'});
+    if(r.ok){
+      const data=await r.json();
+      if(data.sections&&Object.keys(data.sections).length){ Object.assign(DB,data.sections); gotDb=true; }
+    }
+  }catch(e){}
+  if(!gotArticles){
+    try{const r=await fetch('articles.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){GUIDES=d;openCats.clear();for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}}}}catch(e){}
+  }
+  if(!gotDb){
+    try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
+  }
+  await checkAdminSession();
   if(!gquery.trim())renderView();
 }
 

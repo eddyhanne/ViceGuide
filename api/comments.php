@@ -83,13 +83,10 @@ if ($method === 'PATCH') {
 }
 
 if ($method === 'DELETE') {
+    vg_require_admin($cfg);
     $b = vg_body();
     $id = (int)($b['id'] ?? 0);
-    $pw = (string)($b['password'] ?? '');
-    if (!$id || $pw === '') vg_out(['error' => 'id und password erforderlich'], 400);
-    if (empty($cfg['admin_hash']) || !password_verify($pw, $cfg['admin_hash'])) {
-        vg_out(['error' => 'Falsches Passwort'], 403);
-    }
+    if (!$id) vg_out(['error' => 'id erforderlich'], 400);
     $stmt = $pdo->prepare('DELETE FROM comments WHERE id = ?');
     $stmt->execute([$id]);
     vg_out(['ok' => true]);
