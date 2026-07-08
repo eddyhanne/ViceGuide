@@ -668,7 +668,7 @@ const CATICON={news:'home',leaks:'weapons',trailer:'activities',story:'character
 function catIcon(id){return secIcon(CATICON[id]||'home');}
 const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, newsView="list", editMode=false;
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", editMode=false, isRestoringRoute=false;
 (function(){for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}})();
 
 const $=id=>document.getElementById(id);
@@ -727,7 +727,7 @@ function renderSidebar(){
 }
 
 /* Navigation */
-function go(id){ current=id; gquery=''; $('gsearch').value=''; closeArticle(); toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); }
+function go(id){ current=id; gquery=''; $('gsearch').value=''; closeArticle(); toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); syncHash(); }
 
 function updateHeaderBack(){const b=$('hback');if(!b)return;const inArticle=$('article').classList.contains('show');b.classList.toggle('show', inArticle || current!=='home');}
 function headerBack(){ if($('article').classList.contains('show')){closeArticle();} else { go('home'); } }
@@ -959,6 +959,7 @@ function ieApply(){
   document.addEventListener('touchend',()=>{dragging=false;});
 })();
 function openModal(secId,i){
+  curModal={sec:secId,i};
   const sec=SECTIONS.find(s=>s.id===secId); const d=DB[secId][i];
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
@@ -967,8 +968,9 @@ function openModal(secId,i){
     ${frows}
     <div class="mabout">Beschreibung</div><div class="mdesc">${d.desc||''}</div></div>`;
   $('ov').classList.add('show');
+  syncHash();
 }
-function closeModal(){$('ov').classList.remove('show');}
+function closeModal(){$('ov').classList.remove('show');curModal=null;syncHash();}
 
 /* ---- MAP ---- */
 const COMMUNITY={
@@ -1113,9 +1115,9 @@ function openArticle(i){
     return `<div class="mcard" onclick="openArticle(${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></div>`;
   }).join('');
   renderComments(i);
-  $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:'smooth'});
+  $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:'smooth'}); syncHash();
 }
-function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";updateHeaderBack();}
+function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();}
 
 /* ---- GLOBAL SEARCH ---- */
 function globalSearch(q){
@@ -1301,10 +1303,48 @@ function closeLegal(){ $('legal').classList.remove('show'); }
   tick(); setInterval(tick,1000);
 })();
 
+/* ---- Routing: URL-Hash spiegelt Ansicht + offenen Artikel/Eintrag, Reload und Zurueck-Button bleiben auf der Seite ---- */
+function buildHash(){
+  let h='/'+current;
+  const qs=[];
+  if($('article').classList.contains('show') && curArticle!=null) qs.push('a='+curArticle);
+  if(curModal) qs.push('e='+curModal.sec+','+curModal.i);
+  if(qs.length) h+='?'+qs.join('&');
+  return h;
+}
+function syncHash(){
+  if(isRestoringRoute) return;
+  const h='#'+buildHash();
+  if(location.hash!==h) history.pushState(null,'',h);
+}
+function restoreFromLocation(){
+  isRestoringRoute=true;
+  try{
+    let h=(location.hash||'').replace(/^#\/?/,'');
+    const [view,qs]=h.split('?');
+    go((view && SECTIONS.find(s=>s.id===view)) ? view : 'home');
+    closeModal();
+    if(qs){
+      const params=new URLSearchParams(qs);
+      if(params.has('a')){
+        const idx=parseInt(params.get('a'),10);
+        if(GUIDES[idx]) openArticle(idx);
+      }
+      if(params.has('e')){
+        const [sec,iStr]=params.get('e').split(',');
+        const idx=parseInt(iStr,10);
+        if(DB[sec]&&DB[sec][idx]) openModal(sec,idx);
+      }
+    }
+  } finally { isRestoringRoute=false; }
+}
+window.addEventListener('popstate', restoreFromLocation);
+
 /* init */
 newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 dbView = newsView;
-renderSidebar(); renderMobileNav(); renderView(); loadExternal();
+restoreFromLocation();
+loadExternal().then(restoreFromLocation);
 </script>
 </body>
 </html>
