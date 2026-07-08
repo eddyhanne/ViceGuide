@@ -394,6 +394,11 @@
   .ie-frame img{width:100%;height:100%;display:block}
   .ie-imgbox{position:absolute;inset:0;background-repeat:no-repeat;background-color:#000}
   .ie-empty{display:grid;place-items:center;text-align:center;font-family:'Space Mono';font-size:12px;color:var(--text-soft);line-height:1.7;pointer-events:none;padding:20px}
+  .art-hero .ie-empty{position:absolute;inset:0}
+  .aipv-editable{cursor:text;border-radius:6px;transition:.15s;outline:none}
+  .aipv-editable:hover{background:var(--tag-bg)}
+  .aipv-editable:focus{outline:2px dashed var(--accent);outline-offset:3px}
+  #aipv-hero{cursor:pointer}
   .ie-controls{margin:10px 0}
   .ie-zoomlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
   .ie-zoomlabel input[type=range]{width:100%;margin-top:6px;accent-color:var(--accent)}
@@ -604,7 +609,7 @@
 <div class="ov" id="ov" onclick="if(event.target.id==='ov')closeModal()"><div class="modal" id="modal"></div></div>
 
 <!-- Admin -->
-<div class="ov" id="adm" onclick="if(event.target.id==='adm')closeAdmin()"><div class="modal" style="max-width:480px"><div class="mbody">
+<div class="ov" id="adm" onclick="if(event.target.id==='adm')closeAdmin()"><div class="modal" style="max-width:640px"><div class="mbody">
   <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)">✦ Redaktion · intern</div>
   <h3 style="margin:4px 0 6px">Claude-Entwurf veröffentlichen</h3>
   <p style="font-size:14px;color:var(--text-soft);margin-bottom:14px">Lass Claude im Chat recherchieren und einen Artikel als JSON schreiben, dann hier einfügen und veröffentlichen. Kostet nichts extra, läuft über deine Anmeldung.</p>
@@ -1040,7 +1045,7 @@ async function ieApply(){
   const d=isDraft?aiDraft:ieTarget();
   if(ieState.img){ d.img=ieState.img; d.imgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)}; const cr=$('ie-credit').value.trim(); if(cr)d.credit=cr; else delete d.credit; }
   else { delete d.img; delete d.imgfit; }
-  if(isDraft){ closeImgEd(); renderAipvImgFrame(); return; }
+  if(isDraft){ closeImgEd(); renderAipvHero(); return; }
   const nameVal=$('ie-t-name').value.trim();
   const subVal=$('ie-t-sub').value.trim();
   const descVal=$('ie-t-desc').value;
@@ -1297,19 +1302,26 @@ function renderContentBlock(p){
   if(p.startsWith('img:')){const parts=p.slice(4).split('|');const src=parts[0].trim();const cr=(parts[1]||'').trim();return `<figure class="art-fig"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;}
   return `<p>${linkifyChars(p)}</p>`;
 }
+function renderArticleFields(g,p){
+  const tag=$(p+'tag'); if(tag) tag.textContent=GCAT[g.cat]?.name||'';
+  const title=$(p+'title'); if(title) title.textContent=g.title||'';
+  const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'ViceGuide Redaktion';
+  const date=$(p+'date'); if(date) date.textContent=g.date?fmtDT(g.date):'';
+  const hero=$(p+'hero');
+  if(hero){
+    if(g.img){hero.style.display='block';hero.style.cssText='display:block;'+fitStyle(g);const cr=$(p+'herocredit');if(cr){cr.textContent=g.credit?('Quelle: '+g.credit):'';cr.style.display=g.credit?'block':'none';}}
+    else hero.style.display='none';
+  }
+  const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
+  const content=$(p+'content'); if(content) content.innerHTML=(g.content||[]).map(renderContentBlock).join('');
+  const sb=$(p+'sources');
+  if(sb){
+    if(g.sources&&g.sources.length){sb.style.display="block";$(p+'src').innerHTML=g.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a>`).join('');}else sb.style.display="none";
+  }
+}
 function openArticle(i){
   const g=GUIDES[i]; curArticle=i;
-  $('a-tag').textContent=GCAT[g.cat]?.name||'';
-  $('a-title').textContent=g.title;
-  $('a-author').textContent=g.author?('Von '+g.author):'ViceGuide Redaktion';
-  $('a-date').textContent=g.date?fmtDT(g.date):'';
-  const hero=$('a-hero');
-  if(g.img){hero.style.display='block';hero.style.cssText='display:block;'+fitStyle(g);$('a-herocredit').textContent=g.credit?('Quelle: '+g.credit):'';$('a-herocredit').style.display=g.credit?'block':'none';}
-  else hero.style.display='none';
-  $('a-lead').textContent=g.lead||g.summary;
-  $('a-content').innerHTML=(g.content||[]).map(renderContentBlock).join('');
-  const sb=$('a-sources');
-  if(g.sources&&g.sources.length){sb.style.display="block";$('a-src').innerHTML=g.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a>`).join('');}else sb.style.display="none";
+  renderArticleFields(g,'a-');
   // Mehr Artikel (gleiche Kategorie zuerst, dann neueste)
   const others=GUIDES.map((x,idx)=>({x,idx})).filter(o=>o.idx!==i);
   others.sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0));
@@ -1412,41 +1424,49 @@ function showAiPreview(g){
   const box=$('ai-result'); box.style.display='block';
   const imgs=(g.image_queries||[]).map(q=>{const e=encodeURIComponent('GTA 6 '+q);return `<div class="ai-imgrow"><span class="ai-q">${q}</span><a class="ie-sbtn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=${e}">Google</a><a class="ie-sbtn" target="_blank" rel="noopener" href="https://www.bing.com/images/search?q=${e}">Bing</a></div>`;}).join('');
   box.innerHTML=`
-    <div class="ai-pv-h">Vorschau · bitte prüfen, bei Bedarf bearbeiten, dann freigeben</div>
-    <div class="ai-pv">
-      <div class="ai-pv-tag">${GCAT[g.cat]?.name||g.cat}</div>
-      <label class="ie-tlabel">Titel</label>
-      <input type="text" id="aipv-title" class="cm-in" value="${esc(g.title||'')}">
-      <label class="ie-tlabel">Teaser (1 Satz)</label>
-      <input type="text" id="aipv-summary" class="cm-in" value="${esc(g.summary||'')}">
-      <label class="ie-tlabel">Bild</label>
-      <div class="ie-frame" id="aipv-imgframe" onclick="openImgEd('draftpreview',null,0)"></div>
-      <label class="ie-tlabel">Text (Absätze durch Leerzeile trennen)</label>
-      <textarea id="aipv-content" class="cm-ta" rows="8">${esc((g.content||[]).join('\n\n'))}</textarea>
+    <div class="ai-pv-h">Vorschau · sieht so aus wie der spaetere Artikel, Titel/Bild/Text direkt anklickbar bearbeitbar</div>
+    <label class="ie-tlabel">Teaser für die Übersichtsliste (1 Satz, erscheint nicht auf der Artikelseite selbst)</label>
+    <input type="text" id="aipv-summary" class="cm-in" value="${esc(g.summary||'')}">
+    <div class="article" style="display:block;padding:0;max-width:100%">
+      <span class="tg" id="aipv-tag"></span>
+      <h2 id="aipv-title" class="aipv-editable" contenteditable="true" spellcheck="false"></h2>
+      <div class="art-meta"><span class="art-author" id="aipv-author"></span><span class="art-dot">·</span><span class="art-date" id="aipv-date"></span></div>
+      <div class="art-hero" id="aipv-hero" onclick="openImgEd('draftpreview',null,0)">
+        <span class="credit" id="aipv-herocredit"></span>
+        <span class="ie-empty" id="aipv-hero-empty">Bild hierher ziehen<br>oder klicken zum Auswählen</span>
+      </div>
+      <p class="lead aipv-editable" id="aipv-lead" contenteditable="true" spellcheck="false"></p>
+      <div class="content aipv-editable" id="aipv-content" contenteditable="true" spellcheck="false"></div>
+      <p class="disc-inline">Hinweis: Vor Release beruhen viele Angaben auf Leaks, Trailern und Gerüchten und sind nicht offiziell bestätigt.</p>
+      <div class="sources" id="aipv-sources" style="display:none"><b>Quellen dieses Artikels</b><div id="aipv-src"></div></div>
     </div>
-    ${imgs?`<div class="ai-imgsug"><div class="ai-sug-h">Bild-Suchbegriffe zur Inspiration (Bild dann oben per Klick, Einfügen oder Drag&Drop ergänzen):</div>${imgs}</div>`:''}
+    ${imgs?`<div class="ai-imgsug"><div class="ai-sug-h">Bild-Suchbegriffe zur Inspiration (Bild oben per Klick, Einfügen oder Drag&Drop ergänzen):</div>${imgs}</div>`:''}
     <div class="ai-pv-actions">
       <button class="ie-del" onclick="discardAi()">Verwerfen</button>
       <button class="ie-apply" onclick="approveAi()">Freigeben & veröffentlichen</button>
     </div>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Nach dem Freigeben erscheint der Artikel sofort und dauerhaft.</div>`;
-  renderAipvImgFrame();
+  renderArticleFields(g,'aipv-');
+  renderAipvHero();
 }
-function renderAipvImgFrame(){
-  const frame=$('aipv-imgframe'); if(!frame||!aiDraft) return;
+function renderAipvHero(){
+  if(!aiDraft) return;
+  const hero=$('aipv-hero'); const empty=$('aipv-hero-empty'); const cr=$('aipv-herocredit');
+  if(!hero) return;
   if(aiDraft.img){
-    const f=aiDraft.imgfit||{zoom:1,x:50,y:50};
-    frame.innerHTML=`<div class="ie-imgbox" style="display:block;background-image:url('${aiDraft.img}');background-repeat:no-repeat;background-position:${f.x}% ${f.y}%;background-size:${f.zoom*100}% auto"></div>`;
-    frame.classList.add('has');
+    hero.style.cssText='display:block;'+fitStyle(aiDraft);
+    if(empty) empty.style.display='none';
+    if(cr){ cr.textContent=aiDraft.credit?('Quelle: '+aiDraft.credit):''; cr.style.display=aiDraft.credit?'block':'none'; }
   } else {
-    frame.innerHTML=`<div class="ie-empty">Bild hierher ziehen<br>oder klicken zum Auswählen</div>`;
-    frame.classList.remove('has');
+    hero.style.cssText='display:block;background-color:var(--surface-2);';
+    if(empty) empty.style.display='grid';
+    if(cr) cr.style.display='none';
   }
 }
 (function(){
-  document.body.addEventListener('dragover',e=>{ if(e.target.closest('#aipv-imgframe')) e.preventDefault(); });
+  document.body.addEventListener('dragover',e=>{ if(e.target.closest('#aipv-hero')) e.preventDefault(); });
   document.body.addEventListener('drop',e=>{
-    const frame=e.target.closest('#aipv-imgframe'); if(!frame) return;
+    const frame=e.target.closest('#aipv-hero'); if(!frame) return;
     e.preventDefault();
     const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
     if(!file) return;
@@ -1459,12 +1479,20 @@ async function approveAi(){
   if(!aiDraft)return;
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const draft=aiDraft;
-  const titleVal=($('aipv-title').value||'').trim();
+  const titleVal=($('aipv-title').textContent||'').trim();
   const summaryVal=($('aipv-summary').value||'').trim();
-  const contentVal=$('aipv-content').value;
+  const leadVal=($('aipv-lead').textContent||'').trim();
+  const contentEl=$('aipv-content');
+  let contentVal=Array.from(contentEl.children).map(node=>{
+    const t=(node.textContent||'').trim();
+    if(!t) return null;
+    return node.tagName==='H3' ? '### '+t : t;
+  }).filter(Boolean);
+  if(!contentVal.length){ const t=(contentEl.textContent||'').trim(); if(t) contentVal=[t]; }
   if(titleVal) draft.title=titleVal;
   draft.summary=summaryVal;
-  draft.content=contentVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+  draft.lead=leadVal;
+  draft.content=contentVal;
   aiDraft=null; $('ai-result').style.display='none'; $('ai-topic').value='';
   closeAdmin();
   try{
