@@ -260,6 +260,14 @@
   .art-faq summary::after{content:'+';position:absolute;right:2px;top:13px;font-size:20px;color:var(--accent);transition:.2s}
   .art-faq details[open] summary::after{content:'−'}
   .art-faq .faq-a{padding:0 0 16px;font-size:15px;color:var(--text-soft);line-height:1.55}
+  .art-tldr,.art-toc{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:24px}
+  .artbox-h{font-family:'Space Mono';font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:10px}
+  .art-tldr ul{margin:0;padding-left:20px}
+  .art-tldr li{margin-bottom:7px;font-size:15px;line-height:1.5}
+  .art-tldr li::marker{color:var(--accent)}
+  .art-toc ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .art-toc a{font-size:14.5px;color:var(--text);text-decoration:none;border-bottom:1px dashed var(--line)}
+  .art-toc a:hover{color:var(--accent);border-bottom-color:var(--accent)}
   .article .sources{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);opacity:.75}
   .article .sources b{font-family:'Space Mono';font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-soft);display:block;margin-bottom:7px;font-weight:700}
   .article .sources a{display:inline-block;font-size:12.5px;color:var(--text-soft);margin:0 14px 5px 0;word-break:break-word;text-decoration:underline;text-decoration-color:var(--line)}
@@ -596,9 +604,11 @@
     <article class="article" id="article">
       <span class="back" onclick="closeArticle()">← Zurück</span>
       <span class="tg" id="a-tag"></span><h2 id="a-title"></h2>
-      <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span></div>
+      <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span></div>
       <div class="art-hero" id="a-hero" style="display:none"><span class="credit" id="a-herocredit"></span></div>
       <p class="lead" id="a-lead"></p>
+      <div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>
+      <div class="art-toc" id="a-toc" style="display:none"><div class="artbox-h">Direkt zu</div><ul id="a-toc-list"></ul></div>
       <div class="content" id="a-content"></div>
       <p class="disc-inline">Hinweis: Vor Release beruhen viele Angaben auf Leaks, Trailern und Gerüchten und sind nicht offiziell bestätigt.</p>
       <section class="comments" id="a-comments"></section>
@@ -1308,15 +1318,18 @@ async function deleteComment(artId,i,id){
 }
 function renderContentBlock(p){
   if(typeof p!=='string') return '';
-  if(p.startsWith('###')) return `<h3>${linkifyChars(p.replace(/^###\s*/,''))}</h3>`;
   if(p.startsWith('img:')){const parts=p.slice(4).split('|');const src=parts[0].trim();const cr=(parts[1]||'').trim();return `<figure class="art-fig"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;}
   return `<p>${linkifyChars(p)}</p>`;
 }
 /* Baut den Artikeltext aus dem content-Array. Aufzaehlungspunkte ("- Text")
    und FAQ-Eintraege ("faq:Frage|Antwort") werden ueber aufeinanderfolgende
-   Zeilen hinweg zu einer gemeinsamen Liste bzw. einem Akkordeon gruppiert. */
-function renderContent(arr){
+   Zeilen hinweg zu einer gemeinsamen Liste bzw. einem Akkordeon gruppiert.
+   outHeads/outFaqs sind optionale Arrays, in die Zwischenueberschriften
+   (fuer das Inhaltsverzeichnis) bzw. FAQ-Paare (fuer das Schema-Markup)
+   waehrend des Durchlaufs eingesammelt werden. */
+function renderContent(arr,outHeads,outFaqs){
   const blocks=Array.isArray(arr)?arr:[];
+  const used={};
   let html=''; let i=0;
   while(i<blocks.length){
     const p=blocks[i];
@@ -1331,13 +1344,68 @@ function renderContent(arr){
       let items='';
       while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('faq:')){
         const parts=blocks[i].slice(4).split('|'); const q=(parts[0]||'').trim(); const a=(parts[1]||'').trim();
-        items+=`<details><summary>${linkifyChars(q)}</summary><div class="faq-a">${linkifyChars(a)}</div></details>`; i++;
+        items+=`<details><summary>${linkifyChars(q)}</summary><div class="faq-a">${linkifyChars(a)}</div></details>`;
+        if(outFaqs&&(q||a)) outFaqs.push({q,a});
+        i++;
       }
       html+=`<div class="art-faq">${items}</div>`; continue;
+    }
+    if(typeof p==='string'&&p.startsWith('###')){
+      const text=p.replace(/^###\s*/,'').trim();
+      let id=slugify(text)||'abschnitt';
+      if(used[id]){ used[id]++; id=id+'-'+used[id]; } else used[id]=1;
+      if(outHeads&&text) outHeads.push({text,id});
+      html+=`<h3 id="${id}">${linkifyChars(text)}</h3>`; i++; continue;
     }
     html+=renderContentBlock(p); i++;
   }
   return html;
+}
+function stripBlockPrefix(p){
+  if(typeof p!=='string') return '';
+  if(p.startsWith('###')) return p.replace(/^###\s*/,'');
+  if(p.startsWith('img:')) return '';
+  if(p.startsWith('- ')) return p.slice(2);
+  if(p.startsWith('faq:')){ const parts=p.slice(4).split('|'); return (parts[0]||'')+' '+(parts[1]||''); }
+  return p;
+}
+function jumpToSection(e,id){
+  e.preventDefault();
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  return false;
+}
+function renderReadtime(g,p){
+  const el=$(p+'readtime'); const dot=$(p+'rt-dot'); if(!el) return;
+  const text=[g.lead||g.summary||''].concat((g.content||[]).map(stripBlockPrefix)).join(' ');
+  const words=text.trim().split(/\s+/).filter(Boolean).length;
+  const mins=Math.max(1,Math.round(words/200));
+  el.textContent=mins+' Min. Lesezeit';
+  if(dot) dot.style.display=words?'inline':'none';
+}
+function renderTldr(g,p){
+  const box=$(p+'tldr'); if(!box) return;
+  const list=(Array.isArray(g.tldr)?g.tldr:[]).filter(Boolean);
+  const ul=$(p+'tldr-list');
+  if(!list.length){ box.style.display='none'; return; }
+  box.style.display='block';
+  if(ul) ul.innerHTML=list.map(t=>`<li>${linkifyChars(t)}</li>`).join('');
+}
+function renderToc(p,heads){
+  const box=$(p+'toc'); if(!box) return;
+  if(!heads||heads.length<3){ box.style.display='none'; return; }
+  box.style.display='block';
+  $(p+'toc-list').innerHTML=heads.map(h=>`<li><a href="#${h.id}" onclick="return jumpToSection(event,'${h.id}')">${esc(h.text)}</a></li>`).join('');
+}
+function renderFaqSchema(faqs){
+  let tag=document.getElementById('ld-faq');
+  if(!tag){ tag=document.createElement('script'); tag.type='application/ld+json'; tag.id='ld-faq'; document.head.appendChild(tag); }
+  if(!faqs||!faqs.length){ tag.textContent=''; return; }
+  tag.textContent=JSON.stringify({
+    '@context':'https://schema.org',
+    '@type':'FAQPage',
+    mainEntity:faqs.map(f=>({'@type':'Question',name:f.q,acceptedAnswer:{'@type':'Answer',text:f.a}}))
+  });
 }
 /* Gegenstueck zu renderContent: liest die editierbare Vorschau wieder in das
    flache content-Array zurueck, Listen/FAQ/Bilder werden dabei wieder in
@@ -1376,7 +1444,12 @@ function renderArticleFields(g,p){
     else hero.style.display='none';
   }
   const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
-  const content=$(p+'content'); if(content) content.innerHTML=renderContent(g.content);
+  const heads=[]; const faqs=[];
+  const content=$(p+'content'); if(content) content.innerHTML=renderContent(g.content,heads,faqs);
+  renderTldr(g,p);
+  renderToc(p,heads);
+  renderReadtime(g,p);
+  if(p==='a-') renderFaqSchema(faqs);
   const sb=$(p+'sources');
   if(sb){
     if(g.sources&&g.sources.length){sb.style.display="block";$(p+'src').innerHTML=g.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a>`).join('');}else sb.style.display="none";
@@ -1396,7 +1469,7 @@ function openArticle(i){
   renderComments(i);
   $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:'smooth'}); syncHash();
 }
-function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();}
+function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();renderFaqSchema(null);}
 
 /* ---- GLOBAL SEARCH ---- */
 function globalSearch(q){
@@ -1493,12 +1566,14 @@ function showAiPreview(g){
     <div class="article" style="display:block;padding:0;max-width:100%">
       <span class="tg" id="aipv-tag"></span>
       <h2 id="aipv-title" class="aipv-editable" contenteditable="true" spellcheck="false"></h2>
-      <div class="art-meta"><span class="art-author" id="aipv-author"></span><span class="art-dot">·</span><span class="art-date" id="aipv-date"></span></div>
+      <div class="art-meta"><span class="art-author" id="aipv-author"></span><span class="art-dot">·</span><span class="art-date" id="aipv-date"></span><span class="art-dot" id="aipv-rt-dot">·</span><span class="art-readtime" id="aipv-readtime"></span></div>
       <div class="art-hero" id="aipv-hero" onclick="openImgEd('draftpreview',null,0)">
         <span class="credit" id="aipv-herocredit"></span>
         <span class="ie-empty" id="aipv-hero-empty">Bild hierher ziehen<br>oder klicken zum Auswählen</span>
       </div>
       <p class="lead aipv-editable" id="aipv-lead" contenteditable="true" spellcheck="false"></p>
+      <div class="art-tldr" id="aipv-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="aipv-tldr-list"></ul></div>
+      <div class="art-toc" id="aipv-toc" style="display:none"><div class="artbox-h">Direkt zu</div><ul id="aipv-toc-list"></ul></div>
       <div class="content aipv-editable" id="aipv-content" contenteditable="true" spellcheck="false"></div>
       <p class="disc-inline">Hinweis: Vor Release beruhen viele Angaben auf Leaks, Trailern und Gerüchten und sind nicht offiziell bestätigt.</p>
       <div class="sources" id="aipv-sources" style="display:none"><b>Quellen dieses Artikels</b><div id="aipv-src"></div></div>

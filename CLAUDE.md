@@ -81,18 +81,28 @@ Die Seite ist eine Single-Page-Anwendung mit echtem URL-Routing über `location.
   "img": "data:image/webp;base64,...",
   "imgfit": { "zoom": 1, "x": 50, "y": 50 },
   "credit": "optionale Bildquelle",
-  "image_queries": ["Suchbegriff 1", "Suchbegriff 2", "Suchbegriff 3"]
+  "image_queries": ["Suchbegriff 1", "Suchbegriff 2", "Suchbegriff 3"],
+  "tldr": ["Kernaussage 1", "Kernaussage 2", "Kernaussage 3"]
 }
 ```
 `cat` ist eine von: `news`, `leaks`, `trailer`, `story`, `map`, `community` (Phase 1) bzw. `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner` (Phase 2, aktuell gesperrt). Es gibt **kein** `tag`-Feld mehr, das sichtbare Label kommt aus `GCAT[cat].name` im Code. `id` wird beim Anlegen einmalig aus dem Titel generiert (Slug) und bleibt danach fix, auch wenn der Titel später bearbeitet wird, damit Kommentare nicht verwaisen. `image_queries` ist optional, nur für die Bildsuche-Vorschläge im Admin-Panel, wird nicht mit gespeichert wenn nicht vorhanden.
 
 **Strukturelemente innerhalb von `content` (bei Bedarf, nicht in jedem Artikel nötig).** Jeder Eintrag im `content`-Array ist normalerweise ein normaler Absatz (String). Zusaetzlich werden folgende Praefixe erkannt und speziell dargestellt:
-- `"### Zwischenüberschrift"` , eigene Zwischenüberschrift im Artikel.
+- `"### Zwischenüberschrift"` , eigene Zwischenüberschrift im Artikel. Bekommt automatisch eine Anker-ID (aus dem Text generiert) fuers Inhaltsverzeichnis.
 - `"img:https://bild-url|Bildunterschrift"` , weiteres Bild mitten im Artikeltext (Bildunterschrift optional, dann einfach `"img:https://bild-url"`).
 - `"- Ein Punkt"` , Aufzählungspunkt. Mehrere aufeinanderfolgende `"- ..."`-Zeilen ergeben automatisch eine gemeinsame Bulletpoint-Liste.
-- `"faq:Frage?|Antworttext"` , ein aufklappbarer FAQ-Eintrag (Akkordeon). Mehrere aufeinanderfolgende `"faq:..."`-Zeilen ergeben automatisch einen gemeinsamen FAQ-Block.
+- `"faq:Frage?|Antworttext"` , ein aufklappbarer FAQ-Eintrag (Akkordeon). Mehrere aufeinanderfolgende `"faq:..."`-Zeilen ergeben automatisch einen gemeinsamen FAQ-Block, UND automatisch strukturierte Daten (`FAQPage`-Schema, siehe unten) fuers Google-Snippet.
 
 Diese Elemente sind Werkzeuge fuer mehr Struktur (siehe Vorbild-Artikel wie bei GIGA: Bulletpoints, Zwischenueberschriften, aufklappbares FAQ), nicht Pflicht. Bei kurzen News-Meldungen reichen normale Absaetze, bei laenglichen Guides/Erklaerartikeln lohnt sich die Gliederung.
+
+**`tldr` (optional, top-level Feld, kein Praefix im content-Array).** Array aus 2 bis 5 kurzen Stichpunkten, die den Artikel in Sekunden zusammenfassen ("Auf einen Blick"). Wird automatisch als eigene Box direkt unter dem Lead angezeigt, wenn vorhanden, sonst bleibt die Box unsichtbar. Sinnvoll bei laengeren oder faktenreichen Artikeln (z. B. Vorbesteller-Boni, Editionen-Vergleich), bei kurzen News-Meldungen meist nicht noetig, dann einfach weglassen.
+
+**Automatisch, ohne eigenes Feld:**
+- **Inhaltsverzeichnis** ("Direkt zu"): erscheint automatisch, sobald ein Artikel mindestens 3 `### `-Zwischenueberschriften hat. Kein Redaktions-Aufwand noetig, ergibt sich rein aus der Gliederung.
+- **Lesezeit-Anzeige**: wird aus der Wortzahl von `lead` und `content` errechnet (ca. 200 Woerter/Minute) und neben dem Datum angezeigt.
+- **FAQ-Schema (`FAQPage` JSON-LD)**: sobald ein Artikel `faq:`-Eintraege enthaelt, wird beim Oeffnen automatisch strukturiertes Datenmarkup in den `<head>` geschrieben (fuer Google Rich Snippets), beim Schliessen wieder entfernt. Kein Redaktions-Aufwand noetig.
+
+**Hinweis fuer kuenftige Coding-Sessions (SEO/Struktur-Kontinuitaet):** Die Artikelstruktur wird bewusst schrittweise verfeinert, mit dem Ziel, Artikel scanbarer/interaktiver zu machen (Leser lesen selten bis zum Ende) und gleichzeitig SEO-Signale zu verbessern (Rich Snippets, interne Verlinkung, Struktur, die zu echten Suchanfragen passt). Bereits umgesetzt: Bulletpoints, aufklappbares FAQ mit Schema-Markup, TL;DR-Box, automatisches Inhaltsverzeichnis, Lesezeit. Denkbare naechste Schritte, wenn wieder an diesem Thema gearbeitet wird: Article-Schema (JSON-LD) fuer alle Artikel zusaetzlich zum FAQ-Schema, gezielte interne Verlinkung zwischen thematisch verwandten Artikeln im Fliesstext, Zwischenueberschriften konsequent an echten Suchanfragen ausrichten. Bei jeder Erweiterung: sparsam bleiben, nicht mehr Feature-Wucht als noetig, Kernrichtung ist "besser lesbar und besser auffindbar", nicht "moeglichst viele Spielereien".
 
 ### Datenbank-Eintrag-Datenmodell (Charaktere, Fahrzeuge, usw.)
 ```json
