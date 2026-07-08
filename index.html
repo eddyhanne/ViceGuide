@@ -397,6 +397,9 @@
   .ie-zoomlabel input[type=range]{width:100%;margin-top:6px;accent-color:var(--accent)}
   .ie-hint{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin:8px 0}
   .ie-creditlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-top:6px}
+  .ie-textfields{margin-bottom:14px}
+  .ie-tlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
+  .ie-textfields .cm-ta{resize:vertical;font-family:'Inter'}
   .ie-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .ie-apply{flex:1 1 100%;order:5;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)}
   .ie-del{flex:1 1 auto;font-weight:600;font-size:14px;padding:12px 14px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)}
@@ -624,6 +627,12 @@
 <div class="ov" id="imged" onclick="if(event.target.id==='imged')closeImgEd()"><div class="modal" style="max-width:540px"><div class="mbody">
   <button class="mclose" style="position:static;float:right;margin:-4px 0 0" onclick="closeImgEd()">×</button>
   <h3 id="ie-title">Bild bearbeiten</h3>
+  <div class="ie-textfields">
+    <label class="ie-tlabel" id="ie-name-label">Titel</label>
+    <input type="text" id="ie-t-name" class="cm-in">
+    <label class="ie-tlabel" id="ie-sub-label">Unterzeile</label>
+    <input type="text" id="ie-t-sub" class="cm-in">
+  </div>
   <div class="ie-frame" id="ie-frame">
     <div class="ie-imgbox" id="ie-imgbox" style="display:none"></div>
     <div class="ie-empty" id="ie-empty">Bild hierher ziehen<br>oder klicken zum Auswählen</div>
@@ -638,6 +647,10 @@
     <label class="ie-creditlabel">Quelle (optional)
       <input type="text" id="ie-credit" class="cm-in" placeholder="z.B. Rockstar Games" style="margin-top:6px">
     </label>
+  </div>
+  <div class="ie-textfields">
+    <label class="ie-tlabel" id="ie-desc-label">Beschreibung</label>
+    <textarea id="ie-t-desc" class="cm-ta" rows="5"></textarea>
   </div>
   <div class="ie-actions">
     <button class="ie-del" id="ie-paste" onclick="iePaste()">Aus Zwischenspeicher</button>
@@ -764,7 +777,7 @@ function renderHome(){
       const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
       const dt=o.x.date?fmtDShort(o.x.date):'';
       const au=o.x.author||'ViceGuide Redaktion';
-      const nb = editMode ? `<span class="edit-badge">✎ Bild</span>` : '';
+      const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
       return `<div class="ncard ${editMode?'editing':''}" onclick="${editMode?`openImgEd('guide',null,${o.idx})`:`openArticle(${o.idx})`}">${vis}${nb}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></div>`;
     }).join('');
   const phase1 = newsView==='cards'
@@ -852,7 +865,7 @@ function drawDB(sec){
   } else {
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
-      const editBadge = editMode ? `<span class="edit-badge">✎ Bild</span>` : '';
+      const editBadge = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
       return `<div class="card ${editMode?'editing':''}" tabindex="0" role="button" onclick="cardClick('${sec.id}',${gi})" onkeydown="if(event.key==='Enter'){cardClick('${sec.id}',${gi})}">
         ${cardVisual(sec,d)}${editBadge}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></div>`;
     }).join('');
@@ -867,7 +880,7 @@ function toggleEdit(){
   document.body.classList.toggle('editmode',editMode);
   if(editMode) newsView='cards';
   closeAdmin();
-  toast(editMode?'Editiermodus aktiv: Kachel anklicken, um ein Bild einzufügen.':'Editiermodus aus.');
+  toast(editMode?'Editiermodus aktiv: Kachel anklicken, um Bild und Text zu bearbeiten.':'Editiermodus aus.');
   if(!gquery.trim()) renderView();
 }
 function downloadDB(){
@@ -889,11 +902,26 @@ function openImgEd(kind,secId,i){
   const d = kind==='guide' ? GUIDES[i] : DB[secId][i]; const f=d.imgfit||{};
   const name = kind==='guide' ? d.title : d.name;
   ieState={kind,sec:secId,i,name,img:d.img||null,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
-  $('ie-title').textContent='Bild: '+name;
+  $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
   ieBuildSearch(name);
   ieRender();
+  if(kind==='guide'){
+    $('ie-name-label').textContent='Titel';
+    $('ie-t-name').value=d.title||'';
+    $('ie-sub-label').textContent='Teaser (1 Satz)';
+    $('ie-t-sub').value=d.summary||'';
+    $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
+    $('ie-t-desc').value=(d.content||[]).join('\n\n');
+  } else {
+    $('ie-name-label').textContent='Name';
+    $('ie-t-name').value=d.name||'';
+    $('ie-sub-label').textContent='Unterzeile';
+    $('ie-t-sub').value=d.sub||'';
+    $('ie-desc-label').textContent='Beschreibung';
+    $('ie-t-desc').value=d.desc||'';
+  }
   $('imged').classList.add('show');
 }
 function closeImgEd(){$('imged').classList.remove('show');ieState=null;}
@@ -970,9 +998,21 @@ function ieApply(){
   if(!ieState)return; const d=ieTarget();
   if(ieState.img){ d.img=ieState.img; d.imgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)}; const cr=$('ie-credit').value.trim(); if(cr)d.credit=cr; else delete d.credit; }
   else { delete d.img; delete d.imgfit; }
+  const nameVal=$('ie-t-name').value.trim();
+  const subVal=$('ie-t-sub').value.trim();
+  const descVal=$('ie-t-desc').value;
   const wasGuide=ieState.kind==='guide';
+  if(wasGuide){
+    if(nameVal) d.title=nameVal;
+    d.summary=subVal;
+    d.content=descVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+  } else {
+    if(nameVal) d.name=nameVal;
+    d.sub=subVal;
+    d.desc=descVal.trim();
+  }
   closeImgEd(); if(!gquery.trim()) renderView();
-  toast(wasGuide?'Bild übernommen. Zum Sichern „articles.json herunterladen“.':'Bild übernommen. Zum Sichern „database.json herunterladen“.');
+  toast(wasGuide?'Gespeichert. Zum Sichern „articles.json herunterladen“.':'Gespeichert. Zum Sichern „database.json herunterladen“.');
 }
 /* Drag zum Verschieben des Ausschnitts */
 (function(){
