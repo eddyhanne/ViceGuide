@@ -922,9 +922,33 @@ function ieRender(){
     frame.classList.remove('has');
   }
 }
+const IE_MAX_DIM=1100, IE_WEBP_QUALITY=0.78, IE_JPEG_QUALITY=0.82;
+function ieEncode(canvas){
+  const webp=canvas.toDataURL('image/webp', IE_WEBP_QUALITY);
+  if(webp.startsWith('data:image/webp')) return webp;
+  return canvas.toDataURL('image/jpeg', IE_JPEG_QUALITY);
+}
 function ieLoadFile(file){
   if(!file || !file.type.startsWith('image/')){toast('Bitte eine Bilddatei wählen.');return;}
-  const r=new FileReader(); r.onload=()=>{ ieState.img=r.result; ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender(); }; r.readAsDataURL(file);
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.naturalWidth, h=img.naturalHeight;
+      if(w>IE_MAX_DIM || h>IE_MAX_DIM){
+        if(w>=h){ h=Math.round(h*IE_MAX_DIM/w); w=IE_MAX_DIM; } else { w=Math.round(w*IE_MAX_DIM/h); h=IE_MAX_DIM; }
+      }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      ieState.img=ieEncode(c);
+      ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender();
+      const kb=Math.round(ieState.img.length*0.75/1024);
+      toast('Bild optimiert (~'+kb+' KB)');
+    };
+    img.onerror=()=>{ toast('Bild konnte nicht gelesen werden.'); };
+    img.src=r.result;
+  };
+  r.readAsDataURL(file);
 }
 function iePickFile(){ const inp=$('ie-file'); if(inp) inp.click(); }
 async function iePaste(){
