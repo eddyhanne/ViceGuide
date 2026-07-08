@@ -4,6 +4,7 @@ function vg_db(): array {
     if (!file_exists($cfgPath)) {
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
         echo json_encode(['error' => 'config.php fehlt im api-Ordner. Siehe config.sample.php.']);
         exit;
     }
@@ -117,6 +118,7 @@ function vg_require_admin(array $cfg): void {
     if (empty($_SESSION['vg_admin'])) {
         http_response_code(403);
         header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
         echo json_encode(['error' => 'Nicht angemeldet.']);
         exit;
     }

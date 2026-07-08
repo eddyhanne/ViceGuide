@@ -932,6 +932,7 @@ async function deleteGuide(idx,ev){
   try{
     const res=await fetch('api/articles.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(res.status===404){ toast('Artikel wurde serverseitig nicht gefunden.'); return; }
     if(!res.ok) throw new Error();
     GUIDES.splice(idx,1);
     renderView();
@@ -946,6 +947,7 @@ async function deleteDbEntry(secId,i,ev){
   try{
     const res=await fetch('api/db_entries.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d._id})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(res.status===404){ toast('Eintrag wurde serverseitig nicht gefunden.'); return; }
     if(!res.ok) throw new Error();
     DB[secId].splice(i,1);
     renderView();

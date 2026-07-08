@@ -10,6 +10,7 @@
 
 require __DIR__ . '/db.php';
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate');
 
 [$pdo, $cfg] = vg_db();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -86,6 +87,7 @@ if ($method === 'DELETE') {
 
     $stmt = $pdo->prepare('DELETE FROM db_entries WHERE id = ?');
     $stmt->execute([$id]);
+    if ($stmt->rowCount() === 0) vg_out3(['error' => 'Eintrag nicht gefunden, nichts geloescht'], 404);
     vg_out3(['ok' => true]);
 }
 
