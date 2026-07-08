@@ -317,9 +317,12 @@
   .art-dot{margin:0 7px;color:var(--text-soft)}
   .art-date{color:var(--text-soft)}
   .art-hero{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;margin-bottom:22px;background-color:#000;background-repeat:no-repeat}
-  .art-fig{margin:22px 0}
+  .art-fig{margin:22px 0;position:relative}
   .art-fig img{width:100%;border-radius:14px;display:block}
   .art-fig figcaption{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;text-align:center}
+  .art-fig.narrow{max-width:60%;margin-left:auto;margin-right:auto}
+  .fig-size-btn{position:absolute;top:10px;right:10px;font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff;border:0;cursor:pointer}
+  .fig-size-btn:hover{background:rgba(0,0,0,.8)}
   .more{margin-top:44px;border-top:1px solid var(--line);padding-top:26px}
   .more-h{font-family:'Oswald';font-weight:600;font-size:24px;color:var(--heading);margin-bottom:16px}
   .more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
@@ -1113,41 +1116,60 @@ async function ieApply(){
   document.addEventListener('touchmove',e=>{if(!dragging||!ieState)return;const t=e.touches[0];if(Math.abs(t.clientX-sx)>3||Math.abs(t.clientY-sy)>3)ieMoved=true;const f=$('ie-frame');const w=f.clientWidth||300,h=f.clientHeight||230;ieState.x=Math.max(0,Math.min(100,bx-(t.clientX-sx)/w*100));ieState.y=Math.max(0,Math.min(100,by-(t.clientY-sy)/h*100));ieRender();},{passive:true});
   document.addEventListener('touchend',()=>{dragging=false;});
 })();
-/* ---- Automatische Charakter-Verlinkung in Beschreibungstexten ---- */
+/* ---- Automatische Verlinkung von Charakteren, Fahrzeugen, Wildtieren,
+   Gangs und Orten in Beschreibungstexten und Artikeln ----
+   Waffen/Radio/Aktivitaeten bewusst aussen vor gelassen, da deren Namen
+   haeufiger mit ganz normalen Woertern kollidieren. ENT_LINK_SKIP wirkt
+   als generelle Ausschlussliste fuer Namen, die zu oft mit normalen
+   Woertern verwechselt wuerden (z.B. "Police", oder der Bundesstaat
+   "Leonida" vs. dem Nebencharakter "Leonida Joker"). */
 const ENT_LINK_SKIP=new Set(['Leonida','Police','Gold','High','Dad','Crotch','Hammer','Selfie','Nightclub']);
-function buildCharAliases(){
+const ENT_LINK_SECTIONS=[['characters',true],['vehicles',false],['wildlife',false],['gangs',false],['locations',false]];
+function buildEntityAliases(){
   const list=[];
-  (DB.characters||[]).forEach((c,i)=>{
-    const name=c.name; if(!name) return;
-    list.push([name,i]);
-    const parts=name.split(' ');
-    if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],i]);
+  ENT_LINK_SECTIONS.forEach(([sec,splitFirst])=>{
+    (DB[sec]||[]).forEach((d,i)=>{
+      const name=d.name; if(!name||ENT_LINK_SKIP.has(name)) return;
+      const key=sec+':'+i;
+      list.push([name,sec,i,key]);
+      if(splitFirst){
+        const parts=name.split(' ');
+        if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],sec,i,key]);
+      }
+    });
   });
   list.sort((a,b)=>b[0].length-a[0].length);
   return list;
 }
 function escRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
-function linkifyChars(text,excludeIdx){
-  if(!text||!DB.characters||!DB.characters.length) return text||'';
-  const aliases=buildCharAliases().filter(([,i])=>i!==excludeIdx);
+/* excludeKey: "sektion:index" der eigenen Detailseite, damit ein Eintrag
+   sich nicht in der eigenen Beschreibung selbst verlinkt.
+   seen: optionales Set, wenn uebergeben wird pro Schluessel nur das erste
+   Vorkommen verlinkt (fuer Artikel, damit der Text nicht mit Links
+   zugepflastert wird), ohne seen wird wie bisher jedes Vorkommen verlinkt. */
+function linkifyChars(text,excludeKey,seen){
+  if(!text) return text||'';
+  const aliases=buildEntityAliases().filter(([,,,key])=>key!==excludeKey);
   if(!aliases.length) return text;
   const pattern=new RegExp('\\b('+aliases.map(([a])=>escRegExp(a)).join('|')+')(?=s\\b|\\b)','g');
   return text.replace(pattern,(m)=>{
     const found=aliases.find(([a])=>a===m);
     if(!found) return m;
-    return `<a class="ent-link" onclick="event.stopPropagation();openModal('characters',${found[1]})">${m}</a>`;
+    const key=found[3];
+    if(seen){ if(seen.has(key)) return m; seen.add(key); }
+    return `<a class="ent-link" onclick="event.stopPropagation();openModal('${found[1]}',${found[2]})">${m}</a>`;
   });
 }
 function openModal(secId,i){
   curModal={sec:secId,i};
   const sec=SECTIONS.find(s=>s.id===secId); const d=DB[secId][i];
-  const selfIdx=secId==='characters'?i:null;
+  const selfKey=secId+':'+i;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${linkifyChars(d.sub||'',selfIdx)}</div>
+  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${linkifyChars(d.sub||'',selfKey)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
-    <div class="mabout">Beschreibung</div><div class="mdesc">${linkifyChars(d.desc||'',selfIdx)}</div></div>`;
+    <div class="mabout">Beschreibung</div><div class="mdesc">${linkifyChars(d.desc||'',selfKey)}</div></div>`;
   $('ov').classList.add('show');
   syncHash();
 }
@@ -1326,18 +1348,34 @@ async function deleteComment(artId,i,id){
     renderComments(i);
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
 }
-function renderContentBlock(p){
+/* editable: nur in der Claude-Entwurfsvorschau true, blendet den kleinen
+   Breiten-Umschalter auf Bildern ein. seen: siehe linkifyChars. */
+function renderContentBlock(p,editable,seen){
   if(typeof p!=='string') return '';
-  if(p.startsWith('img:')){const parts=p.slice(4).split('|');const src=parts[0].trim();const cr=(parts[1]||'').trim();return `<figure class="art-fig"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;}
-  return `<p>${linkifyChars(p)}</p>`;
+  if(p.startsWith('img:')){
+    const parts=p.slice(4).split('|');
+    const src=parts[0].trim(); const cr=(parts[1]||'').trim(); const narrow=(parts[2]||'').trim()==='narrow';
+    const toggle=editable?`<button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">${narrow?'Volle Breite':'Schmaler'}</button>`:'';
+    return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
+  }
+  return `<p>${linkifyChars(p,null,seen)}</p>`;
+}
+function toggleFigSize(e){
+  e.preventDefault(); e.stopPropagation();
+  const fig=e.target.closest('figure'); if(!fig) return;
+  const narrow=fig.classList.toggle('narrow');
+  fig.dataset.size=narrow?'narrow':'full';
+  e.target.textContent=narrow?'Volle Breite':'Schmaler';
 }
 /* Baut den Artikeltext aus dem content-Array. Aufzaehlungspunkte ("- Text")
    und FAQ-Eintraege ("faq:Frage|Antwort") werden ueber aufeinanderfolgende
    Zeilen hinweg zu einer gemeinsamen Liste bzw. einem Akkordeon gruppiert.
    outHeads/outFaqs sind optionale Arrays, in die Zwischenueberschriften
    (fuer das Inhaltsverzeichnis) bzw. FAQ-Paare (fuer das Schema-Markup)
-   waehrend des Durchlaufs eingesammelt werden. */
-function renderContent(arr,outHeads,outFaqs){
+   waehrend des Durchlaufs eingesammelt werden. seen wird an linkifyChars
+   durchgereicht, damit jeder verlinkbare Name im ganzen Artikel nur beim
+   ersten Vorkommen verlinkt wird, nicht bei jeder Erwaehnung. */
+function renderContent(arr,outHeads,outFaqs,editable,seen){
   const blocks=Array.isArray(arr)?arr:[];
   const used={};
   let html=''; let i=0;
@@ -1346,7 +1384,7 @@ function renderContent(arr,outHeads,outFaqs){
     if(typeof p==='string'&&p.startsWith('- ')){
       let items='';
       while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('- ')){
-        items+=`<li>${linkifyChars(blocks[i].slice(2).trim())}</li>`; i++;
+        items+=`<li>${linkifyChars(blocks[i].slice(2).trim(),null,seen)}</li>`; i++;
       }
       html+=`<ul class="art-list">${items}</ul>`; continue;
     }
@@ -1354,7 +1392,7 @@ function renderContent(arr,outHeads,outFaqs){
       let items='';
       while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('faq:')){
         const parts=blocks[i].slice(4).split('|'); const q=(parts[0]||'').trim(); const a=(parts[1]||'').trim();
-        items+=`<details><summary>${linkifyChars(q)}</summary><div class="faq-a">${linkifyChars(a)}</div></details>`;
+        items+=`<details><summary>${linkifyChars(q,null,seen)}</summary><div class="faq-a">${linkifyChars(a,null,seen)}</div></details>`;
         if(outFaqs&&(q||a)) outFaqs.push({q,a});
         i++;
       }
@@ -1365,9 +1403,9 @@ function renderContent(arr,outHeads,outFaqs){
       let id=slugify(text)||'abschnitt';
       if(used[id]){ used[id]++; id=id+'-'+used[id]; } else used[id]=1;
       if(outHeads&&text) outHeads.push({text,id});
-      html+=`<h3 id="${id}">${linkifyChars(text)}</h3>`; i++; continue;
+      html+=`<h3 id="${id}">${linkifyChars(text,null,seen)}</h3>`; i++; continue;
     }
-    html+=renderContentBlock(p); i++;
+    html+=renderContentBlock(p,editable,seen); i++;
   }
   return html;
 }
@@ -1393,13 +1431,13 @@ function renderReadtime(g,p){
   el.textContent=mins+' Min. Lesezeit';
   if(dot) dot.style.display=words?'inline':'none';
 }
-function renderTldr(g,p){
+function renderTldr(g,p,seen){
   const box=$(p+'tldr'); if(!box) return;
   const list=(Array.isArray(g.tldr)?g.tldr:[]).filter(Boolean);
   const ul=$(p+'tldr-list');
   if(!list.length){ box.style.display='none'; return; }
   box.style.display='block';
-  if(ul) ul.innerHTML=list.map(t=>`<li>${linkifyChars(t)}</li>`).join('');
+  if(ul) ul.innerHTML=list.map(t=>`<li>${linkifyChars(t,null,seen)}</li>`).join('');
 }
 function renderToc(p,heads){
   const box=$(p+'toc'); if(!box) return;
@@ -1436,7 +1474,9 @@ function extractContentBlocks(container){
     }else if(node.tagName==='FIGURE'){
       const img=node.querySelector('img'); const cap=node.querySelector('figcaption');
       const src=img?img.getAttribute('src'):'';
-      if(src) out.push('img:'+src+(cap&&cap.textContent.trim()?'|'+cap.textContent.trim():''));
+      const capTxt=(cap&&cap.textContent.trim())?cap.textContent.trim():'';
+      const narrow=node.dataset.size==='narrow';
+      if(src) out.push('img:'+src+'|'+capTxt+(narrow?'|narrow':''));
     }else{
       const t=(node.textContent||'').trim(); if(t) out.push(t);
     }
@@ -1454,9 +1494,9 @@ function renderArticleFields(g,p){
     else hero.style.display='none';
   }
   const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
-  const heads=[]; const faqs=[];
-  const content=$(p+'content'); if(content) content.innerHTML=renderContent(g.content,heads,faqs);
-  renderTldr(g,p);
+  const heads=[]; const faqs=[]; const seen=new Set(); const editable=(p==='aipv-');
+  renderTldr(g,p,seen);
+  const content=$(p+'content'); if(content) content.innerHTML=renderContent(g.content,heads,faqs,editable,seen);
   renderToc(p,heads);
   renderReadtime(g,p);
   if(p==='a-') renderFaqSchema(faqs);
