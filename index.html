@@ -177,6 +177,8 @@
   .modal .mrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .modal .chip{font-family:'Space Mono';font-size:11px;background:var(--bg-2);border:1px solid var(--line);padding:6px 11px;border-radius:999px;color:var(--text-soft)}
   .modal .mdesc{font-size:15px;color:var(--text)}
+  .ent-link{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none;border-bottom:1px dashed currentColor}
+  .ent-link:hover{opacity:.75}
 
   /* map */
   .mapwrap{margin:18px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#0a2a3a,#0d3346)}
@@ -958,15 +960,41 @@ function ieApply(){
   document.addEventListener('touchmove',e=>{if(!dragging||!ieState)return;const t=e.touches[0];if(Math.abs(t.clientX-sx)>3||Math.abs(t.clientY-sy)>3)ieMoved=true;const f=$('ie-frame');const w=f.clientWidth||300,h=f.clientHeight||230;ieState.x=Math.max(0,Math.min(100,bx-(t.clientX-sx)/w*100));ieState.y=Math.max(0,Math.min(100,by-(t.clientY-sy)/h*100));ieRender();},{passive:true});
   document.addEventListener('touchend',()=>{dragging=false;});
 })();
+/* ---- Automatische Charakter-Verlinkung in Beschreibungstexten ---- */
+const ENT_LINK_SKIP=new Set(['Leonida','Police','Gold','High','Dad','Crotch','Hammer','Selfie','Nightclub']);
+function buildCharAliases(){
+  const list=[];
+  (DB.characters||[]).forEach((c,i)=>{
+    const name=c.name; if(!name) return;
+    list.push([name,i]);
+    const parts=name.split(' ');
+    if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],i]);
+  });
+  list.sort((a,b)=>b[0].length-a[0].length);
+  return list;
+}
+function escRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function linkifyChars(text,excludeIdx){
+  if(!text||!DB.characters||!DB.characters.length) return text||'';
+  const aliases=buildCharAliases().filter(([,i])=>i!==excludeIdx);
+  if(!aliases.length) return text;
+  const pattern=new RegExp('\\b('+aliases.map(([a])=>escRegExp(a)).join('|')+')(?=s\\b|\\b)','g');
+  return text.replace(pattern,(m)=>{
+    const found=aliases.find(([a])=>a===m);
+    if(!found) return m;
+    return `<a class="ent-link" onclick="event.stopPropagation();openModal('characters',${found[1]})">${m}</a>`;
+  });
+}
 function openModal(secId,i){
   curModal={sec:secId,i};
   const sec=SECTIONS.find(s=>s.id===secId); const d=DB[secId][i];
+  const selfIdx=secId==='characters'?i:null;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${d.sub||''}</div>
+  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${linkifyChars(d.sub||'',selfIdx)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
-    <div class="mabout">Beschreibung</div><div class="mdesc">${d.desc||''}</div></div>`;
+    <div class="mabout">Beschreibung</div><div class="mdesc">${linkifyChars(d.desc||'',selfIdx)}</div></div>`;
   $('ov').classList.add('show');
   syncHash();
 }
@@ -1089,9 +1117,9 @@ function addReply(i,id){
 }
 function renderContentBlock(p){
   if(typeof p!=='string') return '';
-  if(p.startsWith('###')) return `<h3>${p.replace(/^###\s*/,'')}</h3>`;
+  if(p.startsWith('###')) return `<h3>${linkifyChars(p.replace(/^###\s*/,''))}</h3>`;
   if(p.startsWith('img:')){const parts=p.slice(4).split('|');const src=parts[0].trim();const cr=(parts[1]||'').trim();return `<figure class="art-fig"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;}
-  return `<p>${p}</p>`;
+  return `<p>${linkifyChars(p)}</p>`;
 }
 function openArticle(i){
   const g=GUIDES[i]; curArticle=i;
