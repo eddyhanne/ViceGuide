@@ -730,7 +730,6 @@ function catIcon(id){return secIcon(CATICON[id]||'home');}
 const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 
 let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", editMode=false, isRestoringRoute=false, isAdmin=false;
-(function(){for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}})();
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';}
@@ -1915,7 +1914,6 @@ async function loadExternal(){
       const data=await r.json();
       if(Array.isArray(data.articles)){
         GUIDES=data.articles; openCats.clear();
-        for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}
         gotArticles=true;
       }
     }
@@ -1928,7 +1926,7 @@ async function loadExternal(){
     }
   }catch(e){}
   if(!gotArticles){
-    try{const r=await fetch('articles.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){GUIDES=d;openCats.clear();for(const c of GROUPS[0].cats){if(GUIDES.some(g=>g.cat===c.id)){openCats.add(c.id);break;}}}}}catch(e){}
+    try{const r=await fetch('articles.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){GUIDES=d;openCats.clear();}}}catch(e){}
   }
   if(!gotDb){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
