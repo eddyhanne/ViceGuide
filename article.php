@@ -143,7 +143,7 @@ $html = str_replace(
 $body = [
     '<div id="view"></div>' => '<div id="view" style="display:none"></div>',
     '<article class="article" id="article">' => '<article class="article show" id="article">',
-    '<h2 id="a-title"></h2>' => '<h2 id="a-title">' . vg_esc($title) . '</h2>',
+    '<h1 id="a-title"></h1>' => '<h1 id="a-title">' . vg_esc($title) . '</h1>',
     '<span class="art-author" id="a-author"></span>' => '<span class="art-author" id="a-author">' . vg_esc($row['author'] ?: 'ViceGuide Redaktion') . '</span>',
     '<span class="art-date" id="a-date"></span>' => '<span class="art-date" id="a-date">' . vg_esc(vg_fmt_date($row['article_date'])) . '</span>',
     '<p class="lead" id="a-lead"></p>' => '<p class="lead" id="a-lead">' . vg_esc($row['lead'] ?: $summary) . '</p>',

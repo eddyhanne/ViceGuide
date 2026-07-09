@@ -250,7 +250,7 @@
   .back{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--text-soft);margin-bottom:20px;cursor:pointer}
   .back:hover{color:var(--accent);gap:11px}
   .article .tg{display:inline-block;font-family:'Space Mono';font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);background:var(--tag-bg);padding:6px 11px;border-radius:7px;margin-bottom:14px}
-  .article h2{font-family:'Oswald';font-weight:600;font-size:clamp(28px,6vw,46px);line-height:1.04;color:var(--heading);margin-bottom:10px}
+  .article h1{font-family:'Oswald';font-weight:600;font-size:clamp(28px,6vw,46px);line-height:1.04;color:var(--heading);margin-bottom:10px}
   .art-date{font-family:'Space Mono';font-size:12px;color:var(--text-soft);margin-bottom:16px}
   .article .lead{font-size:18px;color:var(--text-soft);font-weight:500;margin-bottom:24px;padding-bottom:22px;border-bottom:2px solid var(--line)}
   .article .content p{margin-bottom:16px;font-size:16px} .article .content h3{font-family:'Oswald';font-weight:600;font-size:22px;margin:26px 0 10px;color:var(--heading)}
@@ -614,7 +614,7 @@
     <div id="view"></div>
     <article class="article" id="article">
       <span class="back" onclick="closeArticle()">← Zurück</span>
-      <span class="tg" id="a-tag"></span><h2 id="a-title"></h2>
+      <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
       <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span></div>
       <div class="art-hero" id="a-hero" style="display:none"><span class="credit" id="a-herocredit"></span></div>
       <p class="lead" id="a-lead"></p>
@@ -828,7 +828,7 @@ function renderHome(){
   const cards=GUIDES.map((x,idx)=>({x,idx})).filter(o=>g1.cats.some(c=>c.id===o.x.cat))
     .sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0))
     .map(o=>{
-      const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
+      const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
       const dt=o.x.date?fmtDShort(o.x.date):'';
       const au=o.x.author||'ViceGuide Redaktion';
       const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
@@ -1451,7 +1451,7 @@ function renderContentBlock(p,editable,seen){
     const parts=p.slice(4).split('|');
     const src=parts[0].trim(); const cr=(parts[1]||'').trim(); const narrow=(parts[2]||'').trim()==='narrow';
     const toggle=editable?`<button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">${narrow?'Volle Breite':'Schmaler'}</button>`:'';
-    return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
+    return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="${esc(cr||'Artikelbild')}" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
   }
   return `<p>${renderText(p,seen)}</p>`;
 }
@@ -1636,7 +1636,7 @@ function openArticle(i){
   const others=GUIDES.map((x,idx)=>({x,idx})).filter(o=>o.idx!==i);
   others.sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0));
   $('a-more').innerHTML=others.slice(0,6).map(o=>{
-    const vis=o.x.img?`<div class="mcv"><img src="${o.x.img}" alt="" loading="lazy"></div>`:`<div class="mcv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
+    const vis=o.x.img?`<div class="mcv"><img src="${o.x.img}" alt="${esc(o.x.title)}" loading="lazy"></div>`:`<div class="mcv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
     const dt=o.x.date?fmtDShort(o.x.date):'';
     return `<a class="mcard" href="${articleHref(o.x.id)}" onclick="return articleClick(event,${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></a>`;
   }).join('');
@@ -2063,7 +2063,12 @@ newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 dbView = newsView;
 $('tico').textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
 restoreFromLocation();
-loadExternal().then(restoreFromLocation);
+loadExternal().then(restoreFromLocation).then(()=>{
+  /* Sitelinks-Suchbox (siehe WebSite/SearchAction Schema im head): traegt
+     Google einen ?q=... Parameter an, wird direkt die passende Suche gezeigt. */
+  const q=new URLSearchParams(location.search).get('q');
+  if(q){ gquery=q; $('gsearch').value=q; globalSearch(q); }
+});
 </script>
 </body>
 </html>
