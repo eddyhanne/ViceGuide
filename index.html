@@ -1983,7 +1983,7 @@ function closeLegal(){ $('legal').classList.remove('show'); }
 
 /* Countdown bis Release */
 (function(){
-  const target=new Date("2026-11-19T00:00:00");
+  const target=new Date("2026-11-19T00:00:00+01:00"); // Mitternacht deutscher Zeit (CET), fest verankert statt von der Zeitzone des Besuchers abhaengig
   function pad(n){return String(n).padStart(2,'0');}
   function tick(){
     const el=document.getElementById('cd-d'); if(!el)return;
