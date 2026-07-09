@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
 <head>
+<base href="/">
 <script>(function(){try{var t=localStorage.getItem('vg-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -149,7 +150,7 @@
   /* card grid */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;
-    opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s}
+    opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s;text-decoration:none;color:inherit}
   .card.in{opacity:1;transform:none}
   .card:hover{box-shadow:var(--shadow);border-color:var(--accent);transform:translateY(-5px)}
   .card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -235,7 +236,7 @@
   .acc-head .chev{color:var(--text-soft);transition:.28s;margin-left:8px} .acc-item.open .chev{transform:rotate(90deg);color:var(--accent)}
   .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease} .acc-inner{padding:2px 18px 10px}
   .acc-latest{font-family:'Space Mono';font-size:11px;color:var(--text-soft);padding:12px 0 2px}
-  .sub{display:block;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer}
+  .sub{display:block;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
   .sub-top{display:flex;align-items:baseline;gap:8px} .sub .st{font-weight:600;font-size:15px;color:var(--heading)}
   .sub .meta{margin-left:auto;font-family:'Space Mono';font-size:10.5px;color:var(--text-soft)}
   .sub:hover .st{color:var(--accent)} .sub .sd{font-size:13.5px;color:var(--text-soft);margin-top:3px}
@@ -329,7 +330,7 @@
   .more{margin-top:44px;border-top:1px solid var(--line);padding-top:26px}
   .more-h{font-family:'Oswald';font-weight:600;font-size:24px;color:var(--heading);margin-bottom:16px}
   .more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s}
+  .mcard{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s;text-decoration:none;color:inherit}
   .mcard:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:var(--shadow)}
   .mcv{height:110px;position:relative;display:grid;place-items:center;overflow:hidden}
   .mcv img{width:100%;height:100%;object-fit:cover}
@@ -363,7 +364,7 @@
   .vt{font-size:13px;font-weight:600;color:var(--text-soft);padding:7px 13px;border-radius:8px;transition:.15s}
   .vt.on{background:var(--accent);color:var(--btn-text)}
   .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;margin-top:18px}
-  .ncard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s}
+  .ncard{display:block;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s;text-decoration:none;color:inherit}
   .ncard.in{opacity:1;transform:none}
   .ncard:hover{border-color:var(--accent);transform:translateY(-5px);box-shadow:var(--shadow)}
   .ncv{aspect-ratio:16/10;position:relative;display:grid;place-items:center;overflow:hidden}
@@ -821,7 +822,7 @@ function renderHome(){
   // Phase 1 als Liste (Akkordeon)
   const listHtml=g1.cats.map(c=>{
     const gl=guidesIn(c.id), isOpen=openCats.has(c.id), latest=latestFmt(c.id);
-    const subs=gl.map(gd=>{const i=GUIDES.indexOf(gd);return `<div class="sub" onclick="openArticle(${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></div>`;}).join('');
+    const subs=gl.map(gd=>{const i=GUIDES.indexOf(gd);return `<a class="sub" href="${articleHref(gd.id)}" onclick="return articleClick(event,${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></a>`;}).join('');
     return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${gl.length} Artikel</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${latest?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
   }).join('');
   // Phase 1 als Kacheln (alle Artikel, neueste zuerst)
@@ -833,7 +834,10 @@ function renderHome(){
       const au=o.x.author||'ViceGuide Redaktion';
       const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
       const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
-      return `<div class="ncard ${editMode?'editing':''}" onclick="${editMode?`openImgEd('guide',null,${o.idx})`:`openArticle(${o.idx})`}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></div>`;
+      const tag=editMode?'div':'a';
+      const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
+      const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
+      return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
     }).join('');
   const phase1 = newsView==='cards'
     ? `<div class="news-grid">${cards||'<div class="empty">Noch keine Artikel.</div>'}</div>`
@@ -1229,7 +1233,7 @@ function linkifyArticleRefs(text,tokens){
     const clean=esc(label.trim());
     const exists=(GUIDES||[]).some(g=>g.id===id);
     const token='\uE000'+tokens.length+'\uE001';
-    tokens.push(exists?`<a class="ent-link" data-article-id="${id}" onclick="event.stopPropagation();goToArticleId('${id}')">${clean}</a>`:clean);
+    tokens.push(exists?`<a class="ent-link" data-article-id="${id}" href="${articleHref(id)}" onclick="event.stopPropagation();return articleClick(event,(GUIDES||[]).findIndex(g=>g.id==='${id}'))">${clean}</a>`:clean);
     return token;
   });
 }
@@ -1614,6 +1618,18 @@ function renderArticleFields(g,p){
     if(g.sources&&g.sources.length){sb.style.display="block";$(p+'src').innerHTML=g.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a>`).join('');}else sb.style.display="none";
   }
 }
+/* Echte Artikel-Adresse fuers href-Attribut, und ein Klick-Handler, der bei
+   normalem Linksklick innerhalb der App navigiert (kein Full-Reload), aber
+   Strg/Cmd/Shift-Klick und Mittelklick unangetastet laesst, damit der
+   Browser dort ganz normal einen neuen Tab oeffnet (funktioniert nur mit
+   echten <a href>-Links, nicht mit reinem onclick auf einem <div>). */
+function articleHref(id){ return id ? ('/artikel/'+id) : '#'; }
+function articleClick(e,idx){
+  if(e.metaKey||e.ctrlKey||e.shiftKey) return true;
+  e.preventDefault();
+  openArticle(idx);
+  return false;
+}
 function openArticle(i){
   const g=GUIDES[i]; curArticle=i;
   renderArticleFields(g,'a-');
@@ -1623,7 +1639,7 @@ function openArticle(i){
   $('a-more').innerHTML=others.slice(0,6).map(o=>{
     const vis=o.x.img?`<div class="mcv"><img src="${o.x.img}" alt="" loading="lazy"></div>`:`<div class="mcv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
     const dt=o.x.date?fmtDShort(o.x.date):'';
-    return `<div class="mcard" onclick="openArticle(${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></div>`;
+    return `<a class="mcard" href="${articleHref(o.x.id)}" onclick="return articleClick(event,${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></a>`;
   }).join('');
   renderComments(i);
   $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:'smooth'}); syncHash();
@@ -1634,11 +1650,11 @@ function closeArticle(){$('article').classList.remove('show');$('view').style.di
 function globalSearch(q){
   q=q.trim().toLowerCase();
   const results=[];
-  GUIDES.forEach((g,i)=>{const hay=(g.title+" "+g.summary+" "+(g.content||[]).join(" ")).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'guide',label:g.title,sub:(g.tag||'News & Gerüchte'),i});});
+  GUIDES.forEach((g,i)=>{const hay=(g.title+" "+g.summary+" "+(g.content||[]).join(" ")).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'guide',label:g.title,sub:(g.tag||'News & Gerüchte'),id:g.id,i});});
   SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=(d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'db',sec:s.id,label:d.name,sub:s.label+' · '+d.cat,i});});});
   VIDEOS.forEach((v,i)=>{const hay=(v.title+' '+v.author).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'video',label:v.title,sub:'Videos',i});});
   const cards=results.slice(0,60).map(r=>{
-    if(r.type==='guide')return `<div class="card" onclick="closeArticle();openArticle(${r.i})"><div class="cv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${r.label.charAt(0)}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></div>`;
+    if(r.type==='guide')return `<a class="card" href="${articleHref(r.id)}" onclick="closeArticle();return articleClick(event,${r.i})"><div class="cv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${r.label.charAt(0)}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;
     if(r.type==='video')return `<div class="card" onclick="go('videos')"><div class="cv ph"><span class="ghost">${secIcon('videos')}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">Videos</span></div></div>`;
     const sec=SECTIONS.find(s=>s.id===r.sec); const d=DB[r.sec][r.i];
     return `<div class="card" onclick="openModal('${r.sec}',${r.i})">${cardVisual(sec,d)}<div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></div>`;
@@ -2007,29 +2023,33 @@ function closeLegal(){ $('legal').classList.remove('show'); }
 function buildHash(){
   let h='/'+current;
   const qs=[];
-  if($('article').classList.contains('show') && curArticle!=null) qs.push('a='+curArticle);
   if(curModal) qs.push('e='+curModal.sec+','+curModal.i);
   if(qs.length) h+='?'+qs.join('&');
   return h;
 }
 function syncHash(){
   if(isRestoringRoute) return;
-  const h='#'+buildHash();
-  if(location.hash!==h) history.pushState(null,'',h);
+  const g=($('article').classList.contains('show') && curArticle!=null) ? GUIDES[curArticle] : null;
+  const target=(g && g.id) ? ('/artikel/'+g.id) : ('/#'+buildHash());
+  const currentFull=location.pathname+location.hash;
+  if(currentFull!==target) history.pushState(null,'',target);
 }
 function restoreFromLocation(){
   isRestoringRoute=true;
   try{
+    const artMatch=location.pathname.match(/^\/artikel\/([a-z0-9-]+)\/?$/);
+    if(artMatch){
+      go('home'); closeModal();
+      const idx=GUIDES.findIndex(g=>g.id===artMatch[1]);
+      if(idx>=0) openArticle(idx);
+      return;
+    }
     let h=(location.hash||'').replace(/^#\/?/,'');
     const [view,qs]=h.split('?');
     go((view && SECTIONS.find(s=>s.id===view)) ? view : 'home');
     closeModal();
     if(qs){
       const params=new URLSearchParams(qs);
-      if(params.has('a')){
-        const idx=parseInt(params.get('a'),10);
-        if(GUIDES[idx]) openArticle(idx);
-      }
       if(params.has('e')){
         const [sec,iStr]=params.get('e').split(',');
         const idx=parseInt(iStr,10);

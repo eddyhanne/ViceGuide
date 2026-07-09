@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Artikel-URLs (/artikel/artikel-id) serverseitig fuer Meta-Tags und Crawler
+# aufbereiten, ohne die sichtbare Adresse zu aendern.
+RewriteRule ^artikel/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]
+
+# Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
+RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]

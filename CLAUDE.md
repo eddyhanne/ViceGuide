@@ -49,7 +49,7 @@ Impressum und Datenschutzerklärung sind mit echten Betreiberdaten befüllt (Edd
 - **Hosting:** Domain viceguide.de bei **Hostinger**, Premium Web Hosting, per Git mit dem GitHub-Repo `eddyhanne/ViceGuide` verbunden (Root ist `public_html`). Deployment: Auto-Deploy ist aktiv, ein Push auf `main` zieht sich automatisch auf den Server.
 
 ### Architektur
-Die Seite ist eine Single-Page-Anwendung mit echtem URL-Routing über `location.hash` (siehe `buildHash()`/`restoreFromLocation()`/`syncHash()` im Script). Jede Ansicht (Sektion, offener Artikel, offenes Datenbank-Detail) spiegelt sich in der URL, dadurch bleibt ein Reload auf derselben Ansicht und der Browser-Zurück-Button navigiert innerhalb der Seite statt sie zu verlassen.
+Die Seite ist eine Single-Page-Anwendung. Sektionen und offene Datenbank-Details laufen weiterhin ueber `location.hash` (`buildHash()`/`restoreFromLocation()`/`syncHash()` im Script, z. B. `#/charaktere?e=characters,3`). Offene Artikel haben seit der URL-Umstellung (siehe unten) eine echte, eigene Pfad-URL statt eines Hash-Parameters: `/artikel/{id}`, per `history.pushState()` gesetzt, kein Reload beim Klick. Reload/direkter Aufruf einer solchen URL, sowie der Browser-Zurueck/Vor-Button, funktionieren in beiden Faellen korrekt (siehe "Echte Artikel-URLs" unten fuer die technischen Details).
 
 **Datenfluss (wichtig, hat sich grundlegend geändert):** Früher lebten alle Inhalte nur in `articles.json`/`database.json`, die manuell hoch- und heruntergeladen wurden. Jetzt ist die **MySQL-Datenbank die Quelle der Wahrheit**. Der Ladevorgang (`loadExternal()`) fragt zuerst `api/articles.php` und `api/db_entries.php` ab, und fällt nur zurück auf die statischen JSON-Dateien, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync-Mechanismus). `articles.json`/`database.json` im Repo sind seitdem nur noch ein eingefrorener Stand von der Migration, keine laufend gepflegte Datenquelle mehr.
 
@@ -65,6 +65,16 @@ Die Seite ist eine Single-Page-Anwendung mit echtem URL-Routing über `location.
 8. **Kommentare:** pro Artikel, dauerhaft in der Datenbank, mit Antworten (eine Ebene, mit Zitat der Elternantwort), Upvote/Downvote (ein Vote pro Browser, per `localStorage` gemerkt), Löschen nur im Editiermodus mit Admin-Login.
 9. **Admin-Panel / Redaktion (intern, versteckt):** Overlay, erreichbar über `Shift+Alt+R`, die URL `#redaktion`/`#admin`, oder dreifachen Klick auf einen versteckten Footer-Bereich (`foot-secret`). Für Besucher unsichtbar. Enthält: Claude-Entwurf veröffentlichen (siehe unten), Editiermodus, JSON-Sicherungsexport.
 10. **Editiermodus:** Schalter im Admin-Panel, fragt beim ersten Einschalten pro Browser das Admin-Passwort ab (serverseitig geprüft, Session hält 90 Tage). Danach macht Kachel-Klick den Bild- und Text-Editor auf (`openImgEd()`), Speichern (`ieApply()`) schreibt sofort und dauerhaft in die Datenbank, kein Datei-Umweg mehr.
+
+### Echte Artikel-URLs (`/artikel/{id}`) und serverseitiges Rendering
+Frueher lief jeder Artikel nur unter einem Hash-Parameter mit Array-Index (`#/home?a=3`), Google konnte einzelne Artikel dadurch nicht indexieren, und Mittelklick/Strg-Klick fuer einen neuen Tab ging nicht (JS-`onclick` auf `<div>`, kein echter Link). Geloest ueber eine Hybrid-Loesung aus Apache-Rewrite, einem kleinen serverseitigen "Hydration"-Skript und angepasstem Client-Routing, ohne die Single-File-Architektur aufzugeben:
+- **`.htaccess`** leitet `/artikel/{id}` intern an `article.php?slug={id}` weiter (sichtbare Adresse bleibt gleich), und `/sitemap.xml` an `sitemap.php`.
+- **`article.php`** liest den Artikel direkt per PDO aus der `articles`-Tabelle (kein Umweg ueber `api/articles.php`), laedt danach `index.html` als String und ersetzt per gezielten `str_replace()`-Aufrufen nur die `<head>`-Metadaten (Title, Description, og:*, twitter:*, canonical, `Article`-JSON-LD) sowie den sichtbaren Artikel-Bereich durch eine **vereinfachte Text-Fassung** (Ueberschriften, Absaetze, Bulletpoints als einfache Absaetze, FAQ als Frage/Antwort-Absatz, `[[id|text]]` nur als Klartext, keine Bild-Galerie/kein Akkordeon). Zweck: Suchmaschinen-Crawler und Link-Vorschauen (Discord, WhatsApp, X, ...) fuehren kein JavaScript aus, bevor sie Titel/Beschreibung/Bild lesen, kriegen also sofort echte Inhalte. Fuer normale Besucher mit JavaScript ist das unsichtbar, `openArticle()` uebernimmt beim Laden sofort und rendert wie gewohnt vollstaendig (inklusive TOC, FAQ-Akkordeon, Bildergalerie, Verlinkung). **Bewusst keine zweite vollstaendige Rendering-Engine in PHP**, das waere doppelter Pflegeaufwand, Googlebot fuehrt JS zuverlaessig aus.
+- **`api/article_image.php?id={id}`** liefert das Artikelbild (in der Datenbank nur als base64-Data-URI gespeichert) als echte, abrufbare Bild-URL aus (dekodiert die Bytes on-the-fly), noetig weil `og:image` kein `data:`-URI sein kann. Ermittelt zusaetzlich echte Breite/Hoehe/Mime-Type des Bildes (`getimagesizefromstring`) fuer korrekte `og:image:width/height/type`-Meta-Tags in `article.php` (Uploads sind meist WebP, nicht das Default-JPEG des allgemeinen `og-image.jpg`).
+- **`sitemap.php`** ersetzt die alte statische `sitemap.xml` (Datei wurde entfernt), listet dynamisch die Startseite plus jeden Artikel unter seiner echten `/artikel/{id}`-URL, direkt aus der Datenbank.
+- **Client-seitig** (`index.html`): `articleHref(id)` liefert `/artikel/{id}` fuers `href`-Attribut, `articleClick(event, idx)` ist der gemeinsame Klick-Handler auf allen Artikel-Kacheln/Links (Startseiten-Akkordeon, News-Kacheln, "Mehr Artikel", Suchergebnis-Karten, interne `[[id|text]]`-Verweise): bei normalem Linksklick `preventDefault()` und In-App-Navigation (`openArticle(idx)`, kein Reload), bei Strg/Cmd/Shift-Klick (und automatisch bei Mittelklick, da echte `<a href>`-Links) laesst der Browser den Klick unangetastet, oeffnet also ganz normal einen neuen Tab. `buildHash()`/`syncHash()`/`restoreFromLocation()` wurden entsprechend angepasst: ein offener Artikel setzt `history.pushState()` auf `/artikel/{id}` statt einen `a=`-Hash-Parameter, alles andere (Sektion, offenes Datenbank-Modal) bleibt beim bisherigen Hash-Schema. `restoreFromLocation()` prueft zuerst `location.pathname` auf `/^\/artikel\/([a-z0-9-]+)\/?$/`, bevor sie auf die Hash-Logik zurueckfaellt.
+- **Wichtige Detail-Falle:** Das Dokument (egal ob unter `/` oder unter `/artikel/{id}` ausgeliefert) enthaelt ausschliesslich relative Pfade fuer Fonts (`@font-face url('assets/fonts/...')`) und alle `fetch('api/...')`-Aufrufe. Ohne Gegenmassnahme wuerden diese unter `/artikel/{id}/` fehlerhaft relativ zu `/artikel/` statt zur Domainwurzel aufgeloest (Fonts laden nicht, API-Calls landen auf `/artikel/api/...` und schlagen fehl, wodurch nach dem Hydration-Fallback sogar der gerade angezeigte Artikel wieder verschwinden kann). Behoben durch ein einziges `<base href="/">` als erstes Element im `<head>`, macht alle relativen Pfade im gesamten Dokument wieder korrekt, unabhaengig vom aufgerufenen Pfad.
+- **Lokales Testen ohne Apache:** Die Sandbox/lokale Entwicklungsumgebung hat kein Apache verfuegbar, `.htaccess` kann nicht direkt getestet werden. Workaround: ein kleines PHP-Router-Skript fuer `php -S` bauen, das dieselben zwei Rewrite-Regeln nachbildet (`/artikel/{id}` -> `article.php`, `/sitemap.xml` -> `sitemap.php`), damit lokal (inklusive Playwright-Tests fuer Klick-Verhalten, Browser-Zurueck, Mittelklick/Strg-Klick) getestet werden kann. Echte Verifikation der `.htaccess`-Regeln selbst geht nur nach echtem Deploy auf Hostinger.
 
 ### Guide-/Artikel-Datenmodell (JSON, wie es die API liefert und erwartet)
 ```json
@@ -132,9 +142,11 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
 ├─ index.html           Die komplette, deploybare Seite (direkt editieren)
 ├─ articles.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
 ├─ database.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
-├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px
+├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px, Fallback wenn ein Artikel kein eigenes Bild hat
 ├─ robots.txt           Erlaubt allen Bots alles, verweist auf sitemap.xml
-├─ sitemap.xml          Statisch, aktuell nur die Startseite (siehe Offene Aufgaben, Punkt 1)
+├─ .htaccess            Rewrite-Regeln: /artikel/{id} -> article.php, /sitemap.xml -> sitemap.php
+├─ article.php           Serverseitiges Rendering einer echten Artikel-URL (Meta-Tags, Text-Fallback), siehe "Echte Artikel-URLs" oben
+├─ sitemap.php           Dynamische Sitemap direkt aus der Datenbank (Startseite + jeder Artikel), ersetzt die alte statische sitemap.xml
 ├─ google*.html         Google-Search-Console-Verifizierungsdatei, NICHT loeschen, sonst verliert Search Console die Inhaberschafts-Bestaetigung
 ├─ .gitignore           Schliesst api/config.php und lokale *.sqlite aus
 ├─ assets/
@@ -148,7 +160,8 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
    ├─ auth.php           Login/Logout/Status, session-basiert, 90 Tage
    ├─ articles.php       GET/POST/PUT/DELETE fuer Artikel (DELETE loescht auch zugehoerige Kommentare)
    ├─ db_entries.php     GET/PUT/DELETE fuer Datenbank-Eintraege
-   └─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
+   ├─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
+   └─ article_image.php  Liefert das base64-Artikelbild als echte, abrufbare Bild-URL aus (fuer og:image), siehe "Echte Artikel-URLs" oben
 ```
 Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank, nicht als separate Bild-Dateien im Repo (Ausnahme: Fonts, die liegen als echte Dateien in `assets/fonts/`, weil das fuers Caching besser ist und Fonts sich nicht staendig aendern).
 
@@ -229,12 +242,13 @@ php -S localhost:8000 -t .
 **Erledigt (Stand dieser Datei):**
 - ~~Google Search Console einrichten, Sitemap einreichen~~ (erledigt: Inhaberschaft bestaetigt, Sitemap erfolgreich eingereicht)
 - ~~Echtes OG-Image (`og-image.jpg`) erstellen und bereitstellen~~ (erledigt, aus Logo + Wallpaper zusammengesetzt, 1200x630px)
-- ~~`robots.txt`/`sitemap.xml` anlegen~~ (erledigt, Sitemap listet aktuell nur die Startseite, siehe Punkt 2 unten zur Ursache)
+- ~~`robots.txt`/`sitemap.xml` anlegen~~ (erledigt, `sitemap.xml` ist seit der Artikel-URL-Umstellung dynamisch und listet zusaetzlich zur Startseite jeden Artikel einzeln, siehe `sitemap.php` oben)
 - ~~Discord-Server aufsetzen~~ (erledigt, Community-Sektion verlinkt live)
 - ~~Interne Artikel-Verlinkung (`[[id|text]]`)~~ (erledigt, siehe oben, "Verlinkungs-Check" als wiederkehrender Trigger)
+- ~~Echte, einzeln aufloesbare Artikel-URLs (`/artikel/{id}`)~~ (erledigt, siehe "Echte Artikel-URLs" oben: `.htaccess`, `article.php`, `sitemap.php`, `api/article_image.php`, Mittelklick/Strg-Klick fuer neuen Tab funktioniert jetzt echt. Lokal per PHP-Router-Nachbau plus Playwright getestet, noch nicht auf viceguide.de deployed/live geprueft, siehe naechster Punkt nach Merge nach `main`.)
 
 **Offen, nach Prioritaet:**
-1. **Groessere Baustelle, noch nicht angegangen: echte, einzeln aufloesbare Artikel-URLs.** Aktuell rein Hash-basiertes Routing (`location.hash`, z. B. `#/home?a=3`, Artikel-Index statt Slug in der URL). Dadurch kann Google einzelne Artikel nicht als eigene Suchtreffer listen, nur die Startseite. Fuer echten Content-SEO-Erfolg (einzelne Artikel ranken bei Suchanfragen) waere eine Umstellung auf slug-basierte, serverseitig aufloesbare URLs noetig, groesseres Architektur-Thema, bewusst zurueckgestellt fuer eine eigene, gut durchdachte Session.
+1. **Nach dem Merge der Artikel-URL-Umstellung: einmal live auf viceguide.de pruefen.** In Google Search Console eine der neuen `/artikel/{id}`-URLs unter "URL-Pruefung" testen (Rendering, wie Google die Seite sieht), und in Discord/WhatsApp testweise einen Artikel-Link posten, um die Link-Vorschau (og:image/Titel/Beschreibung) zu verifizieren. Sitemap in Search Console erneut einreichen, falls Google die neue dynamische Version noch nicht erkennt.
 2. **Discord tiefer einbinden:** "Discord öffnen" zusaetzlich zum bestehenden "Discord beitreten" (direkter Sprung statt erneuter Einladungslink), Discord-Widget (Live-Mitgliederzahl, zurueckgestellt bis der Server aktiver ist), eigenes Server-Icon/Branding auf der Seite zeigen, Bot-Anbindung fuer automatisches Posten neuer Artikel (Kurzfassung + Link) in einen Discord-Kanal ueber Webhook, ausgeloest beim Anlegen eines Artikels in `api/articles.php`.
 3. Grundstock an Artikeln weiter ausbauen (laufend).
 4. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
