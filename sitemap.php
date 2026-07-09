@@ -32,7 +32,11 @@ function vg_sitemap_date(?string $iso): string {
 $articles = $pdo->query('SELECT id, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
 
 vg_ensure_entry_slugs($pdo);
-$entries = $pdo->query("SELECT section, slug, updated_at FROM db_entries WHERE slug IS NOT NULL AND slug <> '' ORDER BY section, sort_order")->fetchAll();
+try {
+    $entries = $pdo->query("SELECT section, slug, updated_at FROM db_entries WHERE slug IS NOT NULL AND slug <> '' ORDER BY section, sort_order")->fetchAll();
+} catch (Throwable $e) {
+    $entries = [];
+}
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";

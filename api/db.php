@@ -62,9 +62,16 @@ function vg_db(): array {
             slug TEXT,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
-        $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
-        if (!in_array('slug', array_column($cols, 'name'), true)) {
-            $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT');
+        try {
+            $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
+            if (!in_array('slug', array_column($cols, 'name'), true)) {
+                $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT');
+            }
+        } catch (Throwable $e) {
+            // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
+            // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit
+            // hinunterreissen, z.B. bei einer Race Condition zwischen zwei
+            // gleichzeitigen Requests, die beide die Spalte fehlend sehen.
         }
     } else {
         $pdo->exec('CREATE TABLE IF NOT EXISTS comments (
@@ -115,19 +122,29 @@ function vg_db(): array {
             INDEX idx_section (section),
             INDEX idx_section_slug (section, slug)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
-        $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
-        if (!$cols) {
-            $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug VARCHAR(180) NULL, ADD INDEX idx_section_slug (section, slug)');
+        try {
+            $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
+            if (!$cols) {
+                $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug VARCHAR(180) NULL, ADD INDEX idx_section_slug (section, slug)');
+            }
+        } catch (Throwable $e) {
+            // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
+            // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit
+            // hinunterreissen, z.B. bei einer Race Condition zwischen zwei
+            // gleichzeitigen Requests, die beide die Spalte fehlend sehen.
         }
     }
 
     return [$pdo, $cfg];
 }
 
-/* Slug-Erzeugung, spiegelt slugify() im Frontend (index.html), damit
-   Datenbank-Eintraege dieselbe URL-freundliche Umwandlung bekommen wie
-   Artikel-ids. */
-function vg_slugify(string $s): string {
+/* Slug-Erzeugung fuer Datenbank-Eintraege, spiegelt slugify() im Frontend
+   (index.html) und vg_slugify() in api/articles.php. Eigener Name (nicht
+   vg_slugify), weil db.php von articles.php per require eingebunden wird,
+   das dort bereits eine eigene vg_slugify()-Funktion fuer Artikel-ids
+   definiert, Gleichnamigkeit wuerde zu einem fatalen "Cannot redeclare
+   function"-Fehler fuehren (hat genau das live auf viceguide.de ausgeloest). */
+function vg_entry_slugify(string $s): string {
     $map = ['ä'=>'ae','ö'=>'oe','ü'=>'ue','Ä'=>'Ae','Ö'=>'Oe','Ü'=>'Ue','ß'=>'ss'];
     $s = strtr($s, $map);
     $s = strtolower($s);
@@ -140,19 +157,26 @@ function vg_slugify(string $s): string {
    name-Feld (eindeutig je section), analog zur Artikel-id. Laeuft bei jedem
    GET mit, macht aber nichts mehr sobald alle Eintraege einen slug haben. */
 function vg_ensure_entry_slugs(PDO $pdo): void {
-    $rows = $pdo->query("SELECT id, section, name FROM db_entries WHERE slug IS NULL OR slug = ''")->fetchAll();
-    if (!$rows) return;
-    $existing = $pdo->query("SELECT section, slug FROM db_entries WHERE slug IS NOT NULL AND slug <> ''")->fetchAll();
-    $taken = [];
-    foreach ($existing as $r) { $taken[$r['section'] . '::' . $r['slug']] = true; }
+    try {
+        $rows = $pdo->query("SELECT id, section, name FROM db_entries WHERE slug IS NULL OR slug = ''")->fetchAll();
+        if (!$rows) return;
+        $existing = $pdo->query("SELECT section, slug FROM db_entries WHERE slug IS NOT NULL AND slug <> ''")->fetchAll();
+        $taken = [];
+        foreach ($existing as $r) { $taken[$r['section'] . '::' . $r['slug']] = true; }
 
-    $upd = $pdo->prepare('UPDATE db_entries SET slug = ? WHERE id = ?');
-    foreach ($rows as $r) {
-        $base = vg_slugify($r['name']) ?: 'eintrag';
-        $slug = $base; $n = 2;
-        while (!empty($taken[$r['section'] . '::' . $slug])) { $slug = $base . '-' . $n; $n++; }
-        $taken[$r['section'] . '::' . $slug] = true;
-        $upd->execute([$slug, $r['id']]);
+        $upd = $pdo->prepare('UPDATE db_entries SET slug = ? WHERE id = ?');
+        foreach ($rows as $r) {
+            $base = vg_entry_slugify($r['name']) ?: 'eintrag';
+            $slug = $base; $n = 2;
+            while (!empty($taken[$r['section'] . '::' . $slug])) { $slug = $base . '-' . $n; $n++; }
+            $taken[$r['section'] . '::' . $slug] = true;
+            $upd->execute([$slug, $r['id']]);
+        }
+    } catch (Throwable $e) {
+        // Falls die slug-Spalte aus irgendeinem Grund fehlt (z.B. ALTER TABLE
+        // in vg_db() ohne noetige Rechte fehlgeschlagen), soll das den
+        // aufrufenden Endpunkt nicht mit abschiessen, Eintraege kommen dann
+        // eben ohne slug zurueck statt den ganzen Request zu crashen.
     }
 }
 
