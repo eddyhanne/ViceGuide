@@ -132,6 +132,10 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
 ├─ index.html           Die komplette, deploybare Seite (direkt editieren)
 ├─ articles.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
 ├─ database.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
+├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px
+├─ robots.txt           Erlaubt allen Bots alles, verweist auf sitemap.xml
+├─ sitemap.xml          Statisch, aktuell nur die Startseite (siehe Offene Aufgaben, Punkt 1)
+├─ google*.html         Google-Search-Console-Verifizierungsdatei, NICHT loeschen, sonst verliert Search Console die Inhaberschafts-Bestaetigung
 ├─ .gitignore           Schliesst api/config.php und lokale *.sqlite aus
 ├─ assets/
 │  ├─ img_1.jpg         Palmen-Wallpaper (als base64 in index.html eingebettet)
@@ -142,8 +146,8 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
    ├─ config.php         Echte Zugangsdaten, NICHT im Git (siehe .gitignore), liegt nur auf dem Server
    ├─ db.php             Gemeinsame PDO-Verbindung, legt Tabellen automatisch an (CREATE TABLE IF NOT EXISTS)
    ├─ auth.php           Login/Logout/Status, session-basiert, 90 Tage
-   ├─ articles.php       GET/POST/PUT fuer Artikel
-   ├─ db_entries.php     GET/PUT fuer Datenbank-Eintraege
+   ├─ articles.php       GET/POST/PUT/DELETE fuer Artikel (DELETE loescht auch zugehoerige Kommentare)
+   ├─ db_entries.php     GET/PUT/DELETE fuer Datenbank-Eintraege
    └─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
 ```
 Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank, nicht als separate Bild-Dateien im Repo (Ausnahme: Fonts, die liegen als echte Dateien in `assets/fonts/`, weil das fuers Caching besser ist und Fonts sich nicht staendig aendern).
@@ -221,14 +225,24 @@ php -S localhost:8000 -t .
 - Getrennter Chat/Session-Vorschlag fuer reine Artikel-Erstellung, damit diese Coding-Session nicht mit Content-Arbeit vollgestopft wird. Diese Datei sollte in einem solchen Chat als Projekt-Wissen hinterlegt sein.
 
 ### Offene Aufgaben
-1. Grundstock an Artikeln weiter ausbauen (laufend).
-2. Google Search Console einrichten, Sitemap einreichen.
-3. Echtes OG-Image (`og-image.jpg`) erstellen und bereitstellen.
+
+**Erledigt (Stand dieser Datei):**
+- ~~Google Search Console einrichten, Sitemap einreichen~~ (erledigt: Inhaberschaft bestaetigt, Sitemap erfolgreich eingereicht)
+- ~~Echtes OG-Image (`og-image.jpg`) erstellen und bereitstellen~~ (erledigt, aus Logo + Wallpaper zusammengesetzt, 1200x630px)
+- ~~`robots.txt`/`sitemap.xml` anlegen~~ (erledigt, Sitemap listet aktuell nur die Startseite, siehe Punkt 2 unten zur Ursache)
+- ~~Discord-Server aufsetzen~~ (erledigt, Community-Sektion verlinkt live)
+- ~~Interne Artikel-Verlinkung (`[[id|text]]`)~~ (erledigt, siehe oben, "Verlinkungs-Check" als wiederkehrender Trigger)
+
+**Offen, nach Prioritaet:**
+1. **Groessere Baustelle, noch nicht angegangen: echte, einzeln aufloesbare Artikel-URLs.** Aktuell rein Hash-basiertes Routing (`location.hash`, z. B. `#/home?a=3`, Artikel-Index statt Slug in der URL). Dadurch kann Google einzelne Artikel nicht als eigene Suchtreffer listen, nur die Startseite. Fuer echten Content-SEO-Erfolg (einzelne Artikel ranken bei Suchanfragen) waere eine Umstellung auf slug-basierte, serverseitig aufloesbare URLs noetig, groesseres Architektur-Thema, bewusst zurueckgestellt fuer eine eigene, gut durchdachte Session.
+2. **Discord tiefer einbinden:** "Discord öffnen" zusaetzlich zum bestehenden "Discord beitreten" (direkter Sprung statt erneuter Einladungslink), Discord-Widget (Live-Mitgliederzahl, zurueckgestellt bis der Server aktiver ist), eigenes Server-Icon/Branding auf der Seite zeigen, Bot-Anbindung fuer automatisches Posten neuer Artikel (Kurzfassung + Link) in einen Discord-Kanal ueber Webhook, ausgeloest beim Anlegen eines Artikels in `api/articles.php`.
+3. Grundstock an Artikeln weiter ausbauen (laufend).
 4. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
 5. Rechtliche Absicherung im Blick behalten: "VI" im Logo und der Wortstamm "Vice" sind Markenrecht-Grauzonen (Naehe zu VICE Media, zu Rockstars "Vice City"). DPMA/EUIPO pruefen, wenn es kommerziell ernster wird.
 6. Gewerbeanmeldung pruefen, sobald echte Werbe-/Affiliate-Einnahmen fliessen.
 7. Neue Datenbank-Eintraege komplett neu anlegen (z. B. ein bisher unbekanntes Fahrzeug) geht aktuell noch nicht ueber den Editiermodus, nur bestehende Eintraege bearbeiten. Bei Bedarf nachruesten (weiterer API-Endpunkt plus UI).
 8. Optional: eigener Anthropic-API-Schluessel fuer echte Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` müsste auf einen serverseitigen Proxy-Endpunkt umgestellt werden statt direkt gegen die Anthropic-API zu fetchen), falls der Copy-Paste-Workflow irgendwann zu langsam wird.
+9. Discord-Server-Pflege (Regeln, Moderation, Aktivitaet): bewusst als eigenes Projekt/eigener Chat gefuehrt, nicht Teil dieser Coding-Session.
 
 ### Stolperfallen
 - **Gedankenstriche schleichen sich leicht ein**, besonders in KI-generierten Texten. Nach jeder Generierung prüfen.
