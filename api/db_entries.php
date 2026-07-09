@@ -29,6 +29,7 @@ function vg_body3(): array {
 function vg_rowToEntry(array $r): array {
     $out = [
         '_id'  => (int)$r['id'],
+        'slug' => $r['slug'] ?: null,
         'name' => $r['name'],
         'sub'  => $r['sub'] ?: null,
         'cat'  => $r['cat'] ?: null,
@@ -43,6 +44,7 @@ function vg_rowToEntry(array $r): array {
 }
 
 if ($method === 'GET') {
+    vg_ensure_entry_slugs($pdo);
     $rows = $pdo->query('SELECT * FROM db_entries ORDER BY section, sort_order, id')->fetchAll();
     $grouped = [];
     foreach ($rows as $r) {

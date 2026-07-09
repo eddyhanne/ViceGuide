@@ -76,6 +76,14 @@ Frueher lief jeder Artikel nur unter einem Hash-Parameter mit Array-Index (`#/ho
 - **Wichtige Detail-Falle:** Das Dokument (egal ob unter `/` oder unter `/artikel/{id}` ausgeliefert) enthaelt ausschliesslich relative Pfade fuer Fonts (`@font-face url('assets/fonts/...')`) und alle `fetch('api/...')`-Aufrufe. Ohne Gegenmassnahme wuerden diese unter `/artikel/{id}/` fehlerhaft relativ zu `/artikel/` statt zur Domainwurzel aufgeloest (Fonts laden nicht, API-Calls landen auf `/artikel/api/...` und schlagen fehl, wodurch nach dem Hydration-Fallback sogar der gerade angezeigte Artikel wieder verschwinden kann). Behoben durch ein einziges `<base href="/">` als erstes Element im `<head>`, macht alle relativen Pfade im gesamten Dokument wieder korrekt, unabhaengig vom aufgerufenen Pfad.
 - **Lokales Testen ohne Apache:** Die Sandbox/lokale Entwicklungsumgebung hat kein Apache verfuegbar, `.htaccess` kann nicht direkt getestet werden. Workaround: ein kleines PHP-Router-Skript fuer `php -S` bauen, das dieselben zwei Rewrite-Regeln nachbildet (`/artikel/{id}` -> `article.php`, `/sitemap.xml` -> `sitemap.php`), damit lokal (inklusive Playwright-Tests fuer Klick-Verhalten, Browser-Zurueck, Mittelklick/Strg-Klick) getestet werden kann. Echte Verifikation der `.htaccess`-Regeln selbst geht nur nach echtem Deploy auf Hostinger.
 
+### Echte Datenbank-Eintrag-URLs (`/charaktere/{slug}`, `/fahrzeuge/{slug}`, ...)
+Analog zu den Artikel-URLs, nur fuer Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitaeten und Orte (Datenbank-Eintraege liefen vorher nur ueber ein Hash-Modal `#/charaktere?e=characters,3`, ohne eigene URL, Suchmaschinen konnten also keinen einzelnen Eintrag indexieren). Deutsches URL-Praefix je section (Mapping in `entry.php`, `sitemap.php` als `VG_SITEMAP_SECTION_PREFIX` und im Frontend als `SECTION_PREFIX`/`SECTION_PREFIX_REV`): `characters`->`charaktere`, `vehicles`->`fahrzeuge`, `weapons`->`waffen`, `wildlife`->`wildtiere`, `gangs`->`gangs`, `radio`->`radio`, `activities`->`aktivitaeten`, `locations`->`orte`.
+- **Stabiler `slug` je Eintrag:** Datenbank-Eintraege hatten bisher nur eine interne Zeilen-ID (`_id`) und den editierbaren `name`, keinen bestaendigen Bezeichner fuer die URL. `api/db.php` legt dafuer eine `slug`-Spalte in `db_entries` an (Migration fuer bestehende Installationen: prueft beim Start, ob die Spalte fehlt, und ergaenzt sie automatisch). `vg_slugify()`/`vg_ensure_entry_slugs()` (ebenfalls `api/db.php`) vergeben fehlenden Eintraegen einmalig einen Slug aus dem `name` (deutsche Umlaute wie bei Artikeln aufgeloest, bei Namensgleichheit **innerhalb derselben section** durchnummeriert, z. B. `jason-duval`, `jason-duval-2`), lassen bereits vergebene Slugs aber unangetastet, auch wenn der Name spaeter bearbeitet wird (genau wie die Artikel-`id`). Laeuft bei jedem `GET` von `api/db_entries.php` und in `sitemap.php` mit, macht aber nichts mehr sobald alle Eintraege einen Slug haben.
+- **`entry.php`** entspricht `article.php`, nur fuer `db_entries` (Abfrage per `section`+`slug`): Meta-Tags (Title, Description, og:*, twitter:*, canonical) und eine vereinfachte, sichtbare Fassung (Name als `h1`, Unterzeile, Kategorie/Quelle-Chip, Felder-Liste, Beschreibung als Absaetze) werden in dieselbe `index.html` injiziert, per echtem `<img>`-Tag fuers Bild (nicht der CSS-Hintergrund, den die volle JS-Ansicht fuer den Bild-Zuschnitt/Zoom nutzt, siehe "Offene Aufgaben"). `openModal()` uebernimmt beim Laden sofort und rendert wie gewohnt vollstaendig nach.
+- **`api/entry_image.php?id={interne_id}`** liefert das Eintragsbild als echte Bild-URL aus, analog zu `api/article_image.php`, nur ueber die numerische `_id` statt den Slug (die ist immer vorhanden, auch bevor/falls kein Slug existiert).
+- **Client-seitig:** `entryHref(secId, slug)` und `entryClick(event, secId, idx)` sind das Pendant zu `articleHref()`/`articleClick()`, genutzt in der Datenbank-Listen-/Kachelansicht (`drawDB()`), den Suchergebnis-Karten und der automatischen Charakter/Entitaeten-Verlinkung im Fliesstext (`linkifyChars()`). `buildHash()`/`syncHash()`/`restoreFromLocation()` wurden ein weiteres Mal erweitert: Prioritaet ist offener Artikel > offenes Datenbank-Modal (echter `/{praefix}/{slug}`-Pfad, wenn ein Slug vorhanden ist) > bisheriges Hash-Schema als Ruecksprung (z. B. falls ein Eintrag ausnahmsweise noch keinen Slug hat).
+- **Bewusst nicht angefasst in dieser Runde:** Die CSS-Hintergrundbilder (`fitStyle()`, `background-image`) fuer Artikel-Titelbild und Datenbank-Fotos in der vollen JS-Ansicht wurden nicht durch echte `<img>`-Tags ersetzt (nur `entry.php`s vereinfachte SSR-Fassung nutzt bereits ein echtes `<img>`). Das war Punkt 2 aus dem SEO-Audit (siehe Offene Aufgaben), bewusst als eigene, separate Aenderung zurueckgestellt, weil die Zoom/Ausschnitt-Logik (`imgfit`) dabei 1:1 nachgebaut werden muss.
+
 ### Guide-/Artikel-Datenmodell (JSON, wie es die API liefert und erwartet)
 ```json
 {
@@ -142,11 +150,13 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
 ├─ index.html           Die komplette, deploybare Seite (direkt editieren)
 ├─ articles.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
 ├─ database.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
-├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px, Fallback wenn ein Artikel kein eigenes Bild hat
+├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px, Fallback wenn ein Artikel/Eintrag kein eigenes Bild hat
+├─ logo.png             Echte Logo-Datei fuers Organization-JSON-LD (og:logo), Logo selbst bleibt zusaetzlich als Base64 in index.html eingebettet
 ├─ robots.txt           Erlaubt allen Bots alles, verweist auf sitemap.xml
-├─ .htaccess            Rewrite-Regeln: /artikel/{id} -> article.php, /sitemap.xml -> sitemap.php
+├─ .htaccess            Rewrite-Regeln: /artikel/{id} -> article.php, /{praefix}/{slug} -> entry.php, /sitemap.xml -> sitemap.php
 ├─ article.php           Serverseitiges Rendering einer echten Artikel-URL (Meta-Tags, Text-Fallback), siehe "Echte Artikel-URLs" oben
-├─ sitemap.php           Dynamische Sitemap direkt aus der Datenbank (Startseite + jeder Artikel), ersetzt die alte statische sitemap.xml
+├─ entry.php             Serverseitiges Rendering einer echten Datenbank-Eintrag-URL, siehe "Echte Datenbank-Eintrag-URLs" oben
+├─ sitemap.php           Dynamische Sitemap direkt aus der Datenbank (Startseite, jeder Artikel, jeder Datenbank-Eintrag), ersetzt die alte statische sitemap.xml
 ├─ google*.html         Google-Search-Console-Verifizierungsdatei, NICHT loeschen, sonst verliert Search Console die Inhaberschafts-Bestaetigung
 ├─ .gitignore           Schliesst api/config.php und lokale *.sqlite aus
 ├─ assets/
@@ -156,12 +166,13 @@ Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Upda
 └─ api/
    ├─ config.sample.php Vorlage fuer Datenbank-Zugangsdaten und Admin-Passwort-Hash
    ├─ config.php         Echte Zugangsdaten, NICHT im Git (siehe .gitignore), liegt nur auf dem Server
-   ├─ db.php             Gemeinsame PDO-Verbindung, legt Tabellen automatisch an (CREATE TABLE IF NOT EXISTS)
+   ├─ db.php             Gemeinsame PDO-Verbindung, legt Tabellen automatisch an (CREATE TABLE IF NOT EXISTS), Slug-Migration/Helper (vg_slugify, vg_ensure_entry_slugs)
    ├─ auth.php           Login/Logout/Status, session-basiert, 90 Tage
    ├─ articles.php       GET/POST/PUT/DELETE fuer Artikel (DELETE loescht auch zugehoerige Kommentare)
-   ├─ db_entries.php     GET/PUT/DELETE fuer Datenbank-Eintraege
+   ├─ db_entries.php     GET/PUT/DELETE fuer Datenbank-Eintraege, GET vergibt fehlende Slugs
    ├─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
-   └─ article_image.php  Liefert das base64-Artikelbild als echte, abrufbare Bild-URL aus (fuer og:image), siehe "Echte Artikel-URLs" oben
+   ├─ article_image.php  Liefert das base64-Artikelbild als echte, abrufbare Bild-URL aus (fuer og:image), siehe "Echte Artikel-URLs" oben
+   └─ entry_image.php    Liefert das base64-Bild eines Datenbank-Eintrags als echte, abrufbare Bild-URL aus, siehe "Echte Datenbank-Eintrag-URLs" oben
 ```
 Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank, nicht als separate Bild-Dateien im Repo (Ausnahme: Fonts, die liegen als echte Dateien in `assets/fonts/`, weil das fuers Caching besser ist und Fonts sich nicht staendig aendern).
 
@@ -246,17 +257,21 @@ php -S localhost:8000 -t .
 - ~~Discord-Server aufsetzen~~ (erledigt, Community-Sektion verlinkt live)
 - ~~Interne Artikel-Verlinkung (`[[id|text]]`)~~ (erledigt, siehe oben, "Verlinkungs-Check" als wiederkehrender Trigger)
 - ~~Echte, einzeln aufloesbare Artikel-URLs (`/artikel/{id}`)~~ (erledigt, siehe "Echte Artikel-URLs" oben: `.htaccess`, `article.php`, `sitemap.php`, `api/article_image.php`, Mittelklick/Strg-Klick fuer neuen Tab funktioniert jetzt echt. Nach Merge nach `main` live auf viceguide.de verifiziert: Seitenquelltext einer echten Artikel-URL zeigt korrekte individuelle Meta-Tags, `og:type=article`, echtes Artikelbild mit korrekten Massen/Mime-Type ueber `api/article_image.php`, `Article`-JSON-LD vorhanden.)
+- ~~Kategorien im Startseiten-Akkordeon starten zugeklappt~~ (erledigt, vorher wurde die erste nicht-leere Kategorie automatisch aufgeklappt, auf dem Handy in der Listenansicht waren dadurch weitere Kategorien erst nach viel Scrollen sichtbar)
+- ~~SEO-Audit durchgefuehrt, Quick-Wins erledigt~~ (erledigt: echtes `<h1>` fuer Artikel-Titel statt `<h2>` (vorher gab es auf der gesamten Seite kein einziges h1), beschreibende Alt-Texte statt `alt=""` auf News-/Mehr-Artikel-Kacheln und Inline-Bildern, `logo.png` als echte Datei ergaenzt (`Organization`-JSON-LD verwies vorher auf eine nicht existierende Datei), `?q=...`-Parameter aus dem `WebSite`-Schema (Sitelinks-Suchbox) loest jetzt tatsaechlich `globalSearch()` aus. Groessere Audit-Punkte (Datenbank-URLs, CSS-Hintergrundbilder als echte `<img>`-Tags) siehe unten.)
+- ~~Echte, einzeln aufloesbare Datenbank-Eintrag-URLs (`/charaktere/{slug}`, `/fahrzeuge/{slug}`, ...)~~ (erledigt, siehe "Echte Datenbank-Eintrag-URLs" oben: `slug`-Spalte plus Migration in `api/db.php`, `entry.php`, `api/entry_image.php`, 8 neue `.htaccess`-Regeln, Sitemap erweitert, Datenbank-Kacheln/Listenzeilen und automatische Entitaeten-Verlinkung auf echte Links umgestellt. Lokal per PHP-Router-Nachbau und Playwright getestet (Klick/Zurueck/Vor/Mittelklick/Direktaufruf/Suche/Editiermodus), noch nicht nach dem Merge live auf viceguide.de verifiziert, das steht als naechster Punkt unten an.)
 
 **Offen, nach Prioritaet:**
-1. **Sitemap in Search Console erneut einreichen**, falls Google die neue dynamische `sitemap.php`-Version noch nicht von selbst erkennt (war zum Testzeitpunkt schon als "Erfolgreich" mit den neuen Artikel-URLs gelistet, sollte sich also von selbst erledigen). Optional: einen Artikel-Link testweise in Discord/WhatsApp posten, um die Bild-/Text-Vorschau auch dort mal zu sehen.
-2. **Discord tiefer einbinden:** "Discord öffnen" zusaetzlich zum bestehenden "Discord beitreten" (direkter Sprung statt erneuter Einladungslink), Discord-Widget (Live-Mitgliederzahl, zurueckgestellt bis der Server aktiver ist), eigenes Server-Icon/Branding auf der Seite zeigen, Bot-Anbindung fuer automatisches Posten neuer Artikel (Kurzfassung + Link) in einen Discord-Kanal ueber Webhook, ausgeloest beim Anlegen eines Artikels in `api/articles.php`.
-3. Grundstock an Artikeln weiter ausbauen (laufend).
-4. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
-5. Rechtliche Absicherung im Blick behalten: "VI" im Logo und der Wortstamm "Vice" sind Markenrecht-Grauzonen (Naehe zu VICE Media, zu Rockstars "Vice City"). DPMA/EUIPO pruefen, wenn es kommerziell ernster wird.
-6. Gewerbeanmeldung pruefen, sobald echte Werbe-/Affiliate-Einnahmen fliessen.
-7. Neue Datenbank-Eintraege komplett neu anlegen (z. B. ein bisher unbekanntes Fahrzeug) geht aktuell noch nicht ueber den Editiermodus, nur bestehende Eintraege bearbeiten. Bei Bedarf nachruesten (weiterer API-Endpunkt plus UI).
-8. Optional: eigener Anthropic-API-Schluessel fuer echte Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` müsste auf einen serverseitigen Proxy-Endpunkt umgestellt werden statt direkt gegen die Anthropic-API zu fetchen), falls der Copy-Paste-Workflow irgendwann zu langsam wird.
-9. Discord-Server-Pflege (Regeln, Moderation, Aktivitaet): bewusst als eigenes Projekt/eigener Chat gefuehrt, nicht Teil dieser Coding-Session.
+1. **Nach dem Merge der Datenbank-URL-Umstellung: einmal live auf viceguide.de pruefen**, analog zum Artikel-URL-Live-Check (Search Console URL-Pruefung/Live-Test fuer einen Charakter/Fahrzeug-Link, Seitenquelltext auf korrekte Meta-Tags checken, Sitemap enthaelt die neuen Eintrag-URLs).
+2. **CSS-Hintergrundbilder durch echte `<img>`-Tags ersetzen** (Punkt 2 aus dem urspruenglichen SEO-Audit): Artikel-Titelbild (`.art-hero`) und alle Datenbank-Fotos in der vollen JS-Ansicht (`fitStyle()`/`cardVisual()`/`modalHead()`) sind CSS-Hintergrundbilder, dadurch fuer Google Bildersuche praktisch unsichtbar und ohne Alt-Text moeglich. Eigene, etwas groessere Aenderung, weil die Zoom/Ausschnitt-Logik (`imgfit`: Zoom + x/y-Position) beim Umstieg auf `<img>` mit `object-fit`/`object-position` 1:1 nachgebaut und getestet werden muss, ohne die Bearbeitungs-Erfahrung im Editiermodus zu verschlechtern.
+3. **Discord tiefer einbinden:** "Discord öffnen" zusaetzlich zum bestehenden "Discord beitreten" (direkter Sprung statt erneuter Einladungslink), Discord-Widget (Live-Mitgliederzahl, zurueckgestellt bis der Server aktiver ist), eigenes Server-Icon/Branding auf der Seite zeigen, Bot-Anbindung fuer automatisches Posten neuer Artikel (Kurzfassung + Link) in einen Discord-Kanal ueber Webhook, ausgeloest beim Anlegen eines Artikels in `api/articles.php`.
+4. Grundstock an Artikeln weiter ausbauen (laufend).
+5. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
+6. Rechtliche Absicherung im Blick behalten: "VI" im Logo und der Wortstamm "Vice" sind Markenrecht-Grauzonen (Naehe zu VICE Media, zu Rockstars "Vice City"). DPMA/EUIPO pruefen, wenn es kommerziell ernster wird.
+7. Gewerbeanmeldung pruefen, sobald echte Werbe-/Affiliate-Einnahmen fliessen.
+8. Neue Datenbank-Eintraege komplett neu anlegen (z. B. ein bisher unbekanntes Fahrzeug) geht aktuell noch nicht ueber den Editiermodus, nur bestehende Eintraege bearbeiten. Bei Bedarf nachruesten (weiterer API-Endpunkt plus UI, inklusive Slug-Vergabe beim Anlegen).
+9. Optional: eigener Anthropic-API-Schluessel fuer echte Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` müsste auf einen serverseitigen Proxy-Endpunkt umgestellt werden statt direkt gegen die Anthropic-API zu fetchen), falls der Copy-Paste-Workflow irgendwann zu langsam wird.
+10. Discord-Server-Pflege (Regeln, Moderation, Aktivitaet): bewusst als eigenes Projekt/eigener Chat gefuehrt, nicht Teil dieser Coding-Session.
 
 ### Stolperfallen
 - **Gedankenstriche schleichen sich leicht ein**, besonders in KI-generierten Texten. Nach jeder Generierung prüfen.

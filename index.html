@@ -516,7 +516,7 @@
   .soon-tag{display:inline-block;font-family:'Space Mono';font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-soft);background:var(--surface-2);border:1px solid var(--line);padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
   /* Kategorie-Listenansicht */
   .dblist{display:flex;flex-direction:column;gap:8px;margin-top:4px}
-  .dbrow{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:.15s}
+  .dbrow{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:.15s;text-decoration:none;color:inherit}
   .dbrow:hover{border-color:var(--accent);transform:translateX(2px)}
   .dbrow-thumb{width:48px;height:48px;border-radius:9px;flex-shrink:0;background-color:#000;background-repeat:no-repeat;display:grid;place-items:center;overflow:hidden}
   .dbrow-thumb.ph{background:var(--surface-2)}
@@ -918,22 +918,29 @@ function drawDB(sec){
       const thumb=d.img?`<span class="dbrow-thumb" style="${fitStyle(d)}"></span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
       const badge=editMode?`<span class="dbrow-edit">✎</span>`:'';
       const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
-      return `<div class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" onclick="cardClick('${sec.id}',${gi})" onkeydown="if(event.key==='Enter'){cardClick('${sec.id}',${gi})}">
-        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${d.cat}</span>${badge}${delBtn}</div>`;
+      const tag=editMode?'div':'a';
+      const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
+      const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
+      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
+      return `<${tag} class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${d.cat}</span>${badge}${delBtn}</${tag}>`;
     }).join('');
   } else {
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
       const editBadge = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
       const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</button>` : '';
-      return `<div class="card ${editMode?'editing':''}" tabindex="0" role="button" onclick="cardClick('${sec.id}',${gi})" onkeydown="if(event.key==='Enter'){cardClick('${sec.id}',${gi})}">
-        ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></div>`;
+      const tag=editMode?'div':'a';
+      const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
+      const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
+      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
+      return `<${tag} class="card ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+        ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></${tag}>`;
     }).join('');
     revealCards();
   }
 }
 function setDbView(v){ dbView=v; const sec=SECTIONS.find(s=>s.id===current); if(sec) renderDB(sec); }
-function cardClick(secId,i){ if(editMode){ openImgEd('db',secId,i); } else { openModal(secId,i); } }
 async function deleteGuide(idx,ev){
   if(ev) ev.stopPropagation();
   const g=GUIDES[idx]; if(!g) return;
@@ -1191,10 +1198,10 @@ function buildEntityAliases(){
     (DB[sec]||[]).forEach((d,i)=>{
       const name=d.name; if(!name||ENT_LINK_SKIP.has(name)) return;
       const key=sec+':'+i;
-      list.push([name,sec,i,key]);
+      list.push([name,sec,i,key,d.slug]);
       if(splitFirst){
         const parts=name.split(' ');
-        if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],sec,i,key]);
+        if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],sec,i,key,d.slug]);
       }
     });
   });
@@ -1217,7 +1224,7 @@ function linkifyChars(text,excludeKey,seen){
     if(!found) return m;
     const key=found[3];
     if(seen){ if(seen.has(key)) return m; seen.add(key); }
-    return `<a class="ent-link" onclick="event.stopPropagation();openModal('${found[1]}',${found[2]})">${m}</a>`;
+    return `<a class="ent-link" href="${entryHref(found[1],found[4])}" onclick="event.stopPropagation();return entryClick(event,'${found[1]}',${found[2]})">${m}</a>`;
   });
 }
 /* Artikel-Verweise im Fliesstext: "[[artikel-id|Anzeigetext]]" wird zu
@@ -1629,6 +1636,16 @@ function articleClick(e,idx){
   openArticle(idx);
   return false;
 }
+/* Deutsches URL-Praefix je Datenbank-Sektion, siehe .htaccess/entry.php/sitemap.php. */
+const SECTION_PREFIX={characters:'charaktere',vehicles:'fahrzeuge',weapons:'waffen',wildlife:'wildtiere',gangs:'gangs',radio:'radio',activities:'aktivitaeten',locations:'orte'};
+const SECTION_PREFIX_REV=Object.fromEntries(Object.entries(SECTION_PREFIX).map(([k,v])=>[v,k]));
+function entryHref(secId,slug){ const p=SECTION_PREFIX[secId]; return (p&&slug) ? ('/'+p+'/'+slug) : '#'; }
+function entryClick(e,secId,idx){
+  if(e.metaKey||e.ctrlKey||e.shiftKey) return true;
+  e.preventDefault();
+  openModal(secId,idx);
+  return false;
+}
 function openArticle(i){
   const g=GUIDES[i]; curArticle=i;
   renderArticleFields(g,'a-');
@@ -1650,13 +1667,13 @@ function globalSearch(q){
   q=q.trim().toLowerCase();
   const results=[];
   GUIDES.forEach((g,i)=>{const hay=(g.title+" "+g.summary+" "+(g.content||[]).join(" ")).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'guide',label:g.title,sub:(g.tag||'News & Gerüchte'),id:g.id,i});});
-  SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=(d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'db',sec:s.id,label:d.name,sub:s.label+' · '+d.cat,i});});});
+  SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=(d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'db',sec:s.id,label:d.name,sub:s.label+' · '+d.cat,slug:d.slug,i});});});
   VIDEOS.forEach((v,i)=>{const hay=(v.title+' '+v.author).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'video',label:v.title,sub:'Videos',i});});
   const cards=results.slice(0,60).map(r=>{
     if(r.type==='guide')return `<a class="card" href="${articleHref(r.id)}" onclick="closeArticle();return articleClick(event,${r.i})"><div class="cv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${r.label.charAt(0)}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;
     if(r.type==='video')return `<div class="card" onclick="go('videos')"><div class="cv ph"><span class="ghost">${secIcon('videos')}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">Videos</span></div></div>`;
     const sec=SECTIONS.find(s=>s.id===r.sec); const d=DB[r.sec][r.i];
-    return `<div class="card" onclick="openModal('${r.sec}',${r.i})">${cardVisual(sec,d)}<div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></div>`;
+    return `<a class="card" href="${entryHref(r.sec,r.slug)}" onclick="return entryClick(event,'${r.sec}',${r.i})">${cardVisual(sec,d)}<div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;
   }).join('');
   closeArticle();
   $('view').innerHTML=`<div class="sec-head"><div class="sec-title">Suche</div><div class="sec-note">${results.length} Treffer für „${q}“ über alle Bereiche.</div></div>`+(results.length?`<div class="grid">${cards}</div>`:`<div class="empty">Nichts gefunden. Probier einen anderen Begriff.</div>`);
@@ -2028,7 +2045,11 @@ function buildHash(){
 function syncHash(){
   if(isRestoringRoute) return;
   const g=($('article').classList.contains('show') && curArticle!=null) ? GUIDES[curArticle] : null;
-  const target=(g && g.id) ? ('/artikel/'+g.id) : ('/#'+buildHash());
+  const m=(!g && curModal && DB[curModal.sec] && DB[curModal.sec][curModal.i]) ? DB[curModal.sec][curModal.i] : null;
+  let target;
+  if(g && g.id) target='/artikel/'+g.id;
+  else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
+  else target='/#'+buildHash();
   const currentFull=location.pathname+location.hash;
   if(currentFull!==target) history.pushState(null,'',target);
 }
@@ -2041,6 +2062,16 @@ function restoreFromLocation(){
       const idx=GUIDES.findIndex(g=>g.id===artMatch[1]);
       if(idx>=0) openArticle(idx);
       return;
+    }
+    const entryMatch=location.pathname.match(/^\/(charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)\/([a-z0-9-]+)\/?$/);
+    if(entryMatch){
+      const secId=SECTION_PREFIX_REV[entryMatch[1]];
+      if(secId){
+        go(secId); closeModal();
+        const idx=(DB[secId]||[]).findIndex(d=>d.slug===entryMatch[2]);
+        if(idx>=0) openModal(secId,idx);
+        return;
+      }
     }
     let h=(location.hash||'').replace(/^#\/?/,'');
     const [view,qs]=h.split('?');

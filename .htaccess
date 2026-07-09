@@ -4,5 +4,15 @@ RewriteEngine On
 # aufbereiten, ohne die sichtbare Adresse zu aendern.
 RewriteRule ^artikel/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]
 
+# Datenbank-Eintrag-URLs (Charaktere, Fahrzeuge, ...), analog zu /artikel.
+RewriteRule ^charaktere/([a-z0-9-]+)/?$ entry.php?section=characters&slug=$1 [L,QSA]
+RewriteRule ^fahrzeuge/([a-z0-9-]+)/?$ entry.php?section=vehicles&slug=$1 [L,QSA]
+RewriteRule ^waffen/([a-z0-9-]+)/?$ entry.php?section=weapons&slug=$1 [L,QSA]
+RewriteRule ^wildtiere/([a-z0-9-]+)/?$ entry.php?section=wildlife&slug=$1 [L,QSA]
+RewriteRule ^gangs/([a-z0-9-]+)/?$ entry.php?section=gangs&slug=$1 [L,QSA]
+RewriteRule ^radio/([a-z0-9-]+)/?$ entry.php?section=radio&slug=$1 [L,QSA]
+RewriteRule ^aktivitaeten/([a-z0-9-]+)/?$ entry.php?section=activities&slug=$1 [L,QSA]
+RewriteRule ^orte/([a-z0-9-]+)/?$ entry.php?section=locations&slug=$1 [L,QSA]
+
 # Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
 RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]

@@ -59,8 +59,13 @@ function vg_db(): array {
             img TEXT,
             imgfit_json TEXT,
             credit TEXT,
+            slug TEXT,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
+        $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
+        if (!in_array('slug', array_column($cols, 'name'), true)) {
+            $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT');
+        }
     } else {
         $pdo->exec('CREATE TABLE IF NOT EXISTS comments (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -105,12 +110,50 @@ function vg_db(): array {
             img MEDIUMTEXT NULL,
             imgfit_json VARCHAR(100) NULL,
             credit VARCHAR(200) NULL,
+            slug VARCHAR(180) NULL,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_section (section)
+            INDEX idx_section (section),
+            INDEX idx_section_slug (section, slug)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
+        if (!$cols) {
+            $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug VARCHAR(180) NULL, ADD INDEX idx_section_slug (section, slug)');
+        }
     }
 
     return [$pdo, $cfg];
+}
+
+/* Slug-Erzeugung, spiegelt slugify() im Frontend (index.html), damit
+   Datenbank-Eintraege dieselbe URL-freundliche Umwandlung bekommen wie
+   Artikel-ids. */
+function vg_slugify(string $s): string {
+    $map = ['ä'=>'ae','ö'=>'oe','ü'=>'ue','Ä'=>'Ae','Ö'=>'Oe','Ü'=>'Ue','ß'=>'ss'];
+    $s = strtr($s, $map);
+    $s = strtolower($s);
+    $s = preg_replace('/[^a-z0-9]+/', '-', $s);
+    $s = trim($s, '-');
+    return mb_substr($s, 0, 180);
+}
+
+/* Vergibt fehlenden Datenbank-Eintraegen einmalig einen festen slug aus dem
+   name-Feld (eindeutig je section), analog zur Artikel-id. Laeuft bei jedem
+   GET mit, macht aber nichts mehr sobald alle Eintraege einen slug haben. */
+function vg_ensure_entry_slugs(PDO $pdo): void {
+    $rows = $pdo->query("SELECT id, section, name FROM db_entries WHERE slug IS NULL OR slug = ''")->fetchAll();
+    if (!$rows) return;
+    $existing = $pdo->query("SELECT section, slug FROM db_entries WHERE slug IS NOT NULL AND slug <> ''")->fetchAll();
+    $taken = [];
+    foreach ($existing as $r) { $taken[$r['section'] . '::' . $r['slug']] = true; }
+
+    $upd = $pdo->prepare('UPDATE db_entries SET slug = ? WHERE id = ?');
+    foreach ($rows as $r) {
+        $base = vg_slugify($r['name']) ?: 'eintrag';
+        $slug = $base; $n = 2;
+        while (!empty($taken[$r['section'] . '::' . $slug])) { $slug = $base . '-' . $n; $n++; }
+        $taken[$r['section'] . '::' . $slug] = true;
+        $upd->execute([$slug, $r['id']]);
+    }
 }
 
 function vg_require_admin(array $cfg): void {
