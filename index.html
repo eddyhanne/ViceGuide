@@ -150,8 +150,7 @@
   /* card grid */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;
-    opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s;text-decoration:none;color:inherit}
-  .card.in{opacity:1;transform:none}
+    transition:box-shadow .2s,border-color .2s,transform .2s;text-decoration:none;color:inherit}
   .card:hover{box-shadow:var(--shadow);border-color:var(--accent);transform:translateY(-5px)}
   .card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   .cv{aspect-ratio:16/10;position:relative;display:grid;place-items:center;overflow:hidden}
@@ -370,8 +369,7 @@
   .vt{font-size:13px;font-weight:600;color:var(--text-soft);padding:7px 13px;border-radius:8px;transition:.15s}
   .vt.on{background:var(--accent);color:var(--btn-text)}
   .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;margin-top:18px}
-  .ncard{display:block;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s,box-shadow .22s,border-color .22s;text-decoration:none;color:inherit}
-  .ncard.in{opacity:1;transform:none}
+  .ncard{display:block;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,border-color .2s,transform .2s;text-decoration:none;color:inherit}
   .ncard:hover{border-color:var(--accent);transform:translateY(-5px);box-shadow:var(--shadow)}
   .ncv{aspect-ratio:16/10;position:relative;display:grid;place-items:center;overflow:hidden}
   .ncv img{width:100%;height:100%;object-fit:cover}
@@ -601,7 +599,7 @@
   .sg-all:hover{filter:brightness(1.05)}
   .sg-empty{padding:15px;color:var(--text-soft);font-size:13px}
 
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.card{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -656,12 +654,12 @@
   <textarea id="draft-json" rows="6" placeholder="JSON von Claude hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
   <button id="draft-btn" onclick="submitDraftJson()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Entwurf prüfen</button>
   <div id="ai-result" style="display:none;margin-top:14px"></div>
-  <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
-    <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">KI-Recherche direkt hier (optional)</div>
-    <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin bitte den Weg oben benutzen.</p>
+  <details style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
+    <summary style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);cursor:pointer">KI-Recherche direkt hier (optional)</summary>
+    <p style="font-size:13.5px;color:var(--text-soft);margin:10px 0">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin bitte den Weg oben benutzen.</p>
     <input id="ai-topic" type="text" placeholder="Thema, z.B. „neuester Trailer“" style="width:100%;font-family:'Inter';font-size:15px;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:12px">
     <button id="ai-btn" onclick="generateGuide()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Recherchieren & erstellen</button>
-  </div>
+  </details>
   <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
     <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
     <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um Bild und Text zu bearbeiten. Änderungen werden sofort dauerhaft gespeichert, keine Datei-Uploads mehr nötig.</p>
@@ -862,7 +860,7 @@ function renderHome(){
       const tag=editMode?'div':'a';
       const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
       const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
-      return `<${tag} class="ncard ${editMode?'editing':''}" data-key="news:${o.x.id}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
+      return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
     }).join('');
   const phase1 = newsView==='cards'
     ? `<div class="news-grid">${cards||'<div class="empty">Noch keine Artikel.</div>'}</div>`
@@ -887,7 +885,6 @@ function renderHome(){
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
    ${phase2}`;
   if(newsView==='list') applyOpenHeights();
-  if(newsView==='cards') revealCards();
 }
 function setNewsView(v){ newsView=v; renderHome(); }
 function gotoRelease(){ current='home'; openCats.add('__rel__'); renderSidebar(); renderView(); setTimeout(()=>{const el=document.getElementById('rel-anchor'); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},70); }
@@ -961,10 +958,9 @@ function drawDB(sec){
       const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
       const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
       const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
-      return `<${tag} class="card ${editMode?'editing':''}" data-key="db:${sec.id}:${d._id}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+      return `<${tag} class="card ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
         ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></${tag}>`;
     }).join('');
-    revealCards();
     initLazyBg();
   }
 }
@@ -1913,7 +1909,6 @@ function globalSearch(q){
   }).join('');
   closeArticle();
   $('view').innerHTML=`<div class="sec-head"><div class="sec-title">Suche</div><div class="sec-note">${results.length} Treffer für „${q}“ über alle Bereiche.</div></div>`+(results.length?`<div class="grid">${cards}</div>`:`<div class="empty">Nichts gefunden. Probier einen anderen Begriff.</div>`);
-  revealCards();
   initLazyBg();
 }
 function searchAll(q){
@@ -1938,30 +1933,6 @@ $('gsearch').addEventListener('input',e=>{gquery=e.target.value;$('gclear').styl
 $('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){ $('suggest').classList.remove('show'); globalSearch(gquery); } else if(e.key==='Escape'){ $('suggest').classList.remove('show'); } });
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
-/* card reveal */
-let io=null;
-/* Merkt sich pro Sitzung, welche Kacheln (per data-key) schon einmal per
-   Eintritts-Animation eingeblendet wurden, analog zu seenBgUrls oben.
-   drawDB()/renderHome() bauen die Kacheln bei jedem Sektionswechsel komplett
-   neu auf (innerHTML=...), ohne diese Markierung wuerde revealCards() beim
-   erneuten Besuch einer schon gesehenen Sektion jedes Mal wieder von vorne
-   die gestaffelte Fade-in-Animation durchlaufen (leeres .card -> opacity:0
-   fuer neue DOM-Elemente), obwohl die Inhalte laengst bekannt sind. Das sah
-   optisch identisch zu einem echten Nachladen aus, obwohl es nur die
-   Animation selbst war, keine Netzwerkaktivitaet. */
-const seenCardKeys=new Set();
-function revealCards(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('.card,.ncard').forEach(c=>c.classList.add('in'));return;}
-  if(io)io.disconnect();
-  io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');const k=en.target.dataset.key;if(k)seenCardKeys.add(k);io.unobserve(en.target);}});},{threshold:.1});
-  let freshIdx=0;
-  document.querySelectorAll('.card:not(.in),.ncard:not(.in)').forEach(c=>{
-    const key=c.dataset.key;
-    if(key && seenCardKeys.has(key)){ c.style.transitionDelay='0ms'; c.classList.add('in'); return; }
-    c.style.transitionDelay=(freshIdx%12*35)+'ms'; freshIdx++;
-    io.observe(c);
-  });
-}
 /* Verzoegertes Laden der Kachel-/Listen-Hintergrundbilder (siehe fitStyleBase()):
    erst wenn eine Kachel in die Naehe des sichtbaren Bereichs kommt (200px
    Vorlauf), wird background-image tatsaechlich gesetzt und damit das Bild
