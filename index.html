@@ -279,6 +279,8 @@
   .disc-inline{margin-top:22px;font-size:13px;color:var(--text-soft);font-style:italic}
 
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#fff;padding:13px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:var(--shadow);z-index:300;transition:.35s;max-width:90vw;text-align:center}
+  .edit-fab{position:fixed;bottom:24px;right:24px;z-index:250;font-weight:700;font-size:14.5px;padding:14px 22px;border-radius:999px;color:var(--btn-text);background:var(--btn-bg);box-shadow:var(--shadow);border:none}
+  @media(max-width:640px){.edit-fab{bottom:16px;right:16px;padding:13px 18px;font-size:13.5px}}
   .toast.show{transform:translateX(-50%) translateY(0)}
 
   footer{border-top:1px solid var(--line);padding:34px 22px;background:var(--bg-2);margin-top:20px}
@@ -703,7 +705,7 @@
     <button class="ie-del" id="ie-paste" onclick="iePaste()">Aus Zwischenspeicher</button>
     <button class="ie-del" id="ie-replace" onclick="iePickFile()" style="display:none">Anderes Bild</button>
     <button class="ie-del" id="ie-del" onclick="ieRemove()" style="display:none">Entfernen</button>
-    <button class="ie-apply" id="ie-apply-btn" onclick="ieApply()">Übernehmen</button>
+    <button class="ie-apply" id="ie-apply-btn" onclick="ieApply()">Speichern</button>
   </div>
 </div></div></div>
 
@@ -714,6 +716,7 @@
 </div></div></div>
 
 <div class="toast" id="toast"></div>
+<button class="edit-fab" id="edit-fab" onclick="toggleEdit()" style="display:none">Fertigstellen</button>
 
 <script>
 const SECTIONS=[{"id": "home", "label": "News & Gerüchte", "icon": "📰", "type": "guides"}, {"id": "characters", "label": "Charaktere", "icon": "🎭", "type": "db"}, {"id": "vehicles", "label": "Fahrzeuge", "icon": "🚗", "type": "db"}, {"id": "weapons", "label": "Waffen", "icon": "🔫", "type": "db"}, {"id": "wildlife", "label": "Wildtiere", "icon": "🐊", "type": "db"}, {"id": "gangs", "label": "Gangs", "icon": "👥", "type": "db"}, {"id": "radio", "label": "Radio", "icon": "📻", "type": "db"}, {"id": "activities", "label": "Aktivitäten", "icon": "🎯", "type": "db"}, {"id": "locations", "label": "Orte", "icon": "📍", "type": "db"}, {"id": "map", "label": "Karte", "icon": "🗺️", "type": "map"}, {"id": "videos", "label": "Videos", "icon": "🎬", "type": "videos"}, {"id": "community", "label": "Community", "icon": "💬", "type": "community"}];
@@ -1023,10 +1026,11 @@ async function toggleEdit(){
      "Fertigstellen" (dieser Knopf) oder durch Abmelden. */
   try{ if(editMode) localStorage.setItem('vg-editmode','1'); else localStorage.removeItem('vg-editmode'); }catch(e){}
   const b=$('edit-btn'); if(b){b.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';}
+  const fab=$('edit-fab'); if(fab) fab.style.display=editMode?'block':'none';
   document.body.classList.toggle('editmode',editMode);
   if(editMode) newsView='cards';
   closeAdmin();
-  toast(editMode?'Editiermodus aktiv: Bild anklicken, um Bild und Text zu bearbeiten.':'Editiermodus aus.');
+  toast(editMode?'Editiermodus aktiv: Bild anklicken, bearbeiten, dann Speichern. "Fertigstellen" beendet nur den Editiermodus.':'Editiermodus aus.');
   if(!gquery.trim()) renderView();
   if($('article').classList.contains('show') && curArticle!=null){ renderComments(curArticle); renderArticleFields(GUIDES[curArticle],'a-'); }
   if($('ov').classList.contains('show') && curModal) openModal(curModal.sec,curModal.i);
@@ -1041,6 +1045,7 @@ function restoreEditMode(){
       editMode=true; newsView='cards';
       document.body.classList.add('editmode');
       const b=$('edit-btn'); if(b) b.textContent='Fertigstellen';
+      const fab=$('edit-fab'); if(fab) fab.style.display='block';
     }
   }catch(e){}
 }
@@ -1262,7 +1267,7 @@ async function ieApply(){
     if(wasGuide && curArticle===savedI){ renderArticleFields(GUIDES[curArticle],'a-'); renderComments(curArticle); }
     if(!wasGuide && curModal && curModal.sec===savedSec && curModal.i===savedI){ openModal(curModal.sec,curModal.i); }
   }catch(e){
-    toast('Speichern fehlgeschlagen. Bitte nochmal auf Übernehmen tippen.');
+    toast('Speichern fehlgeschlagen. Bitte nochmal auf Speichern tippen.');
   }finally{
     vgSavesInFlight--;
     if(btn){ btn.disabled=false; btn.textContent=btnLabel; }
