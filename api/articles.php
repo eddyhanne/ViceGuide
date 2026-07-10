@@ -2,10 +2,13 @@
 /*
  * Artikel-API fuer ViceGuide.
  *
- * GET            -> Liste aller Artikel (wie articles.json, aber aus der Datenbank)
- * POST   {...}   -> neuen Artikel anlegen (Admin), gibt die vergebene id zurueck
- * PUT    {id,...}-> bestehenden Artikel aktualisieren (Admin)
- * DELETE {id}    -> Artikel und seine Kommentare loeschen (Admin)
+ * GET                  -> Liste aller Artikel (wie articles.json, aber aus der Datenbank)
+ * POST   {...}         -> neuen Artikel anlegen (Admin), gibt die vergebene id zurueck
+ * PUT    {id,...}      -> Aenderung als Entwurf speichern (Admin)
+ * POST ?action=publish -> alle offenen Entwuerfe veroeffentlichen (Admin)
+ * POST ?action=discard -> alle offenen Entwuerfe verwerfen, ohne sie zu
+ *                         veroeffentlichen (Admin)
+ * DELETE {id}          -> Artikel und seine Kommentare loeschen (Admin)
  */
 
 require __DIR__ . '/db.php';
@@ -122,6 +125,12 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'publish') {
         if (is_array($d)) vg_writeArticleFields($pdo, $r['id'], $d, true);
     }
     vg_out2(['ok' => true, 'published' => count($rows)]);
+}
+
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
+    vg_require_admin($cfg);
+    $n = $pdo->exec("UPDATE articles SET draft_json = NULL WHERE draft_json IS NOT NULL AND draft_json <> ''");
+    vg_out2(['ok' => true, 'discarded' => $n]);
 }
 
 if ($method === 'POST') {

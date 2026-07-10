@@ -6,6 +6,8 @@
  * PUT {id,...}         -> Aenderung als Entwurf speichern (Admin), id ist die
  *                         interne Datenbank-Zeilen-ID (_id im GET-Ergebnis)
  * POST ?action=publish -> alle offenen Entwuerfe veroeffentlichen (Admin)
+ * POST ?action=discard -> alle offenen Entwuerfe verwerfen, ohne sie zu
+ *                         veroeffentlichen (Admin)
  * DELETE {id}          -> Eintrag loeschen (Admin)
  */
 
@@ -103,6 +105,12 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'publish') {
         if (is_array($d)) vg_writeEntryFields($pdo, (int)$r['id'], $d, true);
     }
     vg_out3(['ok' => true, 'published' => count($rows)]);
+}
+
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
+    vg_require_admin($cfg);
+    $n = $pdo->exec("UPDATE db_entries SET draft_json = NULL WHERE draft_json IS NOT NULL AND draft_json <> ''");
+    vg_out3(['ok' => true, 'discarded' => $n]);
 }
 
 if ($method === 'PUT') {

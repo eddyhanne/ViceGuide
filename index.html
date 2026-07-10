@@ -279,8 +279,10 @@
   .disc-inline{margin-top:22px;font-size:13px;color:var(--text-soft);font-style:italic}
 
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#fff;padding:13px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:var(--shadow);z-index:300;transition:.35s;max-width:90vw;text-align:center}
-  .edit-fab{position:fixed;bottom:24px;right:24px;z-index:250;font-weight:700;font-size:14.5px;padding:14px 22px;border-radius:999px;color:var(--btn-text);background:var(--btn-bg);box-shadow:var(--shadow);border:none}
-  @media(max-width:640px){.edit-fab{bottom:16px;right:16px;padding:13px 18px;font-size:13.5px}}
+  .edit-fab-row{position:fixed;bottom:24px;right:24px;z-index:250;display:flex;gap:10px}
+  .edit-fab{font-weight:700;font-size:14.5px;padding:14px 22px;border-radius:999px;color:var(--btn-text);background:var(--btn-bg);box-shadow:var(--shadow);border:none}
+  .edit-fab.discard{color:var(--text);background:var(--surface);border:1.5px solid var(--line)}
+  @media(max-width:640px){.edit-fab-row{bottom:16px;right:16px}.edit-fab{padding:13px 18px;font-size:13.5px}}
   .toast.show{transform:translateX(-50%) translateY(0)}
 
   footer{border-top:1px solid var(--line);padding:34px 22px;background:var(--bg-2);margin-top:20px}
@@ -322,7 +324,7 @@
   .art-author{font-weight:700;color:var(--accent)}
   .art-dot{margin:0 7px;color:var(--text-soft)}
   .art-date{color:var(--text-soft)}
-  .art-hero{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;margin-bottom:22px;background-color:#000;background-repeat:no-repeat}
+  .art-hero{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;margin-bottom:22px;background-color:#000;background-repeat:no-repeat}
   .art-hero.editing{outline:2px dashed var(--accent);outline-offset:-2px;cursor:pointer}
   .mhead.editing{outline:2px dashed var(--accent);outline-offset:-2px;cursor:pointer}
   .art-fig{margin:22px 0;position:relative}
@@ -423,6 +425,7 @@
   .tile-del:hover{background:#e0355f}
   /* Bild-Editor */
   .ie-frame{position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--surface-2);border:2px dashed var(--line);margin:12px 0;display:grid;place-items:center;cursor:pointer;user-select:none}
+  .ie-frame.wide{aspect-ratio:16/9}
   .ie-frame.drag{border-color:var(--accent);background:var(--bg-2)}
   .ie-frame img{width:100%;height:100%;display:block}
   .ie-imgbox{position:absolute;inset:0;background-repeat:no-repeat;background-color:#000}
@@ -663,6 +666,7 @@
     <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
     <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um Bild und Text zu bearbeiten. Änderungen werden sofort dauerhaft gespeichert, keine Datei-Uploads mehr nötig.</p>
     <button id="edit-btn" onclick="toggleEdit()" style="width:100%;font-weight:700;font-size:15px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Editiermodus einschalten</button>
+    <button id="discard-btn" onclick="discardDrafts()" style="display:none;width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Entwürfe verwerfen</button>
     <button id="logout-btn" onclick="adminLogout()" style="display:none;width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Abmelden</button>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Optionale Sicherungskopie, für die normale Bearbeitung nicht mehr nötig:</div>
     <button onclick="downloadDB()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">database.json herunterladen</button>
@@ -718,7 +722,10 @@
 </div></div></div>
 
 <div class="toast" id="toast"></div>
-<button class="edit-fab" id="edit-fab" onclick="toggleEdit()" style="display:none">Fertigstellen</button>
+<div class="edit-fab-row">
+  <button class="edit-fab discard" id="edit-fab-discard" onclick="discardDrafts()" style="display:none">Verwerfen</button>
+  <button class="edit-fab" id="edit-fab" onclick="toggleEdit()" style="display:none">Fertigstellen</button>
+</div>
 
 <script>
 const SECTIONS=[{"id": "home", "label": "News & Gerüchte", "icon": "📰", "type": "guides"}, {"id": "characters", "label": "Charaktere", "icon": "🎭", "type": "db"}, {"id": "vehicles", "label": "Fahrzeuge", "icon": "🚗", "type": "db"}, {"id": "weapons", "label": "Waffen", "icon": "🔫", "type": "db"}, {"id": "wildlife", "label": "Wildtiere", "icon": "🐊", "type": "db"}, {"id": "gangs", "label": "Gangs", "icon": "👥", "type": "db"}, {"id": "radio", "label": "Radio", "icon": "📻", "type": "db"}, {"id": "activities", "label": "Aktivitäten", "icon": "🎯", "type": "db"}, {"id": "locations", "label": "Orte", "icon": "📍", "type": "db"}, {"id": "map", "label": "Karte", "icon": "🗺️", "type": "map"}, {"id": "videos", "label": "Videos", "icon": "🎬", "type": "videos"}, {"id": "community", "label": "Community", "icon": "💬", "type": "community"}];
@@ -855,7 +862,7 @@ function renderHome(){
       const tag=editMode?'div':'a';
       const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
       const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
-      return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
+      return `<${tag} class="ncard ${editMode?'editing':''}" data-key="news:${o.x.id}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
     }).join('');
   const phase1 = newsView==='cards'
     ? `<div class="news-grid">${cards||'<div class="empty">Noch keine Artikel.</div>'}</div>`
@@ -954,7 +961,7 @@ function drawDB(sec){
       const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
       const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
       const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
-      return `<${tag} class="card ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+      return `<${tag} class="card ${editMode?'editing':''}" data-key="db:${sec.id}:${d._id}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
         ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></${tag}>`;
     }).join('');
     revealCards();
@@ -1014,7 +1021,21 @@ async function adminLogout(){
   try{ await fetch('api/auth.php',{method:'DELETE'}); }catch(e){}
   isAdmin=false;
   const lb=$('logout-btn'); if(lb) lb.style.display='none';
-  if(editMode) toggleEdit();
+  /* Nicht toggleEdit() aufrufen: die Session ist gerade schon zerstoert, ein
+     darin versuchter publishDrafts()-Request wuerde nur mit 403 fehlschlagen
+     und den Editiermodus faelschlich eingeschaltet lassen. Offene Entwuerfe
+     gehen dabei nicht verloren, sie liegen weiter in der Datenbank und sind
+     nach dem naechsten Login wieder da. */
+  if(editMode){
+    editMode=false;
+    try{ localStorage.removeItem('vg-editmode'); }catch(e){}
+    document.body.classList.remove('editmode');
+    const b=$('edit-btn'); if(b) b.textContent='Editiermodus einschalten';
+    const fab=$('edit-fab'); if(fab) fab.style.display='none';
+    const dbtn=$('discard-btn'); if(dbtn) dbtn.style.display='none';
+    const dfab=$('edit-fab-discard'); if(dfab) dfab.style.display='none';
+    if(!gquery.trim()) renderView();
+  }
   toast('Abgemeldet.');
 }
 /* Veroeffentlicht alle waehrend der Editier-Sitzung gesammelten Entwuerfe
@@ -1051,6 +1072,44 @@ async function publishDrafts(){
     if(fab){ fab.disabled=false; fab.textContent=fabLabel; }
   }
 }
+/* Gegenstueck zu publishDrafts(): verwirft alle waehrend der Editier-Sitzung
+   gesammelten Entwuerfe ersatzlos, ohne sie zu veroeffentlichen. Endgueltig,
+   daher vorher eine Sicherheitsabfrage. Laedt anschliessend GUIDES/DB frisch
+   vom Server (die jetzt wieder den reinen, unveraenderten Live-Stand zeigen),
+   der lokale Zwischenstand mit den verworfenen Entwuerfen darf nicht
+   weiterleben. */
+async function discardDrafts(){
+  if(!confirm('Alle noch nicht veröffentlichten Entwürfe wirklich verwerfen? Das kann nicht rückgängig gemacht werden.')) return;
+  const els=[$('edit-btn'),$('edit-fab'),$('discard-btn'),$('edit-fab-discard')];
+  const labels=els.map(el=>el?el.textContent:'');
+  els.forEach(el=>{ if(el) el.disabled=true; });
+  if(els[2]) els[2].textContent='Verwirft…';
+  if(els[3]) els[3].textContent='Verwirft…';
+  vgSavesInFlight++;
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch('api/articles.php?action=discard',{method:'POST'}),
+      fetch('api/db_entries.php?action=discard',{method:'POST'}),
+    ]);
+    if(r1.status===403||r2.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
+    if(!r1.ok||!r2.ok) throw new Error();
+    editMode=false;
+    try{ localStorage.removeItem('vg-editmode'); }catch(e){}
+    document.body.classList.remove('editmode');
+    if(els[0]) els[0].textContent='Editiermodus einschalten';
+    if(els[1]) els[1].style.display='none';
+    if(els[2]) els[2].style.display='none';
+    if(els[3]) els[3].style.display='none';
+    await loadExternal();
+    closeAdmin();
+    toast('Alle Entwürfe verworfen.');
+  }catch(e){
+    toast('Verwerfen fehlgeschlagen, bitte nochmal versuchen.');
+  }finally{
+    vgSavesInFlight--;
+    els.forEach((el,idx)=>{ if(el){ el.disabled=false; el.textContent=labels[idx]; } });
+  }
+}
 async function toggleEdit(){
   if(!editMode && !isAdmin){
     const ok=await adminLogin();
@@ -1069,6 +1128,8 @@ async function toggleEdit(){
   try{ if(editMode) localStorage.setItem('vg-editmode','1'); else localStorage.removeItem('vg-editmode'); }catch(e){}
   const b=$('edit-btn'); if(b){b.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';}
   const fab=$('edit-fab'); if(fab) fab.style.display=editMode?'block':'none';
+  const dbtn=$('discard-btn'); if(dbtn) dbtn.style.display=editMode?'block':'none';
+  const dfab=$('edit-fab-discard'); if(dfab) dfab.style.display=editMode?'block':'none';
   document.body.classList.toggle('editmode',editMode);
   if(editMode) newsView='cards';
   closeAdmin();
@@ -1088,6 +1149,8 @@ function restoreEditMode(){
       document.body.classList.add('editmode');
       const b=$('edit-btn'); if(b) b.textContent='Fertigstellen';
       const fab=$('edit-fab'); if(fab) fab.style.display='block';
+      const dbtn=$('discard-btn'); if(dbtn) dbtn.style.display='block';
+      const dfab=$('edit-fab-discard'); if(dfab) dfab.style.display='block';
     }
   }catch(e){}
 }
@@ -1138,6 +1201,10 @@ function openImgEd(kind,secId,i){
   ieBuildSearch(name);
   ieRender();
   $('imged').classList.toggle('imgonly', isDraft);
+  /* Artikel-Titelbilder sind 16:9 (.art-hero), Datenbank-Eintraege bleiben
+     16:10 (.cv/.mhead), der Editor-Rahmen muss den passenden Ausschnitt
+     zeigen, sonst weicht der Zuschnitt in der Vorschau vom echten Ergebnis ab. */
+  const frameEl=$('ie-frame'); if(frameEl) frameEl.classList.toggle('wide', kind==='guide'||isDraft);
   if(!isDraft){
     if(kind==='guide'){
       $('ie-name-label').textContent='Titel';
@@ -1873,11 +1940,27 @@ document.addEventListener('click',e=>{ const w=document.querySelector('.searchwr
 
 /* card reveal */
 let io=null;
+/* Merkt sich pro Sitzung, welche Kacheln (per data-key) schon einmal per
+   Eintritts-Animation eingeblendet wurden, analog zu seenBgUrls oben.
+   drawDB()/renderHome() bauen die Kacheln bei jedem Sektionswechsel komplett
+   neu auf (innerHTML=...), ohne diese Markierung wuerde revealCards() beim
+   erneuten Besuch einer schon gesehenen Sektion jedes Mal wieder von vorne
+   die gestaffelte Fade-in-Animation durchlaufen (leeres .card -> opacity:0
+   fuer neue DOM-Elemente), obwohl die Inhalte laengst bekannt sind. Das sah
+   optisch identisch zu einem echten Nachladen aus, obwohl es nur die
+   Animation selbst war, keine Netzwerkaktivitaet. */
+const seenCardKeys=new Set();
 function revealCards(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('.card,.ncard').forEach(c=>c.classList.add('in'));return;}
   if(io)io.disconnect();
-  io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.1});
-  document.querySelectorAll('.card:not(.in),.ncard:not(.in)').forEach((c,idx)=>{c.style.transitionDelay=(idx%12*35)+'ms';io.observe(c);});
+  io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');const k=en.target.dataset.key;if(k)seenCardKeys.add(k);io.unobserve(en.target);}});},{threshold:.1});
+  let freshIdx=0;
+  document.querySelectorAll('.card:not(.in),.ncard:not(.in)').forEach(c=>{
+    const key=c.dataset.key;
+    if(key && seenCardKeys.has(key)){ c.style.transitionDelay='0ms'; c.classList.add('in'); return; }
+    c.style.transitionDelay=(freshIdx%12*35)+'ms'; freshIdx++;
+    io.observe(c);
+  });
 }
 /* Verzoegertes Laden der Kachel-/Listen-Hintergrundbilder (siehe fitStyleBase()):
    erst wenn eine Kachel in die Naehe des sichtbaren Bereichs kommt (200px
