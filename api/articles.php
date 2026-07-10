@@ -33,7 +33,15 @@ function vg_slugify(string $s): string {
     return trim($s, '-') ?: 'artikel';
 }
 
-function vg_rowToArticle(array $r): array {
+/* $full=true liefert das echte Base64-Bild (fuer Backups/Bearbeiten), sonst
+   nur eine schlanke, abrufbare Bild-URL. Grund: die Startseite laedt sonst
+   bei jedem Besuch alle Artikelbilder aller Artikel auf einmal mit (PageSpeed
+   bemaengelte dadurch eine Netzwerklast von ueber 9 MB), obwohl nur wenige
+   Bilder tatsaechlich sichtbar sind. Echtes Bild und Bild-URL funktionieren
+   fuer <img src>/CSS background-image identisch, daher keine Aenderung an der
+   Anzeige-Logik noetig, siehe CLAUDE.md. */
+function vg_rowToArticle(array $r, bool $full = false): array {
+    $hasImg = !empty($r['img']);
     return [
         'id'      => $r['id'],
         'cat'     => $r['cat'],
@@ -44,7 +52,7 @@ function vg_rowToArticle(array $r): array {
         'lead'    => $r['lead'],
         'content' => json_decode($r['content_json'] ?? '[]', true) ?: [],
         'sources' => json_decode($r['sources_json'] ?? '[]', true) ?: [],
-        'img'     => $r['img'] ?: null,
+        'img'     => $hasImg ? ($full ? $r['img'] : ('api/article_image.php?id=' . urlencode($r['id']))) : null,
         'imgfit'  => $r['imgfit_json'] ? json_decode($r['imgfit_json'], true) : null,
         'credit'  => $r['credit'] ?: null,
         'author'  => $r['author'] ?: null,
@@ -52,8 +60,10 @@ function vg_rowToArticle(array $r): array {
 }
 
 if ($method === 'GET') {
+    $full = !empty($_GET['full']);
+    if ($full) vg_require_admin($cfg);
     $rows = $pdo->query('SELECT * FROM articles ORDER BY article_date DESC')->fetchAll();
-    vg_out2(['articles' => array_map('vg_rowToArticle', $rows)]);
+    vg_out2(['articles' => array_map(fn($r) => vg_rowToArticle($r, $full), $rows)]);
 }
 
 if ($method === 'POST') {

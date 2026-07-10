@@ -26,7 +26,11 @@ function vg_body3(): array {
     return is_array($data) ? $data : [];
 }
 
-function vg_rowToEntry(array $r): array {
+/* $full=true liefert das echte Base64-Bild (fuer Backups/Bearbeiten), sonst
+   nur eine schlanke, abrufbare Bild-URL, siehe gleiche Begruendung wie in
+   articles.php (PageSpeed: ueber 9 MB Netzwerklast beim Startseiten-Laden). */
+function vg_rowToEntry(array $r, bool $full = false): array {
+    $hasImg = !empty($r['img']);
     $out = [
         '_id'  => (int)$r['id'],
         'slug' => $r['slug'] ?: null,
@@ -35,7 +39,7 @@ function vg_rowToEntry(array $r): array {
         'cat'  => $r['cat'] ?: null,
         'src'  => $r['src'] ?: null,
         'desc' => $r['description'] ?: null,
-        'img'  => $r['img'] ?: null,
+        'img'  => $hasImg ? ($full ? $r['img'] : ('api/entry_image.php?id=' . (int)$r['id'])) : null,
     ];
     if ($r['fields_json']) $out['fields'] = json_decode($r['fields_json'], true);
     if ($r['imgfit_json']) $out['imgfit'] = json_decode($r['imgfit_json'], true);
@@ -45,10 +49,12 @@ function vg_rowToEntry(array $r): array {
 
 if ($method === 'GET') {
     vg_ensure_entry_slugs($pdo);
+    $full = !empty($_GET['full']);
+    if ($full) vg_require_admin($cfg);
     $rows = $pdo->query('SELECT * FROM db_entries ORDER BY section, sort_order, id')->fetchAll();
     $grouped = [];
     foreach ($rows as $r) {
-        $grouped[$r['section']][] = vg_rowToEntry($r);
+        $grouped[$r['section']][] = vg_rowToEntry($r, $full);
     }
     vg_out3(['sections' => $grouped]);
 }

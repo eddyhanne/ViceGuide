@@ -1010,27 +1010,41 @@ async function toggleEdit(){
   if(!gquery.trim()) renderView();
   if($('article').classList.contains('show') && curArticle!=null) renderComments(curArticle);
 }
-function downloadDB(){
-  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='database.json';
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-  toast('database.json heruntergeladen.');
+/* Laedt beim Herunterladen bewusst nochmal frisch mit ?full=1 (echte
+   Base64-Bilder statt der schlanken Bild-URLs, die GUIDES/DB im normalen
+   Betrieb halten), damit die Sicherungskopie weiterhin portabel ist und
+   ohne die Seite selbst geoeffnet werden kann. */
+async function downloadDB(){
+  try{
+    const r=await fetch('api/db_entries.php?full=1',{cache:'no-store'});
+    if(!r.ok) throw new Error();
+    const data=await r.json();
+    const blob=new Blob([JSON.stringify(data.sections||{},null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='database.json';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    toast('database.json heruntergeladen.');
+  }catch(e){ toast('Herunterladen fehlgeschlagen.'); }
 }
-function downloadArticles(){
-  const blob=new Blob([JSON.stringify(GUIDES,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='articles.json';
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-  toast('articles.json heruntergeladen.');
+async function downloadArticles(){
+  try{
+    const r=await fetch('api/articles.php?full=1',{cache:'no-store'});
+    if(!r.ok) throw new Error();
+    const data=await r.json();
+    const blob=new Blob([JSON.stringify(data.articles||[],null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='articles.json';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    toast('articles.json heruntergeladen.');
+  }catch(e){ toast('Herunterladen fehlgeschlagen.'); }
 }
 /* ---- Bild-Editor (Admin) ---- */
-let ieState=null; let ieMoved=false; // {kind,sec,i,name,img,zoom,x,y,credit}
+let ieState=null; let ieMoved=false; // {kind,sec,i,name,img,imgChanged,zoom,x,y,credit}
 function ieTarget(){ return ieState.kind==='guide' ? GUIDES[ieState.i] : DB[ieState.sec][ieState.i]; }
 function openImgEd(kind,secId,i){
   const isDraft = kind==='draftpreview';
   const d = isDraft ? aiDraft : (kind==='guide' ? GUIDES[i] : DB[secId][i]);
   const f=d.imgfit||{};
   const name = isDraft ? (d.title||'Neuer Artikel') : (kind==='guide' ? d.title : d.name);
-  ieState={kind,sec:secId,i,name,img:d.img||null,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
+  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
   $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
@@ -1117,7 +1131,7 @@ function compressImageFile(file,cb){
 function ieLoadFile(file){
   compressImageFile(file,dataUrl=>{
     if(!dataUrl){ toast('Bitte eine Bilddatei wählen.'); return; }
-    ieState.img=dataUrl; ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender();
+    ieState.img=dataUrl; ieState.imgChanged=true; ieState.zoom=1; ieState.x=50; ieState.y=50; $('ie-zoom').value=1; ieRender();
     const kb=Math.round(dataUrl.length*0.75/1024);
     toast('Bild optimiert (~'+kb+' KB)');
   });
@@ -1137,13 +1151,28 @@ async function iePaste(){
 }
 document.addEventListener('paste',e=>{ if(!ieState)return; const items=e.clipboardData&&e.clipboardData.items; if(!items)return; for(const it of items){ if(it.type&&it.type.startsWith('image/')){ const blob=it.getAsFile(); if(blob){ ieLoadFile(blob); e.preventDefault(); } return; } } });
 function ieZoom(v){ if(!ieState)return; ieState.zoom=parseFloat(v); ieRender(); }
-function ieRemove(){ if(!ieState)return; ieState.img=null; ieRender(); }
+function ieRemove(){ if(!ieState)return; ieState.img=null; ieState.imgChanged=true; ieRender(); }
 async function ieApply(){
   if(!ieState)return;
   const isDraft=ieState.kind==='draftpreview';
   const d=isDraft?aiDraft:ieTarget();
-  if(ieState.img){ d.img=ieState.img; d.imgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)}; const cr=$('ie-credit').value.trim(); if(cr)d.credit=cr; else delete d.credit; }
-  else { delete d.img; delete d.imgfit; }
+  const imgChanged=ieState.imgChanged;
+  const cr=$('ie-credit').value.trim();
+  const newImgfit={zoom:ieState.zoom,x:Math.round(ieState.x),y:Math.round(ieState.y)};
+  /* GUIDES/DB halten im normalen Betrieb nur eine schlanke Bild-URL statt des
+     echten Bildes (siehe api/articles.php, api/db_entries.php). Wurde hier
+     kein neues Bild hochgeladen/entfernt (imgChanged), darf diese URL beim
+     Speichern nicht als "echtes Bild" an den Server geschickt werden, sonst
+     wuerde sie das tatsaechlich gespeicherte Bild ueberschreiben. Zuschnitt
+     (Zoom/Position) kann sich aber auch ohne neuen Upload aendern. */
+  if(imgChanged){
+    if(ieState.img){ d.img=ieState.img; d.imgfit=newImgfit; }
+    else { d.img=null; d.imgfit=null; }
+  } else if(ieState.img){
+    d.imgfit=newImgfit;
+  }
+  if(cr) d.credit=cr; else delete d.credit;
+
   if(isDraft){ closeImgEd(); renderAipvHero(); return; }
   const nameVal=$('ie-t-name').value.trim();
   const subVal=$('ie-t-sub').value.trim();
@@ -1163,9 +1192,13 @@ async function ieApply(){
   try{
     let res;
     if(wasGuide){
-      res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+      const payload={...d};
+      if(!imgChanged) delete payload.img;
+      res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     } else {
-      res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d._id,name:d.name,sub:d.sub,desc:d.desc,img:d.img,imgfit:d.imgfit,credit:d.credit})});
+      const payload={id:d._id,name:d.name,sub:d.sub,desc:d.desc,imgfit:d.imgfit,credit:d.credit};
+      if(imgChanged) payload.img=d.img;
+      res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     }
     if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
     if(!res.ok) throw new Error();
