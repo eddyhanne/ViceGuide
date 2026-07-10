@@ -1754,20 +1754,30 @@ function revealCards(){
    erst wenn eine Kachel in die Naehe des sichtbaren Bereichs kommt (200px
    Vorlauf), wird background-image tatsaechlich gesetzt und damit das Bild
    angefragt. Verhindert, dass beim Wechsel in eine Sektion mit vielen
-   Eintraegen (Charaktere, Wildtiere, ...) alle Bilder gleichzeitig laden. */
+   Eintraegen (Charaktere, Wildtiere, ...) alle Bilder gleichzeitig laden.
+   seenBgUrls merkt sich pro Sitzung, welche Bild-URLs schon einmal gezeigt
+   wurden (der Browser haelt sie dann eh schon im eigenen Cache): drawDB()
+   baut die Kacheln bei jedem Sektionswechsel komplett neu auf, ohne das
+   wuerde die Verzoegerung bei jedem erneuten Besuch einer schon gesehenen
+   Sektion unnoetig nochmal ablaufen, obwohl die Bilder laengst da sind. */
 let lazyBgIO=null;
+const seenBgUrls=new Set();
 function initLazyBg(){
   if(lazyBgIO)lazyBgIO.disconnect();
   lazyBgIO=new IntersectionObserver((es)=>{
     es.forEach(en=>{
       if(en.isIntersecting){
         const el=en.target, url=el.dataset.bg;
-        if(url){ el.style.backgroundImage=`url('${url}')`; el.removeAttribute('data-bg'); }
+        if(url){ el.style.backgroundImage=`url('${url}')`; el.removeAttribute('data-bg'); seenBgUrls.add(url); }
         lazyBgIO.unobserve(el);
       }
     });
   },{rootMargin:'200px'});
-  document.querySelectorAll('.lazy-bg[data-bg]').forEach(el=>lazyBgIO.observe(el));
+  document.querySelectorAll('.lazy-bg[data-bg]').forEach(el=>{
+    const url=el.dataset.bg;
+    if(url && seenBgUrls.has(url)){ el.style.backgroundImage=`url('${url}')`; el.removeAttribute('data-bg'); }
+    else lazyBgIO.observe(el);
+  });
 }
 
 /* Admin / KI */
