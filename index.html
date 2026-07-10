@@ -701,7 +701,7 @@
     <button class="ie-del" id="ie-paste" onclick="iePaste()">Aus Zwischenspeicher</button>
     <button class="ie-del" id="ie-replace" onclick="iePickFile()" style="display:none">Anderes Bild</button>
     <button class="ie-del" id="ie-del" onclick="ieRemove()" style="display:none">Entfernen</button>
-    <button class="ie-apply" onclick="ieApply()">Übernehmen</button>
+    <button class="ie-apply" id="ie-apply-btn" onclick="ieApply()">Übernehmen</button>
   </div>
 </div></div></div>
 
@@ -1045,6 +1045,12 @@ async function downloadArticles(){
 }
 /* ---- Bild-Editor (Admin) ---- */
 let ieState=null; let ieMoved=false; // {kind,sec,i,name,img,imgChanged,zoom,x,y,credit}
+/* Zaehlt laufende Speichervorgaenge (ieApply). Waehrend mindestens einer
+   laeuft, warnt der Browser vor einem Reload/Schliessen der Seite, damit ein
+   noch unterwegs befindlicher PUT-Request nicht mitten im Speichern
+   abgebrochen wird und die Aenderung stillschweigend verloren geht. */
+let vgSavesInFlight=0;
+window.addEventListener('beforeunload',(e)=>{ if(vgSavesInFlight>0){ e.preventDefault(); e.returnValue=''; } });
 function ieTarget(){ return ieState.kind==='guide' ? GUIDES[ieState.i] : DB[ieState.sec][ieState.i]; }
 function openImgEd(kind,secId,i){
   const isDraft = kind==='draftpreview';
@@ -1195,7 +1201,17 @@ async function ieApply(){
     d.sub=subVal;
     d.desc=descVal.trim();
   }
-  closeImgEd(); if(!gquery.trim()) renderView();
+  /* Dialog bleibt waehrend des Speicherns offen, der Knopf zeigt "Speichert...".
+     Grund: schliesst der Dialog sofort (wie frueher), sieht die Aenderung im UI
+     schon "fertig" aus, obwohl der PUT-Request noch unterwegs ist. Ein direkt
+     danach folgendes Reload/Schliessen der Seite kann diesen Request abbrechen,
+     die Aenderung geht dann komplett verloren, ohne dass die Redaktion das
+     bemerkt (der Erfolgstoast erscheint ja erst nach dem Reload gar nicht mehr).
+     vgSavesInFlight zaehlt zusaetzlich laufende Speichervorgaenge fuer die
+     beforeunload-Warnung, siehe dort. */
+  const btn=$('ie-apply-btn'); const btnLabel=btn?btn.textContent:'';
+  if(btn){ btn.disabled=true; btn.textContent='Speichert…'; }
+  vgSavesInFlight++;
   try{
     let res;
     if(wasGuide){
@@ -1210,7 +1226,13 @@ async function ieApply(){
     if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
     if(!res.ok) throw new Error();
     toast('Gespeichert.');
-  }catch(e){ toast('Speichern fehlgeschlagen.'); }
+    closeImgEd(); if(!gquery.trim()) renderView();
+  }catch(e){
+    toast('Speichern fehlgeschlagen. Bitte nochmal auf Übernehmen tippen.');
+  }finally{
+    vgSavesInFlight--;
+    if(btn){ btn.disabled=false; btn.textContent=btnLabel; }
+  }
 }
 /* Drag zum Verschieben des Ausschnitts */
 (function(){
