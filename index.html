@@ -828,7 +828,7 @@ function renderHome(){
   const cards=GUIDES.map((x,idx)=>({x,idx})).filter(o=>g1.cats.some(c=>c.id===o.x.cat))
     .sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0))
     .map(o=>{
-      const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
+      const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
       const dt=o.x.date?fmtDShort(o.x.date):'';
       const au=o.x.author||'ViceGuide Redaktion';
       const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
@@ -1458,7 +1458,7 @@ function renderContentBlock(p,editable,seen){
     const parts=p.slice(4).split('|');
     const src=parts[0].trim(); const cr=(parts[1]||'').trim(); const narrow=(parts[2]||'').trim()==='narrow';
     const toggle=editable?`<button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">${narrow?'Volle Breite':'Schmaler'}</button>`:'';
-    return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="${esc(cr||'Artikelbild')}" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
+    return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="${esc(cr||'Artikelbild')}" width="1100" height="688" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
   }
   return `<p>${renderText(p,seen)}</p>`;
 }
@@ -1653,7 +1653,7 @@ function openArticle(i){
   const others=GUIDES.map((x,idx)=>({x,idx})).filter(o=>o.idx!==i);
   others.sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0));
   $('a-more').innerHTML=others.slice(0,6).map(o=>{
-    const vis=o.x.img?`<div class="mcv"><img src="${o.x.img}" alt="${esc(o.x.title)}" loading="lazy"></div>`:`<div class="mcv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
+    const vis=o.x.img?`<div class="mcv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="196" height="110" loading="lazy"></div>`:`<div class="mcv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
     const dt=o.x.date?fmtDShort(o.x.date):'';
     return `<a class="mcard" href="${articleHref(o.x.id)}" onclick="return articleClick(event,${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></a>`;
   }).join('');
