@@ -39,7 +39,12 @@ function vg_slugify(string $s): string {
    bemaengelte dadurch eine Netzwerklast von ueber 9 MB), obwohl nur wenige
    Bilder tatsaechlich sichtbar sind. Echtes Bild und Bild-URL funktionieren
    fuer <img src>/CSS background-image identisch, daher keine Aenderung an der
-   Anzeige-Logik noetig, siehe CLAUDE.md. */
+   Anzeige-Logik noetig, siehe CLAUDE.md.
+   Die URL traegt zusaetzlich &v=<updated_at>, reiner Cache-Buster: der
+   Browser cached api/article_image.php mit langer Lebensdauer (siehe dort),
+   ohne den Versions-Anhang wuerde ein neues Bild unter derselben URL bei
+   Besuchern mit bereits gefuelltem Cache erst nach Ablauf der Cache-Zeit
+   ankommen, obwohl der Server laengst das neue Bild ausliefert. */
 function vg_rowToArticle(array $r, bool $full = false): array {
     $hasImg = !empty($r['img']);
     return [
@@ -52,18 +57,71 @@ function vg_rowToArticle(array $r, bool $full = false): array {
         'lead'    => $r['lead'],
         'content' => json_decode($r['content_json'] ?? '[]', true) ?: [],
         'sources' => json_decode($r['sources_json'] ?? '[]', true) ?: [],
-        'img'     => $hasImg ? ($full ? $r['img'] : ('api/article_image.php?id=' . urlencode($r['id']))) : null,
+        'img'     => $hasImg ? ($full ? $r['img'] : ('api/article_image.php?id=' . urlencode($r['id']) . '&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'imgfit'  => $r['imgfit_json'] ? json_decode($r['imgfit_json'], true) : null,
         'credit'  => $r['credit'] ?: null,
         'author'  => $r['author'] ?: null,
     ];
 }
 
+/* Schreibt ein Feld-Set (im clientseitigen JSON-Format, also z.B. "content"
+   statt "content_json") in die echten, oeffentlichen Spalten eines Artikels.
+   Wird sowohl vom bisherigen direkten Speichern als auch beim Veroeffentlichen
+   eines Entwurfs genutzt (siehe PUT und POST ?action=publish). Nur Felder, die
+   im uebergebenen Array tatsaechlich vorhanden sind, werden angefasst (auch
+   ein expliziter null-Wert, z.B. ein entferntes Bild, wird dabei geschrieben),
+   nicht vorhandene Felder bleiben unveraendert. */
+function vg_writeArticleFields(PDO $pdo, string $id, array $d, bool $clearDraft): void {
+    $fieldsMap = [
+        'cat' => 'cat', 'title' => 'title', 'date' => 'article_date', 'summary' => 'summary',
+        'meta' => 'meta', 'lead' => 'lead', 'credit' => 'credit', 'author' => 'author',
+    ];
+    $sets = []; $vals = [];
+    foreach ($fieldsMap as $jsonKey => $col) {
+        if (array_key_exists($jsonKey, $d)) { $sets[] = "$col = ?"; $vals[] = $d[$jsonKey]; }
+    }
+    if (array_key_exists('content', $d)) { $sets[] = 'content_json = ?'; $vals[] = json_encode($d['content'], JSON_UNESCAPED_UNICODE); }
+    if (array_key_exists('sources', $d)) { $sets[] = 'sources_json = ?'; $vals[] = json_encode($d['sources'], JSON_UNESCAPED_UNICODE); }
+    if (array_key_exists('img', $d)) { $sets[] = 'img = ?'; $vals[] = $d['img']; }
+    if (array_key_exists('imgfit', $d)) { $sets[] = 'imgfit_json = ?'; $vals[] = $d['imgfit'] ? json_encode($d['imgfit'], JSON_UNESCAPED_UNICODE) : null; }
+    if (!$sets) return;
+    $sets[] = 'updated_at = CURRENT_TIMESTAMP';
+    if ($clearDraft) { $sets[] = 'draft_json = NULL'; }
+    $vals[] = $id;
+    $pdo->prepare('UPDATE articles SET ' . implode(', ', $sets) . ' WHERE id = ?')->execute($vals);
+}
+
 if ($method === 'GET') {
     $full = !empty($_GET['full']);
     if ($full) vg_require_admin($cfg);
+    $admin = vg_is_admin();
     $rows = $pdo->query('SELECT * FROM articles ORDER BY article_date DESC')->fetchAll();
-    vg_out2(['articles' => array_map(fn($r) => vg_rowToArticle($r, $full), $rows)]);
+    $out = [];
+    foreach ($rows as $r) {
+        $article = vg_rowToArticle($r, $full);
+        /* Entwurfsmodus: ein eingeloggter Admin sieht seine eigenen, noch
+           nicht veroeffentlichten Aenderungen sofort (auch nach einem
+           Reload), alle anderen Besucher weiterhin nur den zuletzt
+           veroeffentlichten Stand. Das Bild im Entwurf ist absichtlich das
+           echte Base64-Bild, nicht die schlanke URL, es ist ja nur fuer die
+           eigene Vorschau bestimmt. */
+        if ($admin && !empty($r['draft_json'])) {
+            $draft = json_decode($r['draft_json'], true);
+            if (is_array($draft)) { $article = array_merge($article, $draft); $article['_draft'] = true; }
+        }
+        $out[] = $article;
+    }
+    vg_out2(['articles' => $out]);
+}
+
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'publish') {
+    vg_require_admin($cfg);
+    $rows = $pdo->query("SELECT id, draft_json FROM articles WHERE draft_json IS NOT NULL AND draft_json <> ''")->fetchAll();
+    foreach ($rows as $r) {
+        $d = json_decode($r['draft_json'], true);
+        if (is_array($d)) vg_writeArticleFields($pdo, $r['id'], $d, true);
+    }
+    vg_out2(['ok' => true, 'published' => count($rows)]);
 }
 
 if ($method === 'POST') {
@@ -107,29 +165,29 @@ if ($method === 'PUT') {
     $id = trim($b['id'] ?? '');
     if ($id === '') vg_out2(['error' => 'id erforderlich'], 400);
 
-    $check = $pdo->prepare('SELECT COUNT(*) c FROM articles WHERE id = ?');
+    $check = $pdo->prepare('SELECT draft_json FROM articles WHERE id = ?');
     $check->execute([$id]);
-    if ((int)$check->fetch()['c'] === 0) vg_out2(['error' => 'Artikel nicht gefunden'], 404);
+    $row = $check->fetch();
+    if (!$row) vg_out2(['error' => 'Artikel nicht gefunden'], 404);
 
-    $fieldsMap = [
-        'cat' => 'cat', 'title' => 'title', 'date' => 'article_date', 'summary' => 'summary',
-        'meta' => 'meta', 'lead' => 'lead', 'credit' => 'credit', 'author' => 'author',
-    ];
-    $sets = []; $vals = [];
-    foreach ($fieldsMap as $jsonKey => $col) {
-        if (array_key_exists($jsonKey, $b)) { $sets[] = "$col = ?"; $vals[] = $b[$jsonKey]; }
+    /* Schreibt bewusst NICHT mehr direkt in die oeffentlichen Spalten,
+       sondern sammelt Aenderungen in draft_json, bis der Editiermodus mit
+       "Fertigstellen" beendet wird (siehe POST ?action=publish). So bleibt
+       fuer normale Besucher der zuletzt veroeffentlichte Stand sichtbar,
+       waehrend der Admin bereits an mehreren Feldern/Bildern arbeitet. Ein
+       bereits bestehender Entwurf wird dabei Feld fuer Feld ergaenzt, nicht
+       komplett ersetzt, damit mehrere Speichervorgaenge nacheinander (erst
+       Bild, spaeter Text) sich nicht gegenseitig ueberschreiben. */
+    $draft = $row['draft_json'] ? (json_decode($row['draft_json'], true) ?: []) : [];
+    $allowed = ['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit'];
+    foreach ($allowed as $key) {
+        if (array_key_exists($key, $b)) { $draft[$key] = $b[$key]; }
     }
-    if (array_key_exists('content', $b)) { $sets[] = 'content_json = ?'; $vals[] = json_encode($b['content'], JSON_UNESCAPED_UNICODE); }
-    if (array_key_exists('sources', $b)) { $sets[] = 'sources_json = ?'; $vals[] = json_encode($b['sources'], JSON_UNESCAPED_UNICODE); }
-    if (array_key_exists('img', $b)) { $sets[] = 'img = ?'; $vals[] = $b['img']; }
-    if (array_key_exists('imgfit', $b)) { $sets[] = 'imgfit_json = ?'; $vals[] = $b['imgfit'] ? json_encode($b['imgfit'], JSON_UNESCAPED_UNICODE) : null; }
+    if (!$draft) vg_out2(['error' => 'keine Felder zum Aktualisieren']);
 
-    if (!$sets) vg_out2(['error' => 'keine Felder zum Aktualisieren']);
-
-    $vals[] = $id;
-    $stmt = $pdo->prepare('UPDATE articles SET ' . implode(', ', $sets) . ' WHERE id = ?');
-    $stmt->execute($vals);
-    vg_out2(['ok' => true]);
+    $pdo->prepare('UPDATE articles SET draft_json = ? WHERE id = ?')
+        ->execute([json_encode($draft, JSON_UNESCAPED_UNICODE), $id]);
+    vg_out2(['ok' => true, 'draft' => true]);
 }
 
 if ($method === 'DELETE') {

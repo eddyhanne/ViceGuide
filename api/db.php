@@ -43,6 +43,7 @@ function vg_db(): array {
             imgfit_json TEXT,
             credit TEXT,
             author TEXT,
+            draft_json TEXT,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
@@ -60,18 +61,27 @@ function vg_db(): array {
             imgfit_json TEXT,
             credit TEXT,
             slug TEXT,
+            draft_json TEXT,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
-            if (!in_array('slug', array_column($cols, 'name'), true)) {
-                $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT');
-            }
+            $names = array_column($cols, 'name');
+            if (!in_array('slug', $names, true)) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT'); }
+            if (!in_array('draft_json', $names, true)) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN draft_json TEXT'); }
         } catch (Throwable $e) {
             // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
             // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit
             // hinunterreissen, z.B. bei einer Race Condition zwischen zwei
             // gleichzeitigen Requests, die beide die Spalte fehlend sehen.
+        }
+        try {
+            $cols = $pdo->query("PRAGMA table_info(articles)")->fetchAll();
+            if (!in_array('draft_json', array_column($cols, 'name'), true)) {
+                $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json TEXT');
+            }
+        } catch (Throwable $e) {
+            // s.o.
         }
     } else {
         $pdo->exec('CREATE TABLE IF NOT EXISTS comments (
@@ -101,6 +111,7 @@ function vg_db(): array {
             imgfit_json VARCHAR(100) NULL,
             credit VARCHAR(200) NULL,
             author VARCHAR(100) NULL,
+            draft_json MEDIUMTEXT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
@@ -118,6 +129,7 @@ function vg_db(): array {
             imgfit_json VARCHAR(100) NULL,
             credit VARCHAR(200) NULL,
             slug VARCHAR(180) NULL,
+            draft_json MEDIUMTEXT NULL,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_section (section),
             INDEX idx_section_slug (section, slug)
@@ -127,11 +139,19 @@ function vg_db(): array {
             if (!$cols) {
                 $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug VARCHAR(180) NULL, ADD INDEX idx_section_slug (section, slug)');
             }
+            $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'draft_json'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN draft_json MEDIUMTEXT NULL'); }
         } catch (Throwable $e) {
             // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
             // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit
             // hinunterreissen, z.B. bei einer Race Condition zwischen zwei
             // gleichzeitigen Requests, die beide die Spalte fehlend sehen.
+        }
+        try {
+            $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'draft_json'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json MEDIUMTEXT NULL'); }
+        } catch (Throwable $e) {
+            // s.o.
         }
     }
 
@@ -178,6 +198,15 @@ function vg_ensure_entry_slugs(PDO $pdo): void {
         // aufrufenden Endpunkt nicht mit abschiessen, Eintraege kommen dann
         // eben ohne slug zurueck statt den ganzen Request zu crashen.
     }
+}
+
+/* Nicht abbrechende Variante von vg_require_admin(): fuer GET-Antworten, die
+   fuer alle Besucher funktionieren muessen, aber fuer eingeloggte Admins
+   zusaetzlich den eigenen Entwurfsstand einblenden sollen (siehe
+   vg_merge_draft() in articles.php/db_entries.php). */
+function vg_is_admin(): bool {
+    vg_session_start();
+    return !empty($_SESSION['vg_admin']);
 }
 
 function vg_require_admin(array $cfg): void {

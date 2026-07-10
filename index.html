@@ -416,6 +416,8 @@
   .card.editing{outline:2px dashed var(--accent);outline-offset:-2px}
   .card.editing .cv{cursor:pointer}
   .edit-badge{position:absolute;top:8px;right:8px;z-index:4;font-family:'Space Mono';font-size:10px;font-weight:700;background:var(--accent);color:var(--btn-text);padding:4px 8px;border-radius:7px;pointer-events:none}
+  .edit-badge.draft{background:#F7B733;color:#1a1207}
+  .dbrow-edit.draft{color:#F7B733}
   .card{position:relative}
   .tile-del{position:absolute;top:8px;left:8px;z-index:5;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:15px;font-weight:700;line-height:1;border:0;cursor:pointer}
   .tile-del:hover{background:#e0355f}
@@ -787,7 +789,7 @@ function modalHead(sec,d,idx){
      bei Artikeln. */
   const editAttr=editMode?` onclick="openImgEd('db','${sec.id}',${idx})"`:'';
   const editCls=editMode?' editing':'';
-  const badge=editMode?`<span class="edit-badge">✎ Bearbeiten</span>`:'';
+  const badge=editMode?(d._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`):'';
   if(d.img)return `<div class="mhead has-img${editCls}"${editAttr} style="${fitStyle(d)}">${d.credit?`<span class="credit">Quelle: ${d.credit}</span>`:''}${badge}${cl}</div>`;
   return `<div class="mhead ph${editCls}"${editAttr}><span class="ghost big">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span>${badge}${cl}</div>`;
 }
@@ -848,7 +850,7 @@ function renderHome(){
       const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
       const dt=o.x.date?fmtDShort(o.x.date):'';
       const au=o.x.author||'ViceGuide Redaktion';
-      const nb = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
+      const nb = editMode ? (o.x._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
       const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
       const tag=editMode?'div':'a';
       const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
@@ -933,7 +935,7 @@ function drawDB(sec){
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
       const thumb=d.img?`<span class="dbrow-thumb lazy-bg" data-bg="${d.img}" style="${fitStyleBase(d)}"></span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
-      const badge=editMode?`<span class="dbrow-edit">✎</span>`:'';
+      const badge=editMode?(d._draft?`<span class="dbrow-edit draft">✎</span>`:`<span class="dbrow-edit">✎</span>`):'';
       const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
       const tag=editMode?'div':'a';
       const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
@@ -946,7 +948,7 @@ function drawDB(sec){
   } else {
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
-      const editBadge = editMode ? `<span class="edit-badge">✎ Bearbeiten</span>` : '';
+      const editBadge = editMode ? (d._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
       const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</button>` : '';
       const tag=editMode?'div':'a';
       const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
@@ -1015,22 +1017,62 @@ async function adminLogout(){
   if(editMode) toggleEdit();
   toast('Abgemeldet.');
 }
+/* Veroeffentlicht alle waehrend der Editier-Sitzung gesammelten Entwuerfe
+   (siehe api/articles.php und api/db_entries.php, ?action=publish), wird von
+   toggleEdit() beim Ausschalten ("Fertigstellen") aufgerufen, bevor der
+   Editiermodus tatsaechlich endet. Loescht bei Erfolg die lokalen
+   _draft-Markierungen direkt im Speicher (kein erneutes Laden noetig, die
+   angezeigten Werte sind ja schon der zuletzt gespeicherte Entwurfsstand).
+   Gibt false zurueck, wenn etwas schiefging, toggleEdit() bricht dann ab und
+   der Editiermodus bleibt an, damit kein Entwurf unbemerkt haengen bleibt. */
+async function publishDrafts(){
+  const btn=$('edit-btn'), fab=$('edit-fab');
+  const btnLabel=btn?btn.textContent:'', fabLabel=fab?fab.textContent:'';
+  if(btn){ btn.disabled=true; btn.textContent='Veröffentlicht…'; }
+  if(fab){ fab.disabled=true; fab.textContent='Veröffentlicht…'; }
+  vgSavesInFlight++;
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch('api/articles.php?action=publish',{method:'POST'}),
+      fetch('api/db_entries.php?action=publish',{method:'POST'}),
+    ]);
+    if(r1.status===403||r2.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return false; }
+    if(!r1.ok||!r2.ok) throw new Error();
+    GUIDES.forEach(g=>{ delete g._draft; });
+    Object.values(DB).forEach(arr=>arr.forEach(d=>{ delete d._draft; }));
+    toast('Alle Entwürfe veröffentlicht.');
+    return true;
+  }catch(e){
+    toast('Veröffentlichen fehlgeschlagen. Editiermodus bleibt an, bitte nochmal auf Fertigstellen tippen.');
+    return false;
+  }finally{
+    vgSavesInFlight--;
+    if(btn){ btn.disabled=false; btn.textContent=btnLabel; }
+    if(fab){ fab.disabled=false; fab.textContent=fabLabel; }
+  }
+}
 async function toggleEdit(){
   if(!editMode && !isAdmin){
     const ok=await adminLogin();
     if(!ok) return;
   }
+  if(editMode){
+    const ok=await publishDrafts();
+    if(!ok) return;
+  }
   editMode=!editMode;
   /* Editiermodus bleibt ueber Reload hinweg an (vg-editmode in localStorage),
      siehe restoreEditMode() beim Start. Endet erst durch bewussten Klick auf
-     "Fertigstellen" (dieser Knopf) oder durch Abmelden. */
+     "Fertigstellen" (dieser Knopf), der dabei zugleich alle gesammelten
+     Entwuerfe veroeffentlicht (siehe publishDrafts() oben), oder durch
+     Abmelden. */
   try{ if(editMode) localStorage.setItem('vg-editmode','1'); else localStorage.removeItem('vg-editmode'); }catch(e){}
   const b=$('edit-btn'); if(b){b.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';}
   const fab=$('edit-fab'); if(fab) fab.style.display=editMode?'block':'none';
   document.body.classList.toggle('editmode',editMode);
   if(editMode) newsView='cards';
   closeAdmin();
-  toast(editMode?'Editiermodus aktiv: Bild anklicken, bearbeiten, dann Speichern. "Fertigstellen" beendet nur den Editiermodus.':'Editiermodus aus.');
+  toast(editMode?'Editiermodus aktiv: Bild anklicken, bearbeiten, dann Speichern. "Fertigstellen" veröffentlicht alle Entwürfe.':'Editiermodus aus, alle Änderungen sind jetzt live.');
   if(!gquery.trim()) renderView();
   if($('article').classList.contains('show') && curArticle!=null){ renderComments(curArticle); renderArticleFields(GUIDES[curArticle],'a-'); }
   if($('ov').classList.contains('show') && curModal) openModal(curModal.sec,curModal.i);
@@ -1257,7 +1299,13 @@ async function ieApply(){
     }
     if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
     if(!res.ok) throw new Error();
-    toast('Gespeichert.');
+    /* Landet zunaechst nur im Entwurf (siehe api/articles.php,
+       api/db_entries.php), fuer normale Besucher aendert sich noch nichts.
+       d._draft markiert das lokal fuers "Entwurf"-Badge auf der Kachel,
+       publishDrafts() (in toggleEdit(), Klick auf "Fertigstellen") loescht
+       die Markierung wieder, sobald wirklich veroeffentlicht wurde. */
+    d._draft=true;
+    toast('Entwurf gespeichert. Sichtbar für alle erst nach "Fertigstellen".');
     /* Wurde direkt aus einer offenen Detailansicht heraus gespeichert (siehe
        "editing"-Klick auf #a-hero/.mhead), zeigt die Detailansicht sonst noch
        den alten Stand, renderView() rendert nur die dahinterliegende Listen-
@@ -1723,7 +1771,7 @@ function renderArticleFields(g,p){
         hero.style.display='block';
         hero.classList.add('editing');
         hero.onclick=()=>openImgEd('guide',null,curArticle);
-        if(badge) badge.style.display='inline-block';
+        if(badge){ badge.style.display='inline-block'; badge.textContent=g._draft?'✎ Entwurf':'✎ Bearbeiten'; badge.classList.toggle('draft',!!g._draft); }
         if(empty) empty.style.display=g.img?'none':'grid';
       } else {
         hero.classList.remove('editing');
