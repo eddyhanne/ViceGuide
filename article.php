@@ -24,7 +24,11 @@ $row = $slug !== '' ? $stmt->fetch() : false;
 
 if (!$row) {
     // Unbekannte oder fehlende id: normale App ausliefern, das Routing im
-    // Frontend zeigt dann die Startseite (kein 404-Rums fuer Besucher).
+    // Frontend zeigt dann die Startseite (kein 404-Rums fuer Besucher), aber
+    // mit echtem 404-Statuscode. Ohne den wuerde die Adresse als ganz normale
+    // 200-Seite behandelt (ein "soft 404"), Suchmaschinen werten das negativ
+    // und verschwenden Crawl-Budget auf Adressen ohne echten Inhalt.
+    http_response_code(404);
     readfile(__DIR__ . '/index.html');
     exit;
 }
@@ -150,8 +154,17 @@ $body = [
     '<div class="content" id="a-content"></div>' => '<div class="content" id="a-content">' . vg_plain_content($content) . '</div>',
 ];
 if ($hasImg) {
-    $body['<div class="art-hero" id="a-hero" style="display:none"><span class="credit" id="a-herocredit"></span></div>'] =
-        '<div class="art-hero" id="a-hero" style="display:block;background-image:url(\'' . vg_esc($imgUrl) . '\');background-size:cover;background-position:center"><span class="credit" id="a-herocredit">' . vg_esc($row['credit'] ?: '') . '</span></div>';
+    /* Nur der oeffnende Tag und der (separat verankerte) Credit-Span werden
+       ersetzt, nicht das gesamte Element als ein Stueck: der Hero-Div in
+       index.html traegt inzwischen weitere Kind-Elemente (Editiermodus-Badge,
+       Leer-Hinweis), ein Abgleich des kompletten Element-Strings wuerde bei
+       jeder kuenftigen Aenderung an diesen JS-only-Elementen stillschweigend
+       nicht mehr treffen (str_replace() ohne Fehlermeldung bei keinem
+       Treffer), das Titelbild bliebe dann in der SSR-Fassung unsichtbar. */
+    $body['<div class="art-hero" id="a-hero" style="display:none">'] =
+        '<div class="art-hero" id="a-hero" style="display:block;background-image:url(\'' . vg_esc($imgUrl) . '\');background-size:cover;background-position:center">';
+    $body['<span class="credit" id="a-herocredit"></span>'] =
+        '<span class="credit" id="a-herocredit">' . vg_esc($row['credit'] ?: '') . '</span>';
 }
 if ($sources) {
     $srcHtml = '';

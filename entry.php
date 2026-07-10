@@ -30,6 +30,7 @@ $section = $_GET['section'] ?? '';
 $slug = preg_replace('/[^a-z0-9-]/', '', $_GET['slug'] ?? '');
 
 if (!isset(VG_SECTION_MAP[$section]) || $slug === '') {
+    http_response_code(404);
     readfile(__DIR__ . '/index.html');
     exit;
 }
@@ -42,7 +43,10 @@ $row = $stmt->fetch();
 
 if (!$row) {
     // Unbekannter oder fehlender Eintrag: normale App ausliefern, das
-    // Frontend-Routing zeigt dann die Startseite (kein 404-Rums).
+    // Frontend-Routing zeigt dann die Startseite (kein 404-Rums), aber mit
+    // echtem 404-Statuscode, siehe article.php fuer die Begruendung (soft 404
+    // vermeiden).
+    http_response_code(404);
     readfile(__DIR__ . '/index.html');
     exit;
 }
