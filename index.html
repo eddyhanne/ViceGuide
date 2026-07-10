@@ -624,7 +624,7 @@
       <span class="back" onclick="closeArticle()">← Zurück</span>
       <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
       <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span></div>
-      <div class="art-hero" id="a-hero" style="display:none"><img id="a-hero-img" alt="" style="display:none" onerror="this.parentElement.classList.add('imgfail')"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
+      <div class="art-hero" id="a-hero" style="display:none"><img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add('imgfail')"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
       <p class="lead" id="a-lead"></p>
       <div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>
       <div class="art-toc" id="a-toc" style="display:none"><div class="artbox-h">Direkt zu</div><ul id="a-toc-list"></ul></div>
@@ -793,12 +793,18 @@ function fitImgStyle(d){const f=(d&&d.imgfit)||{};const z=f.zoom||1;const x=(f.x
    sonst natives loading="lazy" (Kacheln/Listen, siehe CLAUDE.md). onerror
    zeigt "Bild nicht geladen" statt eines kaputten Bild-Icons, siehe .imgfail
    im CSS. */
-function imgTag(d,altText,lazy){
+function imgTag(d,altText,lazy,w,h){
   const loadAttr=lazy===false?'':' loading="lazy"';
-  return `<img src="${d.img}" alt="${esc(altText||'')}"${loadAttr} style="${fitImgStyle(d)}" onerror="this.parentElement.classList.add('imgfail')">`;
+  /* width/height sind reine Layout-Hinweise (PageSpeed: "Image elements do
+     not have explicit width and height"), fuers tatsaechliche Aussehen ist
+     ausschliesslich fitImgStyle() zustaendig (absolut positioniert, per
+     imgfit skaliert). Ein plausibles Seitenverhaeltnis reicht, exakte
+     Pixelwerte sind hier nicht noetig. */
+  const sizeAttr=(w&&h)?` width="${w}" height="${h}"`:'';
+  return `<img src="${d.img}" alt="${esc(altText||'')}"${loadAttr}${sizeAttr} style="${fitImgStyle(d)}" onerror="this.parentElement.classList.add('imgfail')">`;
 }
 function cardVisual(sec,d){
-  if(d.img)return `<div class="cv has-img">${imgTag(d,d.name)}${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
+  if(d.img)return `<div class="cv has-img">${imgTag(d,d.name,true,480,300)}${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
   return `<div class="cv ph"><span class="ghost">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span></div>`;
 }
 function modalHead(sec,d,idx){
@@ -810,7 +816,7 @@ function modalHead(sec,d,idx){
   const editAttr=editMode?` onclick="openImgEd('db','${sec.id}',${idx})"`:'';
   const editCls=editMode?' editing':'';
   const badge=editMode?(d._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`):'';
-  if(d.img)return `<div class="mhead has-img${editCls}"${editAttr}>${imgTag(d,d.name,false)}${d.credit?`<span class="credit">Quelle: ${d.credit}</span>`:''}${badge}${cl}</div>`;
+  if(d.img)return `<div class="mhead has-img${editCls}"${editAttr}>${imgTag(d,d.name,false,480,300)}${d.credit?`<span class="credit">Quelle: ${d.credit}</span>`:''}${badge}${cl}</div>`;
   return `<div class="mhead ph${editCls}"${editAttr}><span class="ghost big">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span>${badge}${cl}</div>`;
 }
 
@@ -954,7 +960,7 @@ function drawDB(sec){
   if(dbView==='list'){
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
-      const thumb=d.img?`<span class="dbrow-thumb">${imgTag(d,d.name)}</span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
+      const thumb=d.img?`<span class="dbrow-thumb">${imgTag(d,d.name,true,48,48)}</span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
       const badge=editMode?(d._draft?`<span class="dbrow-edit draft">✎</span>`:`<span class="dbrow-edit">✎</span>`):'';
       const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
       const tag=editMode?'div':'a';
