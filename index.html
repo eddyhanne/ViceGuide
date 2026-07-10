@@ -321,6 +321,8 @@
   .art-dot{margin:0 7px;color:var(--text-soft)}
   .art-date{color:var(--text-soft)}
   .art-hero{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;margin-bottom:22px;background-color:#000;background-repeat:no-repeat}
+  .art-hero.editing{outline:2px dashed var(--accent);outline-offset:-2px;cursor:pointer}
+  .mhead.editing{outline:2px dashed var(--accent);outline-offset:-2px;cursor:pointer}
   .art-fig{margin:22px 0;position:relative}
   .art-fig img{width:100%;border-radius:14px;display:block}
   .art-fig figcaption{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;text-align:center}
@@ -616,7 +618,7 @@
       <span class="back" onclick="closeArticle()">← Zurück</span>
       <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
       <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span></div>
-      <div class="art-hero" id="a-hero" style="display:none"><span class="credit" id="a-herocredit"></span></div>
+      <div class="art-hero" id="a-hero" style="display:none"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
       <p class="lead" id="a-lead"></p>
       <div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>
       <div class="art-toc" id="a-toc" style="display:none"><div class="artbox-h">Direkt zu</div><ul id="a-toc-list"></ul></div>
@@ -774,10 +776,17 @@ function cardVisual(sec,d){
   if(d.img)return `<div class="cv has-img lazy-bg" data-bg="${d.img}" style="${fitStyleBase(d)}">${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
   return `<div class="cv ph"><span class="ghost">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span></div>`;
 }
-function modalHead(sec,d){
-  const cl=`<button class="mclose" onclick="closeModal()">×</button>`;
-  if(d.img)return `<div class="mhead has-img" style="${fitStyle(d)}">${d.credit?`<span class="credit">Quelle: ${d.credit}</span>`:''}${cl}</div>`;
-  return `<div class="mhead ph"><span class="ghost big">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span>${cl}</div>`;
+function modalHead(sec,d,idx){
+  const cl=`<button class="mclose" onclick="event.stopPropagation();closeModal()">×</button>`;
+  /* Im Editiermodus laesst sich der Kopfbereich (Bild) direkt aus der
+     Detailansicht heraus anklicken und oeffnet denselben Bild/Text-Editor
+     wie die Kachel-Uebersicht, siehe renderArticleFields() fuers Pendant
+     bei Artikeln. */
+  const editAttr=editMode?` onclick="openImgEd('db','${sec.id}',${idx})"`:'';
+  const editCls=editMode?' editing':'';
+  const badge=editMode?`<span class="edit-badge">✎ Bearbeiten</span>`:'';
+  if(d.img)return `<div class="mhead has-img${editCls}"${editAttr} style="${fitStyle(d)}">${d.credit?`<span class="credit">Quelle: ${d.credit}</span>`:''}${badge}${cl}</div>`;
+  return `<div class="mhead ph${editCls}"${editAttr}><span class="ghost big">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span>${badge}${cl}</div>`;
 }
 
 /* Sidebar */
@@ -1009,13 +1018,31 @@ async function toggleEdit(){
     if(!ok) return;
   }
   editMode=!editMode;
-  const b=$('edit-btn'); if(b){b.textContent=editMode?'Editiermodus ausschalten':'Editiermodus einschalten';}
+  /* Editiermodus bleibt ueber Reload hinweg an (vg-editmode in localStorage),
+     siehe restoreEditMode() beim Start. Endet erst durch bewussten Klick auf
+     "Fertigstellen" (dieser Knopf) oder durch Abmelden. */
+  try{ if(editMode) localStorage.setItem('vg-editmode','1'); else localStorage.removeItem('vg-editmode'); }catch(e){}
+  const b=$('edit-btn'); if(b){b.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';}
   document.body.classList.toggle('editmode',editMode);
   if(editMode) newsView='cards';
   closeAdmin();
-  toast(editMode?'Editiermodus aktiv: Kachel anklicken, um Bild und Text zu bearbeiten.':'Editiermodus aus.');
+  toast(editMode?'Editiermodus aktiv: Bild anklicken, um Bild und Text zu bearbeiten.':'Editiermodus aus.');
   if(!gquery.trim()) renderView();
-  if($('article').classList.contains('show') && curArticle!=null) renderComments(curArticle);
+  if($('article').classList.contains('show') && curArticle!=null){ renderComments(curArticle); renderArticleFields(GUIDES[curArticle],'a-'); }
+  if($('ov').classList.contains('show') && curModal) openModal(curModal.sec,curModal.i);
+}
+/* Stellt einen ueber localStorage gemerkten Editiermodus nach einem Reload
+   wieder her, aber nur wenn die Admin-Session noch gueltig ist (sonst bliebe
+   ein veraltetes Flag wirkungslos liegen, bis der naechste echte Login das
+   naechste Mal toggleEdit() aufruft und es ueberschreibt). */
+function restoreEditMode(){
+  try{
+    if(isAdmin && localStorage.getItem('vg-editmode')==='1'){
+      editMode=true; newsView='cards';
+      document.body.classList.add('editmode');
+      const b=$('edit-btn'); if(b) b.textContent='Fertigstellen';
+    }
+  }catch(e){}
 }
 /* Laedt beim Herunterladen bewusst nochmal frisch mit ?full=1 (echte
    Base64-Bilder statt der schlanken Bild-URLs, die GUIDES/DB im normalen
@@ -1226,7 +1253,14 @@ async function ieApply(){
     if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
     if(!res.ok) throw new Error();
     toast('Gespeichert.');
+    /* Wurde direkt aus einer offenen Detailansicht heraus gespeichert (siehe
+       "editing"-Klick auf #a-hero/.mhead), zeigt die Detailansicht sonst noch
+       den alten Stand, renderView() rendert nur die dahinterliegende Listen-
+       /Kachelansicht neu, nicht die geoeffnete Artikel-/Modal-Ansicht selbst. */
+    const savedI=ieState.i, savedSec=ieState.sec;
     closeImgEd(); if(!gquery.trim()) renderView();
+    if(wasGuide && curArticle===savedI){ renderArticleFields(GUIDES[curArticle],'a-'); renderComments(curArticle); }
+    if(!wasGuide && curModal && curModal.sec===savedSec && curModal.i===savedI){ openModal(curModal.sec,curModal.i); }
   }catch(e){
     toast('Speichern fehlgeschlagen. Bitte nochmal auf Übernehmen tippen.');
   }finally{
@@ -1330,7 +1364,7 @@ function openModal(secId,i){
   const selfKey=secId+':'+i;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
+  $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h3>${d.name}</h3><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
     <div class="mabout">Beschreibung</div><div class="mdesc">${renderText(d.desc||'',null,selfKey)}</div></div>`;
@@ -1673,6 +1707,26 @@ function renderArticleFields(g,p){
   if(hero){
     if(g.img){hero.style.display='block';hero.style.cssText='display:block;'+fitStyle(g);const cr=$(p+'herocredit');if(cr){cr.textContent=g.credit?('Quelle: '+g.credit):'';cr.style.display=g.credit?'block':'none';}}
     else hero.style.display='none';
+    /* Im Editiermodus laesst sich das Titelbild (und ueber denselben Dialog
+       auch Titel/Teaser/Text) direkt aus der Artikelansicht heraus bearbeiten,
+       ohne erst zurueck zur Kachel-Uebersicht zu muessen. Nur fuer die echte
+       Artikelansicht (p==='a-'), die KI-Entwurfsvorschau (p==='aipv-') hat
+       ihren eigenen, immer aktiven Klick-Handler. */
+    if(p==='a-'){
+      const badge=$(p+'hero-badge'), empty=$(p+'hero-empty');
+      if(editMode){
+        hero.style.display='block';
+        hero.classList.add('editing');
+        hero.onclick=()=>openImgEd('guide',null,curArticle);
+        if(badge) badge.style.display='inline-block';
+        if(empty) empty.style.display=g.img?'none':'grid';
+      } else {
+        hero.classList.remove('editing');
+        hero.onclick=null;
+        if(badge) badge.style.display='none';
+        if(empty) empty.style.display='none';
+      }
+    }
   }
   const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
   const heads=[]; const faqs=[]; const seen=new Set(); const editable=(p==='aipv-');
@@ -2041,6 +2095,7 @@ async function loadExternal(){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
   }
   await checkAdminSession();
+  restoreEditMode();
   if(!gquery.trim())renderView();
 }
 
