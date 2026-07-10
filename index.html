@@ -765,8 +765,13 @@ ICONS.community='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 function secIcon(id){return ICONS[id]||ICONS.home;}
 const SEC_ICON={}; SECTIONS.forEach(s=>SEC_ICON[s.id]=s.icon);
 function fitStyle(d){const f=(d&&d.imgfit)||{};const z=f.zoom||1;const x=(f.x!=null?f.x:50);const y=(f.y!=null?f.y:50);return `background-color:#000;background-image:url('${d.img}');background-repeat:no-repeat;background-position:${x}% ${y}%;background-size:${(z*100)}% auto;`;}
+/* Wie fitStyle(), aber ohne background-image: fuers verzoegerte (lazy) Laden
+   in Kacheln/Listen, siehe initLazyBg(). Position/Groesse/Farbe kosten kein
+   Netzwerk und koennen sofort gesetzt werden, das eigentliche Bild erst,
+   wenn die Kachel tatsaechlich in den sichtbaren Bereich kommt. */
+function fitStyleBase(d){const f=(d&&d.imgfit)||{};const z=f.zoom||1;const x=(f.x!=null?f.x:50);const y=(f.y!=null?f.y:50);return `background-color:#000;background-repeat:no-repeat;background-position:${x}% ${y}%;background-size:${(z*100)}% auto;`;}
 function cardVisual(sec,d){
-  if(d.img)return `<div class="cv has-img" style="${fitStyle(d)}">${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
+  if(d.img)return `<div class="cv has-img lazy-bg" data-bg="${d.img}" style="${fitStyleBase(d)}">${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
   return `<div class="cv ph"><span class="ghost">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span></div>`;
 }
 function modalHead(sec,d){
@@ -915,7 +920,7 @@ function drawDB(sec){
   if(dbView==='list'){
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
-      const thumb=d.img?`<span class="dbrow-thumb" style="${fitStyle(d)}"></span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
+      const thumb=d.img?`<span class="dbrow-thumb lazy-bg" data-bg="${d.img}" style="${fitStyleBase(d)}"></span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
       const badge=editMode?`<span class="dbrow-edit">✎</span>`:'';
       const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
       const tag=editMode?'div':'a';
@@ -925,6 +930,7 @@ function drawDB(sec){
       return `<${tag} class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
         ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${d.cat}</span>${badge}${delBtn}</${tag}>`;
     }).join('');
+    initLazyBg();
   } else {
     grid.innerHTML=list.map(d=>{
       const gi=data.indexOf(d);
@@ -938,6 +944,7 @@ function drawDB(sec){
         ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${d.cat}</span></div></${tag}>`;
     }).join('');
     revealCards();
+    initLazyBg();
   }
 }
 function setDbView(v){ dbView=v; const sec=SECTIONS.find(s=>s.id===current); if(sec) renderDB(sec); }
@@ -1711,6 +1718,7 @@ function globalSearch(q){
   closeArticle();
   $('view').innerHTML=`<div class="sec-head"><div class="sec-title">Suche</div><div class="sec-note">${results.length} Treffer für „${q}“ über alle Bereiche.</div></div>`+(results.length?`<div class="grid">${cards}</div>`:`<div class="empty">Nichts gefunden. Probier einen anderen Begriff.</div>`);
   revealCards();
+  initLazyBg();
 }
 function searchAll(q){
   q=q.trim().toLowerCase(); if(!q)return []; const terms=q.split(/\s+/); const out=[];
@@ -1741,6 +1749,25 @@ function revealCards(){
   if(io)io.disconnect();
   io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.1});
   document.querySelectorAll('.card:not(.in),.ncard:not(.in)').forEach((c,idx)=>{c.style.transitionDelay=(idx%12*35)+'ms';io.observe(c);});
+}
+/* Verzoegertes Laden der Kachel-/Listen-Hintergrundbilder (siehe fitStyleBase()):
+   erst wenn eine Kachel in die Naehe des sichtbaren Bereichs kommt (200px
+   Vorlauf), wird background-image tatsaechlich gesetzt und damit das Bild
+   angefragt. Verhindert, dass beim Wechsel in eine Sektion mit vielen
+   Eintraegen (Charaktere, Wildtiere, ...) alle Bilder gleichzeitig laden. */
+let lazyBgIO=null;
+function initLazyBg(){
+  if(lazyBgIO)lazyBgIO.disconnect();
+  lazyBgIO=new IntersectionObserver((es)=>{
+    es.forEach(en=>{
+      if(en.isIntersecting){
+        const el=en.target, url=el.dataset.bg;
+        if(url){ el.style.backgroundImage=`url('${url}')`; el.removeAttribute('data-bg'); }
+        lazyBgIO.unobserve(el);
+      }
+    });
+  },{rootMargin:'200px'});
+  document.querySelectorAll('.lazy-bg[data-bg]').forEach(el=>lazyBgIO.observe(el));
 }
 
 /* Admin / KI */
