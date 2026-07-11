@@ -1,96 +1,96 @@
-# CLAUDE.md — ViceGuide
+# CLAUDE.md: ViceGuide
 
-> Arbeitsanweisung und Projektgedächtnis für Claude. Diese Datei ist so geschrieben, dass ein Claude auf einem anderen Account, Rechner oder in einem separaten Chat (z. B. einem eigenen Chat nur für Artikel-Erstellung) sofort produktiv weiterarbeiten kann, ohne die bisherige Chat-Historie zu kennen. Alles Wichtige steht hier direkt drin.
+> Arbeitsanweisung und Projektgedächtnis für Claude. So geschrieben, dass ein Claude auf einem anderen Account, Rechner oder in einem separaten Chat sofort produktiv weiterarbeiten kann, ohne die bisherige Historie zu kennen. Alles Wichtige steht hier direkt drin.
+>
+> **Dokumentstruktur des Projekts:**
+> - **CLAUDE.md** (diese Datei): Website-Technik plus die projektweit verbindlichen Grundlagen (Marke, Ton, Faktenblatt).
+> - **SOCIAL.md:** Instagram-Strategie, Algorithmus-Wissen, Captions, Bio, Hashtags.
+> - **TOOLS.md:** Karussell-Standard und Artikelbild-System (der ViceGuide-Generator folgt dort, sobald er fertig ist).
+> - **KANAELE.md:** Übersicht aller externen Kanäle (Instagram, Discord, Reddit, YouTube, TikTok, X) mit Status und Priorität.
+>
+> **Eine Wahrheit pro Thema, an einem Ort.** Marke, Ton und das GTA-6-Faktenblatt sind hier kanonisch und gelten für Website UND Social. Die anderen Dateien verweisen darauf, statt es zu doppeln. Bei Konflikt gewinnt CLAUDE.md. So läuft nichts mehr still auseinander.
 
 ---
 
 ## 0. Wichtigste Regeln zuerst
 
-**Regel 1, keine Gedankenstriche.** Weder "–" (Halbgeviert) noch "—" (Geviert) dürfen irgendwo auftauchen: nicht im Website-Text, nicht im Code, nicht in Commit-Messages, nicht in KI-Prompts, nicht in KI-generierten Artikeln. Ersetze sie durch Komma, Doppelpunkt oder Punkt. Normale Bindestriche in zusammengesetzten Wörtern (z. B. "Schritt-für-Schritt", "Money-Methods") sind erlaubt. Diese Regel gilt ausnahmslos für das gesamte Projekt.
+**Regel 1, keine Gedankenstriche.** Weder "–" (Halbgeviert) noch "—" (Geviert) dürfen irgendwo auftauchen: nicht im Website-Text, nicht im Code, nicht in Commit-Messages, nicht in KI-Prompts, nicht in generierten Artikeln. Ersetze sie durch Komma, Doppelpunkt oder Punkt. Normale Bindestriche in zusammengesetzten Wörtern (z. B. "Schritt-für-Schritt", "Money-Methods") sind erlaubt. Gilt ausnahmslos fürs gesamte Projekt.
 
-**Regel 2, natürlicher Redaktions-Ton, nicht generisch KI-klingend.** Jeder Artikel, jede Beschreibung, jeder Text auf der Seite soll klingen, als hätte ihn ein ausgebildeter Redakteur geschrieben, der sich mit GTA auskennt und Spaß am Thema hat, nicht wie eine austauschbare KI-Zusammenfassung. Konkret heißt das:
+**Regel 2, Ton eines Gaming-Redakteurs, nicht generisch KI-klingend.** Jeder Artikel, jede Beschreibung, jeder Text soll klingen, als hätte ihn ein echter Gaming-Redakteur geschrieben: jemand, der selbst zockt, die Materie kennt, weiß was Gamer wirklich wissen wollen und wie man sie packt und dranhält. Nicht "Redakteur allgemein", sondern ein Gaming-Journalist, von dessen Beitrag ein professioneller Chefredakteur den Text nicht unterscheiden könnte. Konkret:
 - Keine leeren Füllfloskeln ("Es ist wichtig zu beachten, dass...", "Zusammenfassend lässt sich sagen...", "Tauche ein in die Welt von...").
 - Keine übertriebene Marketing-Sprache oder Ausrufezeichen-Enthusiasmus. Sachlich-locker statt reißerisch.
-- Variabler Satzbau statt gleichförmiger Drei-Punkte-Aufzählungsrhythmus in jedem Absatz.
+- Variabler Satzbau statt gleichförmigem Drei-Punkte-Rhythmus in jedem Absatz.
 - Konkrete Fakten und Details statt vager Verallgemeinerungen. Lieber eine spezifische Quelle nennen als "Berichten zufolge".
-- Ein Artikel darf eine eigene Position/Einordnung haben ("wirkt eher wie ein Gerücht, weil..."), das ist genau der USP von ViceGuide gegenüber reinem Leak-Kopieren.
-- Das gilt für alle Texte: Artikel-Inhalte, Teaser, Datenbank-Beschreibungen, Meta-Texte.
+- Ein Artikel darf eine eigene Position und Einordnung haben ("wirkt eher wie ein Gerücht, weil..."), das ist der USP gegenüber reinem Leak-Kopieren.
+- Gilt für alle Texte: Artikel, Teaser, Datenbank-Beschreibungen, Meta-Texte, Captions.
+
+Diese beiden Regeln sind projektweit und stehen über allem anderen.
 
 ---
 
-## 1. Projektzweck, Ziel, Zielgruppe
+## 1. Projektzweck, Marke, Zielgruppe (verbindlich für alle Kanäle)
 
 **ViceGuide** ist ein inoffizielles, deutschsprachiges Fan-Portal rund um **GTA 6 (Grand Theft Auto VI)**. Domain: **viceguide.de**, live und erreichbar.
 
-**Geschäftsidee:** Ein Content-Hub, der als zweites Standbein Einnahmen generieren soll (Nebeneinkommen, langfristiger Aufbau, kein Vollzeit-Ersatz). Monetarisierung geplant über Display-Ads (AdSense, später Premium-Netzwerke) und Affiliate-Marketing (der Betreiber hat beruflichen Hintergrund in Cost-per-Sale und Amazon-Affiliate, das ist der Wettbewerbsvorteil gegenüber typischen Fanseiten). Aktuell (Stand dieser Datei) sind noch keine Ads oder Affiliate-Links live geschaltet.
+### Positionierung (dauerhaft)
+ViceGuide ist die **deutschsprachige GTA-6-Zentrale**, ein komplettes Guide-Portal, das mit dem Spiel mitwächst. Das ist die dauerhafte Identität, nicht die aktuelle Leak-Phase.
 
-**Strategischer Ankerpunkt:** GTA-6-Release am **19. November 2026**. Davor Traffic über News und Leaks aufbauen, danach mit immergrünen In-Game-Guides nachhaltig monetarisieren. News und Leaks bringen Traffic, monetarisieren aber schlecht. Guides nach Release bringen dauerhaften Long-Tail-Umsatz.
+- **Phase 1 (vor Release, jetzt):** News und Updates, Gerüchte und Leaks, Trailer-Analysen, Charaktere und Story, Map und Setting, Community und Infohäppchen.
+- **Phase 2 (ab Release-Day):** täglich frische Guides quer durch alle Bereiche: Online-Modus, Geld verdienen und Money-Methods, Missionen und Walkthroughs, Tipps und Tricks, Secrets und Easter Eggs, Sammelobjekte und Fundorte, Fahrzeuge und Tuning, Waffen und Ausrüstung, Trophäen und Erfolge, Immobilien und Business, Charakter und Anpassung, Anfänger-Guides.
 
-**Zwei-Phasen-Konzept:**
-- **Phase 1 (vor Release, jetzt live):** News und Updates, Gerüchte und Leaks, Trailer-Analysen, Charaktere und Story, Map und Setting, Community und Infohäppchen.
-- **Phase 2 (ab Release-Day, gesperrt bis dahin):** Money Methods, Missionen und Walkthroughs, Fahrzeuge und Fundorte, Waffen, Secrets und Easter Eggs, Online-Modus, Anfänger-Guides.
+**Wichtig für die Außenwahrnehmung, von Anfang an:** Es muss erkennbar sein, dass ViceGuide mehr ist als Trailer-Analysen. Besucher sollen die Seite als dauerhafte Anlaufstelle merken und folgen, nicht als Pre-Release-Leak-Kanal, der nach dem Launch verwaist. Die aktuelle Leak-Phase ist der Einstieg, nicht die Marke.
 
-**Zielgruppe:** Deutschsprachige GTA-6-Fans, die aktuell auf englische Quellen angewiesen sind. USP: Deutschsprachige Einordnung ("Echt oder Fake?") statt blindes Teilen von Leaks, kompakt und ohne Clickbait. Im deutschsprachigen GTA-6-Nischenmarkt gibt es kaum Konkurrenz, das ist eine First-Mover-Position.
+### USP, phasenabhängig
+- **Jetzt (Phase 1):** Einordnung statt blindes Teilen. "Echt oder Fake?" als Hook, solange das Spiel unveröffentlicht ist. Kein Clickbait, keine Fake-Leaks.
+- **Ab Release (Phase 2):** die beste deutschsprachige Guide-Anlaufstelle, täglich frisch, während der Rest auf englische Quellen angewiesen ist. Da liegt der eigentliche, dauerhafte Wert. Im deutschsprachigen GTA-6-Nischenmarkt gibt es kaum Konkurrenz, das ist die First-Mover-Position.
 
-**Rechtlicher Rahmen (fest):** Klarer Fan-Disclaimer auf jeder Seite.
+### Ziel und Zielgruppe
+- **Nordstern:** viceguide.de maximal sichtbar machen und Traffic auf die Seite bringen. Der mit Abstand stärkste Hebel dafür ist **deutsche Google-SEO**, nicht Social (siehe KANAELE.md für die ehrliche Kanal-Rangfolge). Instagram ist Marke und Community, kein Traffic-Motor.
+- **Zielgruppe:** deutschsprachige GTA-6-Fans, die aktuell auf englische Quellen angewiesen sind.
+- **Geschäftsidee:** Content-Hub als zweites Standbein (Nebeneinkommen, langfristiger Aufbau). Monetarisierung geplant über Display-Ads (AdSense, später Premium-Netzwerke) und Affiliate-Marketing (der Betreiber hat beruflichen Hintergrund in Cost-per-Sale und Amazon-Affiliate, das ist der Wettbewerbsvorteil). **Monetarisierung ist bewusst pausiert, bis echter, messbarer Traffic läuft.** Erst Reichweite, dann Umsatz.
+- **Strategischer Ankerpunkt:** Release am **19. November 2026** (Details im Faktenblatt, Abschnitt 8). Davor Traffic über News und Leaks aufbauen, danach mit immergrünen Guides nachhaltig monetarisieren. News bringen Traffic, monetarisieren schlecht. Guides nach Release bringen dauerhaften Long-Tail-Umsatz.
 
-**Bildrichtlinie fuer offizielles Rockstar-/Take-Two-Material (Screenshots, Trailer-Stills, offizielle Artworks):** Erlaubt, wenn das Bild genau das zeigt, worueber der Artikel/die Textstelle konkret spricht (das Bild ist selbst Gegenstand der inhaltlichen Auseinandersetzung, nicht austauschbare Deko), immer mit Quellenangabe ("Quelle: Rockstar Games"). Das stuetzt sich auf das deutsche Zitatrecht (§51 UrhG) und ist durch etablierte deutsche Gaming-Medien wie GameStar/GamePro und PC Games vielfach vorgelebt (z. B. ein Kajak-Screenshot in einem Artikel, der genau ueber diese Kajak-Szene schreibt, oder ein Ultimate-Edition-Screenshot in einem Artikel, der genau dieses Detail im Screenshot bespricht, jeweils mit "Quelle: Rockstar Games" gekennzeichnet). Diese Seiten sind alle werbefinanziert und operieren unter demselben deutschen Recht wie ViceGuide, anders als z. B. GTA BOOM (UK/NZ-Firma, andere Rechtslage, zudem deckt Rockstars eigene Content-Richtlinie explizit nur nicht-kommerzielle Einzelnutzung ab, ausdruecklich nicht "publications").
-**Nicht erlaubt:** Offizielles Material als generisches Deko-/Titelbild bei Themen ohne konkreten inhaltlichen Bezug zum Bild (z. B. Rockstar-Artwork ueber einem Artikel zu Preisen/Releasedatum ohne visuellen Zusammenhang), sowie Marken-Logos (Rockstar-Logo, "VI"-Logo, PlayStation-/Xbox-Logo) als Branding-/Deko-Element. Fuer solche Faelle weiterhin eigene, KI-generierte oder lizenzierte Grafiken nutzen. Die Vice-City-Farbwelt und Stimmung duerfen dabei frei nachgebaut werden (Farben und Verlaeufe sind nicht schuetzbar).
-**Faustregel beim Schreiben:** Erst den Text schreiben, dann pruefen, ob ein bestimmtes offizielles Bild wirklich zu einer konkreten Aussage im Text passt, nur dann nutzen. Im Zweifel eigenes/KI-Material nehmen. Sobald ueber Werbung/Affiliate wirklich nennenswert Geld fliesst, einmal von einem deutschen Medienrecht-Anwalt gegenchecken lassen (siehe Punkt 5/6 in "Offene Aufgaben").
-
-Standard-Disclaimer-Text (wörtlich auf der Seite verwendet):
+### Rechtlicher Rahmen (fest)
+Klarer Fan-Disclaimer auf jeder Seite. Keine offiziellen Rockstar-Bilder oder -Logos. Nur eigene, KI-generierte oder lizenzierte Grafiken. Die Vice-City-Farbwelt und Stimmung dürfen nachgebaut werden (Farben und Verläufe sind nicht schützbar), konkrete Rockstar-Artworks (Key-Art, VI-Logo, Charakter-Illustrationen) nicht. Standard-Disclaimer-Text (wörtlich auf der Seite):
 
 > ViceGuide ist ein inoffizielles, von Fans erstelltes Guide-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.
 
-Impressum und Datenschutzerklärung sind mit echten Betreiberdaten befüllt (Eddy Hanné, Privatperson, kein Gewerbe, Stand dieser Datei). Sobald echte Werbeeinnahmen fließen, mit nachhaltiger Gewinnerzielungsabsicht, wird in der Regel eine Gewerbeanmeldung nötig, unabhängig vom Impressum-Text, das rechtzeitig prüfen.
+Impressum und Datenschutzerklärung sind mit echten Betreiberdaten befüllt (Eddy Hanné, Privatperson, kein Gewerbe, Stand dieser Datei). Sobald echte Werbeeinnahmen mit nachhaltiger Gewinnerzielungsabsicht fließen, wird in der Regel eine Gewerbeanmeldung nötig, das rechtzeitig prüfen. Das "VI"-Element im Logo und der Wortstamm "Vice" (Nähe zu VICE Media und zu Rockstars "Vice City") sind Markenrecht-Grauzonen, je kommerzieller es wird, desto genauer im Blick behalten (DPMA/EUIPO). Bislang nicht geprüft.
 
 ---
 
 ## 2. Tech-Stack, Architektur, Ordnerstruktur
 
 ### Tech-Stack
-- **Frontend:** Eine einzige, in sich geschlossene **HTML-Datei** (`index.html`, nicht `viceguide.html`, kein Build-Skript, kein `build_site.py`, direkt editieren). Kein Framework, kein Bundler. Vanilla HTML, CSS (CSS Custom Properties für Theming), Vanilla JavaScript, alles inline in der einen Datei.
-- **Backend:** Kleine **PHP-Skripte** im Ordner `api/`, laufen direkt auf dem Hostinger-Webspace (PHP ist dort standardmäßig verfügbar, kein extra Setup). Sprechen mit einer **MySQL-Datenbank**, ebenfalls bei Hostinger. Siehe Abschnitt "Backend / API" unten.
-- **Fonts:** **Selbst gehostet**, nicht mehr von Google geladen (DSGVO-Grund). Oswald, Inter, Space Mono, liegen als `.woff2` unter `assets/fonts/` und werden per `@font-face` im `<style>`-Block eingebunden. Oswald und Inter sind Variable Fonts (je eine Datei deckt alle genutzten Schnitte ab), Space Mono liegt als zwei statische Dateien vor (400/700).
-- **Hosting:** Domain viceguide.de bei **Hostinger**, Premium Web Hosting, per Git mit dem GitHub-Repo `eddyhanne/ViceGuide` verbunden (Root ist `public_html`). Deployment: Auto-Deploy ist aktiv, ein Push auf `main` zieht sich automatisch auf den Server.
+- **Frontend:** eine einzige, in sich geschlossene **HTML-Datei** (`index.html`, kein Build-Skript, direkt editieren). Kein Framework, kein Bundler. Vanilla HTML, CSS (Custom Properties für Theming), Vanilla JavaScript, alles inline.
+- **Backend:** kleine **PHP-Skripte** im Ordner `api/`, laufen direkt auf dem Hostinger-Webspace, sprechen mit einer **MySQL-Datenbank** bei Hostinger. Siehe Abschnitt 7.
+- **Fonts:** **selbst gehostet** (DSGVO-Grund, keine Google-Verbindung). **Oswald, Inter, Space Mono**, als `.woff2` unter `assets/fonts/`, per `@font-face` eingebunden. Oswald und Inter sind Variable Fonts (je eine Datei), Space Mono liegt statisch als 400/700 vor. (Hinweis: das sind die Website-Fonts. Das Instagram-Karussell nutzt andere Fonts, siehe TOOLS.md, nicht verwechseln.)
+- **Hosting:** Domain viceguide.de bei **Hostinger** (Premium Web Hosting), per Git mit dem GitHub-Repo `eddyhanne/ViceGuide` verbunden (Root ist `public_html`). Auto-Deploy aktiv, Push auf `main` zieht sich automatisch auf den Server.
 
 ### Architektur
-Die Seite ist eine Single-Page-Anwendung. Sektionen und offene Datenbank-Details laufen weiterhin ueber `location.hash` (`buildHash()`/`restoreFromLocation()`/`syncHash()` im Script, z. B. `#/charaktere?e=characters,3`). Offene Artikel haben seit der URL-Umstellung (siehe unten) eine echte, eigene Pfad-URL statt eines Hash-Parameters: `/artikel/{id}`, per `history.pushState()` gesetzt, kein Reload beim Klick. Reload/direkter Aufruf einer solchen URL, sowie der Browser-Zurueck/Vor-Button, funktionieren in beiden Faellen korrekt (siehe "Echte Artikel-URLs" unten fuer die technischen Details).
+Die Seite nutzt **echte URLs** (z. B. `/artikel/<id>`, `/charaktere/<slug>`, `/fahrzeuge/<slug>`, `/waffen/<slug>`, `/wildtiere/<slug>`, `/gangs/<slug>`, `/radio/<slug>`, `/aktivitaeten/<slug>`, `/orte/<slug>`) statt reinem Hash-Routing. Folgendes ist gegen den echten Code bestätigt (Stand dieser Datei):
 
-**Datenfluss (wichtig, hat sich grundlegend geändert):** Früher lebten alle Inhalte nur in `articles.json`/`database.json`, die manuell hoch- und heruntergeladen wurden. Jetzt ist die **MySQL-Datenbank die Quelle der Wahrheit**. Der Ladevorgang (`loadExternal()`) fragt zuerst `api/articles.php` und `api/db_entries.php` ab, und fällt nur zurück auf die statischen JSON-Dateien, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync-Mechanismus). `articles.json`/`database.json` im Repo sind seitdem nur noch ein eingefrorener Stand von der Migration, keine laufend gepflegte Datenquelle mehr.
+- **`.htaccess`** leitet `/artikel/{id}` intern an `article.php?slug={id}` weiter und die acht Datenbank-Präfixe an `entry.php?section=...&slug=...`, dazu `/sitemap.xml` an `sitemap.php`. Die sichtbare Adresse bleibt dabei unverändert (internes Rewrite, kein Redirect). `.htaccess` setzt außerdem lange Cache-Zeiten (`mod_expires`/`mod_headers`, in `<IfModule>` gekapselt) für `.woff2`-Fonts (1 Jahr) und `.jpg`/`.jpeg`/`.png` (1 Monat), `index.html` bleibt davon unberührt.
+- **`article.php`** liest den Artikel per PDO direkt aus der `articles`-Tabelle, lädt `index.html` als String und ersetzt per gezieltem `str_replace()` nur die `<head>`-Metadaten (Title, Description, og:*, twitter:*, canonical, `Article`-JSON-LD inkl. echter Bildmaße/Mime-Type) sowie den sichtbaren Artikelbereich durch eine vereinfachte Text-Fassung (Zwischenüberschriften, Absätze, FAQ als Frage/Antwort, `[[id|text]]` nur als Klartext, keine Bildergalerie, kein Akkordeon). Kein zweites vollständiges Rendering, Googlebot führt JavaScript zuverlässig aus, für normale Besucher übernimmt `openArticle()` beim Laden sofort und rendert komplett nach.
+- **`entry.php`** ist das Pendant für Datenbank-Einträge (Abfrage per `section` + `slug`), liefert Name als `<h1>`, Unterzeile, Kategorie/Quelle-Chip, Felder-Liste, Beschreibung als Absätze, dazu `Thing`-JSON-LD. `openModal()` übernimmt beim Laden sofort und rendert vollständig nach.
+- **Beide liefern `http_response_code(404)`** für unbekannte Slugs (mit weiterhin freundlichem Inhalt für Besucher, kein Soft-404 für Suchmaschinen).
+- **`api/article_image.php?id={id}`** und **`api/entry_image.php?id={interne_id}`** liefern das jeweilige Bild (in der Datenbank nur als base64-Data-URI gespeichert) als echte, abrufbare Bild-URL aus, nötig weil `og:image` kein `data:`-URI sein kann. Beide setzen `Cache-Control: public, max-age=86400`. Die von `api/articles.php`/`api/db_entries.php` ausgelieferte Bild-URL hängt zusätzlich `&v=<updated_at>` als Cache-Buster an, damit ein neu veröffentlichtes Bild nicht bis zu 24 Stunden im Browser-Cache hängen bleibt.
+- **Client-seitig:** `articleHref(id)` und `entryHref(secId, slug)` liefern die echte Pfad-URL fürs `href`-Attribut, `articleClick()`/`entryClick()` sind die gemeinsamen Klick-Handler auf allen Artikel-/Datenbank-Kacheln und internen Verweisen (normaler Linksklick: `preventDefault()` plus In-App-Navigation ohne Reload; Strg/Cmd/Shift-Klick und Mittelklick: normaler neuer Tab, da echte `<a href>`-Links). `SECTION_PREFIX`/`SECTION_PREFIX_REV` mappen zwischen interner section-id und deutschem URL-Präfix. `restoreFromLocation()` prüft zuerst den Artikel-Pfad, dann den Eintrags-Pfad, bevor sie auf das bisherige Hash-Schema (offene Sektion, `#/charaktere?e=...`) zurückfällt.
+- **`<base href="/">`** ist als erstes Element im `<head>` gesetzt, damit alle relativen Pfade (Fonts, `fetch('api/...')`) unabhängig vom aufgerufenen Pfad (`/`, `/artikel/...`, `/charaktere/...`) korrekt zur Domainwurzel auflösen. Ohne das würden Fonts und API-Calls unter einer Artikel-/Eintrags-URL fehlerhaft relativ zu deren Pfad statt zur Wurzel aufgelöst.
 
-**Hauptbereiche der Seite (`SECTIONS`):** News & Gerüchte (`home`, Typ `guides`), Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten, Orte (alle Typ `db`), Karte (Typ `map`), Videos (Typ `videos`), Community (Typ `community`). Phase-2-Kategorien sind gesperrt dargestellt.
+Die interaktive Navigation innerhalb der Seite läuft weiter über die Single-Page-Logik in `index.html`, die serverseitigen Seiten sind reine SEO-/Vorschau-Fassaden für Crawler und Link-Vorschauen ohne JavaScript.
 
-1. **Startseite / Guides:** Akkordeon-Struktur, zwei Phasen-Gruppen (`GROUPS`: `pre`/`rel`).
-2. **Artikel-Detailseite:** Titel, Lead, Content-Absätze, optionale Quellenliste, Kommentarbereich, Inline-Disclaimer. Charakternamen im Text werden automatisch zu Links auf deren Charakter-Detail verlinkt (siehe `linkifyChars()`).
-3. **Datenbank:** Detail-Modals aus `DB` (Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten, Orte).
-4. **Karte:** Kartenansicht mit Kartenpunkten.
-5. **Radio, Aktivitäten:** eigene Datenbank-Kategorien mit Detail-Modals.
-6. **Videos:** eingebettete YouTube-Videos (nocookie-Modus).
-7. **Community:** Freitextbereich/Hinweise für Besucher.
-8. **Kommentare:** pro Artikel, dauerhaft in der Datenbank, mit Antworten (eine Ebene, mit Zitat der Elternantwort), Upvote/Downvote (ein Vote pro Browser, per `localStorage` gemerkt), Löschen nur im Editiermodus mit Admin-Login.
-9. **Admin-Panel / Redaktion (intern, versteckt):** Overlay, erreichbar über `Shift+Alt+R`, die URL `#redaktion`/`#admin`, oder dreifachen Klick auf einen versteckten Footer-Bereich (`foot-secret`). Für Besucher unsichtbar. Enthält: Claude-Entwurf veröffentlichen (siehe unten), Editiermodus, JSON-Sicherungsexport.
-10. **Editiermodus:** Schalter im Admin-Panel, fragt beim ersten Einschalten pro Browser das Admin-Passwort ab (serverseitig geprüft, Session hält 90 Tage). Danach macht Kachel-Klick den Bild- und Text-Editor auf (`openImgEd()`), Speichern (`ieApply()`) schreibt sofort und dauerhaft in die Datenbank, kein Datei-Umweg mehr.
+**Datenfluss (wichtig):** Die **MySQL-Datenbank ist die Quelle der Wahrheit.** `loadExternal()` fragt zuerst `api/articles.php` und `api/db_entries.php` ab und fällt nur auf die statischen JSON-Dateien zurück, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync). `articles.json`/`database.json` im Repo sind nur ein eingefrorener Migrationsstand, keine gepflegte Datenquelle mehr.
 
-### Echte Artikel-URLs (`/artikel/{id}`) und serverseitiges Rendering
-Frueher lief jeder Artikel nur unter einem Hash-Parameter mit Array-Index (`#/home?a=3`), Google konnte einzelne Artikel dadurch nicht indexieren, und Mittelklick/Strg-Klick fuer einen neuen Tab ging nicht (JS-`onclick` auf `<div>`, kein echter Link). Geloest ueber eine Hybrid-Loesung aus Apache-Rewrite, einem kleinen serverseitigen "Hydration"-Skript und angepasstem Client-Routing, ohne die Single-File-Architektur aufzugeben:
-- **`.htaccess`** leitet `/artikel/{id}` intern an `article.php?slug={id}` weiter (sichtbare Adresse bleibt gleich), und `/sitemap.xml` an `sitemap.php`.
-- **`article.php`** liest den Artikel direkt per PDO aus der `articles`-Tabelle (kein Umweg ueber `api/articles.php`), laedt danach `index.html` als String und ersetzt per gezielten `str_replace()`-Aufrufen nur die `<head>`-Metadaten (Title, Description, og:*, twitter:*, canonical, `Article`-JSON-LD) sowie den sichtbaren Artikel-Bereich durch eine **vereinfachte Text-Fassung** (Ueberschriften, Absaetze, Bulletpoints als einfache Absaetze, FAQ als Frage/Antwort-Absatz, `[[id|text]]` nur als Klartext, keine Bild-Galerie/kein Akkordeon). Zweck: Suchmaschinen-Crawler und Link-Vorschauen (Discord, WhatsApp, X, ...) fuehren kein JavaScript aus, bevor sie Titel/Beschreibung/Bild lesen, kriegen also sofort echte Inhalte. Fuer normale Besucher mit JavaScript ist das unsichtbar, `openArticle()` uebernimmt beim Laden sofort und rendert wie gewohnt vollstaendig (inklusive TOC, FAQ-Akkordeon, Bildergalerie, Verlinkung). **Bewusst keine zweite vollstaendige Rendering-Engine in PHP**, das waere doppelter Pflegeaufwand, Googlebot fuehrt JS zuverlaessig aus.
-- **`api/article_image.php?id={id}`** liefert das Artikelbild (in der Datenbank nur als base64-Data-URI gespeichert) als echte, abrufbare Bild-URL aus (dekodiert die Bytes on-the-fly), noetig weil `og:image` kein `data:`-URI sein kann. Ermittelt zusaetzlich echte Breite/Hoehe/Mime-Type des Bildes (`getimagesizefromstring`) fuer korrekte `og:image:width/height/type`-Meta-Tags in `article.php` (Uploads sind meist WebP, nicht das Default-JPEG des allgemeinen `og-image.jpg`).
-- **`sitemap.php`** ersetzt die alte statische `sitemap.xml` (Datei wurde entfernt), listet dynamisch die Startseite plus jeden Artikel unter seiner echten `/artikel/{id}`-URL, direkt aus der Datenbank.
-- **Client-seitig** (`index.html`): `articleHref(id)` liefert `/artikel/{id}` fuers `href`-Attribut, `articleClick(event, idx)` ist der gemeinsame Klick-Handler auf allen Artikel-Kacheln/Links (Startseiten-Akkordeon, News-Kacheln, "Mehr Artikel", Suchergebnis-Karten, interne `[[id|text]]`-Verweise): bei normalem Linksklick `preventDefault()` und In-App-Navigation (`openArticle(idx)`, kein Reload), bei Strg/Cmd/Shift-Klick (und automatisch bei Mittelklick, da echte `<a href>`-Links) laesst der Browser den Klick unangetastet, oeffnet also ganz normal einen neuen Tab. `buildHash()`/`syncHash()`/`restoreFromLocation()` wurden entsprechend angepasst: ein offener Artikel setzt `history.pushState()` auf `/artikel/{id}` statt einen `a=`-Hash-Parameter, alles andere (Sektion, offenes Datenbank-Modal) bleibt beim bisherigen Hash-Schema. `restoreFromLocation()` prueft zuerst `location.pathname` auf `/^\/artikel\/([a-z0-9-]+)\/?$/`, bevor sie auf die Hash-Logik zurueckfaellt.
-- **Wichtige Detail-Falle:** Das Dokument (egal ob unter `/` oder unter `/artikel/{id}` ausgeliefert) enthaelt ausschliesslich relative Pfade fuer Fonts (`@font-face url('assets/fonts/...')`) und alle `fetch('api/...')`-Aufrufe. Ohne Gegenmassnahme wuerden diese unter `/artikel/{id}/` fehlerhaft relativ zu `/artikel/` statt zur Domainwurzel aufgeloest (Fonts laden nicht, API-Calls landen auf `/artikel/api/...` und schlagen fehl, wodurch nach dem Hydration-Fallback sogar der gerade angezeigte Artikel wieder verschwinden kann). Behoben durch ein einziges `<base href="/">` als erstes Element im `<head>`, macht alle relativen Pfade im gesamten Dokument wieder korrekt, unabhaengig vom aufgerufenen Pfad.
-- **Lokales Testen ohne Apache:** Die Sandbox/lokale Entwicklungsumgebung hat kein Apache verfuegbar, `.htaccess` kann nicht direkt getestet werden. Workaround: ein kleines PHP-Router-Skript fuer `php -S` bauen, das dieselben zwei Rewrite-Regeln nachbildet (`/artikel/{id}` -> `article.php`, `/sitemap.xml` -> `sitemap.php`), damit lokal (inklusive Playwright-Tests fuer Klick-Verhalten, Browser-Zurueck, Mittelklick/Strg-Klick) getestet werden kann. Echte Verifikation der `.htaccess`-Regeln selbst geht nur nach echtem Deploy auf Hostinger.
+**Entwurf/Veröffentlichen-Modell:** Änderungen im Editiermodus (`ieApply()`) landen zunächst in einer `draft_json`-Spalte auf `articles`/`db_entries`, nicht direkt in den öffentlichen Feldern. Nur der eingeloggte Admin sieht seinen eigenen Entwurf (GET merged `draft_json` über die Live-Werte, Antwort trägt `_draft:true`), Besucher sehen weiterhin den zuletzt veröffentlichten Stand. Ein Klick auf "Fertigstellen" ruft `POST ?action=publish` auf (schreibt alle offenen Entwürfe in die echten Spalten, löscht danach `draft_json`), "Verwerfen" ruft `POST ?action=discard` auf (löscht `draft_json` ersatzlos). Siehe Abschnitt 7 für die Endpunkt-Details.
 
-### Echte Datenbank-Eintrag-URLs (`/charaktere/{slug}`, `/fahrzeuge/{slug}`, ...)
-Analog zu den Artikel-URLs, nur fuer Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitaeten und Orte (Datenbank-Eintraege liefen vorher nur ueber ein Hash-Modal `#/charaktere?e=characters,3`, ohne eigene URL, Suchmaschinen konnten also keinen einzelnen Eintrag indexieren). Deutsches URL-Praefix je section (Mapping in `entry.php`, `sitemap.php` als `VG_SITEMAP_SECTION_PREFIX` und im Frontend als `SECTION_PREFIX`/`SECTION_PREFIX_REV`): `characters`->`charaktere`, `vehicles`->`fahrzeuge`, `weapons`->`waffen`, `wildlife`->`wildtiere`, `gangs`->`gangs`, `radio`->`radio`, `activities`->`aktivitaeten`, `locations`->`orte`.
-- **Stabiler `slug` je Eintrag:** Datenbank-Eintraege hatten bisher nur eine interne Zeilen-ID (`_id`) und den editierbaren `name`, keinen bestaendigen Bezeichner fuer die URL. `api/db.php` legt dafuer eine `slug`-Spalte in `db_entries` an (Migration fuer bestehende Installationen: prueft beim Start, ob die Spalte fehlt, und ergaenzt sie automatisch). `vg_slugify()`/`vg_ensure_entry_slugs()` (ebenfalls `api/db.php`) vergeben fehlenden Eintraegen einmalig einen Slug aus dem `name` (deutsche Umlaute wie bei Artikeln aufgeloest, bei Namensgleichheit **innerhalb derselben section** durchnummeriert, z. B. `jason-duval`, `jason-duval-2`), lassen bereits vergebene Slugs aber unangetastet, auch wenn der Name spaeter bearbeitet wird (genau wie die Artikel-`id`). Laeuft bei jedem `GET` von `api/db_entries.php` und in `sitemap.php` mit, macht aber nichts mehr sobald alle Eintraege einen Slug haben.
-- **`entry.php`** entspricht `article.php`, nur fuer `db_entries` (Abfrage per `section`+`slug`): Meta-Tags (Title, Description, og:*, twitter:*, canonical) und eine vereinfachte, sichtbare Fassung (Name als `h1`, Unterzeile, Kategorie/Quelle-Chip, Felder-Liste, Beschreibung als Absaetze) werden in dieselbe `index.html` injiziert, per echtem `<img>`-Tag fuers Bild (nicht der CSS-Hintergrund, den die volle JS-Ansicht fuer den Bild-Zuschnitt/Zoom nutzt, siehe "Offene Aufgaben"). `openModal()` uebernimmt beim Laden sofort und rendert wie gewohnt vollstaendig nach.
-- **`api/entry_image.php?id={interne_id}`** liefert das Eintragsbild als echte Bild-URL aus, analog zu `api/article_image.php`, nur ueber die numerische `_id` statt den Slug (die ist immer vorhanden, auch bevor/falls kein Slug existiert).
-- **Client-seitig:** `entryHref(secId, slug)` und `entryClick(event, secId, idx)` sind das Pendant zu `articleHref()`/`articleClick()`, genutzt in der Datenbank-Listen-/Kachelansicht (`drawDB()`), den Suchergebnis-Karten und der automatischen Charakter/Entitaeten-Verlinkung im Fliesstext (`linkifyChars()`). `buildHash()`/`syncHash()`/`restoreFromLocation()` wurden ein weiteres Mal erweitert: Prioritaet ist offener Artikel > offenes Datenbank-Modal (echter `/{praefix}/{slug}`-Pfad, wenn ein Slug vorhanden ist) > bisheriges Hash-Schema als Ruecksprung (z. B. falls ein Eintrag ausnahmsweise noch keinen Slug hat).
-- **Bewusst nicht angefasst in dieser Runde:** Die CSS-Hintergrundbilder (`fitStyle()`, `background-image`) fuer Artikel-Titelbild und Datenbank-Fotos in der vollen JS-Ansicht wurden nicht durch echte `<img>`-Tags ersetzt (nur `entry.php`s vereinfachte SSR-Fassung nutzt bereits ein echtes `<img>`). Das war Punkt 2 aus dem SEO-Audit (siehe Offene Aufgaben), bewusst als eigene, separate Aenderung zurueckgestellt, weil die Zoom/Ausschnitt-Logik (`imgfit`) dabei 1:1 nachgebaut werden muss.
+**Hauptbereiche (`SECTIONS`):** News und Gerüchte (`home`, Typ `guides`), Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten, Orte (alle Typ `db`), Karte (`map`), Videos (`videos`), Community (`community`). Phase-2-Kategorien sind gesperrt dargestellt.
 
-### Guide-/Artikel-Datenmodell (JSON, wie es die API liefert und erwartet)
+Artikel-Detailseiten haben Titel, Lead, Content-Absätze, optionale Quellen, Kommentare, Inline-Disclaimer. Charakternamen im Text werden automatisch zu Links auf ihr Detail (`linkifyChars()`). Kommentare liegen dauerhaft in der Datenbank, mit einer Antwortebene, Upvote/Downvote (ein Vote pro Browser per `localStorage`), Löschen nur im Editiermodus mit Admin-Login.
+
+**Admin-Panel (intern, versteckt):** Overlay, erreichbar über `Shift+Alt+R`, die URL `#redaktion`/`#admin`, oder dreifachen Klick auf einen versteckten Footer-Bereich (`foot-secret`). Enthält: Claude-Entwurf veröffentlichen, Editiermodus, JSON-Sicherungsexport. Editiermodus fragt beim ersten Einschalten pro Browser das Admin-Passwort ab (serverseitig geprüft, Session 90 Tage), danach öffnet Kachel-Klick den Bild- und Text-Editor (`openImgEd()`), Speichern (`ieApply()`) schreibt in den Entwurf (siehe oben), "Fertigstellen" veröffentlicht dauerhaft in die Datenbank.
+
+### Guide-/Artikel-Datenmodell (JSON, wie die API liefert und erwartet)
 ```json
 {
   "id": "stabiler-slug-aus-dem-titel",
@@ -109,30 +109,23 @@ Analog zu den Artikel-URLs, nur fuer Charaktere, Fahrzeuge, Waffen, Wildtiere, G
   "tldr": ["Kernaussage 1", "Kernaussage 2", "Kernaussage 3"]
 }
 ```
-`cat` ist eine von: `news`, `leaks`, `trailer`, `story`, `map`, `community` (Phase 1) bzw. `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner` (Phase 2, aktuell gesperrt). Es gibt **kein** `tag`-Feld mehr, das sichtbare Label kommt aus `GCAT[cat].name` im Code. `id` wird beim Anlegen einmalig aus dem Titel generiert (Slug) und bleibt danach fix, auch wenn der Titel später bearbeitet wird, damit Kommentare nicht verwaisen. `image_queries` ist optional, nur für die Bildsuche-Vorschläge im Admin-Panel, wird nicht mit gespeichert wenn nicht vorhanden. `date` im Entwurf ist nur ein Platzhalter, das Admin-Panel überschreibt es beim tatsächlichen Veröffentlichen automatisch mit dem echten Zeitpunkt, hier muss also keine Zeit recherchiert oder exakt getroffen werden.
+`cat` ist eine von: `news`, `leaks`, `trailer`, `story`, `map`, `community` (Phase 1) bzw. `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner` (Phase 2, aktuell gesperrt). **Achtung:** die dauerhaft angestrebte Kategorienbreite (Abschnitt 1) ist größer als diese festen `cat`-Werte. Trophäen, Immobilien und Business, Charakter und Anpassung, Sammelobjekte, Tipps und Tricks haben noch keinen eigenen `cat`-Wert. Das ist eine offene Code-Frage (siehe Abschnitt 6), kein Freibrief, im JSON erfundene `cat`-Werte zu nutzen.
 
-**Strukturelemente innerhalb von `content` (bei Bedarf, nicht in jedem Artikel nötig).** Jeder Eintrag im `content`-Array ist normalerweise ein normaler Absatz (String). Zusaetzlich werden folgende Praefixe erkannt und speziell dargestellt:
-- `"### Zwischenüberschrift"` , eigene Zwischenüberschrift im Artikel. Bekommt automatisch eine Anker-ID (aus dem Text generiert) fuers Inhaltsverzeichnis.
-- `"img:https://bild-url|Bildunterschrift"` , weiteres Bild mitten im Artikeltext (Bildunterschrift optional, dann einfach `"img:https://bild-url"`). Optional ein drittes Segment `"img:https://bild-url|Bildunterschrift|narrow"` fuer ein schmaleres, zentriertes Bild statt voller Breite. In der Claude-Entwurfsvorschau laesst sich die Breite direkt per Knopf am Bild umschalten, ohne den Text neu einzufuegen.
-- `"- Ein Punkt"` , Aufzählungspunkt. Mehrere aufeinanderfolgende `"- ..."`-Zeilen ergeben automatisch eine gemeinsame Bulletpoint-Liste.
-- `"faq:Frage?|Antworttext"` , ein aufklappbarer FAQ-Eintrag (Akkordeon). Mehrere aufeinanderfolgende `"faq:..."`-Zeilen ergeben automatisch einen gemeinsamen FAQ-Block, UND automatisch strukturierte Daten (`FAQPage`-Schema, siehe unten) fuers Google-Snippet.
+Es gibt **kein** `tag`-Feld, das sichtbare Label kommt aus `GCAT[cat].name`. `id` wird beim Anlegen einmalig als Slug aus dem Titel generiert und bleibt fix, auch wenn der Titel später bearbeitet wird (sonst verwaisen Kommentare). `image_queries` ist optional (nur für Bildsuche-Vorschläge im Admin-Panel). `date` im Entwurf ist Platzhalter, das Admin-Panel überschreibt es beim Veröffentlichen automatisch mit dem echten Zeitpunkt.
 
-Diese Elemente sind Werkzeuge fuer mehr Struktur (siehe Vorbild-Artikel wie bei GIGA: Bulletpoints, Zwischenueberschriften, aufklappbares FAQ), nicht Pflicht. Bei kurzen News-Meldungen reichen normale Absaetze, bei laenglichen Guides/Erklaerartikeln lohnt sich die Gliederung.
+**Strukturelemente innerhalb von `content` (bei Bedarf):**
+- `"### Zwischenüberschrift"`: eigene Zwischenüberschrift, bekommt automatisch eine Anker-ID fürs Inhaltsverzeichnis.
+- `"img:https://bild-url|Bildunterschrift"`: weiteres Bild im Text (Unterschrift optional). Drittes Segment `|narrow` für ein schmaleres, zentriertes Bild.
+- `"- Ein Punkt"`: Aufzählungspunkt, mehrere ergeben automatisch eine Liste.
+- `"faq:Frage?|Antworttext"`: aufklappbarer FAQ-Eintrag. Mehrere ergeben einen FAQ-Block plus automatisch `FAQPage`-Schema fürs Google-Snippet.
 
-**Interne Verlinkung auf andere Artikel, mitten im Fliesstext (in jedem normalen Absatz, Listenpunkt oder FAQ-Text nutzbar, nicht nur als eigener Block).** Syntax: `[[artikel-id|Anzeigetext]]`, z. B. `"Welche Plattformen GTA 6 zum Release bekommt, erfaehrst du in [[plattformen-pc-version-gesichert-und-offen|unserem Plattformen-Guide]]."`. `artikel-id` ist die stabile `id` des Zielartikels (der Slug, nicht der Titel, siehe Feld `id` oben), `Anzeigetext` ist der sichtbare, klickbare Linktext. Existiert die id nicht oder nicht mehr, wird beim Anzeigen automatisch nur der reine Anzeigetext ohne Link dargestellt (kein kaputter Link sichtbar). Diese Syntax ersetzt reine Text-Erwaehnungen wie "dazu gibt es einen eigenen Artikel auf ViceGuide", nach Moeglichkeit bei thematisch passenden Erwaehnungen verwenden, aber sparsam (nicht in jedem Satz), damit der Text nicht ueberladen wirkt. Charakternamen werden bereits automatisch verlinkt (siehe unten bei "Automatische Verlinkung"), dafuer diese Syntax nicht verwenden.
+**`tldr`** (optional, top-level, kein Präfix): Array aus 2 bis 5 Stichpunkten, wird als "Auf einen Blick"-Box unter dem Lead angezeigt. Sinnvoll bei längeren oder faktenreichen Artikeln, sonst weglassen.
 
-**Trigger-Phrase "Verlinkungs-Check" (fuer Coding-Sessions mit Code-Zugriff, nicht fuer den reinen Artikel-Chat).** Sagt Eddy in einer Coding-Session nur "Verlinkungs-Check" (plus die aktuelle `articles.json` aus dem Editiermodus-Download als Anhang), ist damit gemeint: alle aktuellen Artikel durchlesen, mit bereits vorhandenen `[[id|text]]`-Verweisen abgleichen (nichts doppelt verlinken), sparsam neue, thematisch passende Verweise ergaenzen (max. 1 bis 2 pro Artikel, nur wo es inhaltlich wirklich passt, Formulierung in die bestehenden Saetze einweben statt generischer "Mehr dazu"-Floskel), das Ganze lokal testen (PHP/SQLite), dann ein einmaliges, admin-geschuetztes PHP-Werkzeug bauen das den aktuellen Datenbank-Stand pro Artikel gegen den Ausgangstext prueft (nicht ueberschreiben, falls der Artikel zwischenzeitlich anderweitig bearbeitet wurde) und die neuen Verweise eintraegt. Eddy ruft das Werkzeug einmal eingeloggt im Browser auf, danach wird es wieder aus dem Repo entfernt (siehe "Einmal-Werkzeuge" in den Stolperfallen unten). Kein direkter Live-Zugriff auf viceguide.de moeglich, die aktuelle articles.json muss Eddy jedes Mal frisch als Anhang mitschicken.
+**Automatisch, ohne eigenes Feld:** Inhaltsverzeichnis ("Direkt zu") ab 3 `### `-Überschriften, Lesezeit-Anzeige aus der Wortzahl, FAQ-Schema (`FAQPage` JSON-LD) sobald `faq:`-Einträge da sind.
 
-**`tldr` (optional, top-level Feld, kein Praefix im content-Array).** Array aus 2 bis 5 kurzen Stichpunkten, die den Artikel in Sekunden zusammenfassen ("Auf einen Blick"). Wird automatisch als eigene Box direkt unter dem Lead angezeigt, wenn vorhanden, sonst bleibt die Box unsichtbar. Sinnvoll bei laengeren oder faktenreichen Artikeln (z. B. Vorbesteller-Boni, Editionen-Vergleich), bei kurzen News-Meldungen meist nicht noetig, dann einfach weglassen.
+**Richtung für künftige Struktur-Arbeit:** Artikel scanbarer und interaktiver machen (Leser lesen selten bis zum Ende) und SEO-Signale verbessern (Rich Snippets, interne Verlinkung, Struktur passend zu echten Suchanfragen). Umgesetzt: Bulletpoints, FAQ mit Schema, TL;DR, Inhaltsverzeichnis, Lesezeit. Denkbare nächste Schritte: Article-Schema (JSON-LD) für alle Artikel, gezielte interne Verlinkung im Fließtext, Zwischenüberschriften an echten Suchanfragen ausrichten. Immer sparsam bleiben, Kernrichtung ist "besser lesbar und besser auffindbar", nicht "möglichst viele Spielereien".
 
-**Automatisch, ohne eigenes Feld:**
-- **Inhaltsverzeichnis** ("Direkt zu"): erscheint automatisch, sobald ein Artikel mindestens 3 `### `-Zwischenueberschriften hat. Kein Redaktions-Aufwand noetig, ergibt sich rein aus der Gliederung.
-- **Lesezeit-Anzeige**: wird aus der Wortzahl von `lead` und `content` errechnet (ca. 200 Woerter/Minute) und neben dem Datum angezeigt.
-- **FAQ-Schema (`FAQPage` JSON-LD)**: sobald ein Artikel `faq:`-Eintraege enthaelt, wird beim Oeffnen automatisch strukturiertes Datenmarkup in den `<head>` geschrieben (fuer Google Rich Snippets), beim Schliessen wieder entfernt. Kein Redaktions-Aufwand noetig.
-
-**Hinweis fuer kuenftige Coding-Sessions (SEO/Struktur-Kontinuitaet):** Die Artikelstruktur wird bewusst schrittweise verfeinert, mit dem Ziel, Artikel scanbarer/interaktiver zu machen (Leser lesen selten bis zum Ende) und gleichzeitig SEO-Signale zu verbessern (Rich Snippets, interne Verlinkung, Struktur, die zu echten Suchanfragen passt). Bereits umgesetzt: Bulletpoints, aufklappbares FAQ mit Schema-Markup, TL;DR-Box, automatisches Inhaltsverzeichnis, Lesezeit. Denkbare naechste Schritte, wenn wieder an diesem Thema gearbeitet wird: Article-Schema (JSON-LD) fuer alle Artikel zusaetzlich zum FAQ-Schema, gezielte interne Verlinkung zwischen thematisch verwandten Artikeln im Fliesstext, Zwischenueberschriften konsequent an echten Suchanfragen ausrichten. Bei jeder Erweiterung: sparsam bleiben, nicht mehr Feature-Wucht als noetig, Kernrichtung ist "besser lesbar und besser auffindbar", nicht "moeglichst viele Spielereien".
-
-### Datenbank-Eintrag-Datenmodell (Charaktere, Fahrzeuge, usw.)
+### Datenbank-Eintrag-Datenmodell
 ```json
 {
   "name": "Jason Duval",
@@ -146,64 +139,63 @@ Diese Elemente sind Werkzeuge fuer mehr Struktur (siehe Vorbild-Artikel wie bei 
   "credit": "optional"
 }
 ```
-Aus der API kommt zusätzlich `_id` (interne Datenbank-Zeilen-ID, wird für Updates gebraucht, nicht redaktionell relevant).
+Aus der API kommt zusätzlich `_id` (interne Zeilen-ID, für Updates gebraucht) und, sobald vergeben, `slug` (stabiler URL-Bezeichner, siehe Architektur oben).
 
-### Ordnerstruktur (verifiziert gegen echtes Repo)
+### Ordnerstruktur (Stand laut Repo, Juli 2026)
 ```
-/                       Projektwurzel
-├─ CLAUDE.md            Diese Datei
-├─ SOCIAL.md            Social-Media-Strategie und Status
-├─ index.html           Die komplette, deploybare Seite (direkt editieren)
-├─ articles.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
-├─ database.json        Eingefrorener Anfangsstand, keine laufende Datenquelle mehr
-├─ og-image.jpg         Link-Vorschaubild (Open Graph/Twitter Card), 1200x630px, Fallback wenn ein Artikel/Eintrag kein eigenes Bild hat
-├─ logo.png             Echte Logo-Datei fuers Organization-JSON-LD (og:logo), Logo selbst bleibt zusaetzlich als Base64 in index.html eingebettet
-├─ robots.txt           Erlaubt allen Bots alles, verweist auf sitemap.xml
-├─ .htaccess            Rewrite-Regeln: /artikel/{id} -> article.php, /{praefix}/{slug} -> entry.php, /sitemap.xml -> sitemap.php
-├─ article.php           Serverseitiges Rendering einer echten Artikel-URL (Meta-Tags, Text-Fallback), siehe "Echte Artikel-URLs" oben
-├─ entry.php             Serverseitiges Rendering einer echten Datenbank-Eintrag-URL, siehe "Echte Datenbank-Eintrag-URLs" oben
-├─ sitemap.php           Dynamische Sitemap direkt aus der Datenbank (Startseite, jeder Artikel, jeder Datenbank-Eintrag), ersetzt die alte statische sitemap.xml
-├─ google*.html         Google-Search-Console-Verifizierungsdatei, NICHT loeschen, sonst verliert Search Console die Inhaberschafts-Bestaetigung
-├─ .gitignore           Schliesst api/config.php und lokale *.sqlite aus
-├─ assets/
-│  ├─ img_1.jpg         Palmen-Wallpaper (als base64 in index.html eingebettet)
-│  ├─ logo*.*           Eigene Logo-Dateien (als base64 eingebettet)
-│  └─ fonts/            Selbst gehostete .woff2 Schriftdateien
+/                          Projektwurzel
+├─ CLAUDE.md               Diese Datei
+├─ SOCIAL.md               Instagram-Strategie
+├─ TOOLS.md                Design-Standards (Karussell, Artikelbilder)
+├─ KANAELE.md              Kanal-Übersicht
+├─ index.html              Die Single-Page-App (direkt editieren)
+├─ article.php             Server-gerendertes Artikel-Detail (echte URL /artikel/id, für SEO)
+├─ entry.php               Server-gerendertes Datenbank-Detail (echte URL /praefix/slug, für SEO)
+├─ sitemap.php             Erzeugt die Sitemap dynamisch aus der Datenbank (ersetzt die alte statische sitemap.xml)
+├─ robots.txt              Suchmaschinen-Regeln
+├─ og-image.jpg            Social-Preview-Bild (Fallback, wenn Artikel/Eintrag kein eigenes Bild hat)
+├─ logo.png                Logo-Datei (u. a. fürs OG-/Social-Preview, JSON-LD-Logo)
+├─ googlec9a955...html     Google-Search-Console-Verifizierungsdatei, nicht löschen
+├─ .htaccess               Server-Regeln (URL-Rewriting auf article.php/entry.php/sitemap.php, Cache-Zeiten)
+├─ .gitignore              Schließt api/config.php und lokale *.sqlite aus
+├─ articles.json           Eingefrorener Anfangsstand, keine laufende Datenquelle
+├─ database.json           Eingefrorener Anfangsstand, keine laufende Datenquelle
+├─ assets/fonts/           Selbst gehostete .woff2 (oswald-variable, inter-variable, spacemono-400/700)
 └─ api/
-   ├─ config.sample.php Vorlage fuer Datenbank-Zugangsdaten und Admin-Passwort-Hash
-   ├─ config.php         Echte Zugangsdaten, NICHT im Git (siehe .gitignore), liegt nur auf dem Server
-   ├─ db.php             Gemeinsame PDO-Verbindung, legt Tabellen automatisch an (CREATE TABLE IF NOT EXISTS), Slug-Migration/Helper (vg_slugify, vg_ensure_entry_slugs)
-   ├─ auth.php           Login/Logout/Status, session-basiert, 90 Tage
-   ├─ articles.php       GET/POST/PUT/DELETE fuer Artikel (DELETE loescht auch zugehoerige Kommentare)
-   ├─ db_entries.php     GET/PUT/DELETE fuer Datenbank-Eintraege, GET vergibt fehlende Slugs
-   ├─ comments.php       GET/POST/PATCH/DELETE fuer Kommentare
-   ├─ article_image.php  Liefert das base64-Artikelbild als echte, abrufbare Bild-URL aus (fuer og:image), siehe "Echte Artikel-URLs" oben
-   └─ entry_image.php    Liefert das base64-Bild eines Datenbank-Eintrags als echte, abrufbare Bild-URL aus, siehe "Echte Datenbank-Eintrag-URLs" oben
+   ├─ config.sample.php    Vorlage für DB-Zugang und Admin-Passwort-Hash
+   ├─ config.php           Echte Zugangsdaten, NICHT im Git, nur auf dem Server
+   ├─ db.php               Gemeinsame PDO-Verbindung, legt Tabellen automatisch an, Slug-Migration/Helper
+   ├─ auth.php             Login/Logout/Status, session-basiert, 90 Tage
+   ├─ articles.php         GET/POST/PUT/DELETE für Artikel, inkl. Entwurf/Veröffentlichen (?action=publish/discard)
+   ├─ db_entries.php       GET/PUT/DELETE für Datenbank-Einträge, inkl. Entwurf/Veröffentlichen (?action=publish/discard)
+   ├─ comments.php         GET/POST/PATCH/DELETE für Kommentare
+   ├─ article_image.php    Liefert das base64-Artikelbild als echte, abrufbare Bild-URL aus (für og:image)
+   └─ entry_image.php      Liefert das base64-Bild eines Datenbank-Eintrags als echte Bild-URL aus
 ```
-Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank, nicht als separate Bild-Dateien im Repo (Ausnahme: Fonts, die liegen als echte Dateien in `assets/fonts/`, weil das fuers Caching besser ist und Fonts sich nicht staendig aendern).
+Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** direkt in der HTML bzw. in der Datenbank (Ausnahme: Fonts, `logo.png`, `og-image.jpg`). Die Design-Quelldateien mit den ViceGuide-Namen (z. B. das Karussell-Wallpaper) liegen nicht im Repo, sondern im Design-Material.
 
 ---
 
 ## 3. Konventionen
 
 ### Code-Stil
-- CSS und JS bleiben inline in `index.html`. Assets als base64-Data-URI, ausser Fonts (siehe oben).
-- **Theming ausschließlich über CSS Custom Properties.** Niemals feste Farbwerte hart in Regeln schreiben, immer die `--variable` nutzen. Dark Mode ist die Basis (`:root`), Light Mode überschreibt (`:root[data-theme="light"]`). Light Mode ist Standard-Theme, wird per `localStorage` (`vg-theme`) über Reloads hinweg gemerkt.
-- Vanilla JS, keine Build-Time-Transpilation. Funktionsnamen sprechend (`openAdmin`, `toggleEdit`, `ieApply`, `renderView`, `toggleTheme`).
-- **Keine Gedankenstriche** und **kein generischer KI-Ton** (siehe Abschnitt 0).
-- PHP-Dateien: einfache, kleine Skripte pro Endpunkt, PDO mit Prepared Statements (nie String-Konkatenation fuer SQL), `vg_require_admin($cfg)` als Gate vor jeder schreibenden Aktion.
+- CSS und JS bleiben inline in `index.html`. Assets als base64, außer Fonts.
+- **Theming ausschließlich über CSS Custom Properties.** Nie feste Farbwerte hart schreiben, immer die `--variable`. Dark Mode ist die CSS-Basis (`:root`), Light Mode überschreibt (`:root[data-theme="light"]`). Light Mode ist Standard-Theme, per `localStorage` (`vg-theme`) gemerkt.
+- Vanilla JS, keine Transpilation. Funktionsnamen sprechend (`openAdmin`, `toggleEdit`, `ieApply`, `renderView`, `toggleTheme`).
+- **Keine Gedankenstriche, kein generischer KI-Ton** (Abschnitt 0).
+- PHP: kleine Skripte pro Endpunkt, PDO mit Prepared Statements (nie String-Konkatenation für SQL), `vg_require_admin($cfg)` als Gate vor jeder schreibenden Aktion.
 
 ### Naming
-- Kategorie-IDs klein und knapp: `news`, `leaks`, `trailer`, `story`, `map`, `community`, `money`, `missions`, `vehicles`, `weapons`, `secrets`, `online`, `beginner`.
+- Kategorie-IDs klein und knapp (siehe `cat`-Liste oben).
 - DB-Sektionen: `characters`, `vehicles`, `weapons`, `wildlife`, `gangs`, `radio`, `activities`, `locations`.
-- Sichtbare Labels deutsch und ausgeschrieben ("Gerüchte und Leaks", "Trailer-Analysen").
+- Sichtbare Labels deutsch und ausgeschrieben.
 - Datenkonstanten in JS in GROSSBUCHSTABEN (`SECTIONS`, `DB`, `GUIDES`, `GROUPS`, `GCAT`).
 
 ### Branch-, Commit-, Test-Regeln
-- Branch für laufende Arbeit: `claude/viceguide-gta6-portal-z49wib`, wird nach Bestätigung durch den Betreiber per Fast-Forward (oder Cherry-Pick bei parallelen Datenänderungen) nach `main` gemergt. `main` ist der Deploy-Branch.
-- Commit-Messages: kurz, deutsch, sachlich, **ohne Gedankenstriche**.
-- Reine Datenänderungen (`database.json`/`articles.json` Uploads vom Betreiber) werden automatisch validiert (JSON gueltig, keine Gedankenstriche, keine verlorenen Eintraege), committed und gemergt, ohne Rückfrage. Code-/Design-Änderungen werden vorher als Vorschau (Zip zum lokalen Öffnen oder Screenshots) gezeigt, erst nach Bestätigung gemergt.
-- Tests: keine automatisierten Tests. Vor dem Commit lokal mit `php -S localhost:PORT -t .` und Playwright/Chromium gegentesten, besonders bei Backend-Aenderungen (Login-Zustand, Speichern, Persistenz nach Reload).
+- Arbeits-Branch: `claude/viceguide-gta6-portal-z49wib`, nach Bestätigung per Fast-Forward (oder Cherry-Pick bei parallelen Datenänderungen) nach `main`. `main` ist Deploy-Branch.
+- Commit-Messages: kurz, deutsch, sachlich, ohne Gedankenstriche.
+- Reine Datenänderungen (Uploads vom Betreiber) werden automatisch validiert (JSON gültig, keine Gedankenstriche, keine verlorenen Einträge), committed und gemergt, ohne Rückfrage. Code-/Design-Änderungen vorher als Vorschau zeigen, erst nach Bestätigung mergen.
+- Keine automatisierten Tests. Vor dem Commit lokal mit `php -S localhost:PORT -t .` und Playwright/Chromium gegentesten, besonders bei Backend-Änderungen.
 
 ---
 
@@ -211,149 +203,141 @@ Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** dire
 
 Kein Build-Schritt. `index.html` ist direkt die ausgelieferte Datei.
 
-**Lokal ansehen (nur Frontend, ohne Backend-Funktionen):**
+**Lokal ansehen (nur Frontend):**
 ```bash
 python3 -m http.server 8000
 # dann http://localhost:8000/index.html
 ```
 
-**Lokal mit Backend testen (Login, Kommentare, Speichern):** braucht PHP mit PDO/SQLite, `api/config.php` lokal auf SQLite zeigen lassen (siehe `config.sample.php` fuer die Struktur, `db_dsn` auf `sqlite:...` statt `mysql:...` setzen):
+**Lokal mit Backend (Login, Kommentare, Speichern):** PHP mit PDO/SQLite, `api/config.php` lokal auf SQLite zeigen lassen (`db_dsn` auf `sqlite:...`):
 ```bash
 php -S localhost:8000 -t .
-# dann http://localhost:8000/index.html
 ```
-`api/db.php` legt die Tabellen beim ersten Aufruf automatisch an.
+`api/db.php` legt die Tabellen beim ersten Aufruf automatisch an. Da `.htaccess` lokal ohne Apache nicht greift, braucht das Testen echter Artikel-/Eintrags-URLs (`/artikel/...`, `/charaktere/...`) einen kleinen Router-Wrapper für `php -S`, der dieselben Rewrite-Regeln nachbildet.
 
-**Deploy:** Push nach `main` auf GitHub, Hostinger Auto-Deploy zieht sich das automatisch (kann im Hostinger-Dashboard unter "Letzte Bereitstellung" geprüft werden). `api/config.php` liegt **nicht** im Git und muss einmalig manuell über den Hostinger-Dateimanager im Ordner `api/` angelegt werden (Vorlage: `config.sample.php`).
+**Deploy:** Push nach `main`, Hostinger Auto-Deploy zieht automatisch. `api/config.php` liegt **nicht** im Git und muss einmalig manuell über den Hostinger-Dateimanager im Ordner `api/` angelegt werden (Vorlage: `config.sample.php`).
 
 ---
 
 ## 5. Getroffene Entscheidungen und Begründung
 
-- **Single-File-HTML statt Framework.** Einfach zu hosten, sofort lauffähig, kein Build-Toolchain-Overhead.
+- **Single-File-HTML statt Framework.** Einfach zu hosten, sofort lauffähig, kein Build-Overhead.
 - **Zwei-Phasen-Struktur (pre/rel), Phase 2 gesperrt.** An den Spiel-Lebenszyklus gekoppelt.
-- **Dual-Theme mit Umschalter**, Light Mode als Standard, per `localStorage` gemerkt.
-- **Eigene Grafik statt Rockstar-Material.** Logo, Palmen-Wallpaper, alle Artikel-/Datenbankbilder sind eigenes oder KI-generiertes Material.
-- **Fonts selbst gehostet statt Google Fonts.** DSGVO-Grund (keine Datenübertragung an Google), zusätzlich Performance-Vorteil durch Browser-Caching separater Dateien.
-- **Bilder automatisch komprimiert.** Jedes im Editiermodus hochgeladene Bild wird clientseitig per Canvas auf max. 1100px Kantenlänge verkleinert und als WebP kodiert (Fallback JPEG falls ein Browser kein WebP-Encoding kann), ohne dass die Redaktion daran denken muss. Grund: eine fruehe Version ohne Kompression liess `database.json` auf ueber 40 MB anwachsen.
-- **Schlanke Bild-URLs statt Base64 in den normalen API-Antworten.** `api/articles.php` und `api/db_entries.php` lieferten frueher bei jedem GET das komplette Base64-Bild jedes Artikels/Eintrags mit, egal ob sichtbar oder nicht. Ein PageSpeed-Insights-Test zeigte dadurch eine Netzwerklast von ueber 9 MB beim Laden der Startseite (Hauptursache fuer einen mittelmaessigen Performance-Score trotz perfektem SEO-Score). Beide Endpunkte liefern im normalen Betrieb jetzt nur noch eine leichte, echte Bild-URL (`api/article_image.php?id=...` bzw. `api/entry_image.php?id=...`) statt des Bildes selbst, das eigentliche Bild wird erst geladen, wenn es tatsaechlich gebraucht wird (und dabei ganz normal vom Browser gecached). Ein optionaler, admin-geschuetzter `?full=1`-Parameter liefert weiterhin die echten Base64-Bilder, genutzt von den "Sicherungskopie herunterladen"-Knoepfen im Admin-Panel, damit diese Backups weiterhin portabel/vollstaendig bleiben. **Wichtige Falle dabei:** der Bild-Editor (`ieApply()`) darf beim Speichern eine unveraenderte, schlanke Bild-URL niemals als "echtes Bild" zurueck an den Server schicken, sonst wuerde sie das tatsaechlich gespeicherte Bild ueberschreiben. Geloest ueber ein `ieState.imgChanged`-Flag (nur true bei echtem Upload/Entfernen, nicht bei reinem Zoom/Positions-Anpassen), das Feld `img` wird beim Speichern nur dann ueberhaupt mitgeschickt, sonst laesst der Server (dank vorhandener `array_key_exists`-Praefung) das gespeicherte Bild unangetastet. `<img src>` und CSS `background-image:url()` funktionieren mit einer echten URL genauso wie mit einem Base64-Data-URI, daher musste an der eigentlichen Anzeige-Logik (Kacheln, Modal, Artikel-Hero) nichts geaendert werden.
-- **CSS-Hintergrundbilder durch echte `<img>`-Tags ersetzt (Kacheln, Listen, Modal-Kopf, Artikel-Titelbild).** Fruehere Version zeigte Fotos ueber `background-image` (`fitStyle()`/`cardVisual()`), dadurch fuer Google Bildersuche praktisch unsichtbar und ohne Alt-Text moeglich, ausserdem kein natives `loading="lazy"` verfuegbar (dafuer gab es zuvor einen selbstgebauten IntersectionObserver-Mechanismus, `initLazyBg()`/`seenBgUrls`/`.lazy-bg`, inzwischen komplett entfernt). Der Zoom/Ausschnitt (`imgfit`: `zoom`/`x`/`y`) liess sich mit einem echten `<img>` nicht per `object-fit`/`object-position` nachbauen (kein Zoom-Konzept jenseits von cover/contain), stattdessen reproduziert `fitImgStyle(d)` die interne Formel von `background-position` direkt: `left:X%;top:Y%` plus ein Gegen-`transform:translate(-X%,-Y%)` ergibt exakt `(Container - Bild) * Prozent`, `width:Z%;height:auto` entspricht `background-size:Z% auto`. Der umgebende Container (`.cv`/`.mhead`/`.dbrow-thumb`/`.art-hero`) braucht dafuer `position:relative;overflow:hidden;background-color:#000` (fuer Buchstaben-/Letterbox-Raender bei abweichendem Seitenverhaeltnis). `imgTag(d,altText,lazy)` baut das `<img>` (Alt-Text aus dem Namen/Titel, `loading="lazy"` fuer Kacheln/Listen ueber natives Browser-Lazy-Loading, `lazy=false` fuer Modal-Kopf/Artikel-Titelbild die weiterhin bewusst sofort sichtbar bleiben), inklusive `onerror`, das bei einem fehlgeschlagenen Bild die Klasse `imgfail` auf den Container setzt (`.imgfail img{display:none}`/`.imgfail:before{content:"Bild nicht geladen"}`, CSS lag bereits vorbereitet, aber ungenutzt, im Stylesheet). Pixel-genau gegengetestet mit einem 4-Quadranten-Testbild bei verschiedenen Zoom/x/y-Werten (Bildinhalt an exakt der erwarteten Stelle, Letterbox-Balken exakt auf der erwarteten Seite). Der KI-Entwurfsvorschau-Bereich (`aipv-hero`, `renderAipvHero()`) ist bewusst NICHT umgestellt, rein admin-intern, nie von Suchmaschinen gecrawlt, bleibt bei `background-image` (weniger Risiko, Drag&Drop-Handling haengt an der bestehenden Div-Struktur).
-- **`width`/`height` auf den neuen `<img>`-Tags ergaenzt, lange Cache-Zeit fuer Schriften/Fallback-Bilder in `.htaccess`.** PageSpeed Insights bemaengelte nach der Bildumstellung fehlende `width`/`height`-Attribute (reiner Layout-Hinweis, das tatsaechliche Aussehen bestimmt weiterhin `fitImgStyle()`), `imgTag()` bekam dafuer optionale `w`/`h`-Parameter. Zusaetzlich lange `Cache-Control`/`Expires`-Header (`mod_expires`/`mod_headers`, in `<IfModule>` gekapselt, bricht also nichts falls ein Modul auf Hostinger fehlen sollte) fuer die selbst gehosteten `.woff2`-Schriftdateien (1 Jahr) und `og-image.jpg`/`logo.png` (1 Monat) ergaenzt, `index.html` selbst bleibt davon unberuehrt (nur nach Dateiendung gefiltert). **Wichtige Randnotiz zu PageSpeed-Messwerten generell:** zwei direkt aufeinanderfolgende Tests derselben, komplett unveraenderten Seite ergaben einmal einen sehr schlechten (67, FCP/LCP über 5s) und einmal einen guten (88, FCP/LCP um 1s) Wert. PageSpeed misst live gegen den echten Server, einzelne Auffaelligkeiten (besonders bei FCP/LCP/TTFB) koennen ein einzelner schlechter Messzeitpunkt sein, nicht zwingend ein echtes Problem. Bei kuenftigen Audits daher immer mehrfach hintereinander testen, bevor man einer einzelnen Zahl hinterherjagt.
-- **Gestaffelte Eintritts-Animation der Kacheln (`revealCards()`) komplett entfernt.** Frueher blendeten `.card`/`.ncard` beim Erscheinen gestaffelt per Opacity/Transform ein (`revealCards()`, IntersectionObserver-gesteuert, mit einem Set `seenCardKeys` das schon gesehene Kacheln vom erneuten Einblenden ausnahm). Der Betreiber empfand das trotz dieser Optimierung weiterhin als unruhig/wie ein Nachladen, obwohl es rein eine CSS-Animation ohne Netzwerkaktivitaet war, siehe `seenBgUrls`-Punkt oben fuer den eigentlichen (Bild-)Anteil des Problems, der separat geloest wurde. Auf ausdruecklichen Wunsch bewusst ganz entfernt statt weiter verfeinert: `.card`/`.ncard` sind jetzt direkt beim Rendern voll sichtbar (kein `opacity:0`/`transform` mehr, kein `revealCards()`, kein `seenCardKeys`), das Hover-"Schweben" (`transform:translateY(-5px)` bei `:hover`) blieb davon unberuehrt bestehen.
-- **Direktes Speichern in die Datenbank statt JSON-Download/Upload.** Ab dem Punkt, wo eine MySQL-Datenbank sowieso fuer Kommentare noetig war, wurde dieselbe Infrastruktur auch fuer Artikel und Datenbank-Eintraege genutzt. Ergebnis: Editiermodus speichert sofort und dauerhaft, auch vom Handy aus, ohne Datei-Umweg.
-- **Bild-Editor (`ieApply()`) schliesst erst nach erfolgreichem Speichern, nicht sofort.** Fruehere Version schloss den Dialog und rendere die Ansicht sofort nach Klick auf "Uebernehmen", der eigentliche `PUT`-Request lief erst danach im Hintergrund. Sichtbares Symptom, das der Betreiber gemeldet hat: neues Titelbild und "Quelle" (Bild-Credit) waren nach einem Reload wieder auf dem alten Stand, weil ein direkt danach folgendes Neuladen/Schliessen der Seite den noch laufenden Request abbrach, ohne dass die Redaktion das bemerkte (kein Fehler sichtbar, der Dialog war ja schon zu). Geloest: der Dialog bleibt waehrend des Speicherns offen, der "Uebernehmen"-Knopf wird deaktiviert und zeigt "Speichert...", geschlossen wird erst nach erfolgreicher Antwort vom Server (bei einem Fehler bleibt der Dialog mit den eingegebenen Daten offen, damit nichts verloren geht). Zusaetzlich ein globaler `beforeunload`-Schutz (`vgSavesInFlight`-Zaehler): versucht der Browser waehrend eines laufenden Speichervorgangs die Seite zu verlassen, warnt er davor. Betrifft nur `ieApply()` (Bild/Text-Editor fuer bestehende Artikel/Datenbank-Eintraege), nicht `approveAi()` (Freigabe eines neuen KI-Entwurfs), dort besteht dasselbe Muster (Admin-Panel schliesst vor Abschluss des `POST`-Requests) theoretisch auch noch, wurde aber nicht mit angefasst, weil der gemeldete Fall nur den Editiermodus betraf.
-- **Echtes Login statt reinem Client-Schalter.** Der Editiermodus-Knopf allein war nie eine echte Sperre (nur ein JS-Flag). Sobald echte Schreibzugriffe auf eine gemeinsame Datenbank moeglich wurden, wurde ein serverseitig geprueftes Passwort-Login (PHP-Session, 90 Tage) noetig, sonst haette theoretisch jeder Besucher mit Entwicklertools schreiben koennen.
-- **KI-Artikel ueber Copy-Paste-JSON statt eigenem Anthropic-API-Schluessel (aktueller Stand).** Der Betreiber wollte die KI-Recherche/Texterstellung weiterhin kostenlos ueber einen normalen Claude-Chat laufen lassen, statt einen bezahlten eigenen API-Key auf dem Server einzurichten. Deshalb: Ergebnis aus dem Chat als JSON ins Admin-Panel einfuegen ("Claude-Entwurf veroeffentlichen"), Vorschau pruefen und bei Bedarf bearbeiten (Titel, Teaser, Text, **und Bild direkt per Klick/Einfuegen/Drag&Drop mit Zoom und Ausschnitt**), dann freigeben. Die Variante mit direkter Live-Recherche gegen die Anthropic-API bleibt als Code-Pfad bestehen (`generateGuide()`), ist aber ohne eigenen Schluessel in `config.php` (`anthropic_api_key`, noch nicht angelegt) nicht nutzbar. Falls die Seite waechst und der Betreiber die volle Handy-Unabhaengigkeit will, kann das jederzeit nachgeruestet werden.
-- **Automatische Verlinkung in Texten.** Namen aus Charaktere, Fahrzeuge, Wildtiere, Gangs und Orte (deutscher Genitiv bei Charakteren, z. B. "Jasons") werden in Datenbank-Beschreibungen und Artikeltexten automatisch klickbar zum jeweiligen Detail-Eintrag verlinkt (`linkifyChars()`/`buildEntityAliases()`), inklusive einer Ausschlussliste fuer Namensueberschneidungen mit normalen Woertern (`ENT_LINK_SKIP`, z. B. "Leonida", der Bundesstaat, vs. der Nebencharakter "Leonida Joker"). Waffen, Radio und Aktivitaeten sind bewusst aussen vor, deren Namen kollidieren zu haeufig mit normalen Woertern. In Artikeln wird jeder Name nur beim ersten Vorkommen im gesamten Artikel verlinkt (nicht bei jeder Wiederholung), damit der Text nicht mit Links zugepflastert wird.
-- **URL-Routing per Hash.** Reload behaelt die aktuelle Ansicht, Browser-Zurueck navigiert innerhalb der Seite statt sie zu verlassen.
-- **Inline-Texteditor im Editiermodus.** Titel/Name, Unterzeile/Teaser und Beschreibung/Text sind direkt im selben Dialog wie der Bild-Editor bearbeitbar, kein separates JSON-Handling fuer kleine Korrekturen mehr noetig.
-- **Editiermodus direkt aus der Artikel-/Datenbank-Detailansicht heraus, nicht nur aus der Kachel-Uebersicht.** Vorher musste man zum Bearbeiten immer erst zurueck zur Listen-/Kachelansicht, ein bereits geoeffneter Artikel oder Datenbank-Eintrag liess sich nicht direkt bearbeiten. Jetzt zeigen `#a-hero` (Artikel-Titelbild) und `.mhead` (Kopfbereich im Datenbank-Modal) im Editiermodus denselben gestrichelten Rahmen und "✎ Bearbeiten"-Badge wie die Kacheln, ein Klick darauf oeffnet denselben Bild/Text-Editor (`openImgEd('guide',null,curArticle)` bzw. `openImgEd('db',sec,idx)`). Speichert man von dort aus, aktualisiert sich die gerade offene Detailansicht sofort mit (siehe `ieApply()`), ohne dass ein manueller Reload noetig waere, das war vorher eine Luecke, `renderView()` allein rendert nur die dahinterliegende Listenansicht neu, nicht die geoeffnete Artikel-/Modal-Ansicht selbst.
-- **Editiermodus bleibt ueber einen Reload hinweg aktiv, endet erst durch bewussten Klick auf "Fertigstellen".** Vorher ging der Editiermodus bei jedem Neuladen der Seite automatisch aus (reines In-Memory-Flag), obwohl die Admin-Session selbst 90 Tage haelt, staendiges erneutes Einschalten war laestig. Jetzt merkt sich `toggleEdit()` den Zustand zusaetzlich in `localStorage` (`vg-editmode`), `restoreEditMode()` stellt ihn beim Start wieder her, aber nur wenn die Admin-Session noch gueltig ist. Der Knopf im Admin-Panel heisst waehrend des Editierens "Fertigstellen" statt "Editiermodus ausschalten", ein Klick darauf beendet den Editiermodus bewusst und loescht das gespeicherte Flag. Zusaetzlich ein schwebender "Fertigstellen"-Knopf (`#edit-fab`, unten rechts, fixiert), sichtbar auf jeder Seite solange der Editiermodus aktiv ist, damit man dafuer nicht jedes Mal das (versteckte) Admin-Panel oeffnen muss.
-- **Entwurf/Veroeffentlichen-Modell: "Speichern" legt einen Entwurf an, "Fertigstellen" veroeffentlicht ihn fuer alle.** Fruehere Version schrieb jede Bearbeitung (`ieApply()`, Knopf "Uebernehmen"/"Speichern") sofort in die oeffentlichen Spalten, sichtbar fuer alle Besucher sofort nach dem Speichern. Der Betreiber wollte stattdessen: waehrend der Editier-Sitzung nur er selbst sieht seine Aenderungen (als Vorschau), andere Besucher weiterhin den zuletzt veroeffentlichten Stand, bis er bewusst auf "Fertigstellen" klickt, das dann alle gesammelten Aenderungen auf einmal live schaltet. Umgesetzt ueber eine neue `draft_json`-Spalte in `articles` und `db_entries` (Migration analog zur `slug`-Spalte, prueft und ergaenzt sich automatisch beim ersten Request, kein manueller Schritt auf Hostinger noetig):
-  - **PUT** (`ieApply()`s Speichern-Knopf) schreibt nicht mehr direkt in die oeffentlichen Spalten, sondern mergt die geaenderten Felder in `draft_json` (bereits vorhandener Entwurf wird Feld fuer Feld ergaenzt, nicht ersetzt, damit z. B. erst ein neues Bild und spaeter ein neuer Text sich nicht gegenseitig ueberschreiben). Bild im Entwurf ist das echte Base64-Bild, keine schlanke URL, es ist ja nur fuer die eigene Vorschau bestimmt.
-  - **GET** liefert fuer nicht eingeloggte Besucher weiterhin ausschliesslich die oeffentlichen Spalten. Fuer einen eingeloggten Admin (`vg_is_admin()` in `db.php`, eine nicht abbrechende Variante von `vg_require_admin()`) werden vorhandene `draft_json`-Felder ueber die oeffentlichen Werte gemergt und die Antwort bekommt zusaetzlich `_draft:true`, damit der Admin auch nach einem Reload mitten in der Editier-Sitzung seinen eigenen Entwurf sieht, ohne dass irgendwas dafuer im Browser zwischengespeichert werden muesste. Ein einfacher Trick zum Vorschau-Testen als normaler Besucher: ein privates/Inkognito-Fenster (dort ist man nie eingeloggt) zeigt automatisch den echten, oeffentlichen Stand.
-  - **POST `?action=publish`** (neue Aktion in `api/articles.php` und `api/db_entries.php`, admin-geschuetzt) sucht alle Zeilen mit gesetztem `draft_json`, schreibt deren Felder ueber `vg_writeArticleFields()`/`vg_writeEntryFields()` (gemeinsame Hilfsfunktion, auch von einer frueheren Version des direkten PUT-Endpunkts genutzt) in die echten Spalten und loescht danach `draft_json`. Wird von `toggleEdit()` beim Ausschalten ("Fertigstellen"-Knopf, sowohl im Admin-Panel als auch der schwebende `#edit-fab`) aufgerufen (`publishDrafts()`), *bevor* der Editiermodus tatsaechlich endet: schlaegt das Veroeffentlichen fehl, bleibt der Editiermodus an und nichts geht verloren (Entwuerfe liegen ja weiterhin in der Datenbank). Waehrend des Veroeffentlichens zeigen beide Knoepfe "Veroeffentlicht…" und sind gesperrt, `vgSavesInFlight` schuetzt zusaetzlich vor einem Reload mitten im Veroeffentlichen (gleiches Muster wie bei `ieApply()`).
-  - **Sichtbares "Entwurf"-Badge** (`.edit-badge.draft`, amberfarben statt dem normalen "✎ Bearbeiten") auf Kacheln/Listenzeilen/Artikel-Titelbild/Datenbank-Modal-Kopf, sobald ein Eintrag `_draft:true` traegt, gesetzt von `ieApply()` direkt im Speicher (`d._draft=true`) nach erfolgreichem Speichern, damit der Admin auf einen Blick sieht, was noch unveroeffentlicht ist, ohne extra nachzuladen.
-  - **POST `?action=discard`** (Gegenstueck zu `?action=publish`) loescht `draft_json` fuer alle betroffenen Zeilen ersatzlos, ohne die Felder zu uebernehmen. Erreichbar ueber einen "Alle Entwuerfe verwerfen"-Knopf im Admin-Panel sowie einen zweiten, dezenteren schwebenden Knopf "Verwerfen" (`#edit-fab-discard`, links neben "Fertigstellen") und ueber `discardDrafts()` im Frontend, mit Sicherheitsabfrage (`confirm()`, da endgueltig). Nach Erfolg werden `editMode` und das `vg-editmode`-localStorage-Flag direkt zurueckgesetzt (nicht ueber `toggleEdit()`, siehe naechster Punkt), danach `loadExternal()` neu aufgerufen, damit GUIDES/DB wieder den reinen, unveraenderten Live-Stand zeigen statt der verworfenen Entwurfswerte im Speicher. `adminLogout()` ruft bei aktivem Editiermodus bewusst nicht mehr `toggleEdit()` auf (das wuerde `publishDrafts()` versuchen, obwohl die Session gerade schon zerstoert ist und der Request nur mit 403 fehlschlaegt), sondern setzt denselben UI-Zustand direkt zurueck, offene Entwuerfe bleiben dabei unangetastet in der Datenbank liegen und sind nach dem naechsten Login wieder da.
-- **Bild-URL-Cache-Busting (`&v=<updated_at>`), separater, wichtiger Fund bei derselben Gelegenheit.** `api/article_image.php`/`api/entry_image.php` senden `Cache-Control: public, max-age=86400` (bewusst so, siehe "Schlanke Bild-URLs" oben), die Bild-URL selbst (`api/article_image.php?id=X`) blieb bei einer Bildaenderung aber unveraendert. Ergebnis: ein Browser, der die URL schonmal (auch nur kurz) besucht hatte, zeigte nach einer Bildaenderung bis zu 24 Stunden lang weiter das alte Bild an, obwohl der Server laengst das neue ausliefert, das sah aus wie "Aenderung wird nicht uebernommen", obwohl es rein ein Caching-Effekt war. Geloest, indem `vg_rowToArticle()`/`vg_rowToEntry()` einen Versions-Anhang `&v=<updated_at>` an die URL haengen, `vg_writeArticleFields()`/`vg_writeEntryFields()` setzen `updated_at` bei jeder echten Aenderung (Veroeffentlichen eines Entwurfs) explizit auf `CURRENT_TIMESTAMP`, unabhaengig davon ob MySQL das per `ON UPDATE CURRENT_TIMESTAMP` sowieso automatisch taete (lokales SQLite tut das nicht von selbst). Da sich die URL dadurch bei jeder echten Aenderung aendert, behandelt der Browser sie automatisch als neue, ungecachte Ressource.
+- **Dual-Theme mit Umschalter,** Light Mode als Standard, per `localStorage`.
+- **Eigene Grafik statt Rockstar-Material.**
+- **Fonts selbst gehostet statt Google Fonts.** DSGVO plus Caching-Vorteil.
+- **Bilder automatisch komprimiert.** Jedes im Editiermodus hochgeladene Bild wird clientseitig per Canvas auf max. 1100px verkleinert und als WebP kodiert (Fallback JPEG). Grund: eine frühe Version ohne Kompression ließ `database.json` auf über 40 MB anwachsen.
+- **Direktes Speichern in die Datenbank statt JSON-Download/Upload.** Dieselbe MySQL-Infrastruktur, die für Kommentare nötig war, trägt auch Artikel und DB-Einträge. Editiermodus speichert sofort und dauerhaft, auch vom Handy.
+- **Echtes Login statt reinem Client-Schalter.** Sobald Schreibzugriffe auf eine gemeinsame Datenbank möglich waren, wurde ein serverseitig geprüftes Passwort-Login (PHP-Session, 90 Tage) nötig.
+- **Echte URLs statt Hash-Routing, mit serverseitigem Rendering für Crawler.** Artikel und Datenbank-Einträge waren ursprünglich nur über Hash-Parameter erreichbar, Suchmaschinen konnten einzelne Seiten nicht indexieren, Mittelklick/Strg-Klick für einen neuen Tab ging nicht. Gelöst über `.htaccess`-Rewrites plus `article.php`/`entry.php` als schlanke SSR-Fassade (nur Metadaten und eine vereinfachte Textfassung), ohne eine zweite vollständige Rendering-Engine zu bauen. Details siehe Architektur oben.
+- **Entwurf/Veröffentlichen-Modell statt sofortigem Live-Schreiben.** Frühere Version schrieb jede Bearbeitung im Editiermodus sofort in die öffentlichen Spalten, sichtbar für alle Besucher sofort nach dem Speichern. Jetzt sammelt der Editiermodus Änderungen in `draft_json` (nur der eingeloggte Admin sieht seine eigene Vorschau), bis bewusst auf "Fertigstellen" geklickt wird. Grund: während einer Editier-Sitzung sollten Besucher nicht unfertige Zwischenstände sehen.
+- **Bild-URL-Cache-Busting (`&v=<updated_at>`).** Die leichten Bild-URLs (`api/article_image.php`/`api/entry_image.php`) werden mit `max-age=86400` gecacht, ohne Versionsanhang zeigte ein Browser nach einer Bildänderung bis zu 24 Stunden weiter das alte Bild. Gelöst, indem sich die URL bei jeder echten Änderung durch den angehängten Zeitstempel ändert.
+- **KI-Artikel über Copy-Paste-JSON statt eigenem API-Schlüssel.** Recherche und Texterstellung laufen kostenlos über einen normalen Claude-Chat, das Ergebnis wird als JSON im Admin-Panel eingefügt ("Claude-Entwurf veröffentlichen"), Vorschau geprüft, bei Bedarf bearbeitet, dann freigegeben. Der Live-Recherche-Pfad (`generateGuide()`) bleibt im Code, ist aber ohne eigenen Schlüssel inaktiv.
+- **Automatische Verlinkung in Texten.** Namen aus Charaktere, Fahrzeuge, Wildtiere, Gangs und Orte werden automatisch klickbar zum Detail-Eintrag verlinkt (`linkifyChars()`/`buildEntityAliases()`), mit Ausschlussliste (`ENT_LINK_SKIP`). Waffen, Radio und Aktivitäten bewusst außen vor (Namenskollisionen). In Artikeln wird jeder Name nur beim ersten Vorkommen verlinkt.
+- **Inline-Texteditor im Editiermodus.** Titel, Teaser und Beschreibung direkt im selben Dialog wie der Bild-Editor.
 
 ---
 
 ## 6. Aktueller Stand, offene Aufgaben, Stolperfallen
 
-### Aktueller Stand (Stand dieser Datei)
-- Seite ist live auf viceguide.de, technisch voll funktionsfaehig, Datenbank-Backend inklusive Login, Kommentare, direktes Speichern.
-- Impressum und Datenschutzerklaerung sind mit echten Daten befuellt.
-- Fonts selbst gehostet, Bildkompression automatisch, Altlast-Bilder nachtraeglich komprimiert.
-- Grundstock an Artikeln existiert, wird laufend per Claude-Entwurf-Workflow erweitert.
-- Getrennter Chat/Session-Vorschlag fuer reine Artikel-Erstellung, damit diese Coding-Session nicht mit Content-Arbeit vollgestopft wird. Diese Datei sollte in einem solchen Chat als Projekt-Wissen hinterlegt sein.
+### Aktueller Stand (Juli 2026)
+- Seite live auf viceguide.de, technisch voll funktionsfähig, Datenbank-Backend inklusive Login, Kommentare, direktes Speichern, Entwurf/Veröffentlichen-Workflow.
+- Impressum und Datenschutzerklärung mit echten Daten befüllt.
+- Fonts selbst gehostet, Bildkompression automatisch, Altlast-Bilder komprimiert.
+- **18 Artikel live.**
+- **SEO-Grundlagen erledigt:** Google Search Console eingerichtet, Sitemap eingereicht, OG-Image vorhanden, echte Artikel-/Eintrags-URLs mit serverseitigem Rendering, PageSpeed-Audit durchgeführt (SEO 100/100 mobil und Desktop, Performance Desktop 90, Mobil im mittleren Bereich, siehe Stolperfallen zu Messwert-Schwankungen).
+- **Internes Artikel-Cross-Linking ist gebaut, wird aber noch manuell angestoßen** (Claude schlägt passende Verlinkungen zu Bestandsartikeln vor, kein Automatismus).
+- Bio-Link auf viceguide.de im Instagram-Profil gesetzt.
 
 ### Offene Aufgaben
-
-**Erledigt (Stand dieser Datei):**
-- ~~Google Search Console einrichten, Sitemap einreichen~~ (erledigt: Inhaberschaft bestaetigt, Sitemap erfolgreich eingereicht)
-- ~~Echtes OG-Image (`og-image.jpg`) erstellen und bereitstellen~~ (erledigt, aus Logo + Wallpaper zusammengesetzt, 1200x630px)
-- ~~`robots.txt`/`sitemap.xml` anlegen~~ (erledigt, `sitemap.xml` ist seit der Artikel-URL-Umstellung dynamisch und listet zusaetzlich zur Startseite jeden Artikel einzeln, siehe `sitemap.php` oben)
-- ~~Discord-Server aufsetzen~~ (erledigt, Community-Sektion verlinkt live)
-- ~~Interne Artikel-Verlinkung (`[[id|text]]`)~~ (erledigt, siehe oben, "Verlinkungs-Check" als wiederkehrender Trigger)
-- ~~Echte, einzeln aufloesbare Artikel-URLs (`/artikel/{id}`)~~ (erledigt, siehe "Echte Artikel-URLs" oben: `.htaccess`, `article.php`, `sitemap.php`, `api/article_image.php`, Mittelklick/Strg-Klick fuer neuen Tab funktioniert jetzt echt. Nach Merge nach `main` live auf viceguide.de verifiziert: Seitenquelltext einer echten Artikel-URL zeigt korrekte individuelle Meta-Tags, `og:type=article`, echtes Artikelbild mit korrekten Massen/Mime-Type ueber `api/article_image.php`, `Article`-JSON-LD vorhanden.)
-- ~~Kategorien im Startseiten-Akkordeon starten zugeklappt~~ (erledigt, vorher wurde die erste nicht-leere Kategorie automatisch aufgeklappt, auf dem Handy in der Listenansicht waren dadurch weitere Kategorien erst nach viel Scrollen sichtbar)
-- ~~SEO-Audit durchgefuehrt, Quick-Wins erledigt~~ (erledigt: echtes `<h1>` fuer Artikel-Titel statt `<h2>` (vorher gab es auf der gesamten Seite kein einziges h1), beschreibende Alt-Texte statt `alt=""` auf News-/Mehr-Artikel-Kacheln und Inline-Bildern, `logo.png` als echte Datei ergaenzt (`Organization`-JSON-LD verwies vorher auf eine nicht existierende Datei), `?q=...`-Parameter aus dem `WebSite`-Schema (Sitelinks-Suchbox) loest jetzt tatsaechlich `globalSearch()` aus. Groessere Audit-Punkte (Datenbank-URLs, CSS-Hintergrundbilder als echte `<img>`-Tags) siehe unten.)
-- ~~Echte, einzeln aufloesbare Datenbank-Eintrag-URLs (`/charaktere/{slug}`, `/fahrzeuge/{slug}`, ...)~~ (erledigt, siehe "Echte Datenbank-Eintrag-URLs" oben: `slug`-Spalte plus Migration in `api/db.php`, `entry.php`, `api/entry_image.php`, 8 neue `.htaccess`-Regeln, Sitemap erweitert, Datenbank-Kacheln/Listenzeilen und automatische Entitaeten-Verlinkung auf echte Links umgestellt. Lokal per PHP-Router-Nachbau und Playwright getestet, nach dem Merge live auf viceguide.de bestaetigt: Klick auf einen Datenbank-Eintrag aendert die Adresse korrekt auf `/{praefix}/{slug}`.)
-- ~~PageSpeed-Insights-Audit durchgefuehrt, Befunde behoben~~ (erledigt: Test zeigte SEO 100/100, Performance nur 69 wegen ueber 9 MB Netzwerklast durch Base64-Bilder in jeder API-Antwort, siehe "Schlanke Bild-URLs" oben fuer die Loesung. Nebenbei behoben: WCAG-AA-Kontrastfehler bei der Akzentfarbe (`--accent` von `#FF2E88` auf `#D00059` abgedunkelt) und beim "Ab Release"-Badge, fehlende `width`/`height`-Attribute auf den drei echten `<img>`-Tags ergaenzt.)
-- ~~Artikel-Titelbilder auf 16:9-Seitenverhaeltnis umstellen~~ (erledigt: `.art-hero` von `aspect-ratio:16/10` auf `16/9` umgestellt. Der Bild-Editor (`#ie-frame`) muss dabei denselben Rahmen zeigen wie das tatsaechliche Ergebnis, sonst weicht der Zuschnitt in der Vorschau vom Endergebnis ab, betrifft aber nur Artikel: Datenbank-Eintraege (Charaktere, Fahrzeuge, ...) bleiben bewusst bei 16:10 (`.cv`/`.mhead`), also bekommt `#ie-frame` eine zusaetzliche Klasse `.wide` (16:9), die `openImgEd()` nur setzt wenn `kind==='guide'` oder `'draftpreview'` ist, sonst bleibt der Standard-16:10-Rahmen fuer Datenbank-Eintraege bestehen.)
-- ~~Weiterer SEO-Durchgang~~ (erledigt, dabei einen echten, in dieser Session selbst eingefuehrten Fehler gefunden und behoben: `article.php` ersetzt Teile von `index.html` per exaktem String-Abgleich (`str_replace()`, kein Fehler bei ausbleibendem Treffer), der Hero-Div bekam beim Bau des Editiermodus-Klicks (`#a-hero`-Badge, Leer-Hinweis) zusaetzliche Kind-Elemente, wodurch der bisherige Volltreffer-String nicht mehr passte und Titelbilder in der serverseitig gerenderten Fassung (Crawler/Link-Vorschauen ohne JS) unsichtbar blieben, obwohl `og:image` im `<head>` weiterhin korrekt war. Geloest, indem `article.php` nur noch den oeffnenden Tag und den separat verankerten Credit-Span ersetzt (id-basiert, robuster gegen kuenftige Aenderungen an Editiermodus-Kindelementen), nicht mehr das komplette Element als ein Stueck. Zusaetzlich behoben:
-  - **Soft-404 vermieden:** `article.php`/`entry.php` lieferten fuer unbekannte Slugs bisher `index.html` mit Status 200 aus (bewusst, damit Besucher keinen harten Fehler sehen), Suchmaschinen werten ein 200 auf einer inhaltslosen Adresse aber negativ. Beide liefern jetzt zusaetzlich `http_response_code(404)`, der freundliche Inhalt fuer Besucher bleibt unveraendert.
-  - **Fehlendes `<h1>` auf der Startseite ergaenzt:** die gesamte Seite hatte ausserhalb einer offenen Artikel-/Datenbank-Detailansicht kein einziges `<h1>`, das Hero-Element auf der Startseite bestand nur aus Hintergrundbild, Logo und Countdown. Ein visuell verstecktes `<h1>ViceGuide: GTA 6 News, Geruechte und Datenbank auf Deutsch</h1>` (neue `.sr-only`-Hilfsklasse, rein fuer Suchmaschinen/Screenreader, keine sichtbare Design-Aenderung) direkt im Hero ergaenzt.
-  - **Datenbank-Modal (Charaktere, Fahrzeuge, ...) nutzte `<h3>` statt `<h1>` fuer den Namen:** entry.php's SSR-Fassung hatte bereits ein `<h1>`, das clientseitige `openModal()` ueberschrieb das aber sofort wieder mit einem `<h3>`, wodurch jede Datenbank-Detailseite im tatsaechlich gerenderten Zustand ganz ohne `<h1>` dastand. Beide auf `<h1>` vereinheitlicht (CSS-Selektor `.modal h3` zu `.modal h1` mitgezogen, keine optische Aenderung).
-
-  Der groessere, damals zurueckgestellte Punkt (CSS-Hintergrundbilder durch echte `<img>`-Tags ersetzen) wurde im direkt folgenden Durchgang noch in derselben Sitzung nachgeholt, siehe "CSS-Hintergrundbilder durch echte `<img>`-Tags ersetzt" oben.)
-
-**Offen, nach Prioritaet:**
-1. **Discord tiefer einbinden:** "Discord öffnen" zusaetzlich zum bestehenden "Discord beitreten" (direkter Sprung statt erneuter Einladungslink), Discord-Widget (Live-Mitgliederzahl, zurueckgestellt bis der Server aktiver ist), eigenes Server-Icon/Branding auf der Seite zeigen, Bot-Anbindung fuer automatisches Posten neuer Artikel (Kurzfassung + Link) in einen Discord-Kanal ueber Webhook, ausgeloest beim Anlegen eines Artikels in `api/articles.php`.
-2. Grundstock an Artikeln weiter ausbauen (laufend).
-3. Social-Kanäle bespielen (Instagram als @viceguide aktiv, siehe SOCIAL.md), Website-Link erst nach offiziellem Launch in die Bio.
-4. Rechtliche Absicherung im Blick behalten: "VI" im Logo und der Wortstamm "Vice" sind Markenrecht-Grauzonen (Naehe zu VICE Media, zu Rockstars "Vice City"). DPMA/EUIPO pruefen, wenn es kommerziell ernster wird.
-5. Gewerbeanmeldung pruefen, sobald echte Werbe-/Affiliate-Einnahmen fliessen.
-6. Neue Datenbank-Eintraege komplett neu anlegen (z. B. ein bisher unbekanntes Fahrzeug) geht aktuell noch nicht ueber den Editiermodus, nur bestehende Eintraege bearbeiten. Bei Bedarf nachruesten (weiterer API-Endpunkt plus UI, inklusive Slug-Vergabe beim Anlegen).
-7. Optional: eigener Anthropic-API-Schluessel fuer echte Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` müsste auf einen serverseitigen Proxy-Endpunkt umgestellt werden statt direkt gegen die Anthropic-API zu fetchen), falls der Copy-Paste-Workflow irgendwann zu langsam wird.
-8. Discord-Server-Pflege (Regeln, Moderation, Aktivitaet): bewusst als eigenes Projekt/eigener Chat gefuehrt, nicht Teil dieser Coding-Session.
+1. Artikel-Grundstock weiter ausbauen (laufend), Ziel ist Content-Menge auf echte deutsche Suchanfragen.
+2. **Kategorien-Taxonomie klären:** die angestrebte Phase-2-Breite (Trophäen, Immobilien und Business, Charakter und Anpassung, Sammelobjekte, Tipps und Tricks) geht über die festen `cat`-Werte im Code hinaus. Entweder auf bestehende Kategorien mappen oder die Sektionen im Code erweitern. Vor der ersten Phase-2-Welle entscheiden.
+3. **Cowork-Automation für tägliche Artikel-Recherche einrichten:** ein geplanter Cowork-Task durchsucht 1x täglich seriöse Quellen nach GTA-6-News, gleicht gegen Faktenblatt und bestehende Artikel ab, entwirft neue Beiträge als fertiges JSON und führt den Redaktionsplan. **Kein Auto-Publish, Freigabe bleibt manuell** (siehe Abschnitt 9).
+4. Rechtliche Absicherung im Blick behalten: "VI" und "Vice" als Markenrecht-Grauzonen (DPMA/EUIPO), prüfen wenn es kommerziell ernster wird. Bislang nicht geprüft.
+5. Gewerbeanmeldung prüfen, sobald echte Werbe-/Affiliate-Einnahmen fließen.
+6. Neue Datenbank-Einträge komplett neu anlegen (z. B. ein unbekanntes Fahrzeug) geht noch nicht über den Editiermodus, nur bestehende bearbeiten. Bei Bedarf nachrüsten (API-Endpunkt plus UI).
+7. Kanal-Aufbau über Instagram hinaus (YouTube, TikTok, X, Reddit, Discord): Status und Priorität in KANAELE.md. Handles außer Instagram sind Stand jetzt nicht gesichert.
+8. Optional: eigener Anthropic-API-Schlüssel für Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` auf serverseitigen Proxy umstellen), falls der Copy-Paste-Workflow zu langsam wird.
 
 ### Stolperfallen
-- **Gedankenstriche schleichen sich leicht ein**, besonders in KI-generierten Texten. Nach jeder Generierung prüfen.
-- **Generischer KI-Ton schleicht sich ein**, siehe Regel 2 in Abschnitt 0. Vor dem Veroeffentlichen laut vorlesen: klingt das wie ein Mensch mit Ahnung, oder wie eine KI-Zusammenfassung?
-- **`api/config.php` nie committen.** Steht in `.gitignore`, muss nach jedem frischen Server-Setup manuell im Hostinger-Dateimanager angelegt werden.
-- **Einmal-Werkzeuge (z. B. ein Passwort-Hash-Generator oder ein Migrations-Skript) gehoeren nach Gebrauch nicht nur vom Server geloescht, sondern auch aus dem Git-Repo entfernt (`git rm`).** Sonst kommen sie beim naechsten Deploy automatisch zurueck, weil Hostinger den kompletten Ordner aus dem Repo-Stand wiederherstellt.
-- **Artikel-`id` ist fix, der Titel nicht.** Beim Bearbeiten eines Artikeltitels bleibt die zugrunde liegende `id` (und damit die Kommentar-Zuordnung) unveraendert, das ist Absicht.
-- **`database.json`/`articles.json` sind kein Live-Speicher mehr.** Falls doch mal jemand denkt, dort etwas aendern zu muessen: es hat keinen Effekt auf die echte Seite, die Datenbank ist massgeblich.
-- **Ich (Claude) habe keinen direkten Netzwerkzugriff auf viceguide.de, Google Drive oder die Hostinger-Datenbank** aus dieser Umgebung heraus (Sandbox-Netzwerkrichtlinie blockt fremde Domains). Grosse Dateien oder Live-Checks laufen über den Betreiber, der Ergebnisse/Screenshots zurückmeldet.
-- **Content-Aenderungen, die der Betreiber direkt im Browser macht (ohne mich), sind mir in einer neuen Chat-Session nicht automatisch bekannt.** Bei Bedarf kurz nachfragen oder zeigen lassen.
-- **Neue Funktionen in `api/db.php` koennen bestehende, gleichnamige Funktionen in anderen `api/*.php`-Dateien kollidieren lassen.** `db.php` wird per `require` in jeden Endpunkt eingebunden, eine neue Funktion dort mit einem Namen, den z. B. `articles.php` schon fuer sich selbst definiert (war bei `vg_slugify()` der Fall), fuehrt zu einem fatalen "Cannot redeclare function"-Fehler bei **jedem** Aufruf dieses Endpunkts, nicht nur bei dem neuen Feature. Symptom war schwer zuzuordnen: die Startseite fiel auf die eingefrorene `articles.json` zurueck (alte Artikel erschienen), weil `api/articles.php` durchgehend 500 zurückgab. Vor dem Hinzufuegen einer Funktion in `db.php` immer mit `grep -rn "function vg_deinname"` in `api/` pruefen, ob der Name schon woanders existiert.
+- **Gedankenstriche schleichen sich leicht ein,** besonders in KI-Texten. Nach jeder Generierung prüfen.
+- **Generischer KI-Ton schleicht sich ein** (Regel 2). Vor dem Veröffentlichen laut vorlesen: klingt das wie ein Gaming-Redakteur, oder wie eine KI-Zusammenfassung?
+- **`api/config.php` nie committen.** Steht in `.gitignore`, muss nach frischem Server-Setup manuell im Hostinger-Dateimanager angelegt werden.
+- **Einmal-Werkzeuge** (Passwort-Hash-Generator, Migrations-Skript) nach Gebrauch nicht nur vom Server, sondern auch aus dem Git-Repo entfernen (`git rm`). Sonst kommen sie beim nächsten Deploy zurück.
+- **Artikel-`id` ist fix, der Titel nicht.** Beim Bearbeiten des Titels bleibt die `id` (und Kommentar-Zuordnung) unverändert, Absicht.
+- **`database.json`/`articles.json` sind kein Live-Speicher mehr.** Änderungen dort haben keinen Effekt, die Datenbank ist maßgeblich.
+- **PageSpeed-Messwerte schwanken zwischen Testläufen,** teils deutlich (in einer Messreihe schwankte der Mobil-Score bei komplett unverändertem Code um über 20 Punkte). Live-Messungen gegen den echten Server, nie nur einem einzelnen Lauf hinterherjagen, immer mehrfach hintereinander testen.
+- **`str_replace()` in `article.php`/`entry.php` bricht still, wenn sich die gesuchten `index.html`-Fragmente ändern** (kein Fehler bei ausbleibendem Treffer, das Feld bleibt in der SSR-Fassung einfach leer/unsichtbar). Nach Änderungen an den betroffenen `index.html`-Elementen (Hero-Div, Modal-Grundgerüst) die SSR-Ausgabe von `article.php`/`entry.php` gegenprüfen.
+- **Genaue Repo-Dateinamen der Bild-Assets** sind aus dem Sandbox-Chat nicht sichtbar, bei Coding-Sessions gegen das echte Repo prüfen.
+- **Claude hat aus der Sandbox keinen Netzwerkzugriff** auf viceguide.de, Google Drive oder die Hostinger-Datenbank. Große Dateien oder Live-Checks laufen über den Betreiber.
+- **Direkt im Browser gemachte Content-Änderungen** sind einem neuen Chat nicht automatisch bekannt. Bei Bedarf nachfragen.
 
 ---
 
 ## 7. Backend / API (Details)
 
 ### Authentifizierung
-- `api/auth.php`: `GET` gibt `{loggedIn:bool}` zurueck, `POST {password}` prueft gegen den in `config.php` hinterlegten bcrypt-Hash (`admin_hash`) und startet bei Erfolg eine PHP-Session (Cookie, 90 Tage, HttpOnly, Secure). `DELETE` beendet die Session.
-- Jeder schreibende Endpunkt ruft `vg_require_admin($cfg)` auf (in `db.php` definiert), das ohne gueltige Session mit HTTP 403 abbricht.
-- Passwort-Hash aendern: kein dauerhaftes Tool im Repo (bewusst geloescht, siehe Stolperfallen). Bei Bedarf lokal `password_hash('neuesPasswort', PASSWORD_BCRYPT)` in PHP ausfuehren (oder Claude fragen) und den Wert in `config.php` eintragen.
+- `api/auth.php`: `GET` gibt `{loggedIn:bool}`, `POST {password}` prüft gegen den bcrypt-Hash (`admin_hash`) in `config.php` und startet bei Erfolg eine PHP-Session (Cookie, 90 Tage, HttpOnly, Secure). `DELETE` beendet sie.
+- Jeder schreibende Endpunkt ruft `vg_require_admin($cfg)` (in `db.php`) auf, das ohne gültige Session mit HTTP 403 abbricht. `vg_is_admin()` ist die nicht abbrechende Variante davon, genutzt um bei `GET` einem eingeloggten Admin zusätzlich seinen eigenen Entwurfsstand zu zeigen.
+- Passwort-Hash ändern: kein dauerhaftes Tool im Repo (bewusst gelöscht). Bei Bedarf lokal `password_hash('neuesPasswort', PASSWORD_BCRYPT)` ausführen und den Wert in `config.php` eintragen.
 
 ### Endpunkte
-- `api/articles.php`: `GET` alle Artikel (fuer eingeloggte Admins inklusive eigenem Entwurfsstand, siehe "Entwurf/Veroeffentlichen-Modell" oben), `POST` neuer Artikel (admin, sofort live, kein Entwurf), `PUT {id,...}` speichert als Entwurf (admin), `POST ?action=publish` veroeffentlicht alle offenen Entwuerfe (admin).
-- `api/db_entries.php`: `GET` alle Eintraege gruppiert nach `section` (mit Entwurfsstand fuer Admins), `PUT {id,...}` speichert als Entwurf (admin), `id` ist hier die interne Zeilen-ID (`_id` im GET-Ergebnis), nicht der Name. `POST ?action=publish` veroeffentlicht alle offenen Entwuerfe (admin).
-- `api/comments.php`: `GET ?article=<id>` Kommentarbaum, `POST {article,name,text,parentId?,quote?}` neuer Kommentar/Antwort, `PATCH {id,dir}` Upvote/Downvote, `DELETE {id}` loeschen (admin).
+- `api/articles.php`: `GET` alle Artikel (für eingeloggte Admins inklusive eigenem Entwurfsstand, `_draft:true` markiert), `POST` neuer Artikel (admin, sofort live, kein Entwurf), `PUT {id,...}` speichert als Entwurf in `draft_json` (admin), `DELETE {id}` löscht Artikel und zugehörige Kommentare (admin), `POST ?action=publish` veröffentlicht alle offenen Entwürfe (admin), `POST ?action=discard` verwirft alle offenen Entwürfe ersatzlos (admin).
+- `api/db_entries.php`: `GET` alle Einträge gruppiert nach `section` (mit Entwurfsstand für Admins), `PUT {id,...}` speichert als Entwurf (admin), `id` ist hier die interne Zeilen-ID (`_id` im GET-Ergebnis), nicht der Name. `DELETE {id}` löscht den Eintrag (admin). `POST ?action=publish`/`?action=discard` analog zu `articles.php`. `GET` vergibt außerdem fehlenden Einträgen einmalig einen `slug` (`vg_ensure_entry_slugs()`).
+- `api/comments.php`: `GET ?article=<id>` Kommentarbaum, `POST {article,name,text,parentId?,quote?}`, `PATCH {id,dir}` Vote, `DELETE {id,password}` löschen (admin).
 
-### KI-Guide-Generator, aktueller Stand
-**Primärer Weg (aktiv genutzt):** Ein separater Claude-Chat (idealerweise mit dieser Datei als Projekt-Wissen) recherchiert und schreibt den Artikel als JSON im oben stehenden Format. Der Betreiber fuegt das JSON im Admin-Panel unter "Claude-Entwurf veroeffentlichen" ein (`submitDraftJson()`), bekommt eine editierbare Vorschau (Titel, Teaser, Text, Bild per Klick/Einfuegen/Drag&Drop mit Zoom/Ausschnitt), und veroeffentlicht direkt in die Datenbank ueber die bestehende Admin-Session. Kein API-Schluessel, keine Zusatzkosten.
+### KI-Guide-Generator
+**Primär (aktiv):** ein separater Claude-Chat (mit dieser Datei als Projekt-Wissen) recherchiert und schreibt den Artikel als JSON. Der Betreiber fügt es im Admin-Panel unter "Claude-Entwurf veröffentlichen" ein (`submitDraftJson()`), bekommt eine editierbare Vorschau (Titel, Teaser, Text, Bild per Klick/Einfügen/Drag&Drop mit Zoom/Ausschnitt) und veröffentlicht direkt. Kein API-Schlüssel, keine Kosten.
 
-**Sekundärer, aktuell inaktiver Weg:** `generateGuide()` ruft direkt `https://api.anthropic.com/v1/messages` auf (Modell `claude-sonnet-4-6`, `web_search_20250305` Tool). Das funktioniert nur, wenn ein eigener Anthropic-API-Key vorhanden und (noch zu bauen) serverseitig ueber einen `api/`-Endpunkt eingebunden ist, niemals direkt im Frontend, das waere ein Sicherheitsproblem. Aktuell nicht eingerichtet, im Admin-Panel entsprechend als "braucht eigenen API-Schluessel" gekennzeichnet.
-
-### Fonts
-Selbst gehostet unter `assets/fonts/`, per `@font-face` im `<style>`-Block referenziert. Keine Verbindung zu Google mehr.
+**Sekundär (inaktiv):** `generateGuide()` ruft direkt `https://api.anthropic.com/v1/messages` (Modell `claude-sonnet-4-6`, `web_search`-Tool). Braucht einen eigenen Schlüssel, serverseitig über einen `api/`-Endpunkt eingebunden, nie im Frontend. Aktuell nicht eingerichtet.
 
 ### Domain und Hosting
-- **Domain:** viceguide.de, bei Hostinger, live.
-- **Kanonische URL:** `https://viceguide.de/`
-- **Datenbank:** MySQL bei Hostinger, ueber den Dateimanager/Datenbank-Bereich im Hostinger-Dashboard verwaltet.
+- Domain viceguide.de bei Hostinger, live. Kanonische URL `https://viceguide.de/`.
+- MySQL bei Hostinger, über das Dashboard verwaltet.
 
-### Social
-- **Instagram/Threads:** Handle **@viceguide**. Details siehe `SOCIAL.md`.
-- **Weitere Handles:** @viceguide fuer YouTube, TikTok, X fruehzeitig gesichert.
+### Social und Kanäle
+- **Instagram/Threads:** Handle **@viceguide**, aktiv. Details in SOCIAL.md.
+- **Weitere Kanäle** (YouTube, TikTok, X, Reddit, Discord): Status und Priorität in KANAELE.md. **Stand jetzt ist außer Instagram nichts gesichert.** (Frühere Notiz, diese Handles seien "gesichert", war falsch und ist korrigiert.)
 
-### Verifizierte GTA-6-Eckdaten (bei neuen Artikeln immer frisch pruefen)
-- **Release:** 19. November 2026.
-- **Vorbesteller:** seit 25. Juni.
-- **Protagonisten:** Jason und Lucia (erstes spielbares Duo der Reihe).
-- **Setting:** Bundesstaat Leonida, Vice City (Miami-Analog).
-- Bei jedem News-Artikel Aktualitaet ueber Web-Suche verifizieren, GTA-6-Berichterstattung aendert sich schnell.
+---
+
+## 8. GTA-6-Faktenblatt (verbindlich, projektweit)
+
+> **Zuletzt geprüft: 11. Juli 2026.** Diese Zahlen gelten für Website UND Social, damit nichts auseinanderdriftet. GTA-6-Berichterstattung ändert sich schnell: bei jedem neuen News-Artikel die relevanten Punkte per Websuche gegenprüfen und bei Änderung dieses Datum und die betroffene Zeile aktualisieren.
+
+- **Release:** Donnerstag, 19. November 2026. Von Rockstar am 6. November 2025 bestätigt, von Take-Two am 21. Mai 2026 nochmals bekräftigt.
+- **Plattformen:** PS5 und Xbox Series X/S. **Kein PC** und **kein Switch 2** zum Launch bestätigt (PC historisch meist später).
+- **Preis:** Standard 79,99 US-Dollar, Ultimate 99,99 US-Dollar (rund 80 bzw. 100 Euro).
+- **Vorbestellung:** live seit 25. Juni 2026. Gratis "Vintage Vice City Pack" bei Vorbestellung vor dem 20. November 2026.
+- **Protagonisten:** Jason (Duval) und Lucia (Caminos), kriminelles Paar, erstes spielbares Duo der GTA-Reihe.
+- **Setting:** Bundesstaat Leonida (fiktiv, nach Vorbild Florida), Herzstück Vice City (Miami-Analog).
+- **Trailer:** Trailer 1 im Dezember 2023, Trailer 2 am 6. Mai 2025. Ein dritter Trailer war Stand Prüfdatum noch nicht erschienen.
+- **Modus:** von Rockstar als Single-Player-Erlebnis bestätigt (Juni 2026). Zur Zukunft eines Online-Modus gab es zum Prüfdatum keine finalen Details.
+
+---
+
+## 9. Claudes Rolle auf der Website (und Redaktions-Automation)
+
+Claude ist hier Content- und Redaktionspartner auf dem Niveau eines erfahrenen Gaming-Redakteurs, nicht allgemeiner Assistent.
+
+- **Artikel proaktiv treiben, nicht nur auf Zuruf.** Claude führt den Redaktionsplan, schlägt Themen vor und priorisiert, welche deutschen Suchanfragen noch nicht bedient sind. Recherche immer per Websuche, seriöse Quellen, gegen das Faktenblatt (Abschnitt 8) geprüft.
+- **Bestehende Artikel kritisch gegenlesen.** Auf Wunsch prüft Claude Bestandsartikel auf Ton, Aktualität und SEO. Maßstab: von einem professionellen Gaming-Journalisten nicht zu unterscheiden, kein generisches KI-Klingen (Regel 2).
+- **Interne Verlinkung proaktiv mitliefern.** Da Cross-Linking gebaut ist, schlägt Claude bei jedem neuen Artikel passende Verweise auf Bestandsartikel vor.
+- **Ausgabeformat:** fertiges JSON im Format aus Abschnitt 2, direkt zum Copy-Paste ins Admin-Panel. Kein Drumherum nötig, das JSON im Codeblock reicht.
+
+### Cowork-Automation (täglicher News-Task)
+Ziel: so viel wie möglich automatisieren, Freigabe bleibt beim Betreiber.
+
+- Ein geplanter Cowork-Task läuft 1x täglich, durchsucht seriöse Quellen nach GTA-6-Neuigkeiten, gleicht gegen Faktenblatt und die bestehenden Artikel ab (keine Dubletten), entwirft echte Neuigkeiten als fertiges Artikel-JSON und aktualisiert den Redaktionsplan in einem Dokument.
+- **Feste Regeln im Task-Prompt:** nur seriöse Quellen, Fakten gegen das Faktenblatt prüfen, Unbestätigtes klar als "unbestätigt" markieren statt als Fakt, kein Auto-Publish. Der Task entwirft, der Betreiber prüft und fügt selbst ins Admin-Panel ein.
+- **Praktische Grenzen:** Cowork-Tasks laufen lokal, nur solange der Rechner wach und Claude Desktop offen ist (verpasste Läufe werden beim nächsten Wachwerden einmalig nachgeholt). Den Task legt der Betreiber selbst per `/schedule` in Cowork an, Claude liefert dafür den exakten Prompt.
 
 ---
 
 ## Für den nächsten Claude: Arbeitsweise mit dem Betreiber
 
-Der Betreiber (Eddy) kommuniziert direkt und iterativ, gibt pro Runde konkretes Feedback. Duzen, deutsch. Ehrlich gegenhalten statt nur zustimmen, wenn etwas fachlich oder rechtlich schiefliegt. Produkt-Vision beachten: internes Tooling bleibt fuer Besucher unsichtbar, Struktur ist an den Spiel-Lebenszyklus gekoppelt, alles bleibt im sauberen Fan-Rahmen.
+Der Betreiber (Eddy) kommuniziert direkt und iterativ, gibt pro Runde konkretes Feedback. Duzen, deutsch. Ehrlich gegenhalten statt nur zustimmen, wenn etwas fachlich oder rechtlich schiefliegt, das ist ausdrücklich erwünscht. Produkt-Vision beachten: internes Tooling bleibt für Besucher unsichtbar, Struktur ist an den Spiel-Lebenszyklus gekoppelt, alles bleibt im sauberen Fan-Rahmen.
 
-**Zwei absolute Regeln: keine Gedankenstriche, und jeder Text klingt nach einem echten Redakteur, nicht nach KI (siehe Abschnitt 0).**
+**Zwei absolute Regeln: keine Gedankenstriche, und jeder Text klingt nach einem echten Gaming-Redakteur, nicht nach KI (Abschnitt 0).**
 
-**Falls dies ein separater Chat nur fuer Artikel-Erstellung ist:** Du musst kein Git, keine Deploys und kein Code anfassen. Deine Aufgabe ist, auf Zuruf ein Thema zu recherchieren (Web-Suche nutzen, GTA-6-Infos aendern sich schnell) und einen Artikel im oben stehenden JSON-Format zu liefern, fertig zum Copy-Paste in den Admin-Panel-Workflow. Kein Talk drumherum noetig, das JSON in einem Codeblock reicht.
+**Falls dies ein separater Chat nur für Artikel-Erstellung ist:** kein Git, keine Deploys, kein Code nötig. Aufgabe ist, auf Zuruf oder aus dem Redaktionsplan ein Thema zu recherchieren (Websuche, gegen Faktenblatt geprüft) und einen Artikel im JSON-Format zu liefern, fertig zum Copy-Paste. Das JSON im Codeblock reicht.
