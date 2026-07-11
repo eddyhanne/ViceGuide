@@ -24,6 +24,19 @@
 - Ein Artikel darf eine eigene Position und Einordnung haben ("wirkt eher wie ein Gerücht, weil..."), das ist der USP gegenüber reinem Leak-Kopieren.
 - Gilt für alle Texte: Artikel, Teaser, Datenbank-Beschreibungen, Meta-Texte, Captions.
 
+**Verbotene Floskeln (harte Liste, nie verwenden):**
+- Meta-Ansagen über den Text: "Wichtig für die Einordnung", "Zur Einordnung", "Eins vorweg", "So viel sei gesagt".
+- Leerlauf-Hedges: "Es bleibt abzuwarten", "Man darf gespannt sein", "Nur die Zeit wird es zeigen", "Wie sich zeigen wird".
+- Marketing-Enthusiasmus: "Tauche ein in", "Mach dich bereit für", "Freu dich auf".
+- Aufsatz-Klammern: "Zusammenfassend lässt sich sagen", "Alles in allem", "Es ist wichtig zu beachten, dass", "Es ist erwähnenswert, dass".
+- Füll-Übergänge: "Doch damit nicht genug", "Und das ist noch nicht alles", "Aber was bedeutet das eigentlich?".
+
+**Prinzip:** nichts ankündigen, was gleich kommt, sondern es direkt sagen. Nicht ins Vage hedgen, sondern Fakten nennen und Position beziehen. Führe mit der bestätigten News, nicht mit der Spekulation: steht eine belegte Tatsache im Raum, gehört die nach vorne, das Gerücht ist der Nebenaspekt.
+
+**Vorher/Nachher:**
+- Schwach: "Wichtig für die Einordnung: bestätigt ist bislang nur die Verlegung des Earnings-Calls."
+- Stark: "Bestätigt ist bisher nur eins: dass Take-Two den Call verschoben hat. Alles andere ist Spekulation."
+
 Diese beiden Regeln sind projektweit und stehen über allem anderen.
 
 ---
