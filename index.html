@@ -112,6 +112,9 @@
   .side-btn:hover{background:var(--surface-2);color:var(--text)}
   .side-btn.active{background:var(--accent);color:var(--btn-text)}
   .side-fan{margin:14px 6px 0;font-family:'Space Mono';font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft);border-top:1px dashed var(--line);padding-top:12px;line-height:1.6}
+  .side-btn .cnt{margin-left:auto;font-family:'Space Mono';font-size:11px;color:var(--text-soft);background:var(--bg-2);padding:2px 8px;border-radius:999px;min-width:20px;text-align:center}
+  .side-btn.active .cnt{background:rgba(255,255,255,.25);color:var(--btn-text)}
+  .side-sep{font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft);margin:16px 6px 8px;padding-top:12px;border-top:1px dashed var(--line)}
   .content{flex:1;min-width:0;padding:0 22px 70px}
   @media(max-width:900px){
     .burger{display:grid;place-items:center}
@@ -370,6 +373,18 @@
   .viewtoggle{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:3px}
   .vt{font-size:13px;font-weight:600;color:var(--text-soft);padding:7px 13px;border-radius:8px;transition:.15s}
   .vt.on{background:var(--accent);color:var(--btn-text)}
+  .newsfilter{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-top:16px}
+  .nf-chips{display:flex;gap:8px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .nf-chip{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--text-soft);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;white-space:nowrap;cursor:pointer;transition:.15s}
+  .nf-chip:hover{border-color:var(--accent-2);color:var(--text)}
+  .nf-chip.on{background:var(--accent);color:var(--btn-text);border-color:var(--accent)}
+  .nf-search{position:relative;flex:0 0 auto}
+  .nf-search input{font-size:13.5px;padding:9px 34px 9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);width:210px;max-width:46vw}
+  .nf-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);place-items:center;width:20px;height:20px;border-radius:999px;background:var(--bg-2);color:var(--text-soft);font-size:14px;line-height:1;cursor:pointer;border:0}
+  .news-more{display:flex;justify-content:center;margin-top:22px}
+  .load-more,.sub-more{font-size:13.5px;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:10px 22px;cursor:pointer;transition:.15s}
+  .load-more:hover,.sub-more:hover{border-color:var(--accent);color:var(--accent)}
+  .sub-more{display:block;width:100%;margin-top:10px;text-align:center}
   .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;margin-top:18px}
   .ncard{display:block;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,border-color .2s,transform .2s;text-decoration:none;color:inherit}
   .ncard:hover{border-color:var(--accent);transform:translateY(-5px);box-shadow:var(--shadow)}
@@ -743,7 +758,7 @@ const CATICON={news:'home',leaks:'weapons',trailer:'activities',story:'character
 function catIcon(id){return secIcon(CATICON[id]||'home');}
 const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", editMode=false, isRestoringRoute=false, isAdmin=false;
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false;
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';}
@@ -827,8 +842,12 @@ function renderMobileNav(){
   el.innerHTML=SECTIONS.map(sc=>`<button class="mn-chip ${sc.id===current?'active':''}" onclick="go('${sc.id}')"><span class="mn-ic">${secIcon(sc.id)}</span>${sc.label}</button>`).join('');
 }
 function renderSidebar(){
-  $('sidebar').innerHTML=SECTIONS.map(s=>`<button class="side-btn ${s.id===current?'active':''}" onclick="go('${s.id}')"><span class="si">${secIcon(s.id)}</span><span class="lbl">${s.label}</span></button>`).join('')
-   +`<button class="side-btn locked-nav" onclick="gotoRelease()" title="Schaltet zum Release frei"><span class="si">${secIcon('release')}</span><span class="lbl">Ab Release</span><span class="nav-lock">🔒</span></button>`
+  const secCount=s=> s.type==='guides'?GUIDES.length : (s.type==='db'?(DB[s.id]||[]).length : null);
+  const mainBtns=SECTIONS.map(s=>{const n=secCount(s);const c=(n!=null)?`<span class="cnt">${n}</span>`:'';return `<button class="side-btn ${s.id===current?'active':''}" onclick="go('${s.id}')"><span class="si">${secIcon(s.id)}</span><span class="lbl">${s.label}</span>${c}</button>`;}).join('');
+  const relBtns=GROUPS[1].cats.map(c=>`<button class="side-btn locked-nav" onclick="gotoRelease()" title="Schaltet zum Release frei"><span class="si">${catIcon(c.id)}</span><span class="lbl">${c.name}</span><span class="nav-lock">🔒</span></button>`).join('');
+  $('sidebar').innerHTML=mainBtns
+   +`<div class="side-sep">Ab Release-Day</div>`
+   +relBtns
    +`<div class="side-fan">Fan-Projekt · inoffiziell<br>keine Rockstar-Marken</div>`;
 }
 
@@ -867,25 +886,18 @@ function renderHome(){
   // Phase 1 als Liste (Akkordeon)
   const listHtml=g1.cats.map(c=>{
     const gl=guidesIn(c.id), isOpen=openCats.has(c.id), latest=latestFmt(c.id);
-    const subs=gl.map(gd=>{const i=GUIDES.indexOf(gd);return `<a class="sub" href="${articleHref(gd.id)}" onclick="return articleClick(event,${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></a>`;}).join('');
+    const gls=gl.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    const mkSub=gd=>{const i=GUIDES.indexOf(gd);return `<a class="sub" href="${articleHref(gd.id)}" onclick="return articleClick(event,${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></a>`;};
+    const showAll=expandedCats.has(c.id), rest=Math.max(0,gls.length-5);
+    const subs=gls.slice(0,showAll?gls.length:5).map(mkSub).join('') + ((rest>0&&!showAll)?`<button class="sub-more" onclick="expandCat('${c.id}',event)">Weitere ${rest} Artikel anzeigen</button>`:'');
     return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${gl.length} Artikel</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${latest?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
   }).join('');
-  // Phase 1 als Kacheln (alle Artikel, neueste zuerst)
-  const cards=GUIDES.map((x,idx)=>({x,idx})).filter(o=>g1.cats.some(c=>c.id===o.x.cat))
-    .sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0))
-    .map(o=>{
-      const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
-      const dt=o.x.date?fmtDShort(o.x.date):'';
-      const au=o.x.author||'ViceGuide Redaktion';
-      const nb = editMode ? (o.x._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
-      const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
-      const tag=editMode?'div':'a';
-      const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
-      const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
-      return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
-    }).join('');
+  // Phase 1 als Kacheln: Kategorie-Filter (Chips) + Suche + Mehr laden
+  const catChips=`<button class="nf-chip ${newsCat==='Alle'?'on':''}" onclick="setNewsCat('Alle')">Alle</button>`+g1.cats.map(c=>`<button class="nf-chip ${newsCat===c.id?'on':''}" onclick="setNewsCat('${c.id}')">${c.name}</button>`).join('');
+  const newsFilter=`<div class="newsfilter"><div class="nf-chips">${catChips}</div><div class="nf-search"><input id="newssearch" type="text" placeholder="News durchsuchen…" value="${esc(newsQuery)}"><button class="nf-clear" onclick="clearNewsSearch()" style="${newsQuery?'display:grid':'display:none'}" aria-label="Leeren">×</button></div></div>`;
+  const nc=newsCardsHtml();
   const phase1 = newsView==='cards'
-    ? `<div class="news-grid">${cards||'<div class="empty">Noch keine Artikel.</div>'}</div>`
+    ? `${newsFilter}<div class="news-grid" id="news-grid">${nc.grid}</div><div class="news-more" id="news-more">${nc.more}</div>`
     : `<div class="acc">${listHtml}</div>`;
   // Phase 2 (gesperrt) immer als Hinweisbalken
   const relChips=g2.cats.map(c=>`<span class="rel-chip"><span class="rc-ic">${catIcon(c.id)}</span>${c.name}</span>`).join('');
@@ -907,8 +919,35 @@ function renderHome(){
      <div class="viewtoggle"><button class="vt ${newsView==='list'?'on':''}" onclick="setNewsView('list')">☰ Liste</button><button class="vt ${newsView==='cards'?'on':''}" onclick="setNewsView('cards')">▦ Kacheln</button></div></div>
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
    ${phase2}`;
-  if(newsView==='list') applyOpenHeights();
+  if(newsView==='list'){ applyOpenHeights(); }
+  else { const ns=$('newssearch'); if(ns){ ns.addEventListener('input',e=>{ newsQuery=e.target.value; newsLimit=12; const c=document.querySelector('.nf-clear'); if(c)c.style.display=newsQuery?'grid':'none'; drawNewsGrid(); }); } }
 }
+function newsCardsHtml(){
+  const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
+  const pool=GUIDES.map((x,idx)=>({x,idx}))
+    .filter(o=>g1.cats.some(c=>c.id===o.x.cat))
+    .filter(o=>newsCat==='Alle'||o.x.cat===newsCat)
+    .filter(o=>!q||(((o.x.title||'')+' '+(o.x.summary||'')).toLowerCase().includes(q)))
+    .sort((a,b)=>new Date(b.x.date||0)-new Date(a.x.date||0));
+  const grid=pool.slice(0,newsLimit).map(o=>{
+    const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
+    const dt=o.x.date?fmtDShort(o.x.date):'';
+    const au=o.x.author||'ViceGuide Redaktion';
+    const nb = editMode ? (o.x._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
+    const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
+    const tag=editMode?'div':'a';
+    const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
+    const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
+    return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><div class="nrow"><span class="navatar">${initial(au)}</span><span class="nauthor">${au}</span><span class="nclock">🕒</span><span class="ndate">${dt}</span></div></div></${tag}>`;
+  }).join('');
+  const more=pool.length>newsLimit?`<button class="load-more" onclick="loadMoreNews()">Mehr laden · noch ${pool.length-newsLimit}</button>`:'';
+  return { grid: grid||'<div class="empty">Keine Artikel gefunden.</div>', more, total: pool.length };
+}
+function drawNewsGrid(){ const nc=newsCardsHtml(); const g=$('news-grid'), m=$('news-more'); if(g)g.innerHTML=nc.grid; if(m)m.innerHTML=nc.more; }
+function setNewsCat(id){ newsCat=id; newsLimit=12; renderHome(); }
+function loadMoreNews(){ newsLimit+=12; drawNewsGrid(); }
+function clearNewsSearch(){ newsQuery=''; const ns=$('newssearch'); if(ns)ns.value=''; const c=document.querySelector('.nf-clear'); if(c)c.style.display='none'; newsLimit=12; drawNewsGrid(); if(ns)ns.focus(); }
+function expandCat(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} expandedCats.add(id); renderHome(); }
 function setNewsView(v){ newsView=v; renderHome(); }
 function gotoRelease(){ current='home'; openCats.add('__rel__'); renderSidebar(); renderView(); setTimeout(()=>{const el=document.getElementById('rel-anchor'); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},70); }
 function toggleCat(id){const it=document.querySelector('.acc-item[data-cat="'+id+'"]');if(!it)return;const b=it.querySelector('.acc-body');const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
