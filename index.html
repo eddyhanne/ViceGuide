@@ -1272,7 +1272,7 @@ function openImgEd(kind,secId,i){
   const d = isDraft ? aiDraft : (kind==='guide' ? GUIDES[i] : DB[secId][i]);
   const f=d.imgfit||{};
   const name = isDraft ? (d.title||'Neuer Artikel') : (kind==='guide' ? d.title : d.name);
-  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
+  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||'Rockstar Games'};
   $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
@@ -2277,10 +2277,18 @@ async function loadExternal(){
     frame.addEventListener('drop',e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f) ieLoadFile(f);});
   }
 })();
-/* Versteckter Redaktionszugang: URL #redaktion ODER Tastenkombi Shift+Alt+R */
+/* Versteckter Redaktionszugang: URL #redaktion, Tastenkombi Strg+Umschalt+1 oder Tipp-Sequenz "admin" */
 function maybeOpenAdmin(){ if(location.hash==='#redaktion'||location.hash==='#admin'){ openAdmin(); } }
 window.addEventListener('hashchange',maybeOpenAdmin);
-document.addEventListener('keydown',e=>{ if(e.shiftKey&&e.altKey&&e.code==='KeyR'){ e.preventDefault(); openAdmin(); } });
+document.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.shiftKey&&!e.altKey&&e.code==='Digit1'){ e.preventDefault(); openAdmin(); } });
+/* Zuverlaessige Alternative ohne Konflikt mit Betriebssystem oder Browser: Tippfolge "admin" ausserhalb von Eingabefeldern */
+(function(){let buf='',t=null;document.addEventListener('keydown',e=>{
+  const el=document.activeElement, tag=el?el.tagName:'';
+  if(tag==='INPUT'||tag==='TEXTAREA'||(el&&el.isContentEditable))return;
+  if(!e.key||e.key.length!==1||e.ctrlKey||e.metaKey||e.altKey)return;
+  buf=(buf+e.key.toLowerCase()).slice(-5);clearTimeout(t);t=setTimeout(()=>buf='',1200);
+  if(buf==='admin'){buf='';openAdmin();}
+});})();
 maybeOpenAdmin();
 (function(){const el=document.getElementById('foot-secret');if(!el)return;let n=0,t=null;el.addEventListener('click',()=>{n++;clearTimeout(t);t=setTimeout(()=>n=0,900);if(n>=3){n=0;openAdmin();}});})();
 
