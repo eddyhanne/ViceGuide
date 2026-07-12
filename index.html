@@ -850,7 +850,7 @@ function renderMobileNav(){
   el.innerHTML=SECTIONS.map(sc=>`<button class="mn-chip ${sc.id===current?'active':''}" onclick="go('${sc.id}')"><span class="mn-ic">${secIcon(sc.id)}</span>${sc.label}</button>`).join('');
 }
 function renderSidebar(){
-  const secCount=s=> s.type==='guides'?GUIDES.length : (s.type==='db'?(DB[s.id]||[]).length : null);
+  const secCount=s=> s.type==='guides'?GUIDES.length : s.type==='db'?(DB[s.id]||[]).length : s.type==='videos'?VIDEOS.length : null;
   const mainBtns=SECTIONS.map(s=>{const n=secCount(s);const c=(n!=null)?`<span class="cnt">${n}</span>`:'';return `<button class="side-btn ${s.id===current?'active':''}" onclick="go('${s.id}')"><span class="si">${secIcon(s.id)}</span><span class="lbl">${s.label}</span>${c}</button>`;}).join('');
   const relBtns=GROUPS[1].cats.map(c=>`<button class="side-btn locked-nav" onclick="gotoRelease()" title="Schaltet zum Release frei"><span class="si">${catIcon(c.id)}</span><span class="lbl">${c.name}</span><span class="nav-lock">🔒</span></button>`).join('');
   $('sidebar').innerHTML=mainBtns
@@ -892,21 +892,18 @@ function latestFmt(c){const list=GUIDES.filter(g=>g.cat===c&&g.date);if(!list.le
 function renderHome(){
   const g1=GROUPS[0], g2=GROUPS[1];
   // Phase 1 als Liste (Akkordeon)
-  const listHtml=g1.cats.map(c=>{
-    const gl=guidesIn(c.id), isOpen=openCats.has(c.id), latest=latestFmt(c.id);
-    const gls=gl.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-    const mkSub=gd=>{const i=GUIDES.indexOf(gd);return `<a class="sub" href="${articleHref(gd.id)}" onclick="return articleClick(event,${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></a>`;};
-    const showAll=expandedCats.has(c.id), rest=Math.max(0,gls.length-5);
-    const subs=gls.slice(0,showAll?gls.length:5).map(mkSub).join('') + ((rest>0&&!showAll)?`<button class="sub-more" onclick="expandCat('${c.id}',event)">Weitere ${rest} Artikel anzeigen</button>`:'');
-    return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${gl.length} Artikel</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${latest?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
-  }).join('');
+  const listHtml=newsListHtml();
   // Phase 1 als Kacheln: Kategorie-Filter (Chips) + Suche + Mehr laden
-  const catChips=`<button class="nf-chip ${newsCat==='Alle'?'on':''}" onclick="setNewsCat('Alle')">Alle</button>`+g1.cats.map(c=>`<button class="nf-chip ${newsCat===c.id?'on':''}" onclick="setNewsCat('${c.id}')">${c.name}</button>`).join('');
-  const newsFilter=`<div class="newsfilter"><div class="nf-chips">${catChips}</div><div class="nf-row2"><div class="nf-search"><input id="newssearch" type="text" placeholder="News durchsuchen…" value="${esc(newsQuery)}"><button class="nf-clear" onclick="clearNewsSearch()" style="${newsQuery?'display:grid':'display:none'}" aria-label="Leeren">×</button></div><select class="nf-sort" onchange="setNewsSort(this.value)"><option value="neu"${newsSort==='neu'?' selected':''}>Neueste zuerst</option><option value="alt"${newsSort==='alt'?' selected':''}>Älteste zuerst</option></select></div></div>`;
-  const nc=newsCardsHtml();
-  const phase1 = newsView==='cards'
-    ? `${newsFilter}<div class="news-grid" id="news-grid">${nc.grid}</div><div class="news-more" id="news-more">${nc.more}</div>`
-    : `<div class="acc">${listHtml}</div>`;
+  const searchField=`<div class="nf-search"><input id="newssearch" type="text" placeholder="News durchsuchen…" value="${esc(newsQuery)}"><button class="nf-clear" onclick="clearNewsSearch()" style="${newsQuery?'display:grid':'display:none'}" aria-label="Leeren">×</button></div>`;
+  const sortSel=`<select class="nf-sort" onchange="setNewsSort(this.value)"><option value="neu"${newsSort==='neu'?' selected':''}>Neueste zuerst</option><option value="alt"${newsSort==='alt'?' selected':''}>Älteste zuerst</option></select>`;
+  const catChips=`<button class="nf-chip ${newsCat==='Alle'?'on':''}" data-cat="Alle" onclick="setNewsCat('Alle')">Alle</button>`+g1.cats.map(c=>`<button class="nf-chip ${newsCat===c.id?'on':''}" data-cat="${c.id}" onclick="setNewsCat('${c.id}')">${c.name}</button>`).join('');
+  let phase1;
+  if(newsView==='cards'){
+    const nc=newsCardsHtml();
+    phase1=`<div class="newsfilter"><div class="nf-chips">${catChips}</div><div class="nf-row2">${searchField}${sortSel}</div></div><div class="news-grid" id="news-grid">${nc.grid}</div><div class="news-more" id="news-more">${nc.more}</div>`;
+  } else {
+    phase1=`<div class="newsfilter"><div class="nf-row2">${searchField}</div></div><div class="acc" id="news-acc">${listHtml}</div>`;
+  }
   // Phase 2 (gesperrt) immer als Hinweisbalken
   const relChips=g2.cats.map(c=>`<span class="rel-chip"><span class="rc-ic">${catIcon(c.id)}</span>${c.name}</span>`).join('');
   const relOpen=openCats.has('__rel__');
@@ -927,14 +924,14 @@ function renderHome(){
      <div class="viewtoggle"><button class="vt ${newsView==='list'?'on':''}" onclick="setNewsView('list')">☰ Liste</button><button class="vt ${newsView==='cards'?'on':''}" onclick="setNewsView('cards')">▦ Kacheln</button></div></div>
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
    ${phase2}`;
-  if(newsView==='list'){ applyOpenHeights(); }
-  else { const ns=$('newssearch'); if(ns){ ns.addEventListener('input',e=>{ newsQuery=e.target.value; newsLimit=12; const c=document.querySelector('.nf-clear'); if(c)c.style.display=newsQuery?'grid':'none'; drawNewsGrid(); }); } }
+  { const ns=$('newssearch'); if(ns){ ns.addEventListener('input',e=>{ newsQuery=e.target.value; newsLimit=12; const c=document.querySelector('.nf-clear'); if(c)c.style.display=newsQuery?'grid':'none'; if(newsView==='cards'){ if(newsQuery&&newsCat!=='Alle'){newsCat='Alle';syncChips();} drawNewsGrid(); } else { drawNewsList(); } }); } }
+  if(newsView==='list') applyOpenHeights();
 }
 function newsCardsHtml(){
   const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
   const pool=GUIDES.map((x,idx)=>({x,idx}))
     .filter(o=>g1.cats.some(c=>c.id===o.x.cat))
-    .filter(o=>newsCat==='Alle'||o.x.cat===newsCat)
+    .filter(o=>q||newsCat==='Alle'||o.x.cat===newsCat)
     .filter(o=>!q||(((o.x.title||'')+' '+(o.x.summary||'')).toLowerCase().includes(q)))
     .sort((a,b)=>{const d=new Date(a.x.date||0)-new Date(b.x.date||0);return newsSort==='alt'?d:-d;});
   const grid=pool.slice(0,newsLimit).map(o=>{
@@ -952,10 +949,30 @@ function newsCardsHtml(){
   return { grid: grid||'<div class="empty">Keine Artikel gefunden.</div>', more, total: pool.length };
 }
 function drawNewsGrid(){ const nc=newsCardsHtml(); const g=$('news-grid'), m=$('news-more'); if(g)g.innerHTML=nc.grid; if(m)m.innerHTML=nc.more; }
+function newsListHtml(){
+  const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
+  const items=g1.cats.map(c=>{
+    let gl=guidesIn(c.id);
+    if(q) gl=gl.filter(gd=>(((gd.title||'')+' '+(gd.summary||'')).toLowerCase().includes(q)));
+    if(q && !gl.length) return '';
+    const gls=gl.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    const isOpen = q ? true : openCats.has(c.id);
+    const showAll = q ? true : expandedCats.has(c.id);
+    const latest=latestFmt(c.id);
+    const mkSub=gd=>{const i=GUIDES.indexOf(gd);return `<a class="sub" href="${articleHref(gd.id)}" onclick="return articleClick(event,${i})"><div class="sub-top"><span class="st">${gd.title}</span><span class="meta">${gd.date?fmtDT(gd.date):(gd.meta||'')}</span></div><div class="sd">${gd.summary}</div></a>`;};
+    const rest=Math.max(0,gls.length-5);
+    const subs=gls.slice(0,showAll?gls.length:5).map(mkSub).join('') + ((rest>0&&!showAll)?`<button class="sub-more" onclick="expandCat('${c.id}',event)">Weitere ${rest} Artikel anzeigen</button>`:'');
+    const cnt = q ? `${gls.length} Treffer` : `${guidesIn(c.id).length} Artikel`;
+    return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${cnt}</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${(latest&&!q)?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
+  }).join('');
+  return items || '<div class="empty">Keine Artikel gefunden.</div>';
+}
+function drawNewsList(){ const el=$('news-acc'); if(el){ el.innerHTML=newsListHtml(); applyOpenHeights(); } }
+function syncChips(){ document.querySelectorAll('.nf-chip').forEach(el=>el.classList.toggle('on', el.dataset.cat===newsCat)); }
 function setNewsCat(id){ newsCat=id; newsLimit=12; renderHome(); }
 function setNewsSort(v){ newsSort=v; newsLimit=12; drawNewsGrid(); }
 function loadMoreNews(){ newsLimit+=12; drawNewsGrid(); }
-function clearNewsSearch(){ newsQuery=''; const ns=$('newssearch'); if(ns)ns.value=''; const c=document.querySelector('.nf-clear'); if(c)c.style.display='none'; newsLimit=12; drawNewsGrid(); if(ns)ns.focus(); }
+function clearNewsSearch(){ newsQuery=''; const ns=$('newssearch'); if(ns)ns.value=''; const c=document.querySelector('.nf-clear'); if(c)c.style.display='none'; newsLimit=12; if(newsView==='cards') drawNewsGrid(); else drawNewsList(); if(ns)ns.focus(); }
 function expandCat(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} expandedCats.add(id); renderHome(); }
 function setNewsView(v){ newsView=v; renderHome(); }
 function gotoRelease(){ current='home'; openCats.add('__rel__'); renderSidebar(); renderView(); setTimeout(()=>{const el=document.getElementById('rel-anchor'); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},70); }
