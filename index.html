@@ -163,7 +163,6 @@
   .pc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
   .pc-thumb.ph{display:grid;place-items:center}
   .pc-thumb.ph .ghost{font-size:40px;opacity:.4}
-  .pc-thumb .pc-pin{position:absolute;top:10px;left:10px;z-index:2;font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--bg);font-weight:700;background:var(--accent);padding:4px 9px;border-radius:999px}
   .pc-body{padding:13px 15px 15px}
   .pc-cat{display:block;font-family:'Space Mono';font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px}
   .pcard h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.2;margin:0}
@@ -926,8 +925,7 @@ function pinnedGuides(){
 }
 function portalCard(g){
   const idx=GUIDES.indexOf(g);
-  const pin=g.pinned?'<span class="pc-pin">\u{1F4CC} Angepinnt</span>':'';
-  const vis=g.img?`<div class="pc-thumb">${pin}<img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></div>`:`<div class="pc-thumb ph">${pin}<span class="ghost">${secIcon('news')}</span></div>`;
+  const vis=g.img?`<div class="pc-thumb"><img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></div>`:`<div class="pc-thumb ph"><span class="ghost">${secIcon('news')}</span></div>`;
   return `<a class="pcard" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${vis}<div class="pc-body"><span class="pc-cat">${GCAT[g.cat]?.name||''}</span><h3>${esc(g.title)}</h3></div></a>`;
 }
 function portalHighlightsHtml(){
