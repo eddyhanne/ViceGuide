@@ -2381,6 +2381,7 @@ function syncHash(){
   else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
   else if(!curModal && SECTION_PREFIX[current]) target='/'+SECTION_PREFIX[current]+'/';
   else if(!curModal && (current==='videos'||current==='community')) target='/'+current;
+  else if(!curModal && current==='map') target='/karte';
   else if(!curModal && current==='home') target='/';
   else target='/#'+buildHash();
   const currentFull=location.pathname+location.hash;
@@ -2420,9 +2421,9 @@ function restoreFromLocation(){
       openLegal(legalMatch[1]);
       return;
     }
-    /* Videos/Community, server-gerendert von section.php. */
-    const sectionMatch=location.pathname.match(/^\/(videos|community)\/?$/);
-    if(sectionMatch){ go(sectionMatch[1]); closeModal(); return; }
+    /* Videos/Community/Karte, server-gerendert von section.php. */
+    const sectionMatch=location.pathname.match(/^\/(videos|community|karte)\/?$/);
+    if(sectionMatch){ go(sectionMatch[1]==='karte'?'map':sectionMatch[1]); closeModal(); return; }
     let h=(location.hash||'').replace(/^#\/?/,'');
     const [view,qs]=h.split('?');
     go((view && SECTIONS.find(s=>s.id===view)) ? view : 'home');

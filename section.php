@@ -1,16 +1,21 @@
 <?php
 /*
- * Serverseitig gerenderte Uebersicht fuer die beiden Sektionen ohne
- * Datenbank-Backing (Videos, Community). Analog zu legal.php: der Inhalt
- * kommt aus den bestehenden JS-Konstanten in index.html (VIDEOS, COMMUNITY),
- * keine zweite Pflegestelle. Ergibt echte, crawlbare URLs (/videos,
- * /community) statt nur ueber das Hash-Schema (/#/videos) erreichbar zu
- * sein. Fuer Besucher mit JavaScript uebernimmt go() beim Laden sofort und
+ * Serverseitig gerenderte Uebersicht fuer die Sektionen ohne Datenbank-
+ * Backing (Videos, Community, Karte). Analog zu legal.php: der Inhalt kommt
+ * aus den bestehenden JS-Konstanten in index.html (VIDEOS, COMMUNITY), keine
+ * zweite Pflegestelle. Ergibt echte, crawlbare URLs (/videos, /community,
+ * /karte) statt nur ueber das Hash-Schema (/#/videos) erreichbar zu sein.
+ * Fuer Besucher mit JavaScript uebernimmt go() beim Laden sofort und
  * rendert die normale, interaktive Ansicht.
  */
 
+// Interne section-id (siehe SECTIONS in index.html) -> deutsches URL-Praefix.
+// Bei videos/community ist das deutsche Wort zufaellig identisch, bei map
+// nicht (karte), daher die explizite Zuordnung statt einfach $page zu nehmen.
+const VG_SECTION_URL_PREFIX = ['videos' => 'videos', 'community' => 'community', 'map' => 'karte'];
+
 $page = $_GET['page'] ?? '';
-$valid = ['videos' => 'Videos', 'community' => 'Community'];
+$valid = ['videos' => 'Videos', 'community' => 'Community', 'map' => 'Karte'];
 
 if (!isset($valid[$page])) {
     http_response_code(404);
@@ -21,7 +26,7 @@ if (!isset($valid[$page])) {
 function vg_esc6($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
 $html = file_get_contents(__DIR__ . '/index.html');
-$canonical = 'https://viceguide.de/' . $page;
+$canonical = 'https://viceguide.de/' . VG_SECTION_URL_PREFIX[$page];
 
 if ($page === 'videos') {
     // Feste Objekt-Form je Eintrag (siehe const VIDEOS in index.html), per
@@ -35,7 +40,7 @@ if ($page === 'videos') {
     $pageTitle = 'GTA 6 Videos: Trailer und Clips auf Deutsch - ViceGuide';
     $description = 'Alle wichtigen GTA-6-Videos an einem Ort: ' . count($vm) . ' Trailer und Clips, deutsch eingeordnet.';
     $h1 = 'GTA 6 Videos';
-} else {
+} elseif ($page === 'community') {
     preg_match('/discordInvite:"([^"]*)"/', $html, $dm);
     preg_match('/redditUrl:"([^"]*)"/', $html, $rm);
     $discordInvite = $dm[1] ?? '';
@@ -50,6 +55,14 @@ if ($page === 'videos') {
     $pageTitle = 'Community: Discord und Austausch zu GTA 6 - ViceGuide';
     $description = 'Tausch dich mit anderen GTA-6-Fans aus: Discord, Diskussionen, Leaks und Theorien.';
     $h1 = 'Community';
+} else {
+    // Karte: die interaktive Kartenansicht ist noch nicht gebaut (siehe
+    // renderMap() in index.html), bis dahin verweist die SSR-Fassung auf die
+    // Orte-Datenbank, genau wie der Platzhalter-Button im Client.
+    $items = '<li><a href="/orte/">Zu den Orten</a></li>';
+    $pageTitle = 'Karte von Leonida: GTA 6 Map auf Deutsch - ViceGuide';
+    $description = 'Die interaktive Karte von Leonida folgt in Kürze. Bis dahin findest du alle bekannten Orte in der Orte-Datenbank.';
+    $h1 = 'Karte von Leonida';
 }
 
 $head = [
