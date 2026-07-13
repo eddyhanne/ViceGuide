@@ -1,5 +1,16 @@
 RewriteEngine On
 
+# Kanonische URL erzwingen: https://viceguide.de/ (kein www, kein http, kein
+# /index.html). Verhindert Duplicate Content, da vorher www.viceguide.de,
+# viceguide.de und viceguide.de/index.html alle separat mit Status 200
+# erreichbar waren.
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.viceguide\.de$ [NC]
+RewriteRule ^ https://viceguide.de%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^index\.html$ / [L,R=301]
+
 # Artikel-URLs (/artikel/artikel-id) serverseitig fuer Meta-Tags und Crawler
 # aufbereiten, ohne die sichtbare Adresse zu aendern.
 RewriteRule ^artikel/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]

@@ -63,7 +63,14 @@ $fields = $row['fields_json'] ? json_decode($row['fields_json'], true) : [];
 $hasImg = !empty($row['img']);
 $canonical = 'https://viceguide.de/' . $secInfo['prefix'] . '/' . $slug;
 $imgUrl = $hasImg ? ('https://viceguide.de/api/entry_image.php?id=' . (int)$row['id']) : 'https://viceguide.de/og-image.jpg';
-$pageTitle = $name . ($sub !== '' ? ' (' . $sub . ')' : '') . ' - ' . $secInfo['label'] . ' - ViceGuide';
+// Wie in article.php: Bestandteile mit dem geringsten SEO-Wert (Branding-
+// Suffix, dann Unterzeile) zuerst weglassen, wenn der Titel sonst ueber der
+// rund 60-Zeichen-Abschneidegrenze im Suchergebnis landen wuerde.
+$base = $name . ($sub !== '' ? ' (' . $sub . ')' : '');
+$withLabel = $base . ' - ' . $secInfo['label'];
+$pageTitle = $withLabel . ' - ViceGuide';
+if (mb_strlen($pageTitle) > 60) $pageTitle = $withLabel;
+if (mb_strlen($pageTitle) > 60 && $sub !== '') $pageTitle = $name . ' - ' . $secInfo['label'];
 
 $imgMeta = null;
 if ($hasImg && preg_match('#^data:image/[a-zA-Z0-9.+-]+;base64,(.+)$#', $row['img'], $im)) {

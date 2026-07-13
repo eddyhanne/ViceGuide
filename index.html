@@ -1835,7 +1835,7 @@ function extractContentBlocks(container){
 function renderArticleFields(g,p){
   const tag=$(p+'tag'); if(tag) tag.textContent=GCAT[g.cat]?.name||'';
   const title=$(p+'title'); if(title) title.textContent=g.title||'';
-  const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'ViceGuide Redaktion';
+  const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'Eddy Hanné';
   const date=$(p+'date'); if(date) date.textContent=g.date?fmtDT(g.date):'';
   const hero=$(p+'hero');
   if(hero){

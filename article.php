@@ -71,7 +71,11 @@ $sources = json_decode($row['sources_json'] ?? '[]', true) ?: [];
 $hasImg = !empty($row['img']);
 $canonical = 'https://viceguide.de/artikel/' . $slug;
 $imgUrl = $hasImg ? ('https://viceguide.de/api/article_image.php?id=' . urlencode($slug)) : 'https://viceguide.de/og-image.jpg';
-$pageTitle = $title . ' - ViceGuide';
+// Suffix nur anhaengen, wenn das Ergebnis unter der Google-Abschneidegrenze
+// (rund 60 Zeichen) bleibt, sonst frisst " - ViceGuide" das sichtbare Ende
+// eines ohnehin schon langen Titels im Suchergebnis.
+$withSuffix = $title . ' - ViceGuide';
+$pageTitle = mb_strlen($withSuffix) <= 60 ? $withSuffix : $title;
 
 // Echte Bildmasse/Mime-Type ermitteln, damit og:image:type/width/height zum
 // tatsaechlichen Artikelbild passen (Uploads sind meist WebP, nicht JPEG,
@@ -132,7 +136,7 @@ $articleLd = json_encode([
     'description' => $summary,
     'image' => $imgUrl,
     'datePublished' => $row['article_date'],
-    'author' => ['@type' => 'Organization', 'name' => $row['author'] ?: 'ViceGuide Redaktion'],
+    'author' => ['@type' => 'Person', 'name' => $row['author'] ?: 'Eddy Hanné'],
     'publisher' => ['@type' => 'Organization', 'name' => 'ViceGuide'],
     'mainEntityOfPage' => $canonical,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -148,7 +152,7 @@ $body = [
     '<div id="view"></div>' => '<div id="view" style="display:none"></div>',
     '<article class="article" id="article">' => '<article class="article show" id="article">',
     '<h1 id="a-title"></h1>' => '<h1 id="a-title">' . vg_esc($title) . '</h1>',
-    '<span class="art-author" id="a-author"></span>' => '<span class="art-author" id="a-author">' . vg_esc($row['author'] ?: 'ViceGuide Redaktion') . '</span>',
+    '<span class="art-author" id="a-author"></span>' => '<span class="art-author" id="a-author">' . vg_esc($row['author'] ?: 'Eddy Hanné') . '</span>',
     '<span class="art-date" id="a-date"></span>' => '<span class="art-date" id="a-date">' . vg_esc(vg_fmt_date($row['article_date'])) . '</span>',
     '<p class="lead" id="a-lead"></p>' => '<p class="lead" id="a-lead">' . vg_esc($row['lead'] ?: $summary) . '</p>',
     '<div class="content" id="a-content"></div>' => '<div class="content" id="a-content">' . vg_plain_content($content) . '</div>',
