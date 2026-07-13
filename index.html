@@ -2145,6 +2145,7 @@ function submitDraftJson(){
   $('draft-json').value='';
   showAiPreview(g);
 }
+let dbPendingNew=[];
 /* Batch-Import fuer Datenbank-Eintraege (Charaktere, Fahrzeuge, ...): nimmt
    ein Objekt oder eine Liste, ordnet jeden Eintrag per section+name dem
    bestehenden Eintrag zu und speichert die Aufwertung als Entwurf (PUT auf
@@ -2162,7 +2163,7 @@ async function submitDbImport(){
   }catch(err){ toast('Das sieht nicht nach gültigem JSON aus.'); return; }
   const items=Array.isArray(parsed)?parsed:[parsed];
   const dbSections=SECTIONS.filter(s=>s.type==='db').map(s=>s.id);
-  const valid=[], problems=[];
+  const valid=[], newList=[], problems=[];
   items.forEach((it,idx)=>{
     if(!it||typeof it!=='object'||Array.isArray(it)){ problems.push('Eintrag '+(idx+1)+': kein Objekt.'); return; }
     const sec=(it.section||'').trim();
@@ -2172,11 +2173,11 @@ async function submitDbImport(){
     const arr=DB[sec]||[];
     let match=arr.find(d=>(d.name||'').trim()===name);
     if(!match) match=arr.find(d=>(d.name||'').trim().toLowerCase()===name.toLowerCase());
-    if(!match){ problems.push('„'+name+'" in '+sec+' nicht gefunden, übersprungen.'); return; }
+    if(!match){ newList.push({it,sec,name}); return; }
     if(match._id==null){ problems.push('„'+name+'": keine Datenbank-ID vorhanden (API nicht erreichbar?).'); return; }
     valid.push({it,match,sec});
   });
-  if(!valid.length){ showDbImportResult([], problems); toast('Nichts zugeordnet, siehe Meldung.'); return; }
+  if(!valid.length && !newList.length){ dbPendingNew=[]; showDbImportResult([], problems, []); toast('Nichts zugeordnet, siehe Meldung.'); return; }
   const btn=$('dbimport-btn'); const lbl=btn?btn.textContent:'';
   if(btn){ btn.disabled=true; btn.textContent='Speichert…'; }
   vgSavesInFlight++;
@@ -2208,7 +2209,8 @@ async function submitDbImport(){
   }
   if(notLogged){ toast('Nicht angemeldet, bitte Editiermodus einmal einschalten (fragt das Passwort ab), dann erneut importieren.'); return; }
   if(applied.length) $('dbimport-json').value='';
-  showDbImportResult(applied, problems);
+  dbPendingNew=newList;
+  showDbImportResult(applied, problems, newList);
   if(!gquery.trim()) renderView();
   if(applied.length) toast(applied.length+(applied.length===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.');
 }
@@ -2230,17 +2232,23 @@ function dbImportPreviewCard(match,sec){
     +'<div class="mabout" style="margin-top:12px">Beschreibung</div><div class="mdesc" style="font-family:\'Inter\',sans-serif">'+renderDescHtml(match.desc,selfKey)+'</div>'
     +'</div>';
 }
-function showDbImportResult(applied, problems){
+function showDbImportResult(applied, problems, newList){
+  newList=newList||[];
   const box=$('dbimport-result'); if(!box) return;
   box.style.display='block';
   const ok=applied.length;
-  let html='<div style="color:var(--accent);font-weight:700">'+ok+(ok===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.</div>';
+  let html='<div style="color:var(--accent);font-weight:700">'+ok+(ok===1?' bestehender Eintrag aktualisiert (Entwurf).':' bestehende Einträge aktualisiert (Entwurf).')+'</div>';
   if(problems.length) html+='<div style="margin-top:8px;color:var(--text-soft)">'+problems.map(p=>'• '+esc(p)).join('<br>')+'</div>';
   if(ok){
     html+='<div style="margin-top:12px;color:var(--text-soft)">Nur für dich sichtbar. So wird es aussehen:</div>';
     html+=applied.map(a=>dbImportPreviewCard(a.match,a.sec)).join('');
-    html+='<button onclick="dbImportPublish()" style="width:100%;margin-top:14px;font-weight:700;font-size:14px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Für alle veröffentlichen</button>'
+    html+='<button onclick="dbImportPublish()" style="width:100%;margin-top:14px;font-weight:700;font-size:14px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Aktualisierungen veröffentlichen</button>'
       +'<button onclick="discardDrafts()" style="width:100%;margin-top:8px;font-weight:600;font-size:13px;padding:10px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Entwürfe verwerfen</button>';
+  }
+  if(newList.length){
+    html+='<div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:12px;color:var(--text-soft)">'+newList.length+' Eintrag'+(newList.length===1?'':'e')+' noch nicht in der Datenbank (neu anlegen?):</div>';
+    html+='<div style="margin-top:6px;color:var(--text)">'+newList.map(n=>'• '+esc(n.name)+' <span style="color:var(--text-soft)">('+esc(n.sec)+')</span>').join('<br>')+'</div>';
+    html+='<button onclick="dbImportCreateNew()" style="width:100%;margin-top:10px;font-weight:700;font-size:14px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">'+newList.length+' neue Einträge anlegen (sofort live)</button>';
   }
   box.innerHTML=html;
 }
@@ -2251,6 +2259,35 @@ async function dbImportPublish(){
     if(box) box.innerHTML='<div style="color:var(--accent);font-weight:700">Veröffentlicht. Jetzt für alle sichtbar.</div>';
     if(!gquery.trim()) renderView();
   }
+}
+/* Legt die beim Import nicht gefundenen Eintraege als neue Datenbank-Eintraege
+   an (POST, sofort live wie der "+ Neuer Eintrag"-Knopf, kein Entwurf). Bewusst
+   ein separater Klick nach der Zuordnung, damit ein Tippfehler im Namen nicht
+   ungewollt einen doppelten Eintrag erzeugt. */
+async function dbImportCreateNew(){
+  if(!dbPendingNew.length){ toast('Keine neuen Einträge offen.'); return; }
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  vgSavesInFlight++;
+  let created=0; const fails=[];
+  try{
+    for(const {it,sec,name} of dbPendingNew){
+      const payload={section:sec,name};
+      ['sub','cat','src','desc','credit'].forEach(k=>{ if(it[k]!=null) payload[k]=it[k]; });
+      if(it.fields!=null) payload.fields=it.fields;
+      if(it.imgfit) payload.imgfit=it.imgfit;
+      let res;
+      try{ res=await fetch('api/db_entries.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }
+      catch(e){ fails.push(name); continue; }
+      if(res.status===403){ toast('Nicht angemeldet, bitte Editiermodus einmal einschalten.'); break; }
+      res.ok?created++:fails.push(name);
+    }
+  }finally{ vgSavesInFlight--; }
+  dbPendingNew=[];
+  await loadExternal();
+  const box=$('dbimport-result');
+  if(box) box.innerHTML='<div style="color:var(--accent);font-weight:700">'+created+' neue'+(created===1?'r Eintrag':' Einträge')+' angelegt und live.</div>'+(fails.length?'<div style="margin-top:6px;color:var(--text-soft)">Fehlgeschlagen: '+fails.map(esc).join(', ')+'</div>':'');
+  if(created) $('dbimport-json').value='';
+  toast(created+' neue Einträge angelegt.');
 }
 /* Einmalige Wartung: setzt bei allen Artikeln und Datenbank-Eintraegen mit
    Bild die Quelle auf "Rockstar" (vereinheitlicht "Rockstar Games" und
