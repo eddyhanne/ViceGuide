@@ -1,0 +1,90 @@
+<?php
+/*
+ * Serverseitig gerenderte Uebersicht fuer die beiden Sektionen ohne
+ * Datenbank-Backing (Videos, Community). Analog zu legal.php: der Inhalt
+ * kommt aus den bestehenden JS-Konstanten in index.html (VIDEOS, COMMUNITY),
+ * keine zweite Pflegestelle. Ergibt echte, crawlbare URLs (/videos,
+ * /community) statt nur ueber das Hash-Schema (/#/videos) erreichbar zu
+ * sein. Fuer Besucher mit JavaScript uebernimmt go() beim Laden sofort und
+ * rendert die normale, interaktive Ansicht.
+ */
+
+$page = $_GET['page'] ?? '';
+$valid = ['videos' => 'Videos', 'community' => 'Community'];
+
+if (!isset($valid[$page])) {
+    http_response_code(404);
+    readfile(__DIR__ . '/index.html');
+    exit;
+}
+
+function vg_esc6($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
+
+$html = file_get_contents(__DIR__ . '/index.html');
+$canonical = 'https://viceguide.de/' . $page;
+
+if ($page === 'videos') {
+    // Feste Objekt-Form je Eintrag (siehe const VIDEOS in index.html), per
+    // Regex statt json_decode ausgelesen, weil die Keys dort unquotiert
+    // sind (gueltiges JS, kein gueltiges JSON).
+    preg_match_all('/\{\s*id:"([^"]*)",\s*title:"([^"]*)",\s*author:"([^"]*)",\s*date:"([^"]*)"\s*\}/', $html, $vm, PREG_SET_ORDER);
+    $items = '';
+    foreach ($vm as $v) {
+        $items .= '<li><a href="https://www.youtube.com/watch?v=' . vg_esc6($v[1]) . '" target="_blank" rel="noopener">' . vg_esc6($v[2]) . '</a> <span class="cat-ssr-sub">' . vg_esc6($v[3]) . '</span></li>';
+    }
+    $pageTitle = 'GTA 6 Videos: Trailer und Clips auf Deutsch - ViceGuide';
+    $description = 'Alle wichtigen GTA-6-Videos an einem Ort: ' . count($vm) . ' Trailer und Clips, deutsch eingeordnet.';
+    $h1 = 'GTA 6 Videos';
+} else {
+    preg_match('/discordInvite:"([^"]*)"/', $html, $dm);
+    preg_match('/redditUrl:"([^"]*)"/', $html, $rm);
+    $discordInvite = $dm[1] ?? '';
+    $redditUrl = $rm[1] ?? '';
+    $items = '';
+    if ($discordInvite !== '') {
+        $items .= '<li><a href="' . vg_esc6($discordInvite) . '" target="_blank" rel="noopener">Discord beitreten</a></li>';
+    }
+    if ($redditUrl !== '') {
+        $items .= '<li><a href="' . vg_esc6($redditUrl) . '" target="_blank" rel="noopener">Subreddit öffnen</a></li>';
+    }
+    $pageTitle = 'Community: Discord und Austausch zu GTA 6 - ViceGuide';
+    $description = 'Tausch dich mit anderen GTA-6-Fans aus: Discord, Diskussionen, Leaks und Theorien.';
+    $h1 = 'Community';
+}
+
+$head = [
+    '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
+        '<title>' . vg_esc6($pageTitle) . '</title>',
+    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
+        '<meta name="description" content="' . vg_esc6($description) . '">',
+    '<link rel="canonical" href="https://viceguide.de/">' =>
+        '<link rel="canonical" href="' . vg_esc6($canonical) . '">',
+    '<meta property="og:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
+        '<meta property="og:title" content="' . vg_esc6($pageTitle) . '">',
+    '<meta property="og:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
+        '<meta property="og:description" content="' . vg_esc6($description) . '">',
+    '<meta property="og:url" content="https://viceguide.de/">' =>
+        '<meta property="og:url" content="' . vg_esc6($canonical) . '">',
+    '<meta name="twitter:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
+        '<meta name="twitter:title" content="' . vg_esc6($pageTitle) . '">',
+    '<meta name="twitter:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
+        '<meta name="twitter:description" content="' . vg_esc6($description) . '">',
+];
+foreach ($head as $search => $replace) {
+    $html = str_replace($search, $replace, $html);
+}
+
+$body = [
+    '<div id="view"></div>' => '<div id="view" style="display:none"></div>',
+    '<div id="cat-ssr" style="display:none"></div>' =>
+        '<div id="cat-ssr" style="display:block;max-width:900px;margin:0 auto;padding:32px 20px">' .
+            '<h1>' . vg_esc6($h1) . '</h1>' .
+            '<p>' . vg_esc6($description) . '</p>' .
+            ($items !== '' ? '<ul class="cat-ssr-list">' . $items . '</ul>' : '') .
+        '</div>',
+];
+foreach ($body as $search => $replace) {
+    $html = str_replace($search, $replace, $html);
+}
+
+echo $html;
