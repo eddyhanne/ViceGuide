@@ -99,6 +99,15 @@ if ($method === 'GET') {
     $full = !empty($_GET['full']);
     if ($full) vg_require_admin($cfg);
     $admin = vg_is_admin();
+    // Anonyme Besucher bekommen einen kurz cachebaren Stand. Der no-store-
+    // Header von oben gilt damit nur noch fuer eingeloggte Admins (koennten
+    // einen eigenen Entwurf sehen) und fuer schreibende Methoden. Vary: Cookie,
+    // damit ein Shared-Cache Admin- und Besucher-Antworten nicht vermischt
+    // (anonyme Besucher haben nach dem Session-Fix ohnehin kein Cookie).
+    if (!$admin) {
+        header('Cache-Control: public, max-age=120, stale-while-revalidate=600');
+        header('Vary: Cookie');
+    }
     $rows = $pdo->query('SELECT * FROM articles ORDER BY article_date DESC')->fetchAll();
     $out = [];
     foreach ($rows as $r) {

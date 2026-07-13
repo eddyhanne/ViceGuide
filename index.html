@@ -117,7 +117,7 @@
   .sidebar::-webkit-scrollbar{width:8px}
   .sidebar::-webkit-scrollbar-thumb{background:transparent;border-radius:8px}
   .sidebar:hover::-webkit-scrollbar-thumb{background:var(--line)}
-  .side-btn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-weight:600;font-size:14.5px;color:var(--text-soft);padding:11px 14px;border-radius:11px;transition:.15s;margin-bottom:3px}
+  .side-btn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-weight:600;font-size:14.5px;color:var(--text-soft);padding:11px 14px;border-radius:11px;transition:.15s;margin-bottom:3px;text-decoration:none;cursor:pointer}
   .side-btn .si{font-size:17px;width:22px;text-align:center}
   .side-btn:hover{background:var(--surface-2);color:var(--text)}
   .side-btn.active{background:var(--accent);color:var(--btn-text)}
@@ -602,7 +602,7 @@
   @media(max-width:900px){
     .mobilenav{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:10px 14px;position:sticky;top:56px;z-index:55;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
     .mobilenav::-webkit-scrollbar{display:none}
-    .mn-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px;white-space:nowrap}
+    .mn-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px;white-space:nowrap;text-decoration:none;cursor:pointer}
     .mn-chip.active{background:var(--accent);color:var(--btn-text);border-color:var(--accent)}
     .mn-ic{display:inline-grid;place-items:center;width:16px;height:16px}
     .mn-ic svg{width:15px;height:15px}
@@ -788,11 +788,11 @@ function modalHead(sec,d,idx){
 /* Sidebar */
 function renderMobileNav(){
   const el=$('mobilenav'); if(!el)return;
-  el.innerHTML=SECTIONS.map(sc=>`<button class="mn-chip ${sc.id===current?'active':''}" onclick="go('${sc.id}')"><span class="mn-ic">${secIcon(sc.id)}</span>${sc.label}</button>`).join('');
+  el.innerHTML=SECTIONS.map(sc=>`<a class="mn-chip ${sc.id===current?'active':''}" href="${sectionHref(sc.id)}" onclick="return goClick(event,'${sc.id}')"><span class="mn-ic">${secIcon(sc.id)}</span>${sc.label}</a>`).join('');
 }
 function renderSidebar(){
   const secCount=s=> s.type==='guides'?GUIDES.length : s.type==='db'?(DB[s.id]||[]).length : s.type==='videos'?VIDEOS.length : null;
-  const mainBtns=SECTIONS.map(s=>{const n=secCount(s);const c=(n!=null)?`<span class="cnt">${n}</span>`:'';return `<button class="side-btn ${s.id===current?'active':''}" onclick="go('${s.id}')"><span class="si">${secIcon(s.id)}</span><span class="lbl">${s.label}</span>${c}</button>`;}).join('');
+  const mainBtns=SECTIONS.map(s=>{const n=secCount(s);const c=(n!=null)?`<span class="cnt">${n}</span>`:'';return `<a class="side-btn ${s.id===current?'active':''}" href="${sectionHref(s.id)}" onclick="return goClick(event,'${s.id}')"><span class="si">${secIcon(s.id)}</span><span class="lbl">${s.label}</span>${c}</a>`;}).join('');
   const relBtns=GROUPS[1].cats.map(c=>`<button class="side-btn locked-nav" onclick="gotoRelease()" title="Schaltet zum Release frei"><span class="si">${catIcon(c.id)}</span><span class="lbl">${c.name}</span><span class="nav-lock">🔒</span></button>`).join('');
   $('sidebar').innerHTML=mainBtns
    +`<div class="side-sep">Ab Release-Day</div>`
@@ -802,6 +802,26 @@ function renderSidebar(){
 
 /* Navigation */
 function go(id){ current=id; gquery=''; $('gsearch').value=''; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); syncHash(); }
+/* Echte URL je Sektion fuer die Navigations-Links (Sidebar/Mobile). Jede
+   Sektion hat eine serverseitige Fassade: home -> /, die acht DB-Hubs ueber
+   SECTION_PREFIX (/charaktere/ ...), map -> /karte, videos/community direkt.
+   So bekommen die Hubs echte interne Links und Linkgewicht von der Startseite,
+   statt nur per Button ohne href erreichbar zu sein. */
+function sectionHref(id){
+  if(id==='home') return '/';
+  if(SECTION_PREFIX[id]) return '/'+SECTION_PREFIX[id]+'/';
+  if(id==='map') return '/karte';
+  return '/'+id;
+}
+/* Klick-Handler der Navigations-Links: normaler Klick bleibt In-App (SPA, kein
+   Reload), Strg/Cmd/Shift-Klick oeffnet die echte URL im neuen Tab, analog zu
+   articleClick()/entryClick(). */
+function goClick(e,id){
+  if(e.metaKey||e.ctrlKey||e.shiftKey) return true;
+  e.preventDefault();
+  go(id);
+  return false;
+}
 
 function updateHeaderBack(){const b=$('hback');if(!b)return;const inArticle=$('article').classList.contains('show');b.classList.toggle('show', inArticle || current!=='home');}
 function headerBack(){ if($('article').classList.contains('show')){closeArticle();} else { go('home'); } }

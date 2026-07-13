@@ -226,12 +226,19 @@ function vg_ensure_entry_slugs(PDO $pdo): void {
    zusaetzlich den eigenen Entwurfsstand einblenden sollen (siehe
    vg_merge_draft() in articles.php/db_entries.php). */
 function vg_is_admin(): bool {
+    // Anonyme Besucher (ohne Session-Cookie) bekommen gar keine Session: sonst
+    // sendet jeder oeffentliche GET ein Set-Cookie, was Shared-/Proxy-Caching
+    // blockiert und pro Besucher unnoetig eine Session-Datei anlegt. Nur wer
+    // schon eingeloggt war (Cookie vorhanden), startet die Session zur Pruefung.
+    if (empty($_COOKIE[session_name()])) return false;
     vg_session_start();
     return !empty($_SESSION['vg_admin']);
 }
 
 function vg_require_admin(array $cfg): void {
-    vg_session_start();
+    // Ohne vorhandenes Session-Cookie kann niemand angemeldet sein: dann gar
+    // keine Session starten (kein Set-Cookie bei unautorisierten Zugriffen).
+    if (!empty($_COOKIE[session_name()])) vg_session_start();
     if (empty($_SESSION['vg_admin'])) {
         http_response_code(403);
         header('Content-Type: application/json; charset=utf-8');

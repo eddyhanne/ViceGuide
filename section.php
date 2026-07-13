@@ -72,6 +72,10 @@ $head = [
         '<meta name="description" content="' . vg_esc6($description) . '">',
     '<link rel="canonical" href="https://viceguide.de/">' =>
         '<link rel="canonical" href="' . vg_esc6($canonical) . '">',
+    // Karte ist noch ein Platzhalter (interaktive Map folgt), bis dahin nicht
+    // indexieren, Links aber folgen. Videos/Community bleiben index,follow.
+    '<meta name="robots" content="index, follow">' =>
+        ($page === 'map' ? '<meta name="robots" content="noindex, follow">' : '<meta name="robots" content="index, follow">'),
     '<meta property="og:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
         '<meta property="og:title" content="' . vg_esc6($pageTitle) . '">',
     '<meta property="og:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>

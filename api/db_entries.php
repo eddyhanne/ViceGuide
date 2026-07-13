@@ -83,6 +83,11 @@ if ($method === 'GET') {
     $full = !empty($_GET['full']);
     if ($full) vg_require_admin($cfg);
     $admin = vg_is_admin();
+    // Anonyme Besucher: kurz cachebar, siehe articles.php fuer die Begruendung.
+    if (!$admin) {
+        header('Cache-Control: public, max-age=120, stale-while-revalidate=600');
+        header('Vary: Cookie');
+    }
     $rows = $pdo->query('SELECT * FROM db_entries ORDER BY section, sort_order, id')->fetchAll();
     $grouped = [];
     foreach ($rows as $r) {
