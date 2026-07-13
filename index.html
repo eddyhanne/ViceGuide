@@ -645,7 +645,7 @@
     <article class="article" id="article">
       <span class="back" onclick="closeArticle()">← Zurück</span>
       <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
-      <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span></div>
+      <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span><span class="art-dot" id="a-upd-dot" style="display:none">·</span><span class="art-date" id="a-updated" style="display:none"></span></div>
       <div class="art-hero" id="a-hero" style="display:none"><img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add('imgfail')"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
       <p class="lead" id="a-lead"></p>
       <div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>
@@ -824,6 +824,13 @@ function parseLocalDT(iso){
   return {y:+m[1],mo:+m[2],d:+m[3],h:m[4]?+m[4]:0,mi:m[5]?+m[5]:0};
 }
 function fmtDT(iso){const p=parseLocalDT(iso);if(!p)return"";const z=n=>String(n).padStart(2,'0');return z(p.d)+'.'+z(p.mo)+'.'+p.y+', '+z(p.h)+':'+z(p.mi)+' Uhr';}
+/* Sortierbarer Wert fuer Datumsvergleiche (z.B. "wurde das hier wirklich
+   spaeter aktualisiert"), behandelt die Zeitangabe wie fmtDT als reine
+   Zahlenfolge ohne Zeitzonen-Umrechnung, damit ein Server-Zeitstempel
+   (updated_at) und ein Browser-Zeitstempel (article_date) vergleichbar
+   bleiben, ohne dass eine echte TZ-Differenz faelschlich als Bearbeitung
+   durchschlaegt. */
+function dtValue(iso){const p=parseLocalDT(iso);return p?Date.UTC(p.y,p.mo-1,p.d,p.h,p.mi):NaN;}
 function fmtDShort(iso){const p=parseLocalDT(iso);if(!p)return'';const z=n=>String(n).padStart(2,'0');const M=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];return z(p.d)+'. '+M[p.mo-1]+' '+p.y;}
 function latestFmt(c){const list=GUIDES.filter(g=>g.cat===c&&g.date);if(!list.length)return"";const newest=list.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];return fmtDT(newest.date);}
 function renderHome(){
@@ -928,7 +935,7 @@ function renderDB(sec){
   const data=DB[sec.id]||[];
   const cats=["Alle",...Array.from(new Set(data.map(d=>d.cat)))];
   $('view').innerHTML=`
-   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle"><button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button></div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
+   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle">${editMode?`<button class="vt" onclick="addDbEntry('${sec.id}')">+ Neuer Eintrag</button>`:''}<button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button></div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
    <div class="filterbar">
      <div class="dbsearchwrap"><input id="dbsearch" type="text" placeholder="In ${sec.label} suchen…" value="${dbQuery}"><button class="clearbtn dbclear" id="dbclear" onclick="clearDbSearch()" aria-label="Leeren" style="${dbQuery?'display:grid':'display:none'}">×</button></div>
      <select id="dbcat">${cats.map(c=>`<option ${c===dbCat?'selected':''}>${c}</option>`).join('')}</select>
@@ -996,6 +1003,22 @@ async function deleteGuide(idx,ev){
     renderView();
     toast('Artikel gelöscht.');
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
+async function addDbEntry(secId){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const name=(prompt('Name des neuen Eintrags:')||'').trim();
+  if(!name) return;
+  const cat=(prompt('Kategorie (z.B. Hauptfiguren), optional:')||'').trim();
+  try{
+    const res=await fetch('api/db_entries.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({section:secId,name,cat:cat||null})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    DB[secId]=DB[secId]||[];
+    DB[secId].push({_id:data._id,name,sub:null,cat:cat||null,src:null,desc:null,img:null});
+    renderView();
+    openImgEd('db',secId,DB[secId].length-1);
+  }catch(e){ toast('Anlegen fehlgeschlagen.'); }
 }
 async function deleteDbEntry(secId,i,ev){
   if(ev) ev.stopPropagation();
@@ -1226,12 +1249,15 @@ function openImgEd(kind,secId,i){
       $('ie-cat-wrap').style.display='block';
       $('ie-t-cat').innerHTML=GROUPS.map(gr=>`<optgroup label="${gr.label}">${gr.cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</optgroup>`).join('');
       $('ie-t-cat').value=d.cat||'news';
+      $('ie-dbcat-wrap').style.display='none';
       $('ie-sub-label').textContent='Teaser (1 Satz)';
       $('ie-t-sub').value=d.summary||'';
       $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
       $('ie-t-desc').value=(d.content||[]).join('\n\n');
     } else {
       $('ie-cat-wrap').style.display='none';
+      $('ie-dbcat-wrap').style.display='block';
+      $('ie-t-dbcat').value=d.cat||'';
       $('ie-name-label').textContent='Name';
       $('ie-t-name').value=d.name||'';
       $('ie-sub-label').textContent='Unterzeile';
@@ -1355,6 +1381,7 @@ async function ieApply(){
     if(nameVal) d.name=nameVal;
     d.sub=subVal;
     d.desc=descVal.trim();
+    d.cat=$('ie-t-dbcat').value.trim();
   }
   /* Dialog bleibt waehrend des Speicherns offen, der Knopf zeigt "Speichert...".
      Grund: schliesst der Dialog sofort (wie frueher), sieht die Aenderung im UI
@@ -1374,7 +1401,7 @@ async function ieApply(){
       if(!imgChanged) delete payload.img;
       res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     } else {
-      const payload={id:d._id,name:d.name,sub:d.sub,desc:d.desc,imgfit:d.imgfit,credit:d.credit};
+      const payload={id:d._id,name:d.name,sub:d.sub,cat:d.cat,desc:d.desc,imgfit:d.imgfit,credit:d.credit};
       if(imgChanged) payload.img=d.img;
       res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     }
@@ -1837,6 +1864,17 @@ function renderArticleFields(g,p){
   const title=$(p+'title'); if(title) title.textContent=g.title||'';
   const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'Eddy Hanné';
   const date=$(p+'date'); if(date) date.textContent=g.date?fmtDT(g.date):'';
+  const upd=$(p+'updated'), updDot=$(p+'upd-dot');
+  if(upd){
+    /* Nur anzeigen, wenn seit der Veroeffentlichung wirklich mehr als ein Tag
+       vergangen ist, sonst wuerde jeder frisch veroeffentlichte Artikel durch
+       den minimalen Zeitversatz zwischen article_date (Browser) und
+       updated_at (Server) faelschlich als "aktualisiert" markiert. */
+    const show=g.updated&&g.date&&(dtValue(g.updated)-dtValue(g.date))>86400000;
+    upd.style.display=show?'inline':'none';
+    if(updDot) updDot.style.display=show?'inline':'none';
+    if(show) upd.textContent='Aktualisiert: '+fmtDT(g.updated);
+  }
   const hero=$(p+'hero');
   if(hero){
     const heroImg=$(p+'hero-img');
@@ -2267,6 +2305,10 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
     <div id="ie-cat-wrap" style="display:none">
       <label class="ie-tlabel">Kategorie</label>
       <select id="ie-t-cat" class="cm-in"></select>
+    </div>
+    <div id="ie-dbcat-wrap" style="display:none">
+      <label class="ie-tlabel">Kategorie</label>
+      <input type="text" id="ie-t-dbcat" class="cm-in" placeholder="z.B. Hauptfiguren">
     </div>
     <label class="ie-tlabel" id="ie-sub-label">Unterzeile</label>
     <input type="text" id="ie-t-sub" class="cm-in">

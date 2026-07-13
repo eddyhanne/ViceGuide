@@ -65,6 +65,15 @@ function vg_plain_content(array $content): string {
 }
 
 $title = $row['title'];
+$updatedAt = $row['updated_at'] ?? null;
+// Nur als echtes Update ausweisen, wenn seit der Veroeffentlichung wirklich
+// mehr als ein Tag vergangen ist (analog zur Client-Logik in index.html),
+// sonst markiert der minimale Zeitversatz zwischen article_date (Browser)
+// und updated_at (Server) jeden frisch veroeffentlichten Artikel faelschlich
+// als aktualisiert.
+$pubTs = $row['article_date'] ? strtotime($row['article_date']) : false;
+$updTs = $updatedAt ? strtotime($updatedAt) : false;
+$showUpdated = $pubTs && $updTs && ($updTs - $pubTs) > 86400;
 $summary = trim($row['summary'] ?: $row['lead'] ?: '');
 $content = json_decode($row['content_json'] ?? '[]', true) ?: [];
 $sources = json_decode($row['sources_json'] ?? '[]', true) ?: [];
@@ -136,6 +145,7 @@ $articleLd = json_encode([
     'description' => $summary,
     'image' => $imgUrl,
     'datePublished' => $row['article_date'],
+    'dateModified' => $updatedAt ?: $row['article_date'],
     'author' => ['@type' => 'Person', 'name' => $row['author'] ?: 'Eddy Hanné'],
     'publisher' => ['@type' => 'Organization', 'name' => 'ViceGuide'],
     'mainEntityOfPage' => $canonical,
@@ -157,6 +167,12 @@ $body = [
     '<p class="lead" id="a-lead"></p>' => '<p class="lead" id="a-lead">' . vg_esc($row['lead'] ?: $summary) . '</p>',
     '<div class="content" id="a-content"></div>' => '<div class="content" id="a-content">' . vg_plain_content($content) . '</div>',
 ];
+if ($showUpdated) {
+    $body['<span class="art-dot" id="a-upd-dot" style="display:none">·</span>'] =
+        '<span class="art-dot" id="a-upd-dot">·</span>';
+    $body['<span class="art-date" id="a-updated" style="display:none"></span>'] =
+        '<span class="art-date" id="a-updated">Aktualisiert: ' . vg_esc(vg_fmt_date($updatedAt)) . '</span>';
+}
 if ($hasImg) {
     /* Nur der oeffnende Tag und der (separat verankerte) Credit-Span werden
        ersetzt, nicht das gesamte Element als ein Stueck: der Hero-Div in

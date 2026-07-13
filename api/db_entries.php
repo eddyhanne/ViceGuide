@@ -3,6 +3,9 @@
  * Datenbank-Eintraege-API fuer ViceGuide (Charaktere, Fahrzeuge, Waffen, ...).
  *
  * GET                  -> alle Eintraege, gruppiert nach section (wie database.json)
+ * POST {section,name,...} -> neuen Eintrag anlegen (Admin, sofort live, kein
+ *                         Entwurf, analog zu articles.php), gibt die neue
+ *                         interne _id zurueck
  * PUT {id,...}         -> Aenderung als Entwurf speichern (Admin), id ist die
  *                         interne Datenbank-Zeilen-ID (_id im GET-Ergebnis)
  * POST ?action=publish -> alle offenen Entwuerfe veroeffentlichen (Admin)
@@ -111,6 +114,39 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
     vg_require_admin($cfg);
     $n = $pdo->exec("UPDATE db_entries SET draft_json = NULL WHERE draft_json IS NOT NULL AND draft_json <> ''");
     vg_out3(['ok' => true, 'discarded' => $n]);
+}
+
+if ($method === 'POST') {
+    vg_require_admin($cfg);
+    $b = vg_body3();
+    $validSections = ['characters', 'vehicles', 'weapons', 'wildlife', 'gangs', 'radio', 'activities', 'locations'];
+    $section = trim($b['section'] ?? '');
+    $name = trim($b['name'] ?? '');
+    if (!in_array($section, $validSections, true)) vg_out3(['error' => 'ungueltige section'], 400);
+    if ($name === '') vg_out3(['error' => 'name erforderlich'], 400);
+
+    $maxOrder = $pdo->prepare('SELECT COALESCE(MAX(sort_order), 0) m FROM db_entries WHERE section = ?');
+    $maxOrder->execute([$section]);
+    $sortOrder = (int)$maxOrder->fetch()['m'] + 1;
+
+    $stmt = $pdo->prepare('INSERT INTO db_entries (section, sort_order, name, sub, cat, src, description, fields_json, img, imgfit_json, credit)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+    $stmt->execute([
+        $section,
+        $sortOrder,
+        $name,
+        $b['sub'] ?? null,
+        $b['cat'] ?? null,
+        $b['src'] ?? null,
+        $b['desc'] ?? null,
+        isset($b['fields']) ? json_encode($b['fields'], JSON_UNESCAPED_UNICODE) : null,
+        $b['img'] ?? null,
+        isset($b['imgfit']) ? json_encode($b['imgfit'], JSON_UNESCAPED_UNICODE) : null,
+        $b['credit'] ?? null,
+    ]);
+    $id = (int)$pdo->lastInsertId();
+    vg_ensure_entry_slugs($pdo);
+    vg_out3(['ok' => true, '_id' => $id], 201);
 }
 
 if ($method === 'PUT') {

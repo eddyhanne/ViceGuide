@@ -64,6 +64,7 @@ function vg_rowToArticle(array $r, bool $full = false): array {
         'imgfit'  => $r['imgfit_json'] ? json_decode($r['imgfit_json'], true) : null,
         'credit'  => $r['credit'] ?: null,
         'author'  => $r['author'] ?: null,
+        'updated' => $r['updated_at'] ?? null,
     ];
 }
 
