@@ -1453,6 +1453,16 @@ async function ieApply(){
    "Leonida" vs. dem Nebencharakter "Leonida Joker"). */
 const ENT_LINK_SKIP=new Set(['Leonida','Police','Gold','High','Dad','Crotch','Hammer','Selfie','Nightclub']);
 const ENT_LINK_SECTIONS=[['characters',true],['vehicles',false],['wildlife',false],['gangs',false],['locations',false]];
+/* Manche Fahrzeuge tragen im Namen ein Baujahr-Praefix ("'95 Grotti Cheetah",
+   "'67 Vapid Dominator Buggy"). Im Fliesstext steht aber der reine Modellname
+   ("Grotti Cheetah") oder eine Variante wie "95er Grotti Cheetah", nie die
+   exakte DB-Schreibweise mit fuehrendem Apostroph. Der fuehrende Apostroph
+   sprengt zusaetzlich den Wortanker der Verlinkungs-Regex. Darum zusaetzlich
+   den Modellnamen ohne Baujahr als Alias fuehren, damit die Verlinkung greift. */
+function stripYearPrefix(name){
+  const m=name.match(/^'?\d{2,4}(?:er)?\s+(.+)$/);
+  return m?m[1]:null;
+}
 function buildEntityAliases(){
   const list=[];
   ENT_LINK_SECTIONS.forEach(([sec,splitFirst])=>{
@@ -1460,6 +1470,10 @@ function buildEntityAliases(){
       const name=d.name; if(!name||ENT_LINK_SKIP.has(name)) return;
       const key=sec+':'+i;
       list.push([name,sec,i,key,d.slug]);
+      if(sec==='vehicles'){
+        const bare=stripYearPrefix(name);
+        if(bare && bare.length>=3 && !ENT_LINK_SKIP.has(bare)) list.push([bare,sec,i,key,d.slug]);
+      }
       if(splitFirst){
         const parts=name.split(' ');
         if(parts.length>1 && parts[0].length>=3 && !ENT_LINK_SKIP.has(parts[0])) list.push([parts[0],sec,i,key,d.slug]);
