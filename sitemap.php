@@ -41,6 +41,12 @@ try {
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 echo "  <url>\n    <loc>https://viceguide.de/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n";
+foreach (VG_SITEMAP_SECTION_PREFIX as $prefix) {
+    echo "  <url>\n    <loc>https://viceguide.de/{$prefix}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n";
+}
+foreach (['impressum', 'datenschutz'] as $legalPage) {
+    echo "  <url>\n    <loc>https://viceguide.de/{$legalPage}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.2</priority>\n  </url>\n";
+}
 foreach ($articles as $r) {
     $loc = 'https://viceguide.de/artikel/' . htmlspecialchars($r['id'], ENT_QUOTES, 'UTF-8');
     $lastmod = vg_sitemap_date($r['article_date']);
