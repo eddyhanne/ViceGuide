@@ -2379,6 +2379,7 @@ function syncHash(){
   let target;
   if(g && g.id) target='/artikel/'+g.id;
   else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
+  else if(!curModal && SECTION_PREFIX[current]) target='/'+SECTION_PREFIX[current]+'/';
   else target='/#'+buildHash();
   const currentFull=location.pathname+location.hash;
   if(currentFull!==target) history.pushState(null,'',target);
