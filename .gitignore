@@ -1,2 +1,6 @@
 api/config.php
 api/*.sqlite
+*.sqlite
+# Full-Page-Cache: nur die generierten Seiten ignorieren, die .htaccess (Schutz
+# des Ordners) bleibt versioniert, damit der Ordner existiert und gesperrt ist.
+cache/*.html

@@ -21,6 +21,16 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 [$pdo, $cfg] = vg_db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+/* Full-Page-Cache leeren bei oeffentlicher Aenderung (POST/DELETE), nicht bei
+   reinem Entwurf (PUT). Siehe articles.php fuer die Begruendung. */
+require __DIR__ . '/../cache.php';
+if ($method === 'POST' || $method === 'DELETE') {
+    register_shutdown_function(function () {
+        $c = http_response_code();
+        if ($c >= 200 && $c < 300) vg_cache_flush();
+    });
+}
+
 function vg_out3($data, int $code = 200): never {
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);

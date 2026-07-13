@@ -10,6 +10,9 @@
  * auseinander).
  */
 
+require __DIR__ . '/cache.php';
+vg_cache_serve(1800);   // Rechtstexte aendern sich selten, Treffer ohne DB.
+
 require __DIR__ . '/api/db.php';
 
 $page = $_GET['page'] ?? '';

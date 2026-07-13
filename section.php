@@ -9,6 +9,9 @@
  * rendert die normale, interaktive Ansicht.
  */
 
+require __DIR__ . '/cache.php';
+vg_cache_serve(600);
+
 // Interne section-id (siehe SECTIONS in index.html) -> deutsches URL-Praefix.
 // Bei videos/community ist das deutsche Wort zufaellig identisch, bei map
 // nicht (karte), daher die explizite Zuordnung statt einfach $page zu nehmen.

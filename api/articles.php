@@ -18,6 +18,18 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 [$pdo, $cfg] = vg_db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+/* Full-Page-Cache leeren, wenn sich oeffentlicher Inhalt geaendert hat: also
+   bei POST (neuer Artikel, ?action=publish, ?action=discard) und DELETE, aber
+   nicht bei PUT (reiner Entwurf, oeffentlich noch nichts geaendert). Nur bei
+   erfolgreicher (2xx) Aktion, damit ein 403 nichts leert. */
+require __DIR__ . '/../cache.php';
+if ($method === 'POST' || $method === 'DELETE') {
+    register_shutdown_function(function () {
+        $c = http_response_code();
+        if ($c >= 200 && $c < 300) vg_cache_flush();
+    });
+}
+
 function vg_out2($data, int $code = 200): never {
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);

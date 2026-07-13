@@ -7,11 +7,13 @@
  * CLAUDE.md).
  */
 
+require __DIR__ . '/cache.php';
+vg_cache_serve(3600, 'application/xml; charset=utf-8');
+
 require __DIR__ . '/api/db.php';
 [$pdo, $cfg] = vg_db();
 
 header('Content-Type: application/xml; charset=utf-8');
-header('Cache-Control: public, max-age=3600');
 
 const VG_SITEMAP_SECTION_PREFIX = [
     'characters' => 'charaktere',

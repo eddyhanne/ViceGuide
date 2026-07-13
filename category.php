@@ -12,6 +12,9 @@
  * interaktive Kachelansicht.
  */
 
+require __DIR__ . '/cache.php';
+vg_cache_serve(600);   // Treffer wird hier ausgeliefert, DB bleibt unberuehrt.
+
 require __DIR__ . '/api/db.php';
 [$pdo, $cfg] = vg_db();
 
