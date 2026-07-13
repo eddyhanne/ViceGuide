@@ -15,10 +15,10 @@ vg_cache_serve(600);
 // Interne section-id (siehe SECTIONS in index.html) -> deutsches URL-Praefix.
 // Bei videos/community ist das deutsche Wort zufaellig identisch, bei map
 // nicht (karte), daher die explizite Zuordnung statt einfach $page zu nehmen.
-const VG_SECTION_URL_PREFIX = ['videos' => 'videos', 'community' => 'community', 'map' => 'karte'];
+const VG_SECTION_URL_PREFIX = ['videos' => 'videos', 'community' => 'community', 'map' => 'karte', 'news' => 'news'];
 
 $page = $_GET['page'] ?? '';
-$valid = ['videos' => 'Videos', 'community' => 'Community', 'map' => 'Karte'];
+$valid = ['videos' => 'Videos', 'community' => 'Community', 'map' => 'Karte', 'news' => 'News & Gerüchte'];
 
 if (!isset($valid[$page])) {
     http_response_code(404);
@@ -58,6 +58,23 @@ if ($page === 'videos') {
     $pageTitle = 'Community: Discord und Austausch zu GTA 6 - ViceGuide';
     $description = 'Tausch dich mit anderen GTA-6-Fans aus: Discord, Diskussionen, Leaks und Theorien.';
     $h1 = 'Community';
+} elseif ($page === 'news') {
+    // News-Rubrik: die Artikel kommen aus der Datenbank (anders als
+    // Videos/Community aus JS-Konstanten). Wir listen alle Beitraege als
+    // echte, crawlbare Links auf ihre /artikel/{id}-URL. Fuer Besucher mit
+    // JavaScript uebernimmt go() beim Laden und rendert die interaktive
+    // News-Ansicht (Filter, Suche, Kacheln/Liste).
+    require_once __DIR__ . '/api/db.php';
+    [$pdo, $cfg] = vg_db();
+    $rows = $pdo->query('SELECT id, title, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
+    $items = '';
+    foreach ($rows as $r) {
+        $d = $r['article_date'] ? substr((string)$r['article_date'], 0, 10) : '';
+        $items .= '<li><a href="/artikel/' . vg_esc6($r['id']) . '">' . vg_esc6($r['title']) . '</a>' . ($d !== '' ? ' <span class="cat-ssr-sub">' . vg_esc6($d) . '</span>' : '') . '</li>';
+    }
+    $pageTitle = 'GTA 6 News und Gerüchte auf Deutsch - ViceGuide';
+    $description = 'Alle GTA-6-News, Gerüchte und Leaks auf Deutsch, chronologisch und eingeordnet. ' . count($rows) . ' Beiträge, laufend aktualisiert.';
+    $h1 = 'News & Gerüchte';
 } else {
     // Karte: die interaktive Kartenansicht ist noch nicht gebaut (siehe
     // renderMap() in index.html), bis dahin verweist die SSR-Fassung auf die

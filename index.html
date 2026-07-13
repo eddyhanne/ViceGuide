@@ -993,7 +993,7 @@ function renderNews(){
    <div class="group" id="news-anchor"><div class="group-head"><div class="news-head"><div class="group-title"><span class="badge ${g1.badgeClass}">${g1.badge}</span></div>
      <div class="viewtoggle"><button class="vt ${newsView==='list'?'on':''}" onclick="setNewsView('list')">☰ Liste</button><button class="vt ${newsView==='cards'?'on':''}" onclick="setNewsView('cards')">▦ Kacheln</button></div></div>
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
-   ${phase2}`;
+   `;
   { const ns=$('newssearch'); if(ns){ ns.addEventListener('input',e=>{ newsQuery=e.target.value; newsLimit=12; const c=document.querySelector('.nf-clear'); if(c)c.style.display=newsQuery?'grid':'none'; if(newsView==='cards'){ if(newsQuery&&newsCat!=='Alle'){newsCat='Alle';syncChips();} drawNewsGrid(); } else { drawNewsList(); } }); } }
   if(newsView==='list') applyOpenHeights();
 }
