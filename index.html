@@ -314,7 +314,8 @@
   .cv.has-img{background-color:#000}
   .mhead.has-img{background-color:#000}
   .cv.has-img .ci,.cv.has-img:after{display:none}
-  .credit{position:absolute;bottom:6px;right:7px;z-index:2;font-family:'Space Mono';font-size:9px;background:rgba(0,0,0,.55);color:#fff;padding:2px 6px;border-radius:5px;max-width:82%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .credit{position:absolute;bottom:6px;right:7px;z-index:2;font-family:'Space Mono';font-size:8.5px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.9);padding:2px 5px;border-radius:5px;max-width:68%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media(max-width:600px){.credit{font-size:7.5px;padding:1px 4px;max-width:58%;bottom:5px;right:5px;background:rgba(0,0,0,.42)}}
   .imgfail img{display:none}
   .imgfail:before{content:"Bild nicht geladen";font-family:'Space Mono';font-size:11px;color:var(--text-soft)}
   .mhead .ghost{position:absolute;font-size:130px;opacity:.15;z-index:0;pointer-events:none}
@@ -972,6 +973,27 @@ function renderDB(sec){
   $('dbcat').addEventListener('change',e=>{dbCat=e.target.value;drawDB(sec);});
   drawDB(sec);
 }
+/* Sortierung der Datenbank-Eintraege: erst nach Kategorie-Gruppe in fester
+   Reihenfolge (DB_CAT_ORDER je Rubrik), innerhalb der Gruppe alphabetisch
+   nach Name. Kategorien ohne festgelegte Reihenfolge kommen danach,
+   alphabetisch nach Kategoriename. So wirkt jede Rubrik redaktionell
+   gruppiert statt in zufaelliger Einfuege-Reihenfolge. Neue Rubriken-
+   Reihenfolgen hier ergaenzen, sobald eine Rubrik inhaltlich ausgebaut wird. */
+const DB_CAT_ORDER={
+  characters:['Hauptfiguren','Verbündete','Kriminelle','Gesetz','Musikszene','Nebenfiguren','Hintergrund-NPCs'],
+  gangs:['Straßengangs','Motorradclubs','Kriminelle','Behörden']
+};
+function dbSortList(secId,list){
+  const order=DB_CAT_ORDER[secId]||[];
+  const rank=c=>{ const i=order.indexOf(c); return i>=0?i:order.length; };
+  list.sort((a,b)=>{
+    const ra=rank(a.cat),rb=rank(b.cat);
+    if(ra!==rb) return ra-rb;
+    const ca=(a.cat||''),cb=(b.cat||'');
+    if(ca!==cb) return ca.localeCompare(cb,'de');
+    return (a.name||'').localeCompare(b.name||'','de');
+  });
+}
 function drawDB(sec){
   const data=DB[sec.id]||[];
   const q=dbQuery.trim().toLowerCase();
@@ -980,6 +1002,7 @@ function drawDB(sec){
     if(!inCat)return false; if(!q)return true;
     return (d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase().includes(q);
   });
+  dbSortList(sec.id,list);
   $('dbcount').textContent=list.length+" "+(list.length===1?"Eintrag":"Einträge")+(dbCat!=="Alle"?" · "+dbCat:"");
   const grid=$('dbgrid'), empty=$('dbempty');
   if(!list.length){grid.innerHTML="";empty.style.display="block";return;}
@@ -1255,7 +1278,7 @@ function openImgEd(kind,secId,i){
   const d = isDraft ? aiDraft : (kind==='guide' ? GUIDES[i] : DB[secId][i]);
   const f=d.imgfit||{};
   const name = isDraft ? (d.title||'Neuer Artikel') : (kind==='guide' ? d.title : d.name);
-  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||'Rockstar Games'};
+  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||'Rockstar'};
   $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
@@ -1552,6 +1575,15 @@ function renderText(s,seen,excludeKey){
   const linked=linkifyChars(pre,excludeKey,seen);
   return restoreArticleRefs(linked,tokens);
 }
+/* Beschreibungstext eines Datenbank-Eintrags als echte Absaetze rendern
+   (an Leerzeilen getrennt), damit ein mehrteiliger Text im Modal genauso
+   umbricht wie in der serverseitigen Fassade entry.php. Ohne das floss ein
+   Text mit Absaetzen im Modal zu einem einzigen Block zusammen. */
+function renderDescHtml(desc,excludeKey){
+  const paras=String(desc||'').split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+  if(!paras.length) return '';
+  return paras.map((p,i)=>'<p style="margin:0 0 '+(i<paras.length-1?'.8em':'0')+'">'+renderText(p,null,excludeKey)+'</p>').join('');
+}
 function goToArticleId(id){
   const idx=(GUIDES||[]).findIndex(g=>g.id===id);
   if(idx<0){ toast('Verlinkter Artikel wurde nicht gefunden.'); return; }
@@ -1566,7 +1598,7 @@ function openModal(secId,i){
   $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
-    <div class="mabout">Beschreibung</div><div class="mdesc">${renderText(d.desc||'',null,selfKey)}</div></div>`;
+    <div class="mabout">Beschreibung</div><div class="mdesc">${renderDescHtml(d.desc,selfKey)}</div></div>`;
   $('ov').classList.add('show');
   syncHash();
 }
@@ -2087,15 +2119,16 @@ async function submitDbImport(){
     if(!match) match=arr.find(d=>(d.name||'').trim().toLowerCase()===name.toLowerCase());
     if(!match){ problems.push('„'+name+'" in '+sec+' nicht gefunden, übersprungen.'); return; }
     if(match._id==null){ problems.push('„'+name+'": keine Datenbank-ID vorhanden (API nicht erreichbar?).'); return; }
-    valid.push({it,match});
+    valid.push({it,match,sec});
   });
-  if(!valid.length){ showDbImportResult(0, problems, false); toast('Nichts zugeordnet, siehe Meldung.'); return; }
+  if(!valid.length){ showDbImportResult([], problems); toast('Nichts zugeordnet, siehe Meldung.'); return; }
   const btn=$('dbimport-btn'); const lbl=btn?btn.textContent:'';
   if(btn){ btn.disabled=true; btn.textContent='Speichert…'; }
   vgSavesInFlight++;
-  let ok=0, notLogged=false;
+  const applied=[];
+  let notLogged=false;
   try{
-    for(const {it,match} of valid){
+    for(const {it,match,sec} of valid){
       /* name bewusst NICHT ueberschreiben: er ist der Matching-Schluessel des
          bestehenden Eintrags, ein abweichend geschriebener Name im JSON (z.B.
          andere Gross-/Kleinschreibung) wuerde den Eintrag sonst umbenennen.
@@ -2112,26 +2145,46 @@ async function submitDbImport(){
       if(!res.ok){ problems.push('„'+match.name+'": Speichern fehlgeschlagen.'); continue; }
       ['sub','cat','src','desc','credit','fields','imgfit'].forEach(k=>{ if(it[k]!=null) match[k]=it[k]; });
       match._draft=true;
-      ok++;
+      applied.push({match,sec});
     }
   }finally{
     vgSavesInFlight--;
     if(btn){ btn.disabled=false; btn.textContent=lbl; }
   }
   if(notLogged){ toast('Nicht angemeldet, bitte Editiermodus einmal einschalten (fragt das Passwort ab), dann erneut importieren.'); return; }
-  if(ok) $('dbimport-json').value='';
-  showDbImportResult(ok, problems, ok>0);
+  if(applied.length) $('dbimport-json').value='';
+  showDbImportResult(applied, problems);
   if(!gquery.trim()) renderView();
-  if(ok) toast(ok+(ok===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.');
+  if(applied.length) toast(applied.length+(applied.length===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.');
 }
-function showDbImportResult(ok, problems, canPublish){
+/* Vorschaukarte eines aufgewerteten Eintrags, baut denselben Aufbau nach wie
+   das echte Detail-Modal (Name, Unterzeile, Chips, Felder, Beschreibung),
+   damit die Redaktion direkt im Import-Fenster prueft, was veroeffentlicht
+   wird, ohne erst zur Kachel navigieren zu muessen. */
+function dbImportPreviewCard(match,sec){
+  const secLabel=(SECTIONS.find(s=>s.id===sec)||{}).label||sec;
+  const idx=(DB[sec]||[]).indexOf(match);
+  const selfKey=sec+':'+idx;
+  const fields=match.fields?Object.entries(match.fields):[];
+  const frows=fields.length?'<div class="mfields" style="margin-top:10px">'+fields.map(([k,v])=>'<div class="mf"><span class="mfk">'+esc(k)+'</span><span class="mfv">'+esc(String(v))+'</span></div>').join('')+'</div>':'';
+  const chips='<div class="mrow" style="margin-top:8px"><span class="chip">'+esc(secLabel)+'</span>'+(match.cat?'<span class="chip">'+esc(match.cat)+'</span>':'')+(match.src?'<span class="chip">Quelle: '+esc(match.src)+'</span>':'')+'</div>';
+  return '<div style="border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;background:var(--bg)">'
+    +'<div style="font-family:\'Oswald\',sans-serif;font-weight:700;font-size:19px;line-height:1.15">'+esc(match.name)+'</div>'
+    +(match.sub?'<div style="color:var(--accent);font-size:13px;margin-top:2px">'+esc(match.sub)+'</div>':'')
+    +chips+frows
+    +'<div class="mabout" style="margin-top:12px">Beschreibung</div><div class="mdesc" style="font-family:\'Inter\',sans-serif">'+renderDescHtml(match.desc,selfKey)+'</div>'
+    +'</div>';
+}
+function showDbImportResult(applied, problems){
   const box=$('dbimport-result'); if(!box) return;
   box.style.display='block';
+  const ok=applied.length;
   let html='<div style="color:var(--accent);font-weight:700">'+ok+(ok===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.</div>';
   if(problems.length) html+='<div style="margin-top:8px;color:var(--text-soft)">'+problems.map(p=>'• '+esc(p)).join('<br>')+'</div>';
-  if(canPublish){
-    html+='<div style="margin-top:10px;color:var(--text-soft)">Nur für dich sichtbar. Zum Prüfen die Kachel öffnen, dann:</div>'
-      +'<button onclick="dbImportPublish()" style="width:100%;margin-top:8px;font-weight:700;font-size:14px;padding:11px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Für alle veröffentlichen</button>'
+  if(ok){
+    html+='<div style="margin-top:12px;color:var(--text-soft)">Nur für dich sichtbar. So wird es aussehen:</div>';
+    html+=applied.map(a=>dbImportPreviewCard(a.match,a.sec)).join('');
+    html+='<button onclick="dbImportPublish()" style="width:100%;margin-top:14px;font-weight:700;font-size:14px;padding:12px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Für alle veröffentlichen</button>'
       +'<button onclick="discardDrafts()" style="width:100%;margin-top:8px;font-weight:600;font-size:13px;padding:10px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Entwürfe verwerfen</button>';
   }
   box.innerHTML=html;
@@ -2411,12 +2464,6 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button id="dbimport-btn" onclick="submitDbImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Als Entwurf speichern</button>
     <div id="dbimport-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
   </div>
-  <details style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
-    <summary style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);cursor:pointer">KI-Recherche direkt hier (optional)</summary>
-    <p style="font-size:13.5px;color:var(--text-soft);margin:10px 0">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin bitte den Weg oben benutzen.</p>
-    <input id="ai-topic" type="text" placeholder="Thema, z.B. „neuester Trailer“" style="width:100%;font-family:'Inter';font-size:15px;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:12px">
-    <button id="ai-btn" onclick="generateGuide()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Recherchieren & erstellen</button>
-  </details>
   <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
     <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
     <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um Bild und Text zu bearbeiten. Änderungen werden sofort dauerhaft gespeichert, keine Datei-Uploads mehr nötig.</p>
@@ -2427,6 +2474,12 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button onclick="downloadDB()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">database.json herunterladen</button>
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
   </div>
+  <details style="margin-top:18px;opacity:.6">
+    <summary style="font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-soft);cursor:pointer">KI-Recherche direkt hier (aktuell inaktiv)</summary>
+    <p style="font-size:12.5px;color:var(--text-soft);margin:8px 0">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin die Wege oben benutzen.</p>
+    <input id="ai-topic" type="text" placeholder="Thema, z.B. „neuester Trailer“" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:8px">
+    <button id="ai-btn" onclick="generateGuide()" style="width:100%;font-weight:600;font-size:13px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Recherchieren & erstellen</button>
+  </details>
 `;
 const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;margin:-4px 0 0" onclick="closeImgEd()">×</button>
   <h3 id="ie-title">Bild bearbeiten</h3>
@@ -2456,7 +2509,7 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
     </label>
     <div class="ie-hint">Bild im Rahmen ziehen, um den Ausschnitt zu verschieben.</div>
     <label class="ie-creditlabel">Quelle (optional)
-      <input type="text" id="ie-credit" class="cm-in" placeholder="z.B. Rockstar Games" style="margin-top:6px">
+      <input type="text" id="ie-credit" class="cm-in" placeholder="z.B. Rockstar" style="margin-top:6px">
     </label>
   </div>
   <div class="ie-textfields">
