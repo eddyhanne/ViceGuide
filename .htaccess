@@ -14,6 +14,24 @@ RewriteRule ^radio/([a-z0-9-]+)/?$ entry.php?section=radio&slug=$1 [L,QSA]
 RewriteRule ^aktivitaeten/([a-z0-9-]+)/?$ entry.php?section=activities&slug=$1 [L,QSA]
 RewriteRule ^orte/([a-z0-9-]+)/?$ entry.php?section=locations&slug=$1 [L,QSA]
 
+# Kategorie-Uebersichten ohne Slug (z.B. /charaktere/), listen alle Eintraege
+# der Sektion als echte, crawlbare Links auf. Muss vor den generischen
+# Eintrag-Regeln keine Rolle spielen (unterschiedliches Muster: hier ohne
+# Segment nach dem Praefix), Reihenfolge ist trotzdem unkritisch.
+RewriteRule ^charaktere/?$ category.php?section=characters [L,QSA]
+RewriteRule ^fahrzeuge/?$ category.php?section=vehicles [L,QSA]
+RewriteRule ^waffen/?$ category.php?section=weapons [L,QSA]
+RewriteRule ^wildtiere/?$ category.php?section=wildlife [L,QSA]
+RewriteRule ^gangs/?$ category.php?section=gangs [L,QSA]
+RewriteRule ^radio/?$ category.php?section=radio [L,QSA]
+RewriteRule ^aktivitaeten/?$ category.php?section=activities [L,QSA]
+RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
+
+# Impressum/Datenschutz als eigene, crawlbare URLs (Inhalt kommt aus dem
+# LEGAL-Objekt in index.html, siehe legal.php).
+RewriteRule ^impressum/?$ legal.php?page=impressum [L,QSA]
+RewriteRule ^datenschutz/?$ legal.php?page=datenschutz [L,QSA]
+
 # Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
 RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
 

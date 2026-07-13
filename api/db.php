@@ -18,6 +18,26 @@ function vg_db(): array {
     $isSqlite = str_starts_with($cfg['db_dsn'], 'sqlite:');
     if ($isSqlite) {
         $pdo->exec('PRAGMA foreign_keys = ON');
+    }
+
+    /* Schema-Migration (CREATE TABLE/ALTER TABLE) ist teuer und lief bisher bei
+       jedem einzelnen Request mit, article.php, entry.php, sitemap.php und
+       jeder api/*.php-Aufruf rufen vg_db() auf. Ein leichter Probe-Query
+       reicht, um zu pruefen, ob Tabellen und Spalten schon passen, die volle
+       Migration unten laeuft nur noch, wenn der Probe fehlschlaegt (frisches
+       Deployment oder ein noch ausstehendes Schema-Upgrade). */
+    $schemaReady = false;
+    try {
+        $pdo->query('SELECT id FROM comments LIMIT 1');
+        $pdo->query('SELECT draft_json FROM articles LIMIT 1');
+        $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
+        $schemaReady = true;
+    } catch (Throwable $e) {
+        $schemaReady = false;
+    }
+
+    if (!$schemaReady) {
+    if ($isSqlite) {
         $pdo->exec('CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             article_id TEXT NOT NULL,
@@ -153,6 +173,7 @@ function vg_db(): array {
         } catch (Throwable $e) {
             // s.o.
         }
+    }
     }
 
     return [$pdo, $cfg];
