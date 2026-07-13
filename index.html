@@ -193,6 +193,8 @@
   @media(max-width:560px){.modal{max-height:92vh}}
   .modal h1{font-family:'Oswald';font-weight:600;font-size:26px;color:var(--heading);letter-spacing:.3px}
   .modal .msub{color:var(--accent);font-weight:600;font-size:14px;margin-bottom:14px}
+  .modal .mback{display:inline-block;font-family:'Space Mono';font-size:12px;color:var(--text-soft);text-decoration:none;margin-bottom:12px;transition:.15s}
+  .modal .mback:hover{color:var(--accent)}
   .modal .mrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .modal .chip{font-family:'Space Mono';font-size:11px;background:var(--bg-2);border:1px solid var(--line);padding:6px 11px;border-radius:999px;color:var(--text-soft)}
   .modal .mdesc{font-size:15px;color:var(--text)}
@@ -1650,7 +1652,7 @@ function openModal(secId,i){
   const selfKey=secId+':'+i;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
+  $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><a class="mback" href="${sectionHref(secId)}" onclick="return modalHubClick(event,'${secId}')">‹ Alle ${sec.label}</a><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
     <div class="mrow"><span class="chip">${sec.label}</span><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
     <div class="mabout">Beschreibung</div><div class="mdesc">${renderDescHtml(d.desc,selfKey)}</div></div>`;
@@ -1658,6 +1660,12 @@ function openModal(secId,i){
   syncHash();
 }
 function closeModal(){$('ov').classList.remove('show');curModal=null;syncHash();}
+/* Breadcrumb im Popup: springt zur Rubrik-Uebersicht. Normaler Klick bleibt
+   In-App (Popup schliessen, Rubrik oeffnen), Strg/Cmd/Shift-Klick oeffnet die
+   echte Hub-URL im neuen Tab, analog zu goClick()/entryClick(). Wichtig fuer
+   Besucher, die per Google direkt auf einer Eintrags-URL landen und sonst
+   keinen Weg tiefer in die passende Rubrik haetten. */
+function modalHubClick(e,secId){ if(e.metaKey||e.ctrlKey||e.shiftKey) return true; e.preventDefault(); $('ov').classList.remove('show'); curModal=null; go(secId); return false; }
 
 /* ---- MAP ---- */
 const COMMUNITY={
