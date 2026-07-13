@@ -208,8 +208,9 @@
     .p-hl{grid-template-columns:1fr}
     .p-hl .feat .pc-thumb{aspect-ratio:16/9}
     .p-rgrid,.p-relgrid{grid-template-columns:1fr 1fr}
+    .p-nrow{flex-direction:column;align-items:flex-start;gap:4px}
     .p-nd{display:none}
-    .p-ncat{min-width:70px}
+    .p-ncat{min-width:0}
   }
 
   /* section header */
@@ -516,6 +517,8 @@
   .tile-pin{position:absolute;top:8px;left:40px;z-index:5;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:1;border:0;cursor:pointer;filter:grayscale(1);opacity:.72}
   .tile-pin:hover{opacity:1;filter:none}
   .tile-pin.on{background:var(--accent);filter:none;opacity:1}
+  .art-pin{display:inline-flex;align-items:center;gap:6px;margin-left:12px;font-family:'Space Mono';font-size:12px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer;vertical-align:middle}
+  .art-pin.on{background:var(--accent);color:var(--bg)}
   /* Bild-Editor */
   .ie-frame{position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--surface-2);border:2px dashed var(--line);margin:12px 0;display:grid;place-items:center;cursor:pointer;user-select:none}
   .ie-frame.wide{aspect-ratio:16/9}
@@ -716,7 +719,7 @@
     <div id="view"></div>
     <div id="cat-ssr" style="display:none"></div>
     <article class="article" id="article">
-      <span class="back" onclick="closeArticle()">← Zurück</span>
+      <span class="back" onclick="closeArticle()">← Zurück</span><button class="art-pin" id="a-pin" style="display:none" onclick="togglePinCurrent()">📌 Anpinnen</button>
       <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
       <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span><span class="art-dot" id="a-upd-dot" style="display:none">·</span><span class="art-date" id="a-updated" style="display:none"></span></div>
       <div class="art-hero" id="a-hero" style="display:none"><img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add('imgfail')"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
@@ -954,7 +957,7 @@ function portalDbHtml(){
   const dbSecs=SECTIONS.filter(s=>s.type==='db');
   const tiles=dbSecs.map((s,i)=>{const n=(DB[s.id]||[]).length;return `<a class="p-rtile grad${(i%8)+1}" href="${sectionHref(s.id)}" onclick="return goClick(event,'${s.id}')"><span class="p-ric">${secIcon(s.id)}</span><span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></span></a>`;}).join('');
   const rel=GROUPS[1].cats.map(c=>`<div class="p-reltile"><span class="p-ric">${catIcon(c.id)}</span><span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span><span class="p-rlk">\u{1F512}</span></div>`).join('');
-  return `<div class="p-sh"><h2>Gesamte GTA-6-Datenbank</h2></div><div class="p-rgrid">${tiles}</div>`
+  return `<div class="p-sh"><h2>GTA-6-Datenbank</h2></div><div class="p-rgrid">${tiles}</div>`
     +`<div class="p-sh p-sh-sm"><h2>Ab Release-Day</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span></div><div class="p-relgrid">${rel}</div>`;
 }
 function renderHome(){
@@ -1192,9 +1195,11 @@ async function togglePin(idx,ev){
     if(!res.ok) throw new Error();
     g.pinned=np;
     renderView();
+    const pb=$('a-pin'); if(pb && $('article').classList.contains('show') && curArticle===idx){ pb.classList.toggle('on',np); pb.textContent=np?'📌 Angepinnt':'📌 Anpinnen'; }
     toast(np?'📌 Angepinnt.':'Losgelöst.');
   }catch(e){ toast('Anpinnen fehlgeschlagen.'); }
 }
+function togglePinCurrent(){ if(curArticle!=null) togglePin(curArticle); }
 async function addDbEntry(secId){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const name=(prompt('Name des neuen Eintrags:')||'').trim();
@@ -2161,6 +2166,13 @@ function renderArticleFields(g,p){
         if(badge) badge.style.display='none';
         if(empty) empty.style.display='none';
       }
+    }
+  }
+  if(p==='a-'){
+    const pinBtn=$('a-pin');
+    if(pinBtn){
+      if(editMode){ pinBtn.style.display='inline-flex'; pinBtn.classList.toggle('on',!!g.pinned); pinBtn.textContent=g.pinned?'📌 Angepinnt':'📌 Anpinnen'; }
+      else pinBtn.style.display='none';
     }
   }
   const lead=$(p+'lead'); if(lead) lead.textContent=g.lead||g.summary||'';
