@@ -29,7 +29,7 @@ function vg_sitemap_date(?string $iso): string {
     return "{$m[1]}-{$m[2]}-{$m[3]}";
 }
 
-$articles = $pdo->query('SELECT id, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
+$articles = $pdo->query('SELECT id, article_date, updated_at FROM articles ORDER BY article_date DESC')->fetchAll();
 
 vg_ensure_entry_slugs($pdo);
 try {
@@ -52,7 +52,7 @@ foreach (['videos', 'community', 'karte'] as $sectionPage) {
 }
 foreach ($articles as $r) {
     $loc = 'https://viceguide.de/artikel/' . htmlspecialchars($r['id'], ENT_QUOTES, 'UTF-8');
-    $lastmod = vg_sitemap_date($r['article_date']);
+    $lastmod = vg_sitemap_date($r['updated_at'] ?: $r['article_date']);
     echo "  <url>\n    <loc>{$loc}</loc>\n    <lastmod>{$lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
 }
 foreach ($entries as $r) {

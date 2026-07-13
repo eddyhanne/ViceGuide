@@ -234,6 +234,10 @@ Aus der API kommt zusätzlich `_id` (interne Zeilen-ID, für Updates gebraucht) 
 ├─ robots.txt              Suchmaschinen-Regeln
 ├─ og-image.jpg            Social-Preview-Bild (Fallback, wenn Artikel/Eintrag kein eigenes Bild hat)
 ├─ logo.png                Logo-Datei (u. a. fürs OG-/Social-Preview, JSON-LD-Logo)
+├─ favicon-16x16.png       Favicon (Browser-Tab), aus logo.png generiert (quadratisch, transparent)
+├─ favicon-32x32.png       Favicon, siehe favicon-16x16.png
+├─ favicon-48x48.png       Favicon, Google verlangt fürs Suchergebnis-Icon ein Vielfaches von 48px
+├─ apple-touch-icon.png    iOS-Home-Bildschirm-Icon, wie Favicons aber mit deckendem Hintergrund statt Transparenz
 ├─ googlec9a955...html     Google-Search-Console-Verifizierungsdatei, nicht löschen
 ├─ .htaccess               Server-Regeln (URL-Rewriting auf article.php/entry.php/sitemap.php, Cache-Zeiten)
 ├─ .gitignore              Schließt api/config.php und lokale *.sqlite aus
@@ -322,6 +326,8 @@ php -S localhost:8000 -t .
 - **Echter Autor (Eddy Hanné) statt generischer "ViceGuide Redaktion".** Auf Betreiberentscheidung: Klarname statt Pseudonym/Team-Seite, stärkeres E-E-A-T-Signal. Fallback in `article.php` (sichtbarer Autor-Span plus Article-JSON-LD, dort zusätzlich `@type` von `Organization` auf `Person` geändert) und in `index.html`s clientseitigem Rendering geändert. Nur der Fallback für Artikel ohne eigenes `author`-Feld, ein individuell gesetzter Autor überschreibt das weiterhin.
 - **Sichtbares Aktualisierungsdatum plus `dateModified` im Article-JSON-LD.** `updated_at` existierte pro Artikelzeile bereits (bisher nur als Cache-Buster für Bild-URLs genutzt), jetzt reicht `api/articles.php` es zusätzlich als `updated`-Feld an den Client durch. `article.php` und `index.html` zeigen ein "Aktualisiert: ..."-Badge neben dem Datum, aber nur wenn zwischen `article_date` und `updated_at` wirklich mehr als ein Tag liegt, sonst würde der minimale Zeitversatz zwischen Browser- und Server-Zeitstempel jeden frisch veröffentlichten Artikel fälschlich als bearbeitet markieren. `dateModified` im JSON-LD wird immer mitgeschrieben (fällt auf `article_date` zurück, wenn kein `updated_at` da ist).
 - **Neue Datenbank-Einträge lassen sich jetzt direkt im Editiermodus anlegen,** nicht nur bestehende bearbeiten. Neuer Endpunkt `POST api/db_entries.php` (Admin, sofort live wie bei neuen Artikeln, kein Entwurf), dazu ein "+ Neuer Eintrag"-Knopf in der Kategorie-Ansicht, der Name und optional Kategorie abfragt und danach direkt den Bild-/Text-Editor öffnet. Der Bild-/Text-Editor bekommt dabei ein neues Kategorie-Textfeld für Datenbank-Einträge (`ie-t-dbcat`): das fehlte bisher komplett, `cat` liess sich nach dem Anlegen gar nicht mehr aendern.
+- **Favicon ergänzt (fehlte komplett).** Weder `<link rel="icon">` noch eine `favicon.ico` waren vorhanden, Google zeigt ohne Favicon kein Icon im Suchergebnis, Browser-Tabs blieben ohne Symbol. Aus `logo.png` per PHP/GD ein quadratisches Icon-Set generiert (auf transparenter Fläche zentriert statt hart beschnitten, damit die "VI"-Form nicht seitlich abgeschnitten wird): `favicon-16x16.png`, `favicon-32x32.png`, `favicon-48x48.png` (Google verlangt fürs Suchergebnis-Icon ein Vielfaches von 48px) sowie `apple-touch-icon.png` mit deckendem dunkellila Hintergrund statt Transparenz (iOS rendert Transparenz beim Home-Bildschirm-Icon unvorhersehbar).
+- **Sitemap-`lastmod` für Artikel nutzt jetzt `updated_at` statt `article_date`.** Direkte Folgeinkonsistenz aus der `dateModified`-Änderung: die Sitemap zeigte Google weiterhin nur das Veröffentlichungsdatum als "zuletzt geändert", selbst wenn ein Artikel Tage später inhaltlich überarbeitet wurde. `sitemap.php` liest jetzt zusätzlich `updated_at` und nimmt es (mit Fallback auf `article_date`) als `lastmod`.
 
 ---
 
