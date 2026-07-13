@@ -2058,6 +2058,92 @@ function submitDraftJson(){
   $('draft-json').value='';
   showAiPreview(g);
 }
+/* Batch-Import fuer Datenbank-Eintraege (Charaktere, Fahrzeuge, ...): nimmt
+   ein Objekt oder eine Liste, ordnet jeden Eintrag per section+name dem
+   bestehenden Eintrag zu und speichert die Aufwertung als Entwurf (PUT auf
+   api/db_entries.php, inkl. fields). Gegenstueck zu submitDraftJson() fuer
+   Artikel. Bewusst update-only: nicht gefundene Namen werden gemeldet, nicht
+   neu angelegt, damit Tippfehler nicht versehentlich Dubletten erzeugen.
+   Bild bleibt unangetastet, wenn im JSON kein img steht. */
+async function submitDbImport(){
+  const raw=$('dbimport-json').value.trim();
+  if(!raw){ toast('Bitte JSON einfügen.'); return; }
+  let parsed;
+  try{
+    let clean=raw.replace(/```json|```/g,'').trim();
+    parsed=JSON.parse(clean);
+  }catch(err){ toast('Das sieht nicht nach gültigem JSON aus.'); return; }
+  const items=Array.isArray(parsed)?parsed:[parsed];
+  const dbSections=SECTIONS.filter(s=>s.type==='db').map(s=>s.id);
+  const valid=[], problems=[];
+  items.forEach((it,idx)=>{
+    if(!it||typeof it!=='object'||Array.isArray(it)){ problems.push('Eintrag '+(idx+1)+': kein Objekt.'); return; }
+    const sec=(it.section||'').trim();
+    const name=(it.name||'').trim();
+    if(!name){ problems.push('Eintrag '+(idx+1)+': Feld name fehlt.'); return; }
+    if(!sec||!dbSections.includes(sec)){ problems.push('„'+name+'": section fehlt oder ungültig ('+(sec||'leer')+'). Erlaubt: '+dbSections.join(', ')+'.'); return; }
+    const arr=DB[sec]||[];
+    let match=arr.find(d=>(d.name||'').trim()===name);
+    if(!match) match=arr.find(d=>(d.name||'').trim().toLowerCase()===name.toLowerCase());
+    if(!match){ problems.push('„'+name+'" in '+sec+' nicht gefunden, übersprungen.'); return; }
+    if(match._id==null){ problems.push('„'+name+'": keine Datenbank-ID vorhanden (API nicht erreichbar?).'); return; }
+    valid.push({it,match});
+  });
+  if(!valid.length){ showDbImportResult(0, problems, false); toast('Nichts zugeordnet, siehe Meldung.'); return; }
+  const btn=$('dbimport-btn'); const lbl=btn?btn.textContent:'';
+  if(btn){ btn.disabled=true; btn.textContent='Speichert…'; }
+  vgSavesInFlight++;
+  let ok=0, notLogged=false;
+  try{
+    for(const {it,match} of valid){
+      /* name bewusst NICHT ueberschreiben: er ist der Matching-Schluessel des
+         bestehenden Eintrags, ein abweichend geschriebener Name im JSON (z.B.
+         andere Gross-/Kleinschreibung) wuerde den Eintrag sonst umbenennen.
+         Umbenennen laeuft weiter ueber den Editiermodus. */
+      const payload={id:match._id};
+      ['sub','cat','src','desc','credit'].forEach(k=>{ if(it[k]!=null) payload[k]=it[k]; });
+      if(it.fields!=null) payload.fields=it.fields;
+      if(it.img) payload.img=it.img;
+      if(it.imgfit) payload.imgfit=it.imgfit;
+      let res;
+      try{ res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }
+      catch(e){ problems.push('„'+match.name+'": Netzwerkfehler beim Speichern.'); continue; }
+      if(res.status===403){ notLogged=true; break; }
+      if(!res.ok){ problems.push('„'+match.name+'": Speichern fehlgeschlagen.'); continue; }
+      ['sub','cat','src','desc','credit','fields','imgfit'].forEach(k=>{ if(it[k]!=null) match[k]=it[k]; });
+      match._draft=true;
+      ok++;
+    }
+  }finally{
+    vgSavesInFlight--;
+    if(btn){ btn.disabled=false; btn.textContent=lbl; }
+  }
+  if(notLogged){ toast('Nicht angemeldet, bitte Editiermodus einmal einschalten (fragt das Passwort ab), dann erneut importieren.'); return; }
+  if(ok) $('dbimport-json').value='';
+  showDbImportResult(ok, problems, ok>0);
+  if(!gquery.trim()) renderView();
+  if(ok) toast(ok+(ok===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.');
+}
+function showDbImportResult(ok, problems, canPublish){
+  const box=$('dbimport-result'); if(!box) return;
+  box.style.display='block';
+  let html='<div style="color:var(--accent);font-weight:700">'+ok+(ok===1?' Eintrag':' Einträge')+' als Entwurf gespeichert.</div>';
+  if(problems.length) html+='<div style="margin-top:8px;color:var(--text-soft)">'+problems.map(p=>'• '+esc(p)).join('<br>')+'</div>';
+  if(canPublish){
+    html+='<div style="margin-top:10px;color:var(--text-soft)">Nur für dich sichtbar. Zum Prüfen die Kachel öffnen, dann:</div>'
+      +'<button onclick="dbImportPublish()" style="width:100%;margin-top:8px;font-weight:700;font-size:14px;padding:11px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Für alle veröffentlichen</button>'
+      +'<button onclick="discardDrafts()" style="width:100%;margin-top:8px;font-weight:600;font-size:13px;padding:10px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Entwürfe verwerfen</button>';
+  }
+  box.innerHTML=html;
+}
+async function dbImportPublish(){
+  const done=await publishDrafts();
+  if(done){
+    const box=$('dbimport-result');
+    if(box) box.innerHTML='<div style="color:var(--accent);font-weight:700">Veröffentlicht. Jetzt für alle sichtbar.</div>';
+    if(!gquery.trim()) renderView();
+  }
+}
 async function generateGuide(){
   const btn=$('ai-btn'), topic=$('ai-topic').value.trim()||"aktuelle GTA 6 News";
   btn.disabled=true;btn.textContent="Recherchiere…";
@@ -2318,6 +2404,13 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
   <textarea id="draft-json" rows="6" placeholder="JSON von Claude hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
   <button id="draft-btn" onclick="submitDraftJson()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Entwurf prüfen</button>
   <div id="ai-result" style="display:none;margin-top:14px"></div>
+  <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
+    <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Datenbank-Einträge aufwerten</div>
+    <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">JSON für Charaktere, Fahrzeuge, Waffen und die anderen Datenbanken hier einfügen, ein Objekt oder eine Liste. Jeder Eintrag braucht ein Feld <code>section</code> (z.B. characters) und wird per Name dem passenden bestehenden Eintrag zugeordnet, dann als Entwurf gespeichert. Danach prüfen und veröffentlichen.</p>
+    <textarea id="dbimport-json" rows="6" placeholder="DB-Eintrag-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
+    <button id="dbimport-btn" onclick="submitDbImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Als Entwurf speichern</button>
+    <div id="dbimport-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
+  </div>
   <details style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
     <summary style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);cursor:pointer">KI-Recherche direkt hier (optional)</summary>
     <p style="font-size:13.5px;color:var(--text-soft);margin:10px 0">Braucht einen eigenen Anthropic-API-Schlüssel in config.php, aktuell nicht eingerichtet. Bis dahin bitte den Weg oben benutzen.</p>
