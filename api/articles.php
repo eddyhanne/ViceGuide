@@ -76,6 +76,7 @@ function vg_rowToArticle(array $r, bool $full = false): array {
         'imgfit'  => $r['imgfit_json'] ? json_decode($r['imgfit_json'], true) : null,
         'credit'  => $r['credit'] ?: null,
         'author'  => $r['author'] ?: null,
+        'pinned'  => !empty($r['pinned']),
         'updated' => $r['updated_at'] ?? null,
     ];
 }
@@ -153,6 +154,26 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
     vg_require_admin($cfg);
     $n = $pdo->exec("UPDATE articles SET draft_json = NULL WHERE draft_json IS NOT NULL AND draft_json <> ''");
     vg_out2(['ok' => true, 'discarded' => $n]);
+}
+
+/* Anpinnen ist bewusst kein Entwurf, sondern sofort oeffentlich: es ist eine
+   reine Kurations-Aktion (welcher Artikel steht im Portal-Block "Im Fokus"),
+   kein Bearbeiten von Artikelinhalt. Deshalb eigener Endpunkt statt ueber
+   draft_json/publish. */
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'pin') {
+    vg_require_admin($cfg);
+    $b = vg_body2();
+    $id = trim($b['id'] ?? '');
+    if ($id === '') vg_out2(['error' => 'id erforderlich'], 400);
+    $pinned = !empty($b['pinned']) ? 1 : 0;
+    $stmt = $pdo->prepare('UPDATE articles SET pinned = ? WHERE id = ?');
+    $stmt->execute([$pinned, $id]);
+    if ($stmt->rowCount() === 0) {
+        $c = $pdo->prepare('SELECT COUNT(*) c FROM articles WHERE id = ?');
+        $c->execute([$id]);
+        if ((int)$c->fetch()['c'] === 0) vg_out2(['error' => 'Artikel nicht gefunden'], 404);
+    }
+    vg_out2(['ok' => true, 'pinned' => (bool)$pinned]);
 }
 
 if ($method === 'POST') {

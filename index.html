@@ -513,6 +513,9 @@
   .card{position:relative}
   .tile-del{position:absolute;top:8px;left:8px;z-index:5;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:15px;font-weight:700;line-height:1;border:0;cursor:pointer}
   .tile-del:hover{background:#e0355f}
+  .tile-pin{position:absolute;top:8px;left:40px;z-index:5;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:1;border:0;cursor:pointer;filter:grayscale(1);opacity:.72}
+  .tile-pin:hover{opacity:1;filter:none}
+  .tile-pin.on{background:var(--accent);filter:none;opacity:1}
   /* Bild-Editor */
   .ie-frame{position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--surface-2);border:2px dashed var(--line);margin:12px 0;display:grid;place-items:center;cursor:pointer;user-select:none}
   .ie-frame.wide{aspect-ratio:16/9}
@@ -926,9 +929,7 @@ function fmtDShort(iso){const p=parseLocalDT(iso);if(!p)return'';const z=n=>Stri
 function latestFmt(c){const list=GUIDES.filter(g=>g.cat===c&&g.date);if(!list.length)return"";const newest=list.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];return fmtDT(newest.date);}
 /* ---- STARTSEITE (Portal) ---- */
 function pinnedGuides(){
-  const pin=GUIDES.filter(g=>g.pinned);
-  const list=(pin.length?pin:GUIDES).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  return list.slice(0,3);
+  return GUIDES.filter(g=>g.pinned).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,3);
 }
 function portalCard(g,variant){
   const idx=GUIDES.indexOf(g);
@@ -943,7 +944,8 @@ function portalHighlightsHtml(){
   return `<div class="p-sh"><h2>Im Fokus</h2></div><div class="p-hl">${feat}<div class="p-side">${side}</div></div>`;
 }
 function portalNewsHtml(){
-  const list=GUIDES.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
+  const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
+  const list=GUIDES.filter(g=>!pinnedIds.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
   if(!list.length) return '';
   const rows=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-ncat">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
   return `<div class="p-sh"><h2>Neueste News</h2><a class="p-more" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News \u2192</a></div><div class="p-news">${rows}</div>`;
@@ -1007,10 +1009,11 @@ function newsCardsHtml(){
     const dt=o.x.date?fmtDShort(o.x.date):'';
     const nb = editMode ? (o.x._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
     const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
+    const pinBtn = editMode ? `<button type="button" class="tile-pin ${o.x.pinned?'on':''}" onclick="togglePin(${o.idx},event)" title="${o.x.pinned?'Angepinnt (klicken zum Lösen)':'Anpinnen (erscheint im Portal unter Im Fokus)'}">📌</button>` : '';
     const tag=editMode?'div':'a';
     const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
     const clickAttr=editMode?`openImgEd('guide',null,${o.idx})`:`return articleClick(event,${o.idx})`;
-    return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><span class="ndate">${dt}</span></div></${tag}>`;
+    return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${nb}${delBtn}${pinBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><span class="ndate">${dt}</span></div></${tag}>`;
   }).join('');
   const more=pool.length>newsLimit?`<button class="load-more" onclick="loadMoreNews()">Mehr laden · noch ${pool.length-newsLimit}</button>`:'';
   return { grid: grid||'<div class="empty">Keine Artikel gefunden.</div>', more, total: pool.length };
@@ -1173,6 +1176,24 @@ async function deleteGuide(idx,ev){
     renderView();
     toast('Artikel gelöscht.');
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
+/* Anpinnen/Lösen eines Artikels für den Portal-Block "Im Fokus". Sofort
+   öffentlich (kein Entwurf), siehe api/articles.php?action=pin. Im Portal
+   werden die neuesten bis zu 3 angepinnten Artikel gezeigt. */
+async function togglePin(idx,ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  const g=GUIDES[idx]; if(!g) return;
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const np=!g.pinned;
+  if(np && GUIDES.filter(x=>x.pinned).length>=3 && !confirm('Es sind bereits 3 Artikel angepinnt. Im Portal erscheinen nur die neuesten 3. Trotzdem anpinnen?')) return;
+  try{
+    const res=await fetch('api/articles.php?action=pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id,pinned:np})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    g.pinned=np;
+    renderView();
+    toast(np?'📌 Angepinnt.':'Losgelöst.');
+  }catch(e){ toast('Anpinnen fehlgeschlagen.'); }
 }
 async function addDbEntry(secId){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }

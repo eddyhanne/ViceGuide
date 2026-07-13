@@ -29,7 +29,7 @@ function vg_db(): array {
     $schemaReady = false;
     try {
         $pdo->query('SELECT id FROM comments LIMIT 1');
-        $pdo->query('SELECT draft_json FROM articles LIMIT 1');
+        $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
@@ -64,6 +64,7 @@ function vg_db(): array {
             credit TEXT,
             author TEXT,
             draft_json TEXT,
+            pinned INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
@@ -97,8 +98,12 @@ function vg_db(): array {
         }
         try {
             $cols = $pdo->query("PRAGMA table_info(articles)")->fetchAll();
-            if (!in_array('draft_json', array_column($cols, 'name'), true)) {
+            $anames = array_column($cols, 'name');
+            if (!in_array('draft_json', $anames, true)) {
                 $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json TEXT');
+            }
+            if (!in_array('pinned', $anames, true)) {
+                $pdo->exec('ALTER TABLE articles ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
             }
         } catch (Throwable $e) {
             // s.o.
@@ -132,6 +137,7 @@ function vg_db(): array {
             credit VARCHAR(200) NULL,
             author VARCHAR(100) NULL,
             draft_json MEDIUMTEXT NULL,
+            pinned TINYINT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
@@ -170,6 +176,8 @@ function vg_db(): array {
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'draft_json'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json MEDIUMTEXT NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'pinned'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN pinned TINYINT NOT NULL DEFAULT 0'); }
         } catch (Throwable $e) {
             // s.o.
         }
