@@ -803,7 +803,7 @@ function renderSidebar(){
 }
 
 /* Navigation */
-function go(id){ current=id; gquery=''; $('gsearch').value=''; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); syncHash(); }
+function go(id){ current=id; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); syncHash(); }
 /* Echte URL je Sektion fuer die Navigations-Links (Sidebar/Mobile). Jede
    Sektion hat eine serverseitige Fassade: home -> /, die acht DB-Hubs ueber
    SECTION_PREFIX (/charaktere/ ...), map -> /karte, videos/community direkt.
