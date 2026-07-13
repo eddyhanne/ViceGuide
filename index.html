@@ -1514,8 +1514,8 @@ const COMMUNITY={
   redditUrl:""           // z.B. "https://www.reddit.com/r/deinsubreddit"
 };
 const VIDEOS=[
-  {id:"QdBZY2fkU-0", title:"GTA 6 – Trailer 1", author:"Rockstar Games", date:"2023-12-05"},
-  {id:"VQRLujxTm3c", title:"GTA 6 – Trailer 2", author:"Rockstar Games", date:"2025-05-06"}
+  {id:"QdBZY2fkU-0", title:"GTA 6: Trailer 1", author:"Rockstar Games", date:"2023-12-05"},
+  {id:"VQRLujxTm3c", title:"GTA 6: Trailer 2", author:"Rockstar Games", date:"2025-05-06"}
 ];
 function playVideo(btn,id){ const box=btn.parentNode; box.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?rel=0&autoplay=1" title="YouTube-Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'; }
 function renderVideos(){
@@ -2380,6 +2380,8 @@ function syncHash(){
   if(g && g.id) target='/artikel/'+g.id;
   else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
   else if(!curModal && SECTION_PREFIX[current]) target='/'+SECTION_PREFIX[current]+'/';
+  else if(!curModal && (current==='videos'||current==='community')) target='/'+current;
+  else if(!curModal && current==='home') target='/';
   else target='/#'+buildHash();
   const currentFull=location.pathname+location.hash;
   if(currentFull!==target) history.pushState(null,'',target);
@@ -2418,6 +2420,9 @@ function restoreFromLocation(){
       openLegal(legalMatch[1]);
       return;
     }
+    /* Videos/Community, server-gerendert von section.php. */
+    const sectionMatch=location.pathname.match(/^\/(videos|community)\/?$/);
+    if(sectionMatch){ go(sectionMatch[1]); closeModal(); return; }
     let h=(location.hash||'').replace(/^#\/?/,'');
     const [view,qs]=h.split('?');
     go((view && SECTIONS.find(s=>s.id===view)) ? view : 'home');

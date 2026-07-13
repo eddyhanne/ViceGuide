@@ -32,6 +32,12 @@ RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
 RewriteRule ^impressum/?$ legal.php?page=impressum [L,QSA]
 RewriteRule ^datenschutz/?$ legal.php?page=datenschutz [L,QSA]
 
+# Videos/Community, analog zu den Kategorie-Uebersichten, aber ohne
+# Datenbank dahinter (Inhalt kommt aus VIDEOS/COMMUNITY in index.html,
+# siehe section.php).
+RewriteRule ^videos/?$ section.php?page=videos [L,QSA]
+RewriteRule ^community/?$ section.php?page=community [L,QSA]
+
 # Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
 RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
 
