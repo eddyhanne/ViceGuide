@@ -31,6 +31,7 @@ function vg_db(): array {
         $pdo->query('SELECT id FROM comments LIMIT 1');
         $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
+        $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -83,6 +84,13 @@ function vg_db(): array {
             credit TEXT,
             slug TEXT,
             draft_json TEXT,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS section_meta (
+            section TEXT PRIMARY KEY,
+            img TEXT,
+            imgfit_json TEXT,
+            credit TEXT,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
@@ -159,6 +167,13 @@ function vg_db(): array {
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_section (section),
             INDEX idx_section_slug (section, slug)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS section_meta (
+            section VARCHAR(30) PRIMARY KEY,
+            img MEDIUMTEXT NULL,
+            imgfit_json VARCHAR(100) NULL,
+            credit VARCHAR(200) NULL,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
