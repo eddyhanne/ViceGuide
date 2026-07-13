@@ -47,7 +47,7 @@ foreach (VG_SITEMAP_SECTION_PREFIX as $prefix) {
 foreach (['impressum', 'datenschutz'] as $legalPage) {
     echo "  <url>\n    <loc>https://viceguide.de/{$legalPage}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.2</priority>\n  </url>\n";
 }
-foreach (['videos', 'community'] as $sectionPage) {
+foreach (['videos', 'community', 'karte'] as $sectionPage) {
     echo "  <url>\n    <loc>https://viceguide.de/{$sectionPage}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.5</priority>\n  </url>\n";
 }
 foreach ($articles as $r) {
