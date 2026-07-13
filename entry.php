@@ -75,23 +75,23 @@ if ($hasImg && preg_match('#^data:image/[a-zA-Z0-9.+-]+;base64,(.+)$#', $row['im
 $html = file_get_contents(__DIR__ . '/index.html');
 
 $head = [
-    '<title>ViceGuide - GTA 6 News, Guides & Datenbank (Deutsch)</title>' =>
+    '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
         '<title>' . vg_esc2($pageTitle) . '</title>',
-    '<meta name="description" content="ViceGuide ist deine deutschsprachige Anlaufstelle für GTA 6: aktuelle News, Gerüchte und Leaks, dazu eine große Datenbank zu Charakteren, Fahrzeugen, Waffen, Wildtieren, Orten und mehr. Ab Release folgen Guides, Geld-Tipps und Easter Eggs.">' =>
+    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
         '<meta name="description" content="' . vg_esc2($summary) . '">',
     '<link rel="canonical" href="https://viceguide.de/">' =>
         '<link rel="canonical" href="' . vg_esc2($canonical) . '">',
-    '<meta property="og:title" content="ViceGuide - GTA 6 News, Guides & Datenbank (Deutsch)">' =>
+    '<meta property="og:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
         '<meta property="og:title" content="' . vg_esc2($pageTitle) . '">',
-    '<meta property="og:description" content="Deine deutschsprachige Anlaufstelle für GTA 6: News, Leaks, Datenbank und ab Release Guides, Geld-Tipps und Easter Eggs.">' =>
+    '<meta property="og:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
         '<meta property="og:description" content="' . vg_esc2($summary) . '">',
     '<meta property="og:url" content="https://viceguide.de/">' =>
         '<meta property="og:url" content="' . vg_esc2($canonical) . '">',
     '<meta property="og:image" content="https://viceguide.de/og-image.jpg">' =>
         '<meta property="og:image" content="' . vg_esc2($imgUrl) . '">',
-    '<meta name="twitter:title" content="ViceGuide - GTA 6 News, Guides & Datenbank (Deutsch)">' =>
+    '<meta name="twitter:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
         '<meta name="twitter:title" content="' . vg_esc2($pageTitle) . '">',
-    '<meta name="twitter:description" content="Deine deutschsprachige Anlaufstelle für GTA 6: News, Leaks, Datenbank und ab Release Guides.">' =>
+    '<meta name="twitter:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
         '<meta name="twitter:description" content="' . vg_esc2($summary) . '">',
     '<meta name="twitter:image" content="https://viceguide.de/og-image.jpg">' =>
         '<meta name="twitter:image" content="' . vg_esc2($imgUrl) . '">',

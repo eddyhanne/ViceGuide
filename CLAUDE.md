@@ -19,23 +19,31 @@
 **Regel 2, Ton eines Gaming-Redakteurs, nicht generisch KI-klingend.** Jeder Artikel, jede Beschreibung, jeder Text soll klingen, als hätte ihn ein echter Gaming-Redakteur geschrieben: jemand, der selbst zockt, die Materie kennt, weiß was Gamer wirklich wissen wollen und wie man sie packt und dranhält. Nicht "Redakteur allgemein", sondern ein Gaming-Journalist, von dessen Beitrag ein professioneller Chefredakteur den Text nicht unterscheiden könnte. Konkret:
 - Keine leeren Füllfloskeln ("Es ist wichtig zu beachten, dass...", "Zusammenfassend lässt sich sagen...", "Tauche ein in die Welt von...").
 - Keine übertriebene Marketing-Sprache oder Ausrufezeichen-Enthusiasmus. Sachlich-locker statt reißerisch.
-- Variabler Satzbau statt gleichförmigem Drei-Punkte-Rhythmus in jedem Absatz.
-- Konkrete Fakten und Details statt vager Verallgemeinerungen. Lieber eine spezifische Quelle nennen als "Berichten zufolge".
+- Konkrete Fakten und Details statt vager Verallgemeinerungen. **Steht eine Quelle im `sources`-Feld, wird sie im Text namentlich genannt** ("laut Forbes", "wie ComicBook.com berichtet", "Analyst Mat Piscatella verweist darauf"), nie über eine anonyme Sammelformel wie "Beobachter werten", "mehrere Quellen" oder "Berichten zufolge".
 - Ein Artikel darf eine eigene Position und Einordnung haben ("wirkt eher wie ein Gerücht, weil..."), das ist der USP gegenüber reinem Leak-Kopieren.
 - Gilt für alle Texte: Artikel, Teaser, Datenbank-Beschreibungen, Meta-Texte, Captions.
 
+**Satzrhythmus, der häufigste KI-Verräter (besonders beachten).** Der typische KI-Fehler ist der Drei-Teile-Komma-Satz: Hauptaussage, Komma, Zusatz, Komma, noch ein Zusatz, und das zehnmal hintereinander. Ein einzelner Satz dieser Art liest sich okay, in Serie erzeugt er genau den Sing-Sang, an dem man KI-Text sofort erkennt. Gegenmittel: Satzlängen bewusst mischen. Ein kurzer Satz, dann ein längerer. Wo drei Gedanken zusammengehören, lieber einen Punkt setzen als ein drittes Komma. **Wichtig, weil hausgemacht:** Regel 1 verbietet Gedankenstriche, das darf nicht dazu führen, dass stattdessen alles mit Kommas aneinandergehängt wird. Wo ein Gedankenstrich stünde, gehört meistens ein Punkt hin, kein Komma.
+
 **Verbotene Floskeln (harte Liste, nie verwenden):**
-- Meta-Ansagen über den Text: "Wichtig für die Einordnung", "Zur Einordnung", "Eins vorweg", "So viel sei gesagt".
+- Meta-Ansagen über den Text: "Wichtig für die Einordnung", "Zur Einordnung", "Wichtig dabei", "Eins vorweg", "So viel sei gesagt", "Für Spieler heißt das konkret".
+- Aufsatz-Klammern: "Zusammenfassend lässt sich sagen", "Kurz gesagt", "Unser Fazit", "Alles in allem", "Es ist wichtig zu beachten, dass", "Es ist erwähnenswert, dass", "Ein Blick auf X hilft bei der Einordnung".
 - Leerlauf-Hedges: "Es bleibt abzuwarten", "Man darf gespannt sein", "Nur die Zeit wird es zeigen", "Wie sich zeigen wird".
 - Marketing-Enthusiasmus: "Tauche ein in", "Mach dich bereit für", "Freu dich auf".
-- Aufsatz-Klammern: "Zusammenfassend lässt sich sagen", "Alles in allem", "Es ist wichtig zu beachten, dass", "Es ist erwähnenswert, dass".
+- Vage Sammel-Quellen: "Beobachter werten", "mehrere Quellen", "Berichten zufolge", "in der Berichterstattung gilt". Stattdessen die konkrete Quelle namentlich nennen (siehe oben).
 - Füll-Übergänge: "Doch damit nicht genug", "Und das ist noch nicht alles", "Aber was bedeutet das eigentlich?".
+- Klischee-Eröffnungen: "Kaum ein Spiel wird so sehnlich erwartet", "so sehnlich erwartet", "Fans auf der ganzen Welt".
+- Rhetorische Leserfragen als Absatzabschluss: "Was denkt ihr?", "Freut ihr euch?", "Was meint ihr?", "Seid ihr gespannt?". Das ist Fan-Blog-Stil, kein Redaktionston.
+- Weichmacher und Hype-Adjektive ohne Beleg (sparsam, nie als Autoren-Wertung im Leerlauf): "quasi", "regelrecht", "gefühlt", "im wahrsten Sinne", "atemberaubend", "wunderschön", "gigantisch". Ein Adjektiv, das man nicht belegen kann, gehört raus.
+- Konjunktiv-Spekulationsteppiche: nicht mehrere "könnte/dürfte/würde/möglicherweise" in Folge stapeln. Einmal sauber kennzeichnen, dann Position beziehen.
 
 **Prinzip:** nichts ankündigen, was gleich kommt, sondern es direkt sagen. Nicht ins Vage hedgen, sondern Fakten nennen und Position beziehen. Führe mit der bestätigten News, nicht mit der Spekulation: steht eine belegte Tatsache im Raum, gehört die nach vorne, das Gerücht ist der Nebenaspekt.
 
-**Vorher/Nachher:**
-- Schwach: "Wichtig für die Einordnung: bestätigt ist bislang nur die Verlegung des Earnings-Calls."
-- Stark: "Bestätigt ist bisher nur eins: dass Take-Two den Call verschoben hat. Alles andere ist Spekulation."
+**Vorher/Nachher (aus echten Testartikeln, alle vier Fehlertypen):**
+- Meta-Ansage. Schwach: "Wichtig dabei, das ist reine Fan-Spekulation." Stark: "Das ist reine Fan-Spekulation, bestätigt ist daran nichts."
+- Aufsatz-Klammer. Schwach: "Kurz gesagt, ein Termin im Sommer ist plausibel." Stark: "Ein Termin im Sommer ist plausibel, das WM-Finale als Bühne eher nicht."
+- Vage Quelle. Schwach: "Beobachter werten das als möglichen Hinweis." Stark: "Forbes-Autor Brian Mazique wertet das als möglichen Hinweis."
+- Komma-Kette. Schwach: "Take-Two präsentiert am 7. August die Zahlen, an einem Freitag statt wie sonst zwischen Dienstag und Donnerstag, was Beobachter als Hinweis werten." Stark: "Take-Two präsentiert am 7. August die Zahlen. Der Termin fällt auf einen Freitag, ungewöhnlich für einen Investorencall."
 
 Diese beiden Regeln sind projektweit und stehen über allem anderen.
 
@@ -108,7 +116,7 @@ Artikel-Detailseiten haben Titel, Lead, Content-Absätze, optionale Quellen, Kom
 {
   "id": "stabiler-slug-aus-dem-titel",
   "cat": "news",
-  "title": "prägnanter Titel, max. 8 Wörter",
+  "title": "prägnanter Titel, Keyword vorne, rund 55 bis 65 Zeichen",
   "date": "2026-01-01T00:00",
   "summary": "1 Satz Teaser, max. 20 Wörter",
   "meta": "kurzes Label, z. B. Analyse oder News",
@@ -130,9 +138,45 @@ Es gibt **kein** `tag`-Feld, das sichtbare Label kommt aus `GCAT[cat].name`. `id
 - `"### Zwischenüberschrift"`: eigene Zwischenüberschrift, bekommt automatisch eine Anker-ID fürs Inhaltsverzeichnis.
 - `"img:https://bild-url|Bildunterschrift"`: weiteres Bild im Text (Unterschrift optional). Drittes Segment `|narrow` für ein schmaleres, zentriertes Bild.
 - `"- Ein Punkt"`: Aufzählungspunkt, mehrere ergeben automatisch eine Liste.
-- `"faq:Frage?|Antworttext"`: aufklappbarer FAQ-Eintrag. Mehrere ergeben einen FAQ-Block plus automatisch `FAQPage`-Schema fürs Google-Snippet.
+- `"faq:Frage?|Antworttext"`: aufklappbarer FAQ-Eintrag. **Pflicht in jedem Artikel, siehe eigener Block unten.** Mehrere ergeben einen FAQ-Block plus automatisch `FAQPage`-Schema fürs Google-Snippet.
 
 **`tldr`** (optional, top-level, kein Präfix): Array aus 2 bis 5 Stichpunkten, wird als "Auf einen Blick"-Box unter dem Lead angezeigt. Sinnvoll bei längeren oder faktenreichen Artikeln, sonst weglassen.
+
+**FAQ, starker Standard mit klarer Format-Pflicht.** FAQ wird als `faq:Frage?|Antwort`-Zeilen am Ende des `content`-Arrays geschrieben. **Es gibt KEIN separates `faq`-Feld im Datenmodell.** Ein eigenes `"faq": [...]`-Feld im JSON wird vom Code stillschweigend ignoriert und taucht auf der Live-Seite gar nicht auf (dieser Fehler ist schon passiert, siehe Stolperfallen). Wann FAQ Pflicht ist und wann es entfallen darf, steht typabhängig im Artikel-Muster unten (Guide/Reference immer, News/Analyse als Standard mit begründeter Ausnahme). Grund für den hohen Stellenwert: die `faq:`-Zeilen triggern automatisch das `FAQPage`-Schema fürs Google-Snippet, das ist gerade für eine kleine Seite ein direkter Sichtbarkeits-Hebel, nicht nur redaktionelle Kür. Die Fragen an echten Suchanfragen orientieren ("Wann kommt...", "Stimmt es, dass...", "Was kostet...").
+
+### Verbindliches Artikel-Muster (alle Artikel, alle Oberflächen)
+Jeder Artikel folgt demselben Aufbau, egal ob über Claude Chat, Claude Code oder Cowork erstellt. "Dasselbe Muster" heißt gleiche Pflicht-Bausteine und gleiche Qualitätslatte, nicht identisches Skelett unabhängig vom Inhalt.
+
+**Pflicht-Bausteine in jedem Artikel:**
+- **title:** Keyword in den ersten Wörtern, Gesamtlänge rund 55 bis 65 Zeichen. Doppelpunkt-Konstruktionen und Zitat-Aufhänger sind erlaubt und ranken oft besser als eine starre Kurzform. Kein reißerischer Clickbait, aber gern konkret und suchnah.
+- **lead:** ein Satz, führt mit der bestätigten Tatsache oder dem Indiz, keine Floskel.
+- **tldr:** "Auf einen Blick"-Box, 2 bis 4 Punkte. Bei jedem faktenreichen Artikel dabei, also praktisch immer. **Punkt 1 darf die Lead-Aussage nicht wortgleich wiederholen**, sondern liefert die Konsequenz oder Einordnung, sonst ist die Box redundant.
+- **content:** öffnet mit dem bestätigten Kern (nicht der Spekulation), Bullets beim Aufzählen, jede genutzte Quelle im Text namentlich ("laut Forbes"). Zwischenüberschriften und interne Verlinkung nach den Regeln unten, nicht als Pflicht-Quote.
+- **faq:** an echten Suchfragen orientiert. Starker Standard, aber typabhängig (siehe unten), nicht bei jeder Kurzmeldung erzwungen.
+- **sources:** mindestens 2, benannt und real.
+- **image_queries:** 3 Vorschläge. Bildfelder (`img`, `imgfit`, `credit`) beim Neuschreiben bestehender Artikel weglassen, wenn die Bilder separat gepflegt werden, sonst überschreibt ein leeres `img` das vorhandene Bild.
+
+**Zwischenüberschriften (`###`), gestaffelt nach Typ:**
+- Kurz-News (unter ~500 Wörter): 0 bis 1 Zwischenüberschrift, oft läuft der Text sauber ohne durch.
+- Analyse (ca. 800 bis 1.500 Wörter): 2 bis 4 Zwischenüberschriften.
+- Hub/Guide (mehrteilig): 4+ plus Inhaltsverzeichnis (kommt automatisch ab 3 `###`).
+Keine erzwungene Mindest-Quote, kurze Meldungen nicht künstlich mit Überschriften aufblähen.
+
+**FAQ, typabhängig statt pauschal:**
+- **Guide, Reference, "Alles was wir wissen"-Hub:** FAQ Pflicht, 2 bis 3 Einträge. Hier passt die Suchintention und das FAQPage-Schema greift natürlich.
+- **News und Analyse:** FAQ als starker Standard, aber verzichtbar, wenn der Artikel keine zwei echten, distinkten Suchfragen hergibt (reine Kurzmeldung). Dann im Chat kurz begründen, warum kein FAQ. Der Filter flaggt fehlendes FAQ weiterhin, damit die Entscheidung bewusst fällt und nicht aus Versehen.
+
+**Interne Verlinkung, gedeckelt statt gefordert:**
+- Maximal 3 Cross-Links `[[id|text]]` im Fließtext plus ein Hub-Verweis. Priorität ist kontextuelle Relevanz, nicht Menge. Lieber zwei sinnvolle Links als fünf gezwungene.
+
+**Längen-Zielkorridore pro Typ:** Kurz-News 300 bis 500 Wörter, Analyse 800 bis 1.500, Hub/Guide mehrteilig. Grober Richtwert, kein Selbstzweck, der Inhalt bestimmt die Länge.
+
+**Flexibel nach Artikeltyp:**
+- **Analyse/News mit Wertung** (z. B. Trailer-Termin, Streik, Online-Modus): eigene Position ausdrücklich erwünscht, als normaler Absatz oder eigener `###`-Abschnitt (etwa "Was das bedeutet"). Die Meinung darf klar eingeleitet werden ("Meiner Einschätzung nach", "Wir halten das für unwahrscheinlich, weil..."), aber NIE mit Aufsatz-Klammer wie "Unser Fazit:" oder "Kurz gesagt:". Haltung immer auf benannte Fakten stützen, nie als bloße Behauptung. Das ist der USP gegenüber reinem Leak-Kopieren.
+- **Reference** (z. B. Karte, Plattformen, Editionen): nüchtern, keine erzwungene Meinung, dafür maximal vollständig und sauber strukturiert.
+
+### Pflicht-Filter vor jeder Übergabe: `viceguide_lint.py`
+Vor der Übergabe eines Artikels läuft das Prüfskript `viceguide_lint.py` (liegt im Repo-Wurzelverzeichnis) über das JSON. Aufruf: `python3 viceguide_lint.py <datei>.json`. Es prüft hart auf vollständige Schema-Felder, gültige `cat`, kein separates `faq`-Feld, null Gedankenstriche, mindestens eine Quelle und die komplette Floskel-Verbotsliste aus Abschnitt 0. Dazu weiche Warnungen: fehlendes FAQ (bei Guide/Reference nachrüsten, bei Kurz-News bewusst entscheiden), Titel länger als ~65 Zeichen, und Sätze mit 4+ Kommas (Sing-Sang). **Ein Artikel wird erst übergeben, wenn der Filter 0 harte Fehler meldet und die weichen Warnungen redaktionell geprüft sind.** Das ist der maschinelle Teil der Qualitätssicherung, die Tonalität "liest sich wie ein Gaming-Redakteur" bleibt zusätzlich redaktionelle Beurteilung.
 
 **Automatisch, ohne eigenes Feld:** Inhaltsverzeichnis ("Direkt zu") ab 3 `### `-Überschriften, Lesezeit-Anzeige aus der Wortzahl, FAQ-Schema (`FAQPage` JSON-LD) sobald `faq:`-Einträge da sind.
 
@@ -161,6 +205,7 @@ Aus der API kommt zusätzlich `_id` (interne Zeilen-ID, für Updates gebraucht) 
 ├─ SOCIAL.md               Instagram-Strategie
 ├─ TOOLS.md                Design-Standards (Karussell, Artikelbilder)
 ├─ KANAELE.md              Kanal-Übersicht
+├─ viceguide_lint.py       Prüfskript für Artikel-JSON (Pflicht-Filter vor Übergabe, siehe Abschnitt 2)
 ├─ index.html              Die Single-Page-App (direkt editieren)
 ├─ article.php             Server-gerendertes Artikel-Detail (echte URL /artikel/id, für SEO)
 ├─ entry.php               Server-gerendertes Datenbank-Detail (echte URL /praefix/slug, für SEO)
@@ -271,10 +316,12 @@ php -S localhost:8000 -t .
 6. Neue Datenbank-Einträge komplett neu anlegen (z. B. ein unbekanntes Fahrzeug) geht noch nicht über den Editiermodus, nur bestehende bearbeiten. Bei Bedarf nachrüsten (API-Endpunkt plus UI).
 7. Kanal-Aufbau über Instagram hinaus (YouTube, TikTok, X, Reddit, Discord): Status und Priorität in KANAELE.md. Handles außer Instagram sind Stand jetzt nicht gesichert.
 8. Optional: eigener Anthropic-API-Schlüssel für Live-Recherche direkt auf der Seite (`config.php` Feld `anthropic_api_key`, `generateGuide()` auf serverseitigen Proxy umstellen), falls der Copy-Paste-Workflow zu langsam wird.
+9. **Sichtbares Aktualisierungsdatum plus `dateModified` im Article-JSON-LD (SEO).** Bei den schnelllebigen Themen (Trailer 3, Earnings, Streik) wertet Google Aktualität. Vermutlich existiert in der Datenbank pro Zeile bereits ein `updated_at` (der Cache-Buster `&v=<updated_at>` deutet stark darauf hin), dann ist es reine Render-Arbeit: Datum sichtbar unter der Überschrift ausgeben und in `dateModified` im JSON-LD schreiben, in `index.html` und `article.php`. Erst gegen den echten Code prüfen, ob `updated_at` schon da ist. Eigener Coding-Strang, blockiert die Artikel-Regeneration nicht, kein neues JSON-Feld nötig.
 
 ### Stolperfallen
 - **Gedankenstriche schleichen sich leicht ein,** besonders in KI-Texten. Nach jeder Generierung prüfen.
-- **Generischer KI-Ton schleicht sich ein** (Regel 2). Vor dem Veröffentlichen laut vorlesen: klingt das wie ein Gaming-Redakteur, oder wie eine KI-Zusammenfassung?
+- **Generischer KI-Ton schleicht sich ein** (Regel 2). Häufigster konkreter Fehler: die Drei-Teile-Komma-Kette (Sing-Sang) und eingeschlichene Floskeln wie "Kurz gesagt", "Wichtig dabei", "Beobachter werten". Vor dem Veröffentlichen laut vorlesen: klingt das wie ein Gaming-Redakteur, oder wie eine KI-Zusammenfassung? Die Selbstprüfliste in Abschnitt 9 durchgehen.
+- **FAQ im falschen Format verschwindet spurlos.** FAQ muss als `faq:Frage?|Antwort`-Zeile im `content`-Array stehen. Ein separates `"faq": [...]`-Feld wird ohne Fehlermeldung ignoriert und erscheint nicht auf der Seite (ist schon passiert). Nach dem Veröffentlichen einmal auf der Live-Seite prüfen, ob der FAQ-Block wirklich da ist.
 - **`api/config.php` nie committen.** Steht in `.gitignore`, muss nach frischem Server-Setup manuell im Hostinger-Dateimanager angelegt werden.
 - **Einmal-Werkzeuge** (Passwort-Hash-Generator, Migrations-Skript) nach Gebrauch nicht nur vom Server, sondern auch aus dem Git-Repo entfernen (`git rm`). Sonst kommen sie beim nächsten Deploy zurück.
 - **Artikel-`id` ist fix, der Titel nicht.** Beim Bearbeiten des Titels bleibt die `id` (und Kommentar-Zuordnung) unverändert, Absicht.
@@ -337,6 +384,15 @@ Claude ist hier Content- und Redaktionspartner auf dem Niveau eines erfahrenen G
 - **Bestehende Artikel kritisch gegenlesen.** Auf Wunsch prüft Claude Bestandsartikel auf Ton, Aktualität und SEO. Maßstab: von einem professionellen Gaming-Journalisten nicht zu unterscheiden, kein generisches KI-Klingen (Regel 2).
 - **Interne Verlinkung proaktiv mitliefern.** Da Cross-Linking gebaut ist, schlägt Claude bei jedem neuen Artikel passende Verweise auf Bestandsartikel vor.
 - **Ausgabeformat:** fertiges JSON im Format aus Abschnitt 2, direkt zum Copy-Paste ins Admin-Panel. Kein Drumherum nötig, das JSON im Codeblock reicht.
+- **Selbstprüfung vor jeder Abgabe (Pflicht-Durchlauf).** Bevor das JSON rausgeht, diese Liste tatsächlich durchgehen, nicht aufs Gedächtnis verlassen:
+  1. Keine Gedankenstriche ("–" oder "—") irgendwo im JSON?
+  2. Kein Satz aus der Verbotsliste (Abschnitt 0)? Satzlängen gemischt, kein Drei-Teile-Komma-Sing-Sang?
+  3. Jede im `sources`-Feld genutzte Quelle im Text namentlich genannt statt "Beobachter"/"mehrere Quellen"?
+  4. FAQ da, wo es hingehört (Guide/Reference immer, News/Analyse als Standard), als `faq:`-Zeilen im `content` (KEIN separates `faq`-Feld)? Bei bewusstem Verzicht kurz begründet?
+  5. Fakten gegen das Faktenblatt (Abschnitt 8) geprüft, Aktuelles per Websuche gegengecheckt?
+  6. `viceguide_lint.py` über das JSON laufen lassen: 0 harte Fehler, weiche Warnungen redaktionell geprüft?
+
+  Genau an diesem Durchlauf werden generischer Ton und Formatfehler abgefangen. Er ist der Grund, warum FAQ und Tonalität nicht mehr durchrutschen sollten.
 
 ### Cowork-Automation (täglicher News-Task)
 Ziel: so viel wie möglich automatisieren, Freigabe bleibt beim Betreiber.
