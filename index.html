@@ -161,27 +161,20 @@
   .pc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
   .pc-thumb.ph{display:grid;place-items:center}
   .pc-thumb.ph .ghost{font-size:40px;opacity:.4}
-  .pc-body{padding:14px 15px 16px}
-  .pc-pin{display:inline-block;font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px}
-  .pc-cat{display:block;font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-bottom:4px}
-  .pcard h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.2;margin:0 0 6px}
-  .pcard p{color:var(--text-soft);font-size:13.5px;line-height:1.5;margin:0}
-  .p-hl{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
-  .p-hl .p-side{display:grid;gap:16px;align-content:start}
-  .p-hl .feat h3{font-size:23px}
-  .p-hl .feat .pc-thumb{aspect-ratio:16/10}
-  .p-hl .side{display:grid;grid-template-columns:112px 1fr}
-  .p-hl .side .pc-thumb{aspect-ratio:auto;height:100%;min-height:96px}
-  .p-hl .side .pc-body{padding:12px 14px;align-self:center}
-  .p-hl .side h3{font-size:15px;margin:0}
-  .p-hl .side .pc-cat{margin-bottom:3px}
-  .p-news{display:grid;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  .p-nrow{display:flex;gap:14px;align-items:center;padding:13px 17px;text-decoration:none;color:inherit;border-bottom:1px solid var(--line);transition:background .15s}
+  .pc-thumb .pc-pin{position:absolute;top:10px;left:10px;z-index:2;font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--bg);font-weight:700;background:var(--accent);padding:4px 9px;border-radius:999px}
+  .pc-body{padding:13px 15px 15px}
+  .pc-cat{display:block;font-family:'Space Mono';font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px}
+  .pcard h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.2;margin:0}
+  .p-hl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .p-news{max-width:900px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .p-nrow{display:flex;gap:16px;align-items:center;padding:12px 17px;text-decoration:none;color:inherit;border-bottom:1px solid var(--line);transition:background .15s}
   .p-nrow:last-child{border-bottom:0}
   .p-nrow:hover{background:var(--surface-2)}
-  .p-ncat{font-family:'Space Mono';font-size:10px;font-weight:700;color:var(--accent);min-width:96px;text-transform:uppercase}
-  .p-nt{font-family:'Oswald';font-weight:500;font-size:16px;color:var(--heading);flex:1}
-  .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft);white-space:nowrap}
+  .p-nmain{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+  .p-ncat{align-self:flex-start;font-family:'Space Mono';font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;cursor:pointer}
+  .p-ncat:hover{text-decoration:underline}
+  .p-nt{font-family:'Oswald';font-weight:500;font-size:16.5px;color:var(--heading);line-height:1.25}
+  .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft);white-space:nowrap;flex-shrink:0}
   .p-rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .p-rtile{position:relative;display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);min-height:78px;transition:border-color .15s,transform .15s}
   .p-rtile:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -200,14 +193,11 @@
   .p-reltile .p-rn{color:var(--text-soft)}
   @media(max-width:760px){
     .p-hl{grid-template-columns:1fr}
-    .p-hl .feat .pc-thumb{aspect-ratio:16/9}
     .p-rgrid{grid-template-columns:1fr}
     .p-rgrid .p-rthumb{width:130px}
     .p-relgrid{grid-template-columns:1fr 1fr}
     .p-relgrid .p-rthumb{width:64px}
-    .p-nrow{flex-direction:column;align-items:flex-start;gap:4px}
     .p-nd{display:none}
-    .p-ncat{min-width:0}
   }
 
   /* section header */
@@ -326,6 +316,8 @@
   .back{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--text-soft);margin-bottom:20px;cursor:pointer}
   .back:hover{color:var(--accent);gap:11px}
   .article .tg{display:inline-block;font-family:'Space Mono';font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);background:var(--tag-bg);padding:6px 11px;border-radius:7px;margin-bottom:14px}
+  .article .tg.tg-clk{cursor:pointer;transition:background .15s}
+  .article .tg.tg-clk:hover{background:var(--accent);color:var(--bg)}
   .article h1{font-family:'Oswald';font-weight:600;font-size:clamp(28px,6vw,46px);line-height:1.04;color:var(--heading);margin-bottom:10px}
   .art-date{font-family:'Space Mono';font-size:12px;color:var(--text-soft);margin-bottom:16px}
   .article .lead{font-size:18px;color:var(--text-soft);font-weight:500;margin-bottom:24px;padding-bottom:22px;border-bottom:2px solid var(--line)}
@@ -932,25 +924,26 @@ let SECTION_IMG={}; // {characters:{img,imgfit,credit}, ...} aus api/sections.ph
 function pinnedGuides(){
   return GUIDES.filter(g=>g.pinned).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,3);
 }
-function portalCard(g,variant){
+function portalCard(g){
   const idx=GUIDES.indexOf(g);
-  const vis=g.img?`<div class="pc-thumb"><img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></div>`:`<div class="pc-thumb ph"><span class="ghost">${secIcon('news')}</span></div>`;
-  const teaser=variant==='feat'?`<p>${esc(g.summary||'')}</p>`:'';
-  return `<a class="pcard ${variant}" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${vis}<div class="pc-body">${g.pinned?'<span class="pc-pin">\u{1F4CC} Angepinnt</span>':''}<span class="pc-cat">${GCAT[g.cat]?.name||''}</span><h3>${esc(g.title)}</h3>${teaser}</div></a>`;
+  const pin=g.pinned?'<span class="pc-pin">\u{1F4CC} Angepinnt</span>':'';
+  const vis=g.img?`<div class="pc-thumb">${pin}<img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></div>`:`<div class="pc-thumb ph">${pin}<span class="ghost">${secIcon('news')}</span></div>`;
+  return `<a class="pcard" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${vis}<div class="pc-body"><span class="pc-cat">${GCAT[g.cat]?.name||''}</span><h3>${esc(g.title)}</h3></div></a>`;
 }
 function portalHighlightsHtml(){
   const p=pinnedGuides(); if(!p.length) return '';
-  const feat=portalCard(p[0],'feat');
-  const side=p.slice(1).map(g=>portalCard(g,'side')).join('');
-  return `<div class="p-sh"><h2>Im Fokus</h2></div><div class="p-hl">${feat}<div class="p-side">${side}</div></div>`;
+  return `<div class="p-sh"><h2>Im Fokus</h2></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
 }
 function portalNewsHtml(){
   const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
   const list=GUIDES.filter(g=>!pinnedIds.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
   if(!list.length) return '';
-  const rows=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-ncat">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
+  const rows=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-nmain"><span class="p-ncat" onclick="event.preventDefault();event.stopPropagation();goNewsCat('${g.cat}')">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span></span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
   return `<div class="p-sh"><h2>Neueste News</h2><a class="p-more" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News \u2192</a></div><div class="p-news">${rows}</div>`;
 }
+/* Direkt in eine News-Kategorie springen (aus dem Artikel-Tag oder der
+   Portal-Newsliste): oeffnet /news in der Kachel-Ansicht mit gesetztem Filter. */
+function goNewsCat(catId){ go('news'); if(catId && catId!=='Alle'){ newsCat=catId; newsView='cards'; renderNews(); } }
 function portalDbHtml(){
   const dbSecs=SECTIONS.filter(s=>s.type==='db');
   const tiles=dbSecs.map(s=>{const n=(DB[s.id]||[]).length;const meta=SECTION_IMG[s.id];const thumb=(meta&&meta.img)?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:`<span class="p-rthumb p-rthumb-ph">${secIcon(s.id)}</span>`;const clickAttr=editMode?`onclick="return sectionImgClick(event,'${s.id}')"`:`onclick="return goClick(event,'${s.id}')"`;const editBadge=editMode?'<span class="p-redit">\u270e Bild</span>':'';return `<a class="p-rtile" href="${sectionHref(s.id)}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></span></a>`;}).join('');
@@ -1189,7 +1182,6 @@ async function togglePin(idx,ev){
   const g=GUIDES[idx]; if(!g) return;
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const np=!g.pinned;
-  if(np && GUIDES.filter(x=>x.pinned).length>=3 && !confirm('Es sind bereits 3 Artikel angepinnt. Im Portal erscheinen nur die neuesten 3. Trotzdem anpinnen?')) return;
   try{
     const res=await fetch('api/articles.php?action=pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id,pinned:np})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
@@ -1197,7 +1189,7 @@ async function togglePin(idx,ev){
     g.pinned=np;
     renderView();
     const pb=$('a-pin'); if(pb && $('article').classList.contains('show') && curArticle===idx){ pb.classList.toggle('on',np); pb.textContent=np?'📌 Angepinnt':'📌 Anpinnen'; }
-    toast(np?'📌 Angepinnt.':'Losgelöst.');
+    toast(np?('📌 Angepinnt.'+(GUIDES.filter(x=>x.pinned).length>3?' Im Portal: die 3 neuesten.':'')):'Losgelöst.');
   }catch(e){ toast('Anpinnen fehlgeschlagen.'); }
 }
 function togglePinCurrent(){ if(curArticle!=null) togglePin(curArticle); }
@@ -2138,7 +2130,8 @@ function extractContentBlocks(container){
   return out;
 }
 function renderArticleFields(g,p){
-  const tag=$(p+'tag'); if(tag) tag.textContent=GCAT[g.cat]?.name||'';
+  const tag=$(p+'tag');
+  if(tag){ tag.textContent=GCAT[g.cat]?.name||''; if(p==='a-'&&g.cat){ tag.classList.add('tg-clk'); tag.title='Alle: '+(GCAT[g.cat]?.name||''); tag.onclick=()=>goNewsCat(g.cat); } }
   const title=$(p+'title'); if(title) title.textContent=g.title||'';
   const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'Eddy Hanné';
   const date=$(p+'date'); if(date) date.textContent=g.date?fmtDT(g.date):'';
