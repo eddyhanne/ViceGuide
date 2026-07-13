@@ -182,14 +182,14 @@
   .p-ncat{font-family:'Space Mono';font-size:10px;font-weight:700;color:var(--accent);min-width:96px;text-transform:uppercase}
   .p-nt{font-family:'Oswald';font-weight:500;font-size:16px;color:var(--heading);flex:1}
   .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft);white-space:nowrap}
-  .p-rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-  .p-rtile{border-radius:16px;overflow:hidden;text-decoration:none;color:#fff;position:relative;min-height:104px;display:flex;flex-direction:column;justify-content:flex-end;padding:13px;transition:transform .15s}
-  .p-rtile .p-rov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.45))}
-  .p-rtile>*{position:relative;z-index:1}
+  .p-rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .p-rtile{display:flex;align-items:center;gap:11px;border-radius:12px;color:#fff;padding:11px 14px;text-decoration:none;transition:transform .15s}
   .p-rtile:hover{transform:translateY(-2px)}
-  .p-ric{font-size:23px}
-  .p-rn{font-family:'Oswald';font-weight:700;font-size:18px;margin-top:auto}
-  .p-rc{font-family:'Space Mono';font-size:11px;opacity:.85}
+  .p-ric{flex-shrink:0;display:grid;place-items:center}
+  .p-ric svg{width:22px;height:22px;display:block}
+  .p-rtx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+  .p-rn{font-family:'Oswald';font-weight:600;font-size:15px}
+  .p-rc{font-family:'Space Mono';font-size:10.5px;opacity:.85}
   .grad1{background:linear-gradient(135deg,#6d3f9c,#c23b86)}
   .grad2{background:linear-gradient(135deg,#2b6f8f,#6d3f9c)}
   .grad3{background:linear-gradient(135deg,#c23b86,#ff8f5f)}
@@ -198,10 +198,10 @@
   .grad6{background:linear-gradient(135deg,#c23b86,#6d3f9c)}
   .grad7{background:linear-gradient(135deg,#2b6f8f,#c23b86)}
   .grad8{background:linear-gradient(135deg,#9c3f7f,#ff8f5f)}
-  .p-relgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:13px}
-  .p-reltile{border-radius:16px;position:relative;min-height:104px;display:flex;flex-direction:column;justify-content:flex-end;padding:13px;background:var(--bg-2);border:1px solid var(--line);color:var(--text-soft)}
-  .p-reltile .p-rlk{position:absolute;right:12px;top:12px;font-size:15px;opacity:.8}
-  .p-reltile .p-ric{opacity:.5}
+  .p-relgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+  .p-reltile{display:flex;align-items:center;gap:11px;border-radius:12px;padding:11px 14px;background:var(--bg-2);border:1px solid var(--line);color:var(--text-soft)}
+  .p-reltile .p-rlk{margin-left:auto;font-size:14px;opacity:.7;flex-shrink:0}
+  .p-reltile .p-ric{opacity:.55}
   .p-reltile .p-rn{color:var(--text-soft)}
   .p-reltile .p-rc{opacity:.8}
   @media(max-width:760px){
@@ -950,8 +950,8 @@ function portalNewsHtml(){
 }
 function portalDbHtml(){
   const dbSecs=SECTIONS.filter(s=>s.type==='db');
-  const tiles=dbSecs.map((s,i)=>{const n=(DB[s.id]||[]).length;return `<a class="p-rtile grad${(i%8)+1}" href="${sectionHref(s.id)}" onclick="return goClick(event,'${s.id}')"><span class="p-rov"></span><span class="p-ric">${secIcon(s.id)}</span><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></a>`;}).join('');
-  const rel=GROUPS[1].cats.map(c=>`<div class="p-reltile"><span class="p-rlk">\u{1F512}</span><span class="p-ric">${catIcon(c.id)}</span><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></div>`).join('');
+  const tiles=dbSecs.map((s,i)=>{const n=(DB[s.id]||[]).length;return `<a class="p-rtile grad${(i%8)+1}" href="${sectionHref(s.id)}" onclick="return goClick(event,'${s.id}')"><span class="p-ric">${secIcon(s.id)}</span><span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></span></a>`;}).join('');
+  const rel=GROUPS[1].cats.map(c=>`<div class="p-reltile"><span class="p-ric">${catIcon(c.id)}</span><span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span><span class="p-rlk">\u{1F512}</span></div>`).join('');
   return `<div class="p-sh"><h2>Gesamte GTA-6-Datenbank</h2></div><div class="p-rgrid">${tiles}</div>`
     +`<div class="p-sh p-sh-sm"><h2>Ab Release-Day</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span></div><div class="p-relgrid">${rel}</div>`;
 }
