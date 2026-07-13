@@ -150,10 +150,12 @@
   @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   .hero-sub{max-width:560px;margin:0 auto;color:var(--text-soft);font-weight:500;font-size:clamp(14px,2.2vw,17px)}
   /* Portal (Startseite) */
-  .p-sh{display:flex;align-items:baseline;gap:12px;margin:34px 0 15px}
+  .p-sh{display:flex;align-items:baseline;gap:12px;margin:34px 0 15px;flex-wrap:wrap}
   .p-sh h2{font-family:'Oswald';font-weight:700;font-size:clamp(21px,3vw,27px);color:var(--heading);letter-spacing:.4px}
   .p-sh.p-sh-sm h2{font-size:19px}
-  .p-more{margin-left:auto;color:var(--accent);text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap}
+  .p-more{color:var(--accent);text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap}
+  .p-newshead{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .p-newscat{font-family:'Inter';font-size:13px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer}
   .p-reltag{font-family:'Space Mono';font-size:11px;letter-spacing:1px;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:999px;padding:3px 10px}
   .pcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:border-color .15s,transform .15s}
   .pcard:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -166,15 +168,13 @@
   .pc-cat{display:block;font-family:'Space Mono';font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px}
   .pcard h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.2;margin:0}
   .p-hl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .p-news{max-width:900px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  .p-nrow{display:flex;gap:16px;align-items:center;padding:12px 17px;text-decoration:none;color:inherit;border-bottom:1px solid var(--line);transition:background .15s}
-  .p-nrow:last-child{border-bottom:0}
-  .p-nrow:hover{background:var(--surface-2)}
-  .p-nmain{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+  .p-news{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .p-nrow{display:flex;flex-direction:column;gap:6px;padding:14px 16px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,transform .15s}
+  .p-nrow:hover{border-color:var(--accent);transform:translateY(-1px)}
   .p-ncat{align-self:flex-start;font-family:'Space Mono';font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;cursor:pointer}
   .p-ncat:hover{text-decoration:underline}
-  .p-nt{font-family:'Oswald';font-weight:500;font-size:16.5px;color:var(--heading);line-height:1.25}
-  .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft);white-space:nowrap;flex-shrink:0}
+  .p-nt{font-family:'Oswald';font-weight:500;font-size:17px;color:var(--heading);line-height:1.25;flex:1}
+  .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft)}
   .p-rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .p-rtile{position:relative;display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);min-height:78px;transition:border-color .15s,transform .15s}
   .p-rtile:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -197,7 +197,7 @@
     .p-rgrid .p-rthumb{width:130px}
     .p-relgrid{grid-template-columns:1fr 1fr}
     .p-relgrid .p-rthumb{width:64px}
-    .p-nd{display:none}
+    .p-news{grid-template-columns:1fr}
   }
 
   /* section header */
@@ -936,10 +936,11 @@ function portalHighlightsHtml(){
 }
 function portalNewsHtml(){
   const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
-  const list=GUIDES.filter(g=>!pinnedIds.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
+  const list=GUIDES.filter(g=>!pinnedIds.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,4);
   if(!list.length) return '';
-  const rows=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-nmain"><span class="p-ncat" onclick="event.preventDefault();event.stopPropagation();goNewsCat('${g.cat}')">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span></span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
-  return `<div class="p-sh"><h2>Neueste News</h2><a class="p-more" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News \u2192</a></div><div class="p-news">${rows}</div>`;
+  const cards=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-ncat" onclick="event.preventDefault();event.stopPropagation();goNewsCat('${g.cat}')">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
+  const catSel=`<select class="p-newscat" onchange="if(this.value){goNewsCat(this.value);this.value='';}"><option value="">Kategorie w\u00e4hlen\u2026</option>${GROUPS[0].cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select>`;
+  return `<div class="p-sh"><h2>Neueste News</h2><span class="p-newshead">${catSel}<a class="p-more" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News \u2192</a></span></div><div class="p-news">${cards}</div>`;
 }
 /* Direkt in eine News-Kategorie springen (aus dem Artikel-Tag oder der
    Portal-Newsliste): oeffnet /news in der Kachel-Ansicht mit gesetztem Filter. */
