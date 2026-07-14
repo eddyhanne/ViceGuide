@@ -20,4 +20,17 @@ return [
     'db_user'    => 'DEIN_DB_BENUTZER',
     'db_pass'    => 'DEIN_DB_PASSWORT',
     'admin_hash' => '$2y$10$ersetzeMichMitEinemEchtenHashAusGenerateHashPhp',
+
+    // E-Mail an diese Adresse bei jedem neuen (fremden) Kommentar.
+    // Leer lassen ('') schaltet die Kommentar-Benachrichtigung ab.
+    'notify_email' => 'hanneeddy@gmail.com',
+
+    // Absender fuer alle ausgehenden Mails (Kommentar-Benachrichtigung und
+    // Newsletter). Sollte eine Adresse deiner eigenen Domain sein, sonst
+    // landet die Mail schneller im Spam.
+    'mail_from'    => 'ViceGuide <no-reply@viceguide.de>',
+
+    // Basis-URL fuer Links in Mails (Artikel-Link, Newsletter-Bestaetigung
+    // und -Abmeldung). Ohne abschliessenden Schraegstrich.
+    'site_url'     => 'https://viceguide.de',
 ];

@@ -9,6 +9,7 @@
  */
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/mail.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
@@ -55,6 +56,64 @@ function vg_buildTree(array $rows, string $voter = ''): array {
     return $roots;
 }
 
+/* Admin-Benachrichtigung: baut und verschickt die Mail an den Betreiber bei
+   einem neuen (fremden) Kommentar. Fehler beim Versand duerfen das Anlegen des
+   Kommentars nie stoeren, daher komplett in try/catch. */
+function vg_comment_notify(array $cfg, PDO $pdo, string $to, string $articleId, string $name, string $text, ?string $quote, ?int $parentId): void {
+    try {
+        $title = $articleId;
+        try {
+            $st = $pdo->prepare('SELECT title FROM articles WHERE id = ? LIMIT 1');
+            $st->execute([$articleId]);
+            $t = $st->fetchColumn();
+            if ($t) $title = (string)$t;
+        } catch (Throwable $e) { /* Titel nicht kritisch */ }
+
+        $url = vg_site_url($cfg) . '/artikel/' . rawurlencode($articleId);
+        $kind = $parentId ? 'Neue Antwort' : 'Neuer Kommentar';
+        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $safeText = nl2br(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
+        $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $q = $quote ? '<p style="color:#666;border-left:3px solid #ccc;padding-left:10px;margin:0 0 12px">' . htmlspecialchars($quote, ENT_QUOTES, 'UTF-8') . '</p>' : '';
+        $html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222">'
+              . '<p><b>' . $kind . '</b> zu &bdquo;' . $safeTitle . '&ldquo;</p>'
+              . '<p><b>' . $safeName . '</b> schreibt:</p>'
+              . $q
+              . '<p>' . $safeText . '</p>'
+              . '<p style="margin-top:18px"><a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;font-weight:700;padding:11px 20px;border-radius:10px">Zum Artikel und antworten</a></p>'
+              . '<hr style="border:none;border-top:1px solid #ddd;margin:22px 0"><p style="font-size:12px;color:#999">Automatische Benachrichtigung von ViceGuide.</p>'
+              . '</div>';
+        vg_send_mail($cfg, $to, $kind . ' auf ViceGuide: ' . $title, $html);
+    } catch (Throwable $e) { /* Versand ist Beiwerk, nie den Request abbrechen */ }
+}
+
+if ($method === 'GET' && isset($_GET['recent'])) {
+    /* Fuer das Admin-Benachrichtigungs-Popup: die letzten Kommentare ueber alle
+       Artikel, mit Artikeltitel und own-Flag (eigene Kommentare filtert der
+       Client weg). Nur fuer eingeloggte Admins. */
+    vg_require_admin($cfg);
+    $voter = substr(trim((string)($_GET['voter'] ?? '')), 0, 100);
+    $stmt = $pdo->query('SELECT c.id, c.article_id, c.parent_id, c.name, c.text, c.quote, c.author_token, c.created_at, a.title AS article_title
+                         FROM comments c LEFT JOIN articles a ON a.id = c.article_id
+                         ORDER BY c.created_at DESC, c.id DESC LIMIT 40');
+    $out = [];
+    foreach ($stmt->fetchAll() as $r) {
+        $own = ($voter !== '' && !empty($r['author_token']) && hash_equals((string)$r['author_token'], $voter));
+        $out[] = [
+            'id'            => (int)$r['id'],
+            'article_id'    => $r['article_id'],
+            'article_title' => $r['article_title'] ?: $r['article_id'],
+            'parent_id'     => $r['parent_id'] ? (int)$r['parent_id'] : null,
+            'name'          => $r['name'],
+            'text'          => $r['text'],
+            'quote'         => $r['quote'],
+            'created_at'    => $r['created_at'],
+            'own'           => $own,
+        ];
+    }
+    vg_out(['comments' => $out]);
+}
+
 if ($method === 'GET') {
     $articleId = trim($_GET['article'] ?? '');
     if ($articleId === '') vg_out(['error' => 'article fehlt'], 400);
@@ -79,7 +138,16 @@ if ($method === 'POST') {
     $author = substr(trim((string)($b['voter'] ?? '')), 0, 100) ?: null;
     $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token) VALUES (?, ?, ?, ?, ?, ?)');
     $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author]);
-    vg_out(['ok' => true, 'id' => (int)$pdo->lastInsertId()], 201);
+    $newId = (int)$pdo->lastInsertId();
+
+    /* Benachrichtigung an den Betreiber, aber nicht fuer eigene Kommentare:
+       wer eingeloggt ist (Admin), bekommt keine Mail ueber den eigenen Beitrag.
+       notify_email leer lassen schaltet die Benachrichtigung komplett ab. */
+    $notify = trim((string)($cfg['notify_email'] ?? ''));
+    if ($notify !== '' && !vg_is_admin()) {
+        vg_comment_notify($cfg, $pdo, $notify, $articleId, $name, $text, $quote ?: null, $parentId);
+    }
+    vg_out(['ok' => true, 'id' => $newId], 201);
 }
 
 if ($method === 'PATCH') {

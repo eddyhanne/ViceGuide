@@ -735,10 +735,38 @@
   </main>
 </div>
 
+<style>
+  .nl-box{margin:22px 0 20px;padding:20px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface-2);max-width:560px}
+  .nl-h{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;letter-spacing:.3px}
+  .nl-p{font-size:13.5px;color:var(--text-soft);margin:4px 0 12px;line-height:1.55}
+  .nl-row{display:flex;gap:9px;flex-wrap:wrap}
+  .nl-in{flex:1;min-width:180px;font-family:'Inter',sans-serif;font-size:14.5px;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text)}
+  .nl-btn{font-weight:700;font-size:14.5px;padding:12px 22px;border-radius:11px;border:none;color:var(--btn-text);background:var(--btn-bg);cursor:pointer;white-space:nowrap}
+  .nl-btn:disabled{opacity:.6;cursor:default}
+  .nl-msg{font-size:13px;margin-top:10px;min-height:1px;line-height:1.5}
+  .nl-msg.ok{color:var(--accent)}
+  .nl-msg.err{color:#e0555f}
+  .nl-legal{font-size:11.5px;color:var(--text-soft);margin-top:11px;line-height:1.5}
+  .nl-legal a{color:var(--accent);text-decoration:underline}
+  .notif-fab{position:fixed;bottom:24px;left:24px;z-index:250;width:54px;height:54px;border-radius:999px;border:none;background:var(--btn-bg);color:var(--btn-text);font-size:22px;box-shadow:var(--shadow);cursor:pointer;align-items:center;justify-content:center}
+  .notif-badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#e0555f;color:#fff;font-size:11px;font-weight:700;line-height:20px;text-align:center}
+  .notif-item{border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:11px;background:var(--surface-2)}
+  @media(max-width:640px){.notif-fab{bottom:80px;left:16px;width:48px;height:48px;font-size:20px}}
+</style>
 <footer><div class="foot">
   <div><div class="fn">Vice<span class="vc">Guide</span></div>
   <p id="foot-secret" style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;cursor:default;user-select:none">Miami, bei Tag und bei Nacht. 🌴</p></div>
   <p class="disc"><b>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</b> Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
+  <div class="nl-box" id="nl-box">
+    <div class="nl-h">📧 Newsletter</div>
+    <p class="nl-p">Die wichtigsten GTA-6-News direkt per Mail: neue Trailer, bestätigte Ankündigungen von Rockstar und die großen Leaks. Kein Spam, jederzeit abbestellbar.</p>
+    <div class="nl-row">
+      <input id="nl-email" class="nl-in" type="email" placeholder="Deine E-Mail-Adresse" maxlength="180" autocomplete="email">
+      <button class="nl-btn" id="nl-btn" onclick="submitNewsletter()">Anmelden</button>
+    </div>
+    <div class="nl-msg" id="nl-msg"></div>
+    <p class="nl-legal">Mit der Anmeldung willigst du in den Versand des Newsletters ein. Wir schicken dir zuerst eine Bestätigungsmail (Double-Opt-In). Details in der <a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutzerklärung</a>.</p>
+  </div>
   <div class="legal-links"><a href="/impressum" onclick="return legalClick(event,'impressum')">Impressum</a><span>·</span><a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutz</a></div>
 </div></footer>
 
@@ -758,6 +786,9 @@
 </div></div></div>
 
 <div class="toast" id="toast"></div>
+<!-- Admin: Benachrichtigung bei neuen Kommentaren (nur eingeloggt sichtbar) -->
+<button class="notif-fab" id="notif-fab" onclick="openNotif()" style="display:none" title="Neue Kommentare" aria-label="Neue Kommentare">🔔<span class="notif-badge" id="notif-badge" style="display:none">0</span></button>
+<div class="ov" id="notif" onclick="if(event.target.id==='notif')closeNotif()"><div class="modal" style="max-width:520px"><div class="mbody" id="notif-body"></div></div></div>
 <div class="edit-fab-row">
   <button class="edit-fab discard" id="edit-fab-discard" onclick="discardDrafts()" style="display:none">Verwerfen</button>
   <button class="edit-fab" id="edit-fab" onclick="toggleEdit()" style="display:none">Fertigstellen</button>
@@ -1251,6 +1282,7 @@ async function checkAdminSession(){
     if(res.ok){ const data=await res.json(); isAdmin=!!data.loggedIn; }
   }catch(e){}
   const lb=$('logout-btn'); if(lb) lb.style.display=isAdmin?'block':'none';
+  startNotifPolling();
 }
 async function adminLogin(){
   const pw=prompt('Admin-Passwort:');
@@ -1260,6 +1292,7 @@ async function adminLogin(){
     if(!res.ok){ toast('Falsches Passwort.'); return false; }
     isAdmin=true;
     const lb=$('logout-btn'); if(lb) lb.style.display='block';
+    startNotifPolling();
     return true;
   }catch(e){ toast('Anmeldung fehlgeschlagen.'); return false; }
 }
@@ -1267,6 +1300,7 @@ async function adminLogout(){
   try{ await fetch('api/auth.php',{method:'DELETE'}); }catch(e){}
   isAdmin=false;
   const lb=$('logout-btn'); if(lb) lb.style.display='none';
+  const nf=$('notif-fab'); if(nf) nf.style.display='none';
   /* Nicht toggleEdit() aufrufen: die Session ist gerade schon zerstoert, ein
      darin versuchter publishDrafts()-Request wuerde nur mit 403 fehlschlagen
      und den Editiermodus faelschlich eingeschaltet lassen. Offene Entwuerfe
@@ -2021,6 +2055,138 @@ async function deleteComment(artId,i,id){
     renderComments(i);
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
 }
+
+/* ---- Kommentar-Benachrichtigung fuer den Admin ----
+   Eingeloggt pollt die Seite regelmaessig die letzten Kommentare ueber alle
+   Artikel (api/comments.php?recent=1). Neue fremde Kommentare (own gefiltert)
+   erhoehen den Zaehler an der Glocke unten links. Das Popup zeigt sie mit Link
+   zum Artikel und einer Direktantwort. Zusaetzlich geht bei jedem fremden
+   Kommentar serverseitig eine Mail raus (api/comments.php POST). */
+let notifList=[], notifTimer=null, notifPrevSeen=0;
+let notifSeen=0; try{ notifSeen=parseInt(localStorage.getItem('vg-notif-seen')||'0',10)||0; }catch(e){}
+async function pollNotif(){
+  const fab=$('notif-fab');
+  if(!isAdmin){ if(fab) fab.style.display='none'; return; }
+  try{
+    const res=await fetch('api/comments.php?recent=1&voter='+encodeURIComponent(voterId),{cache:'no-store'});
+    if(!res.ok) return;
+    const data=await res.json();
+    notifList=(data.comments||[]).filter(c=>!c.own);
+    if(fab) fab.style.display='flex';
+    const unseen=notifList.filter(c=>c.id>notifSeen).length;
+    const badge=$('notif-badge');
+    if(badge){ if(unseen>0){ badge.textContent=unseen>9?'9+':String(unseen); badge.style.display='block'; } else { badge.style.display='none'; } }
+  }catch(e){}
+}
+function startNotifPolling(){
+  if(!isAdmin) return;
+  pollNotif();
+  if(!notifTimer) notifTimer=setInterval(pollNotif,60000);
+}
+function openNotif(){
+  notifPrevSeen=notifSeen;
+  const body=$('notif-body');
+  const items=notifList.slice(0,30);
+  body.innerHTML=`<button class="mclose" style="position:static;float:right;margin:-4px 0 0" onclick="closeNotif()">×</button>
+    <h3 style="margin:0 0 14px">Neue Kommentare</h3>
+    ${items.length?items.map(notifItemHtml).join(''):'<div class="cm-note">Noch keine Kommentare.</div>'}`;
+  $('notif').classList.add('show');
+  if(notifList.length){
+    notifSeen=Math.max(notifSeen,...notifList.map(c=>c.id));
+    try{ localStorage.setItem('vg-notif-seen',String(notifSeen)); }catch(e){}
+  }
+  const badge=$('notif-badge'); if(badge) badge.style.display='none';
+}
+function closeNotif(){ $('notif').classList.remove('show'); }
+function notifItemHtml(c){
+  const isNew=c.id>notifPrevSeen;
+  const snippet=esc(c.text.length>170?c.text.slice(0,170)+'…':c.text);
+  const kind=c.parent_id?'Antwort':'Kommentar';
+  return `<div class="notif-item"${isNew?' style="border-left:3px solid var(--accent)"':''}>
+    <div style="font-size:12px;color:var(--text-soft)"><b>${esc(c.name)}</b> · ${kind} zu „${esc(c.article_title)}" · ${fmtCommentDate(c.created_at)}</div>
+    <div style="margin:7px 0;line-height:1.5">${snippet}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="cm-act" onclick="notifOpen('${esc(c.article_id)}')">↗ Öffnen</button>
+      <button class="cm-act" onclick="notifToggleReply(${c.id})">↩ Direkt antworten</button>
+    </div>
+    <div id="nrb-${c.id}" style="display:none">
+      <textarea id="nr-${c.id}" class="cm-ta" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
+      <button class="cm-btn cm-btn-sm" onclick="notifReply('${esc(c.article_id)}',${c.id})">Antwort posten</button>
+    </div>
+  </div>`;
+}
+function notifToggleReply(id){
+  const rb=$('nrb-'+id); if(!rb) return;
+  const show=rb.style.display==='none';
+  rb.style.display=show?'block':'none';
+  if(show){ const el=$('nr-'+id); if(el) el.focus(); }
+}
+function notifOpen(artId){
+  closeNotif();
+  const idx=GUIDES.findIndex(g=>g.id===artId);
+  if(idx<0){ toast('Artikel nicht gefunden.'); return; }
+  goIfNeeded('home');
+  openArticle(idx);
+  setTimeout(()=>{ const el=$('a-comments'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },420);
+}
+async function notifReply(artId,parentId){
+  const ta=$('nr-'+parentId); if(!ta) return;
+  const t=(ta.value||'').trim();
+  if(!t){ toast('Bitte etwas schreiben.'); return; }
+  const name=savedCmName||'ViceGuide';
+  const p=(notifList.find(c=>c.id===parentId)||{});
+  const quote=p.name?(p.name+': '+((p.text||'').length>90?p.text.slice(0,90)+'…':(p.text||''))):'';
+  try{
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name,text:t,parentId,quote,voter:voterId})});
+    if(!res.ok) throw new Error();
+    ta.value=''; const rb=$('nrb-'+parentId); if(rb) rb.style.display='none';
+    toast('Antwort gepostet ✦');
+    if($('article').classList.contains('show') && curArticle!=null && GUIDES[curArticle] && GUIDES[curArticle].id===artId){ renderComments(curArticle); }
+  }catch(e){ toast('Antwort konnte nicht gespeichert werden.'); }
+}
+
+/* ---- Newsletter-Anmeldung (Besucher) ---- */
+async function submitNewsletter(){
+  const el=$('nl-email'), msg=$('nl-msg'), btn=$('nl-btn');
+  const email=(el.value||'').trim();
+  if(!email||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.textContent='Bitte eine gültige E-Mail-Adresse angeben.'; msg.className='nl-msg err'; return; }
+  btn.disabled=true; const lbl=btn.textContent; btn.textContent='…';
+  try{
+    const res=await fetch('api/newsletter.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){ msg.textContent=data.error||'Anmeldung fehlgeschlagen.'; msg.className='nl-msg err'; }
+    else { msg.textContent=data.message||'Fast geschafft. Bitte bestätige den Link in deiner E-Mail.'; msg.className='nl-msg ok'; el.value=''; }
+  }catch(e){ msg.textContent='Anmeldung fehlgeschlagen, bitte später erneut versuchen.'; msg.className='nl-msg err'; }
+  finally{ btn.disabled=false; btn.textContent=lbl; }
+}
+
+/* ---- Newsletter-Versand (Admin) ---- */
+async function loadNewsletterStats(){
+  const el=$('nl-adm-count'); if(!el) return;
+  try{
+    const res=await fetch('api/newsletter.php',{cache:'no-store'});
+    if(!res.ok) return;
+    const d=await res.json();
+    const c=d.counts||{};
+    el.textContent=`${c.confirmed||0} bestätigt · ${c.pending||0} offen`;
+  }catch(e){}
+}
+async function sendNewsletter(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const subj=($('nl-subject').value||'').trim(), body=($('nl-body').value||'').trim();
+  const out=$('nl-send-result');
+  if(!subj||!body){ out.textContent='Betreff und Inhalt sind erforderlich.'; return; }
+  if(!confirm('Newsletter jetzt an alle bestätigten Abonnenten senden?')) return;
+  const btn=$('nl-send-btn'); btn.disabled=true; const lbl=btn.textContent; btn.textContent='Sende…';
+  try{
+    const res=await fetch('api/newsletter.php?action=send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subj,body})});
+    const d=await res.json().catch(()=>({}));
+    if(!res.ok){ out.textContent=d.error||'Versand fehlgeschlagen.'; }
+    else { out.textContent=`Gesendet: ${d.sent||0}${d.failed?(', fehlgeschlagen: '+d.failed):''}.`; }
+  }catch(e){ out.textContent='Versand fehlgeschlagen.'; }
+  finally{ btn.disabled=false; btn.textContent=lbl; }
+}
+
 /* editable: nur in der Claude-Entwurfsvorschau true, blendet den kleinen
    Breiten-Umschalter auf Bildern ein. seen: siehe linkifyChars. */
 function renderContentBlock(p,editable,seen){
@@ -2319,7 +2485,7 @@ $('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
 /* Admin / KI */
-function openAdmin(){const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');setTimeout(()=>$('draft-json').focus(),80);}
+function openAdmin(){const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
 /* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
@@ -2782,6 +2948,14 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button id="dbimport-btn" onclick="submitDbImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Datenbank-Einträge prüfen</button>
     <div id="dbimport-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
   </div>
+  <div style="border:1.5px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="font-size:17px">📧</span><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">Newsletter</span><span id="nl-adm-count" style="font-size:12px;color:var(--text-soft)"></span></div>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Betreff und Inhalt eingeben und an alle <b>bestätigten</b> Abonnenten senden. Reiner Text wird automatisch umbrochen, einfaches HTML ist erlaubt. Ein Abmeldelink hängt automatisch an jeder Mail.</p>
+    <input id="nl-subject" type="text" placeholder="Betreff" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:8px">
+    <textarea id="nl-body" rows="6" placeholder="Newsletter-Inhalt…" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
+    <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
+    <div id="nl-send-result" style="font-family:'Space Mono';font-size:12px;margin-top:10px;line-height:1.6;color:var(--text-soft)"></div>
+  </div>
   <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:14px">
     <div style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Editiermodus</div>
     <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:10px">Aktiviere den Modus und klicke dann eine Kachel, um Bild und Text zu bearbeiten. Änderungen werden sofort dauerhaft gespeichert, keine Datei-Uploads mehr nötig.</p>
@@ -2867,12 +3041,16 @@ const LEGAL={
    <h4>4. Eingebettete Videos (YouTube)</h4>
    <p>Im Bereich „Videos“ und teils in Artikeln werden YouTube-Videos eingebettet. Es wird der erweiterte Datenschutzmodus („youtube-nocookie“) genutzt. Erst beim Starten eines Videos werden Daten (u.a. deine IP-Adresse) an YouTube/Google übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Anbieter: Google Ireland Limited.</p>
    <h4>5. Kommentarfunktion</h4>
-   <p>Die Kommentarfunktion befindet sich aktuell in der Vorschau-Phase. Eingegebene Kommentare werden ausschließlich lokal in deinem Browser für die laufende Sitzung angezeigt, nicht an einen Server übertragen und nicht dauerhaft gespeichert. Sobald eine echte, dauerhafte Kommentarfunktion oder ein externer Kommentardienst eingebunden wird, wird dieser Abschnitt vor der Aktivierung entsprechend aktualisiert.</p>
-   <h4>6. Werbung und Affiliate-Links</h4>
+   <p>Du kannst Artikel kommentieren und auf Kommentare antworten. Gespeichert werden der von dir gewählte Name (ein Pseudonym ist möglich, ein Klarname ist nicht nötig), dein Kommentartext, ein optionales Zitat des beantworteten Kommentars sowie Datum und Uhrzeit. Eine Angabe deiner E-Mail-Adresse ist für Kommentare nicht erforderlich.</p>
+   <p>Zur Missbrauchsvermeidung, insbesondere um pro Kommentar nur eine Bewertung je Person zuzulassen, speichern wir zusätzlich eine anonyme, zufällige Kennung in deinem Browser (localStorage) und, falls diese fehlt, einen gekürzten, nicht umkehrbaren Hash deiner IP-Adresse. Die Kommentardaten werden in unserer Datenbank beim Hoster gespeichert und bleiben sichtbar, bis der Kommentar gelöscht wird. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden Kommentar- und Community-Funktion). Du kannst die Löschung deines Kommentars jederzeit über die unten genannte Kontaktadresse verlangen.</p>
+   <h4>6. Newsletter</h4>
+   <p>Du kannst unseren Newsletter abonnieren, um über wichtige GTA-6-News informiert zu werden. Wir nutzen das Double-Opt-In-Verfahren: Nach deiner Anmeldung senden wir eine E-Mail an die angegebene Adresse mit der Bitte, das Abonnement über einen Link zu bestätigen. Erst nach dieser Bestätigung erhältst du den Newsletter.</p>
+   <p>Gespeichert werden deine E-Mail-Adresse, der Status deiner Anmeldung, ein zufälliges Token für Bestätigung und Abmeldung sowie zur Dokumentation deiner Einwilligung ein gekürzter, nicht umkehrbarer Hash deiner IP-Adresse und der Zeitpunkt. Rechtsgrundlage ist deine Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO. Du kannst den Newsletter jederzeit über den Abmeldelink am Ende jeder Newsletter-Mail oder über die unten genannte Kontaktadresse abbestellen, deine Daten werden dann für den Newsletter nicht weiter verwendet. Der Versand erfolgt über unseren eigenen Server bei unserem Hoster, es werden keine Newsletter-Daten an Dritte weitergegeben.</p>
+   <h4>7. Werbung und Affiliate-Links</h4>
    <p>Aktuell sind auf dieser Seite keine Werbeanzeigen und keine Affiliate-Links aktiv. Sollten künftig Angebote wie Google AdSense oder Partnerprogramme (z.B. das Amazon-Partnerprogramm) eingebunden werden, wird diese Datenschutzerklärung vor der Aktivierung entsprechend ergänzt.</p>
-   <h4>7. Deine Rechte</h4>
-   <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie ein Beschwerderecht bei einer Aufsichtsbehörde.</p>
-   <h4>8. Kontakt</h4>
+   <h4>8. Deine Rechte</h4>
+   <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie ein Beschwerderecht bei einer Aufsichtsbehörde. Eine erteilte Einwilligung (z.B. zum Newsletter) kannst du jederzeit mit Wirkung für die Zukunft widerrufen.</p>
+   <h4>9. Kontakt</h4>
    <p>Bei Fragen zum Datenschutz: hanneeddy@gmail.com.</p>`
 };
 function openLegal(k){ $('legal-content').innerHTML=LEGAL[k]||''; $('legal').classList.add('show'); }

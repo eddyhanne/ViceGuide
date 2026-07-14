@@ -33,6 +33,7 @@ function vg_db(): array {
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
+        $pdo->query('SELECT id FROM newsletter_subscribers LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -102,6 +103,15 @@ function vg_db(): array {
             imgfit_json TEXT,
             credit TEXT,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            status TEXT NOT NULL DEFAULT \'pending\',
+            token TEXT NOT NULL,
+            consent_ip TEXT NULL,
+            confirmed_at TEXT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
@@ -202,6 +212,17 @@ function vg_db(): array {
             imgfit_json VARCHAR(100) NULL,
             credit VARCHAR(200) NULL,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(190) NOT NULL UNIQUE,
+            status VARCHAR(16) NOT NULL DEFAULT \'pending\',
+            token VARCHAR(64) NOT NULL,
+            consent_ip VARCHAR(64) NULL,
+            confirmed_at DATETIME NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_token (token),
+            INDEX idx_status (status)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
