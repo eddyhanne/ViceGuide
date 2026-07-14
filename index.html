@@ -90,7 +90,11 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  html{scroll-behavior:smooth}
+  /* Bewusst kein globales scroll-behavior:smooth. Das macht die native
+     Scroll-Wiederherstellung bei Zurueck-Navigation zur Animation und friert
+     mobil die Wischgeste (Zuruecklaufen vom linken Rand) fuer Sekunden ein.
+     Jeder gewollte weiche Scroll wird explizit per JS mit behavior:'smooth'
+     ausgeloest, hier braucht es die Regel nicht. */
   body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
   ::selection{background:var(--accent);color:#fff}
@@ -866,7 +870,7 @@ function renderSidebar(){
 }
 
 /* Navigation */
-function go(id){ current=id; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:'smooth'}); syncHash(); }
+function go(id){ current=id; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash(); }
 /* Echte URL je Sektion fuer die Navigations-Links (Sidebar/Mobile). Jede
    Sektion hat eine serverseitige Fassade: home -> /, die acht DB-Hubs ueber
    SECTION_PREFIX (/charaktere/ ...), map -> /karte, videos/community direkt.
@@ -2242,7 +2246,7 @@ function openArticle(i){
     return `<a class="mcard" href="${articleHref(o.x.id)}" onclick="return articleClick(event,${o.idx})">${vis}<div class="mcb"><span class="mtag">${GCAT[o.x.cat]?.name||''}</span><span class="mt">${o.x.title}</span><span class="mdate">${dt}</span></div></a>`;
   }).join('');
   renderComments(i);
-  $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:'smooth'}); syncHash();
+  $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash();
 }
 function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();renderFaqSchema(null);}
 
