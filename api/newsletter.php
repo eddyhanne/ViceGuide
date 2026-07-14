@@ -112,11 +112,27 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
 if ($method === 'GET' && isset($_GET['unsubscribe'])) {
     $token = substr(trim((string)$_GET['unsubscribe']), 0, 64);
     if ($token === '') nl_page('Link unvollständig', 'Dieser Abmeldelink ist unvollständig.', $cfg);
-    $st = $pdo->prepare('SELECT id FROM newsletter_subscribers WHERE token = ? LIMIT 1');
+    $st = $pdo->prepare('SELECT id, email, status FROM newsletter_subscribers WHERE token = ? LIMIT 1');
     $st->execute([$token]);
     $row = $st->fetch();
-    if ($row) {
+    if ($row && $row['status'] !== 'unsubscribed') {
         $pdo->prepare("UPDATE newsletter_subscribers SET status='unsubscribed' WHERE id=?")->execute([$row['id']]);
+        /* Admin bei echter Abmeldung benachrichtigen (nicht bei erneutem Klick).
+           Gleiches Design wie die uebrigen Mails. Versandfehler egal. */
+        $notify = trim((string)($cfg['notify_email'] ?? ''));
+        if ($notify !== '') {
+            try {
+                $cnt = (int)$pdo->query("SELECT COUNT(*) FROM newsletter_subscribers WHERE status='confirmed'")->fetchColumn();
+                $safeEmail = htmlspecialchars((string)$row['email'], ENT_QUOTES, 'UTF-8');
+                $uHEAD = "font-family:'Oswald','Arial Narrow',Arial,sans-serif";
+                $uBODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
+                $uinner = '<div class="m-h" style="' . $uHEAD . ';font-size:22px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 12px">Abmeldung vom Newsletter</div>'
+                        . '<div class="m-tx" style="' . $uBODY . ';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 10px"><b>' . $safeEmail . '</b> hat sich soeben vom Newsletter abgemeldet.</div>'
+                        . '<div class="m-soft" style="' . $uBODY . ';font-size:14px;color:#6b6478;line-height:1.6">Bestätigte Abonnenten insgesamt: ' . $cnt . '.</div>';
+                $ufooter = '<div class="m-foot" style="' . $uBODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Automatische Benachrichtigung von ViceGuide.</div>';
+                vg_send_mail($cfg, $notify, 'Newsletter-Abmeldung auf ViceGuide', vg_mail_shell($uinner, $ufooter, $cfg));
+            } catch (Throwable $e) { /* Versand ist Beiwerk */ }
+        }
     }
     nl_page('Abgemeldet', 'Du bekommst ab jetzt keinen ViceGuide-Newsletter mehr. Schade, dass du gehst, du kannst dich jederzeit wieder anmelden.', $cfg);
 }
