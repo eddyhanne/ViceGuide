@@ -2854,11 +2854,18 @@ function legalClick(e,k){
   return false;
 }
 
-/* iOS-artige Wischgeste vom linken Rand = zurueck */
+/* Wischgeste vom linken Rand = zurueck, aber NUR fuer Overlays ohne eigenen
+   History-Eintrag (Bild-Editor, Impressum/Datenschutz). Artikel, DB-Modal und
+   Sektionswechsel haben echte History-Eintraege und werden bereits von der
+   nativen Zurueck-Geste des Browsers ueber popstate/restoreFromLocation
+   behandelt, exakt wie der Browser-Zurueck-Knopf. Frueher rief dieser Handler
+   dafuer zusaetzlich headerBack()/closeModal() auf, das mutierte per syncHash
+   die History (pushState) waehrend der laufenden nativen Geste und fror die
+   Seite mobil fuer Sekunden ein. Diese Zweige sind bewusst entfernt. */
 (function(){
   let sx=0, sy=0, tracking=false;
   document.addEventListener('touchstart',e=>{ if(e.touches.length!==1)return; const t=e.touches[0]; if(t.clientX<=28){tracking=true;sx=t.clientX;sy=t.clientY;} },{passive:true});
-  document.addEventListener('touchend',e=>{ if(!tracking)return; tracking=false; const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=Math.abs(t.clientY-sy); if(dx>60 && dy<50){ if(document.getElementById('imged').classList.contains('show')){closeImgEd();} else if(document.getElementById('ov').classList.contains('show')){closeModal();} else if(document.getElementById('legal').classList.contains('show')){closeLegal();} else { headerBack(); } } },{passive:true});
+  document.addEventListener('touchend',e=>{ if(!tracking)return; tracking=false; const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=Math.abs(t.clientY-sy); if(dx>60 && dy<50){ if(document.getElementById('imged').classList.contains('show')){closeImgEd();} else if(document.getElementById('legal').classList.contains('show')){closeLegal();} } },{passive:true});
 })();
 
 /* Countdown bis Release */
