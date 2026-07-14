@@ -18,6 +18,12 @@ function vg_db(): array {
     $isSqlite = str_starts_with($cfg['db_dsn'], 'sqlite:');
     if ($isSqlite) {
         $pdo->exec('PRAGMA foreign_keys = ON');
+    } else {
+        /* Verbindung fest auf UTC, damit CURRENT_TIMESTAMP (Kommentare etc.)
+           deterministisch in UTC geschrieben wird. Der Client haengt beim
+           Anzeigen ein "Z" an und rechnet in die Zeitzone des Besuchers um.
+           Numerischer Offset braucht keine MySQL-Zeitzonentabellen. */
+        try { $pdo->exec("SET time_zone = '+00:00'"); } catch (Throwable $e) {}
     }
 
     /* Schema-Migration (CREATE TABLE/ALTER TABLE) ist teuer und lief bisher bei

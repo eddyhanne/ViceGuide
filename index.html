@@ -1942,7 +1942,13 @@ function slugify(s){
 function countC(list){let n=0;for(const c of list){n++;if(c.replies)n+=countC(c.replies);}return n;}
 function fmtCommentDate(s){
   if(!s) return '';
-  const d=new Date(s.replace(' ','T'));
+  /* Die Datenbank liefert den Zeitstempel in UTC ohne Zeitzonen-Kennung
+     ("YYYY-MM-DD HH:MM:SS"). Ohne "Z" wuerde der Browser ihn als Ortszeit lesen
+     und die Anzeige waere um den UTC-Versatz verschoben (im Sommer 2 Stunden).
+     Also als UTC parsen, getHours() rechnet dann in die Zeitzone des Besuchers
+     um (fuer die deutsche Zielgruppe die korrekte lokale Zeit). */
+  const hasTz=/[zZ]$|[+-]\d\d:?\d\d$/.test(s);
+  const d=new Date(s.includes('T')?(hasTz?s:s+'Z'):(s.replace(' ','T')+(hasTz?'':'Z')));
   if(isNaN(d)) return s;
   const p=x=>String(x).padStart(2,'0');
   return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
