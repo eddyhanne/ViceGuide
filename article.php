@@ -164,12 +164,18 @@ $breadcrumbLd = json_encode([
         ['@type' => 'ListItem', 'position' => 3, 'name' => $row['title'], 'item' => $canonical],
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-$html = str_replace(
-    '<style>',
-    '<script type="application/ld+json">' . $articleLd . '</script>' . "\n"
-        . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n" . '<style>',
-    $html
-);
+/* NUR vor dem ersten <style> (dem Head-CSS) einfuegen. index.html enthaelt
+   inzwischen weitere <style>-Vorkommen (Footer-CSS im Body und ein <style> in
+   einem JS-String der Newsletter-Vorschau). Ein globales str_replace('<style>')
+   wuerde die JSON-LD-Skripte auch dort einsetzen und dabei mitten ins
+   Haupt-<script> ein </script> schreiben, das den Skriptblock vorzeitig
+   beendet, alles danach erschiene dann als roher Text auf der Seite. */
+$ldInject = '<script type="application/ld+json">' . $articleLd . '</script>' . "\n"
+    . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n";
+$stylePos = strpos($html, '<style>');
+if ($stylePos !== false) {
+    $html = substr($html, 0, $stylePos) . $ldInject . substr($html, $stylePos);
+}
 
 // Sichtbaren Basis-Inhalt einbauen, damit auch ohne JavaScript echter Text
 // da ist (Crawler ohne JS-Ausfuehrung, Lesbarkeit im "Quelltext anzeigen").

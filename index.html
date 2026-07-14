@@ -2276,6 +2276,9 @@ function nlAddArticle(id){ if(!id)return; const g=(GUIDES||[]).find(x=>x.id===id
 function nlAddEntry(val){ if(!val)return; const idx=val.indexOf(':'); const sec=val.slice(0,idx), idStr=val.slice(idx+1); const e=(DB[sec]||[]).find(x=>String(x._id)===idStr); if(!e)return; nlDraft.entries.push({sec,_id:e._id,slug:e.slug||slugify(e.name||''),title:e.name,secLabel:NL_SEC_LABEL[sec]||'Eintrag',pfx:NL_SEC_PFX[sec]||sec,teaser:(e.desc||'').slice(0,120),highlight:false}); nlPersist(); nlRenderEntries(); nlFillAddSelects(); }
 function nlAutolink(h){ return h.replace('ViceGuide','<a href="'+NL_BASE+'/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>'); }
 function nlTextBlock(t){ if(!t||!t.trim())return''; const h=nlAutolink(esc(t).replace(/\n/g,'<br>')); return '<div style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">'+h+'</div>'; }
+/* Zwischentext zwischen News und Einträgen: gleiche Optik wie das
+   "Mehr aus dieser Woche"-Label (Inter, fett, Versalien, gesperrt, weich). */
+function nlMidBlock(t){ if(!t||!t.trim())return''; return '<div style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">'+esc(t.replace(/\n/g,' '))+'</div>'; }
 function nlCard(o){
   const border=o.accent?'2px solid #D00059':'1px solid #ecdfca';
   return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
@@ -2315,7 +2318,7 @@ function nlBuildInner(){
       html+=nlCard({url,img,label:'',title:a.title,teaser:a.teaser,cta:'Weiterlesen'});
     }
   });
-  html+=nlTextBlock(nlDraft.mid);
+  html+=nlMidBlock(nlDraft.mid);
   const ents=nlDraft.entries.slice().sort((a,b)=>(b.highlight?1:0)-(a.highlight?1:0));
   ents.forEach(e=>{
     const url=NL_BASE+'/'+(e.pfx||'')+'/'+(e.slug||''), img=e._id!=null?NL_BASE+'/api/entry_image.php?id='+encodeURIComponent(e._id):'';

@@ -138,12 +138,15 @@ $breadcrumbLd = json_encode([
         ['@type' => 'ListItem', 'position' => 3, 'name' => $name, 'item' => $canonical],
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-$html = str_replace(
-    '<style>',
-    '<script type="application/ld+json">' . $entryLd . '</script>' . "\n"
-        . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n" . '<style>',
-    $html
-);
+/* Nur vor dem ersten <style> (Head-CSS) einfuegen, sonst landet ein </script>
+   in weiteren <style>-Vorkommen (u.a. in einem JS-String) und beendet das
+   Haupt-<script> vorzeitig. Siehe ausfuehrlicher Kommentar in article.php. */
+$ldInject = '<script type="application/ld+json">' . $entryLd . '</script>' . "\n"
+    . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n";
+$stylePos = strpos($html, '<style>');
+if ($stylePos !== false) {
+    $html = substr($html, 0, $stylePos) . $ldInject . substr($html, $stylePos);
+}
 
 // Sichtbaren Basis-Inhalt einbauen: Name als h1, Unterzeile, Kategorie-Chip,
 // Felder-Liste, Beschreibung. Bewusst kein Nachbau des Bild-Zuschnitts
