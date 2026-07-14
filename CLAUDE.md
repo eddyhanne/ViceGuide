@@ -74,7 +74,7 @@ ViceGuide ist die **deutschsprachige GTA-6-Zentrale**, ein komplettes Guide-Port
 ### Rechtlicher Rahmen (fest)
 Klarer Fan-Disclaimer auf jeder Seite. Keine offiziellen Rockstar-Bilder oder -Logos. Nur eigene, KI-generierte oder lizenzierte Grafiken. Die Vice-City-Farbwelt und Stimmung dürfen nachgebaut werden (Farben und Verläufe sind nicht schützbar), konkrete Rockstar-Artworks (Key-Art, VI-Logo, Charakter-Illustrationen) nicht. Standard-Disclaimer-Text (wörtlich auf der Seite):
 
-> ViceGuide ist ein inoffizielles, von Fans erstelltes Guide-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.
+> ViceGuide ist ein inoffizielles, von Fans erstelltes Guide-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf inoffiziellen Quellen und Gerüchten und sind nicht offiziell bestätigt.
 
 Impressum und Datenschutzerklärung sind mit echten Betreiberdaten befüllt (Eddy Hanné, Privatperson, kein Gewerbe, Stand dieser Datei). Sobald echte Werbeeinnahmen mit nachhaltiger Gewinnerzielungsabsicht fließen, wird in der Regel eine Gewerbeanmeldung nötig, das rechtzeitig prüfen. Das "VI"-Element im Logo und der Wortstamm "Vice" (Nähe zu VICE Media und zu Rockstars "Vice City") sind Markenrecht-Grauzonen, je kommerzieller es wird, desto genauer im Blick behalten (DPMA/EUIPO). Bislang nicht geprüft.
 

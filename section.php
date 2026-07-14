@@ -56,7 +56,7 @@ if ($page === 'videos') {
         $items .= '<li><a href="' . vg_esc6($redditUrl) . '" target="_blank" rel="noopener">Subreddit öffnen</a></li>';
     }
     $pageTitle = 'Community: Discord und Austausch zu GTA 6 - ViceGuide';
-    $description = 'Tausch dich mit anderen GTA-6-Fans aus: Discord, Diskussionen, Leaks und Theorien.';
+    $description = 'Tausch dich mit anderen GTA-6-Fans aus: Discord, Diskussionen, Gerüchte und Theorien.';
     $h1 = 'Community';
 } elseif ($page === 'news') {
     // News-Rubrik: die Artikel kommen aus der Datenbank (anders als
@@ -73,7 +73,7 @@ if ($page === 'videos') {
         $items .= '<li><a href="/artikel/' . vg_esc6($r['id']) . '">' . vg_esc6($r['title']) . '</a>' . ($d !== '' ? ' <span class="cat-ssr-sub">' . vg_esc6($d) . '</span>' : '') . '</li>';
     }
     $pageTitle = 'GTA 6 News und Gerüchte auf Deutsch - ViceGuide';
-    $description = 'Alle GTA-6-News, Gerüchte und Leaks auf Deutsch, chronologisch und eingeordnet. ' . count($rows) . ' Beiträge, laufend aktualisiert.';
+    $description = 'Alle GTA-6-News, Gerüchte und Spekulationen auf Deutsch, chronologisch und eingeordnet. ' . count($rows) . ' Beiträge, laufend aktualisiert.';
     $h1 = 'News & Gerüchte';
 } else {
     // Karte: die interaktive Kartenansicht ist noch nicht gebaut (siehe
@@ -88,7 +88,7 @@ if ($page === 'videos') {
 $head = [
     '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
         '<title>' . vg_esc6($pageTitle) . '</title>',
-    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
+    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Gerüchte, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
         '<meta name="description" content="' . vg_esc6($description) . '">',
     '<link rel="canonical" href="https://viceguide.de/">' =>
         '<link rel="canonical" href="' . vg_esc6($canonical) . '">',

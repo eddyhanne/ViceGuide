@@ -57,7 +57,7 @@ $html = file_get_contents(__DIR__ . '/index.html');
 $head = [
     '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
         '<title>' . vg_esc4($pageTitle) . '</title>',
-    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
+    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Gerüchte, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
         '<meta name="description" content="' . vg_esc4($description) . '">',
     '<link rel="canonical" href="https://viceguide.de/">' =>
         '<link rel="canonical" href="' . vg_esc4($canonical) . '">',
