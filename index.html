@@ -1009,6 +1009,9 @@ function goNewsCat(catId){ go('news'); if(catId && catId!=='Alle'){ newsCat=catI
 function portalDbHtml(){
   const dbSecs=SECTIONS.filter(s=>s.type==='db');
   const tiles=dbSecs.map(s=>{const n=(DB[s.id]||[]).length;const meta=SECTION_IMG[s.id];const thumb=(meta&&meta.img)?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:`<span class="p-rthumb p-rthumb-ph">${secIcon(s.id)}</span>`;const clickAttr=editMode?`onclick="return sectionImgClick(event,'${s.id}')"`:`onclick="return goClick(event,'${s.id}')"`;const editBadge=editMode?'<span class="p-redit">\u270e Bild</span>':'';return `<a class="p-rtile" href="${sectionHref(s.id)}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></span></a>`;}).join('');
+  return `<div class="p-sh"><h2>GTA-6-Datenbank</h2></div><div class="p-rgrid">${tiles}</div>`;
+}
+function portalRelHtml(){
   const rel=GROUPS[1].cats.map(c=>{
     const meta=SECTION_IMG[c.id]; const hasImg=meta&&meta.img;
     const thumb=hasImg?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:'';
@@ -1016,8 +1019,7 @@ function portalDbHtml(){
     const clickAttr=editMode?`onclick="sectionImgClick(event,'${c.id}')" style="cursor:pointer"`:'';
     return `<div class="p-rtile p-reltile${hasImg?' has-img':''}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span><span class="p-rlk">\u{1F512}</span></div>`;
   }).join('');
-  return `<div class="p-sh"><h2>GTA-6-Datenbank</h2></div><div class="p-rgrid">${tiles}</div>`
-    +`<div class="p-sh p-sh-sm"><h2>Ab Release-Day</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span></div><div class="p-relgrid">${rel}</div>`;
+  return `<div class="p-sh p-sh-sm"><h2>Ab Release-Day</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span></div><div class="p-relgrid">${rel}</div>`;
 }
 /* Klick auf eine Rubrik-Kachel im Editiermodus oeffnet den Bild-Editor fuer
    das Rubrik-Bild (kind 'section'), statt in die Rubrik zu navigieren. */
@@ -1029,8 +1031,9 @@ function renderHome(){
      <img class="hero-logo" src="logo.png" alt="ViceGuide"><p class="hero-sub">Der deutsche GTA-6-Hub mit Datenbank, Guides und aktuellen News. Charaktere, Fahrzeuge, Waffen, Orte, Leaks und Easter Eggs an einem Ort.</p>
      <div class="countdown" id="countdown"><div class="cd-label">Release am 19. November 2026</div><div class="cd-grid"><div class="cd-cell"><span class="cd-num" id="cd-d">0</span><span class="cd-unit">Tage</span></div><div class="cd-cell"><span class="cd-num" id="cd-h">0</span><span class="cd-unit">Std</span></div><div class="cd-cell"><span class="cd-num" id="cd-m">0</span><span class="cd-unit">Min</span></div><div class="cd-cell"><span class="cd-num" id="cd-s">0</span><span class="cd-unit">Sek</span></div></div></div></div></section>
    ${portalHighlightsHtml()}
+   ${portalDbHtml()}
    ${portalNewsHtml()}
-   ${portalDbHtml()}`;
+   ${portalRelHtml()}`;
 }
 function renderNews(){
   const g1=GROUPS[0], g2=GROUPS[1];
