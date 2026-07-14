@@ -23,14 +23,26 @@ return [
 
     // E-Mail an diese Adresse bei jedem neuen (fremden) Kommentar.
     // Leer lassen ('') schaltet die Kommentar-Benachrichtigung ab.
+    // Kann dein privates Gmail sein oder info@viceguide.de.
     'notify_email' => 'hanneeddy@gmail.com',
 
     // Absender fuer alle ausgehenden Mails (Kommentar-Benachrichtigung und
-    // Newsletter). Sollte eine Adresse deiner eigenen Domain sein, sonst
-    // landet die Mail schneller im Spam.
-    'mail_from'    => 'ViceGuide <no-reply@viceguide.de>',
+    // Newsletter). Sollte eine echte Adresse deiner Domain sein.
+    'mail_from'    => 'ViceGuide <info@viceguide.de>',
 
     // Basis-URL fuer Links in Mails (Artikel-Link, Newsletter-Bestaetigung
     // und -Abmeldung). Ohne abschliessenden Schraegstrich.
     'site_url'     => 'https://viceguide.de',
+
+    // Authentifizierter SMTP-Versand ueber ein echtes Postfach (empfohlen,
+    // bessere Zustellbarkeit dank DKIM). Sobald smtp_host und smtp_user
+    // gesetzt sind, laeuft der Versand darueber statt ueber PHP mail().
+    // Zugangsdaten stehen im Hostinger-Panel unter E-Mail, Konfigurationseinstellungen.
+    // Hostinger: Host smtp.hostinger.com, Port 465 mit smtp_secure 'ssl'
+    // (alternativ Port 587 mit 'tls'). smtp_user ist die volle Adresse.
+    'smtp_host'    => '',                    // z.B. 'smtp.hostinger.com'
+    'smtp_port'    => 465,
+    'smtp_user'    => '',                    // z.B. 'info@viceguide.de'
+    'smtp_pass'    => '',                    // Passwort des Postfachs
+    'smtp_secure'  => 'ssl',                 // 'ssl' (465), 'tls' (587) oder 'none'
 ];
