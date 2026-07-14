@@ -32,6 +32,7 @@ function vg_db(): array {
         $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
+        $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -49,6 +50,14 @@ function vg_db(): array {
             likes INTEGER NOT NULL DEFAULT 0,
             dislikes INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS comment_votes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            comment_id INTEGER NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+            voter TEXT NOT NULL,
+            dir TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(comment_id, voter)
         )');
         $pdo->exec('CREATE TABLE IF NOT EXISTS articles (
             id TEXT PRIMARY KEY,
@@ -129,6 +138,15 @@ function vg_db(): array {
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_article_id (article_id),
             FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS comment_votes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            comment_id INT NOT NULL,
+            voter VARCHAR(100) NOT NULL,
+            dir VARCHAR(4) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uniq_comment_voter (comment_id, voter),
+            FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         $pdo->exec('CREATE TABLE IF NOT EXISTS articles (
             id VARCHAR(180) PRIMARY KEY,

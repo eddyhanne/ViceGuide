@@ -78,9 +78,43 @@ if ($method === 'PATCH') {
     $dir = $b['dir'] ?? '';
     if (!$id || !in_array($dir, ['up', 'down'], true)) vg_out(['error' => 'id und dir (up/down) erforderlich'], 400);
     $col = $dir === 'up' ? 'likes' : 'dislikes';
-    $stmt = $pdo->prepare("UPDATE comments SET $col = $col + 1 WHERE id = ?");
-    $stmt->execute([$id]);
-    vg_out(['ok' => true]);
+
+    /* Eine Stimme pro Wähler pro Kommentar, serverseitig erzwungen. "Wähler"
+       ist ein anonymes, dauerhaftes Browser-Token (localStorage vg-voter, vom
+       Client mitgeschickt). Fehlt es (z.B. direkter API-Aufruf), fällt der
+       Wähler auf einen IP-Hash zurück, damit auch dann nicht beliebig oft
+       abgestimmt werden kann. Der reine localStorage-Check im Client war
+       trivial umgehbar (Speicher leeren, anderer Browser, curl). */
+    $voter = trim((string)($b['voter'] ?? ''));
+    if ($voter === '') {
+        $voter = 'ip:' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|' . ($cfg['admin_hash'] ?? '')), 0, 40);
+    }
+    $voter = substr($voter, 0, 100);
+
+    $chk = $pdo->prepare('SELECT 1 FROM comment_votes WHERE comment_id = ? AND voter = ? LIMIT 1');
+    $chk->execute([$id, $voter]);
+    $already = (bool)$chk->fetchColumn();
+
+    if (!$already) {
+        try {
+            $pdo->beginTransaction();
+            $pdo->prepare('INSERT INTO comment_votes (comment_id, voter, dir) VALUES (?,?,?)')
+                ->execute([$id, $voter, $dir]);
+            $pdo->prepare("UPDATE comments SET $col = $col + 1 WHERE id = ?")->execute([$id]);
+            $pdo->commit();
+        } catch (Throwable $e) {
+            /* Unique-Verletzung durch parallele Klicks (Race): als "schon
+               abgestimmt" behandeln, nicht doppelt zählen. */
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            $already = true;
+        }
+    }
+
+    $cur = $pdo->prepare('SELECT likes, dislikes FROM comments WHERE id = ?');
+    $cur->execute([$id]);
+    $row = $cur->fetch();
+    if (!$row) vg_out(['error' => 'Kommentar nicht gefunden'], 404);
+    vg_out(['ok' => true, 'already' => $already, 'likes' => (int)$row['likes'], 'dislikes' => (int)$row['dislikes']]);
 }
 
 if ($method === 'DELETE') {

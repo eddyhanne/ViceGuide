@@ -111,8 +111,9 @@
   .searchwrap input{width:100%;font-family:'Inter';font-size:15px;color:var(--text);padding:11px 16px 11px 42px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);outline:none;transition:.2s}
   .searchwrap input:focus{border-color:var(--accent)}
   .searchwrap .ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--accent);pointer-events:none}
-  .theme-toggle{width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);display:grid;place-items:center;font-size:16px;color:var(--text);transition:.2s;flex-shrink:0}
-  .theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:rotate(18deg)}
+  .theme-toggle{height:38px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:13px;font-weight:600;color:var(--text);transition:border-color .2s,color .2s;flex-shrink:0;white-space:nowrap}
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+  .theme-toggle #tico{font-size:15px;line-height:1}
 
   /* app shell */
   .app{display:flex;max-width:1400px;margin:0 auto;align-items:flex-start}
@@ -704,7 +705,7 @@
     <button class="hback" id="hback" onclick="headerBack()" aria-label="Zurück">←</button>
     <div class="brand" onclick="go('home')"><img class="brand-logo" src="logo.png" alt="ViceGuide"></div>
     <div class="searchwrap"><input id="gsearch" type="text" placeholder="Alles durchsuchen: Charaktere, Orte, Fahrzeuge, News…" autocomplete="off"><span class="ic">⌕</span><button class="clearbtn" id="gclear" onclick="clearGlobal()" aria-label="Leeren" style="display:none">×</button><div class="suggest" id="suggest"></div></div>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Hell/Dunkel"><span id="tico">☀</span></button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Zwischen Hell- und Dunkelmodus wechseln"><span id="tico">☀</span><span id="tlbl">Hell</span></button>
   </div>
 </header>
 <nav class="mobilenav" id="mobilenav" aria-label="Bereiche"></nav>
@@ -779,7 +780,7 @@ const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false;
 
 const $=id=>document.getElementById(id);
-function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';}
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
 function toggleSidebar(force){
   const sb=$('sidebar'), bd=$('sbBackdrop'), b=$('burger');
   const open = (force===undefined) ? !sb.classList.contains('mobileopen') : force;
@@ -1901,6 +1902,12 @@ function fmtCommentDate(s){
 let votedIds=new Set();
 try{ votedIds=new Set(JSON.parse(localStorage.getItem('vg-voted')||'[]')); }catch(e){}
 function saveVoted(){ try{ localStorage.setItem('vg-voted', JSON.stringify([...votedIds])); }catch(e){} }
+/* Dauerhaftes, anonymes Wähler-Token pro Browser. Wird bei jeder Stimme
+   mitgeschickt, der Server erzwingt damit eine Stimme pro Kommentar pro Wähler
+   (siehe api/comments.php). Das lokale votedIds sperrt zusätzlich sofort die
+   Buttons, der Server bleibt aber die maßgebliche Grenze. */
+let voterId='';
+try{ voterId=localStorage.getItem('vg-voter')||''; if(!voterId){ voterId=(self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)); localStorage.setItem('vg-voter',voterId); } }catch(e){}
 let cmIndex={};
 function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
 async function renderComments(i){
@@ -1965,12 +1972,16 @@ async function addComment(artId,i){
 }
 async function voteC(artId,i,id,dir){
   if(votedIds.has(id)){ toast('Du hast bereits abgestimmt.'); return; }
+  /* Sofort lokal sperren, bevor der Request rausgeht. Ohne das könnten mehrere
+     schnelle Klicks vor der Server-Antwort je einen PATCH auslösen. */
+  votedIds.add(id); saveVoted();
   try{
-    const res=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,dir:dir>0?'up':'down'})});
+    const res=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,dir:dir>0?'up':'down',voter:voterId})});
     if(!res.ok) throw new Error();
-    votedIds.add(id); saveVoted();
+    const data=await res.json().catch(()=>({}));
+    if(data&&data.already) toast('Du hast bereits abgestimmt.');
     renderComments(i);
-  }catch(e){ toast('Abstimmen fehlgeschlagen.'); }
+  }catch(e){ votedIds.delete(id); saveVoted(); toast('Abstimmen fehlgeschlagen.'); }
 }
 function toggleReply(id){
   const rb=$('rb-'+id); if(!rb) return;
@@ -2997,7 +3008,7 @@ window.addEventListener('popstate', restoreFromLocation);
 /* init */
 newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 dbView = newsView;
-$('tico').textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+{ const _dark=document.documentElement.getAttribute('data-theme')==='dark'; $('tico').textContent=_dark?'☾':'☀'; const _l=$('tlbl'); if(_l)_l.textContent=_dark?'Dunkel':'Hell'; }
 restoreFromLocation();
 /* Nach dem Laden der echten Daten einmal erzwungen neu aufbauen: der erste
    restoreFromLocation-Lauf rendert noch mit leeren Listen. viewReady zuruecksetzen,
