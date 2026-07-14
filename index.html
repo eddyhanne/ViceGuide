@@ -776,7 +776,7 @@ const CATICON={news:'home',leaks:'weapons',trailer:'activities',story:'character
 function catIcon(id){return secIcon(CATICON[id]||'home');}
 const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false;
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false;
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';}
@@ -870,7 +870,11 @@ function renderSidebar(){
 }
 
 /* Navigation */
-function go(id){ current=id; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash(); }
+function go(id){ current=id; viewReady=true; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash(); }
+/* go() nur, wenn die Ansicht noch nie aufgebaut wurde oder die Sektion wirklich
+   wechselt. Verhindert den teuren renderView()-Neuaufbau beim blossen Schliessen
+   eines Overlays (siehe restoreFromLocation), rendert aber den ersten Aufbau. */
+function goIfNeeded(id){ if(!viewReady || current!==id) go(id); }
 /* Echte URL je Sektion fuer die Navigations-Links (Sidebar/Mobile). Jede
    Sektion hat eine serverseitige Fassade: home -> /, die acht DB-Hubs ueber
    SECTION_PREFIX (/charaktere/ ...), map -> /karte, videos/community direkt.
@@ -2910,47 +2914,70 @@ function syncHash(){
   const currentFull=location.pathname+location.hash;
   if(currentFull!==target) history.pushState(null,'',target);
 }
+/* Idempotent: baut den Zustand nur soweit um, wie er wirklich von der Ziel-URL
+   abweicht. Wichtig fuer die mobile Zurueck-Wischgeste: nur wenn sich die
+   Sektion tatsaechlich aendert, laeuft go() mit dem schweren renderView().
+   Wird bloss ein Overlay (Artikel/Eintrag) geschlossen und die Sektion darunter
+   bleibt gleich, wird nicht neu gerendert. Das war die letzte synchrone
+   Schwerarbeit, die mobil gelegentlich noch mit der laufenden Geste ruckelte,
+   und erhaelt nebenbei Filter und Scrollposition beim Zuruecknavigieren. */
 function restoreFromLocation(){
   isRestoringRoute=true;
   try{
-    const artMatch=location.pathname.match(/^\/artikel\/([a-z0-9-]+)\/?$/);
+    const path=location.pathname;
+    const artOpen=$('article').classList.contains('show');
+    const artMatch=path.match(/^\/artikel\/([a-z0-9-]+)\/?$/);
     if(artMatch){
-      go('home'); closeModal();
       const idx=GUIDES.findIndex(g=>g.id===artMatch[1]);
-      if(idx>=0) openArticle(idx);
-      return;
-    }
-    const entryMatch=location.pathname.match(/^\/(charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)\/([a-z0-9-]+)\/?$/);
-    if(entryMatch){
-      const secId=SECTION_PREFIX_REV[entryMatch[1]];
-      if(secId){
-        go(secId); closeModal();
-        const idx=(DB[secId]||[]).findIndex(d=>d.slug===entryMatch[2]);
-        if(idx>=0) openModal(secId,idx);
+      if(idx>=0){
+        if(curModal) closeModal();
+        goIfNeeded('home');
+        if(curArticle!==idx) openArticle(idx);
         return;
       }
     }
+    const entryMatch=path.match(/^\/(charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)\/([a-z0-9-]+)\/?$/);
+    if(entryMatch){
+      const secId=SECTION_PREFIX_REV[entryMatch[1]];
+      if(secId){
+        const idx=(DB[secId]||[]).findIndex(d=>d.slug===entryMatch[2]);
+        if(idx>=0){
+          if(artOpen) closeArticle();
+          goIfNeeded(secId);
+          if(!(curModal && curModal.sec===secId && curModal.i===idx)) openModal(secId,idx);
+          return;
+        }
+      }
+    }
+    /* Ab hier soll kein Artikel und kein Eintrags-Modal offen sein. Offene
+       Overlays nur schliessen, die Ansicht darunter nicht neu aufbauen. */
+    if(artOpen) closeArticle();
+    if(curModal) closeModal();
     /* Kategorie-Hub ohne Slug (z.B. /charaktere/), server-gerendert von
        category.php. Oeffnet einfach die normale Kachelansicht der Sektion. */
-    const catMatch=location.pathname.match(/^\/(charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)\/?$/);
+    const catMatch=path.match(/^\/(charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)\/?$/);
     if(catMatch){
       const secId=SECTION_PREFIX_REV[catMatch[1]];
-      if(secId){ go(secId); closeModal(); return; }
+      if(secId){ goIfNeeded(secId); return; }
     }
     /* Impressum/Datenschutz, server-gerendert von legal.php. */
-    const legalMatch=location.pathname.match(/^\/(impressum|datenschutz)\/?$/);
+    const legalMatch=path.match(/^\/(impressum|datenschutz)\/?$/);
     if(legalMatch){
-      go('home'); closeModal();
+      goIfNeeded('home');
       openLegal(legalMatch[1]);
       return;
     }
     /* Videos/Community/Karte, server-gerendert von section.php. */
-    const sectionMatch=location.pathname.match(/^\/(videos|community|karte|news)\/?$/);
-    if(sectionMatch){ go(sectionMatch[1]==='karte'?'map':sectionMatch[1]); closeModal(); return; }
+    const sectionMatch=path.match(/^\/(videos|community|karte|news)\/?$/);
+    if(sectionMatch){
+      const sec=sectionMatch[1]==='karte'?'map':sectionMatch[1];
+      goIfNeeded(sec);
+      return;
+    }
     let h=(location.hash||'').replace(/^#\/?/,'');
     const [view,qs]=h.split('?');
-    go((view && SECTIONS.find(s=>s.id===view)) ? view : 'home');
-    closeModal();
+    const targetView=(view && SECTIONS.find(s=>s.id===view)) ? view : 'home';
+    goIfNeeded(targetView);
     if(qs){
       const params=new URLSearchParams(qs);
       if(params.has('e')){
@@ -2968,7 +2995,11 @@ newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 dbView = newsView;
 $('tico').textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
 restoreFromLocation();
-loadExternal().then(restoreFromLocation).then(()=>{
+/* Nach dem Laden der echten Daten einmal erzwungen neu aufbauen: der erste
+   restoreFromLocation-Lauf rendert noch mit leeren Listen. viewReady zuruecksetzen,
+   damit goIfNeeded() diesen einen Neuaufbau nicht als "schon fertig" ueberspringt.
+   Danach greift die Idempotenz wieder fuer alle popstate-Navigationen. */
+loadExternal().then(()=>{ viewReady=false; restoreFromLocation(); }).then(()=>{
   /* Sitelinks-Suchbox (siehe WebSite/SearchAction Schema im head): traegt
      Google einen ?q=... Parameter an, wird direkt die passende Suche gezeigt. */
   const q=new URLSearchParams(location.search).get('q');
