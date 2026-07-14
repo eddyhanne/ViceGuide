@@ -169,6 +169,26 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'send') {
     nl_json(['ok' => true, 'sent' => $sent, 'failed' => $failed]);
 }
 
+/* ---- Admin: Abonnent loeschen ---- */
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'delete') {
+    vg_require_admin($cfg);
+    $b = json_decode(file_get_contents('php://input'), true) ?: [];
+    $email = strtolower(trim((string)($b['email'] ?? '')));
+    // Optional auf einen Status begrenzen (das Panel loescht gezielt "pending"),
+    // damit ein bestaetigter Abonnent nicht versehentlich ueber diesen Weg
+    // verschwindet statt sauber abgemeldet zu werden.
+    $status = trim((string)($b['status'] ?? ''));
+    if ($email === '') nl_json(['error' => 'E-Mail fehlt.'], 400);
+    if ($status !== '' && in_array($status, ['pending', 'confirmed', 'unsubscribed'], true)) {
+        $st = $pdo->prepare('DELETE FROM newsletter_subscribers WHERE email = ? AND status = ?');
+        $st->execute([$email, $status]);
+    } else {
+        $st = $pdo->prepare('DELETE FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([$email]);
+    }
+    nl_json(['ok' => true, 'deleted' => $st->rowCount()]);
+}
+
 /* ---- Besucher: Anmeldung ---- */
 if ($method === 'POST') {
     $b = json_decode(file_get_contents('php://input'), true) ?: [];

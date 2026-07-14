@@ -2253,11 +2253,26 @@ async function nlShowSubs(){
   if(!d||d.err){ box.textContent='Konnte nicht laden (nur eingeloggt sichtbar).'; return; }
   const subs=d.subscribers||[];
   const grp=s=>subs.filter(x=>x.status===s);
-  const row=x=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px"><span style="word-break:break-all">${esc(x.email)}</span><span style="color:var(--text-soft);white-space:nowrap;font-size:11px">${x.confirmed_at?fmtCommentDate(x.confirmed_at):(x.created_at?fmtCommentDate(x.created_at):'')}</span></div>`;
-  const sect=(t,arr,empty)=>`<div class="nl-lbl">${t} (${arr.length})</div>`+(arr.length?arr.map(row).join(''):`<div style="font-size:12px;color:var(--text-soft);padding:2px 0">${empty}</div>`);
-  box.innerHTML=sect('Aktiv',grp('confirmed'),'Noch keine aktiven Abonnenten.')
-    +sect('Offen, noch nicht bestätigt',grp('pending'),'Keine offenen.')
-    +sect('Abgemeldet',grp('unsubscribed'),'Keine Abmeldungen.');
+  const row=(x,canDel)=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px"><span style="word-break:break-all">${esc(x.email)}</span><span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="color:var(--text-soft);font-size:11px">${x.confirmed_at?fmtCommentDate(x.confirmed_at):(x.created_at?fmtCommentDate(x.created_at):'')}</span>${canDel?`<button onclick="nlDeleteSub('${esc(x.email).replace(/'/g,"\\'")}','${x.status}')" title="Eintrag entfernen" style="border:none;background:none;color:var(--text-soft);cursor:pointer;font-size:16px;line-height:1;padding:0 2px">&times;</button>`:''}</span></div>`;
+  const sect=(t,arr,empty,canDel)=>`<div class="nl-lbl">${t} (${arr.length})</div>`+(arr.length?arr.map(x=>row(x,canDel)).join(''):`<div style="font-size:12px;color:var(--text-soft);padding:2px 0">${empty}</div>`);
+  box.innerHTML=sect('Aktiv',grp('confirmed'),'Noch keine aktiven Abonnenten.',false)
+    +sect('Offen, noch nicht bestätigt',grp('pending'),'Keine offenen.',true)
+    +sect('Abgemeldet',grp('unsubscribed'),'Keine Abmeldungen.',true);
+}
+/* Loescht einen Abonnenten dauerhaft aus der Datenbank (nur Panel, nur Admin).
+   Gedacht fuer offene, nie bestaetigte Anmeldungen und alte Abmeldungen, die
+   der Betreiber aufraeumen will. Bestaetigte Abonnenten stehen bewusst nicht
+   zum Loeschen (die melden sich sauber ueber den Abmeldelink ab). */
+async function nlDeleteSub(email,status){
+  if(!confirm('„'+email+'" dauerhaft entfernen?')) return;
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  try{
+    const res=await fetch('api/newsletter.php?action=delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,status})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok){ toast('Löschen fehlgeschlagen.'); return; }
+    toast('Entfernt.');
+    nlShowSubs();
+  }catch(e){ toast('Löschen fehlgeschlagen.'); }
 }
 async function nlExportSubs(){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
@@ -2905,31 +2920,6 @@ async function dbImportCreateNew(){
   if(created) $('dbimport-json').value='';
   toast(created+' neue Einträge angelegt.');
 }
-/* Einmalige Wartung: setzt bei allen Artikeln und Datenbank-Eintraegen mit
-   Bild die Quelle auf "Rockstar" (vereinheitlicht "Rockstar Games" und
-   fuellt fehlende Quellen). Schreibt Entwuerfe und veroeffentlicht sie
-   direkt. Es ist alles Rockstar-Material, daher pauschal. */
-async function bulkCredit(){
-  if(!confirm('Bei allen Artikeln und Datenbank-Einträgen mit Bild die Quelle auf „Rockstar" setzen und sofort veröffentlichen?')) return;
-  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
-  const arts=(GUIDES||[]).filter(g=>g.img&&g.credit!=='Rockstar').map(g=>g.id);
-  const entries=[]; Object.values(DB).forEach(arr=>arr.forEach(d=>{ if(d.img&&d._id!=null&&d.credit!=='Rockstar') entries.push(d._id); }));
-  const total=arts.length+entries.length;
-  if(!total){ toast('Alle Bildquellen stehen bereits auf „Rockstar".'); return; }
-  vgSavesInFlight++;
-  let n=0, failed=0;
-  try{
-    for(const id of arts){
-      try{ const r=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,credit:'Rockstar'})}); if(r.status===403){ toast('Nicht angemeldet.'); return; } r.ok?n++:failed++; }catch(e){ failed++; }
-    }
-    for(const id of entries){
-      try{ const r=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,credit:'Rockstar'})}); if(r.status===403){ toast('Nicht angemeldet.'); return; } r.ok?n++:failed++; }catch(e){ failed++; }
-    }
-  }finally{ vgSavesInFlight--; }
-  const done=await publishDrafts();
-  if(done){ (GUIDES||[]).forEach(g=>{ if(g.img) g.credit='Rockstar'; }); Object.values(DB).forEach(arr=>arr.forEach(d=>{ if(d.img) d.credit='Rockstar'; })); if(!gquery.trim()) renderView(); }
-  toast(done?(n+' Bildquellen auf „Rockstar" gesetzt.'+(failed?(' '+failed+' fehlgeschlagen.'):'')):'Gespeichert, aber Veröffentlichen fehlgeschlagen.');
-}
 async function generateGuide(){
   const btn=$('ai-btn'), topic=$('ai-topic').value.trim()||"aktuelle GTA 6 News";
   btn.disabled=true;btn.textContent="Recherchiere…";
@@ -3193,20 +3183,20 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <p style="font-size:12px;color:var(--text-soft);margin-top:9px;line-height:1.5">Modus aktivieren, dann eine Kachel anklicken, um Bild und Text zu bearbeiten. „Fertigstellen" veröffentlicht alle Entwürfe.</p>
   </div>
   <h3 style="margin:4px 0 14px">Inhalte einpflegen</h3>
-  <div style="border:1.5px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="font-size:17px">📰</span><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">Artikel</span><span style="font-size:12px;color:var(--text-soft)">News & Guides</span></div>
+  <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
+    <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📰 Artikel <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)">News &amp; Guides</span></summary>
     <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Fertigen Artikel als JSON (mit <code>title</code> und <code>content</code>) einfügen. Es folgt eine Vorschau, dann veröffentlichen.</p>
     <textarea id="draft-json" rows="5" placeholder="Artikel-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
     <button id="draft-btn" onclick="submitDraftJson()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Artikel prüfen</button>
     <div id="ai-result" style="display:none;margin-top:14px"></div>
-  </div>
-  <div style="border:1.5px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="font-size:17px">🗂️</span><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">Datenbank-Einträge</span><span style="font-size:12px;color:var(--text-soft)">Charaktere, Fahrzeuge …</span></div>
+  </details>
+  <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
+    <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">🗂️ Datenbank-Einträge <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)">Charaktere, Fahrzeuge …</span></summary>
     <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">JSON mit Feld <code>section</code> (z.B. characters) einfügen, ein Objekt oder eine Liste. Wird per Name dem bestehenden Eintrag zugeordnet. Es folgt eine Vorschau, dann veröffentlichen.</p>
     <textarea id="dbimport-json" rows="5" placeholder="Datenbank-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
     <button id="dbimport-btn" onclick="submitDbImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Datenbank-Einträge prüfen</button>
     <div id="dbimport-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
-  </div>
+  </details>
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📧 Newsletter <span id="nl-adm-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
     <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Wochenrückblick erzeugen, dann anpassen. Alles ist optional, leere Felder werden weggelassen und die Mail bleibt sauber.</p>
@@ -3254,8 +3244,6 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.6">Optionale Sicherungskopie, für die normale Bearbeitung nicht mehr nötig:</div>
     <button onclick="downloadDB()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">database.json herunterladen</button>
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
-    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Wartung:</div>
-    <button onclick="bulkCredit()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Bildquellen auf „Rockstar" setzen</button>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Kommentar-Glocke:</div>
     <button onclick="notifToggleVisible()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">🔔 Kommentar-Glocke ein-/ausblenden</button>
   </details>
