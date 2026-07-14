@@ -2274,28 +2274,28 @@ function nlFillAddSelects(){
 }
 function nlAddArticle(id){ if(!id)return; const g=(GUIDES||[]).find(x=>x.id===id); if(!g)return; nlDraft.arts.push({id:g.id,title:g.title,teaser:g.summary||g.lead||'',top:false}); nlPersist(); nlRenderArts(); nlFillAddSelects(); }
 function nlAddEntry(val){ if(!val)return; const idx=val.indexOf(':'); const sec=val.slice(0,idx), idStr=val.slice(idx+1); const e=(DB[sec]||[]).find(x=>String(x._id)===idStr); if(!e)return; nlDraft.entries.push({sec,_id:e._id,slug:e.slug||slugify(e.name||''),title:e.name,secLabel:NL_SEC_LABEL[sec]||'Eintrag',pfx:NL_SEC_PFX[sec]||sec,teaser:(e.desc||'').slice(0,120),highlight:false}); nlPersist(); nlRenderEntries(); nlFillAddSelects(); }
-function nlAutolink(h){ return h.replace('ViceGuide','<a href="'+NL_BASE+'/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>'); }
-function nlTextBlock(t){ if(!t||!t.trim())return''; const h=nlAutolink(esc(t).replace(/\n/g,'<br>')); return '<div style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">'+h+'</div>'; }
+function nlAutolink(h){ return h.replace('ViceGuide','<a class="m-acc" href="'+NL_BASE+'/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>'); }
+function nlTextBlock(t){ if(!t||!t.trim())return''; const h=nlAutolink(esc(t).replace(/\n/g,'<br>')); return '<div class="m-tx" style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">'+h+'</div>'; }
 /* Zwischentext zwischen News und Einträgen: gleiche Optik wie das
    "Mehr aus dieser Woche"-Label (Inter, fett, Versalien, gesperrt, weich). */
-function nlMidBlock(t){ if(!t||!t.trim())return''; return '<div style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">'+esc(t.replace(/\n/g,' '))+'</div>'; }
+function nlMidBlock(t){ if(!t||!t.trim())return''; return '<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">'+esc(t.replace(/\n/g,' '))+'</div>'; }
 function nlCard(o){
   const border=o.accent?'2px solid #D00059':'1px solid #ecdfca';
-  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
     +'<td width="140" style="padding:0;vertical-align:top"><a href="'+o.url+'"><img src="'+o.img+'" width="140" alt="" style="width:140px;height:120px;object-fit:cover;display:block"></a></td>'
     +'<td style="padding:12px 16px;vertical-align:top">'
-    +(o.label?'<div style="'+NL_BODY+';font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#D00059;text-transform:uppercase;margin:0 0 5px">'+(o.accent?'★ ':'')+esc(o.label)+'</div>':'')
-    +'<div style="'+NL_HEAD+';font-size:18px;font-weight:600;color:#221041;line-height:1.25;margin:0 0 6px">'+esc(o.title)+'</div>'
-    +(o.teaser?'<div style="'+NL_BODY+';font-size:13px;color:#6b6478;line-height:1.5;margin:0 0 8px">'+esc(o.teaser)+'</div>':'')
-    +'<a href="'+o.url+'" style="'+NL_BODY+';font-size:13px;font-weight:700;color:#D00059;text-decoration:none">'+o.cta+' &rarr;</a>'
+    +(o.label?'<div class="m-acc" style="'+NL_BODY+';font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#D00059;text-transform:uppercase;margin:0 0 5px">'+(o.accent?'★ ':'')+esc(o.label)+'</div>':'')
+    +'<div class="m-h" style="'+NL_HEAD+';font-size:18px;font-weight:600;color:#221041;line-height:1.25;margin:0 0 6px">'+esc(o.title)+'</div>'
+    +(o.teaser?'<div class="m-soft" style="'+NL_BODY+';font-size:13px;color:#6b6478;line-height:1.5;margin:0 0 8px">'+esc(o.teaser)+'</div>':'')
+    +'<a class="m-acc" href="'+o.url+'" style="'+NL_BODY+';font-size:13px;font-weight:700;color:#D00059;text-decoration:none">'+o.cta+' &rarr;</a>'
     +'</td></tr></table>';
 }
 function nlCountdownHtml(){
   const days=Math.max(0,Math.ceil((Date.UTC(2026,10,19)-Date.now())/86400000));
-  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px"><tr><td align="center" bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #ecdfca;border-radius:14px;padding:16px 20px">'
-    +'<div style="'+NL_BODY+';font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7fa5;margin:0 0 4px">Countdown bis zum Release</div>'
-    +'<div style="'+NL_HEAD+';font-size:30px;font-weight:700;color:#221041;line-height:1.05">noch <span style="color:#D00059">'+days+' Tage</span></div>'
-    +'<div style="'+NL_BODY+';font-size:13px;color:#8a7fa5;margin:4px 0 0">19. November 2026</div></td></tr></table>';
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px"><tr><td align="center" bgcolor="#FFFFFF" class="m-box" style="background:#FFFFFF;border:1px solid #ecdfca;border-radius:14px;padding:16px 20px">'
+    +'<div class="m-soft" style="'+NL_BODY+';font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7fa5;margin:0 0 4px">Countdown bis zum Release</div>'
+    +'<div class="m-h" style="'+NL_HEAD+';font-size:30px;font-weight:700;color:#221041;line-height:1.05">noch <span class="m-acc" style="color:#D00059">'+days+' Tage</span></div>'
+    +'<div class="m-soft" style="'+NL_BODY+';font-size:13px;color:#8a7fa5;margin:4px 0 0">19. November 2026</div></td></tr></table>';
 }
 function nlBuildInner(){
   nlSyncFields();
@@ -2305,15 +2305,15 @@ function nlBuildInner(){
   arts.forEach((a,idx)=>{
     const url=NL_BASE+'/artikel/'+encodeURIComponent(a.id), img=NL_BASE+'/api/article_image.php?id='+encodeURIComponent(a.id);
     if(a.top&&idx===0){
-      html+='<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="margin:0 0 18px;background:#ffffff;border:2px solid #D00059;border-radius:16px;overflow:hidden">'
+      html+='<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="margin:0 0 18px;background:#ffffff;border:2px solid #D00059;border-radius:16px;overflow:hidden">'
         +'<tr><td style="padding:0"><a href="'+url+'"><img src="'+img+'" width="560" alt="" style="width:100%;display:block"></a></td></tr>'
         +'<tr><td style="padding:18px 22px 22px">'
-        +'<div style="'+NL_BODY+';font-size:12px;font-weight:700;letter-spacing:.8px;color:#D00059;text-transform:uppercase;margin:0 0 8px">&#9733; Top-Story</div>'
-        +'<div style="'+NL_HEAD+';font-size:26px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 10px">'+esc(a.title)+'</div>'
-        +(a.teaser?'<div style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.6;margin:0 0 16px">'+esc(a.teaser)+'</div>':'')
-        +'<a href="'+url+'" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;'+NL_BODY+';font-size:14px;font-weight:700;padding:11px 22px;border-radius:9px">Ganzen Artikel lesen</a>'
+        +'<div class="m-acc" style="'+NL_BODY+';font-size:12px;font-weight:700;letter-spacing:.8px;color:#D00059;text-transform:uppercase;margin:0 0 8px">&#9733; Top-Story</div>'
+        +'<div class="m-h" style="'+NL_HEAD+';font-size:26px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 10px">'+esc(a.title)+'</div>'
+        +(a.teaser?'<div class="m-tx" style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.6;margin:0 0 16px">'+esc(a.teaser)+'</div>':'')
+        +'<a class="m-btn" href="'+url+'" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;'+NL_BODY+';font-size:14px;font-weight:700;padding:11px 22px;border-radius:9px">Ganzen Artikel lesen</a>'
         +'</td></tr></table>';
-      if(arts.length>1) html+='<div style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">Mehr aus dieser Woche</div>';
+      if(arts.length>1) html+='<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">Mehr aus dieser Woche</div>';
     } else {
       html+=nlCard({url,img,label:'',title:a.title,teaser:a.teaser,cta:'Weiterlesen'});
     }
@@ -2330,11 +2330,12 @@ function nlBuildInner(){
 }
 function nlWrapPreview(inner){
   const ff="@font-face{font-family:'Oswald';font-weight:200 700;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/oswald-variable.woff2') format('woff2')}@font-face{font-family:'Inter';font-weight:100 900;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/inter-variable.woff2') format('woff2')}";
-  return '<!doctype html><html><head><meta charset="utf-8"><style>'+ff+'</style></head><body style="margin:0;background:#FBF3E7">'
-    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF3E7"><tr><td align="center" style="padding:24px 14px"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
+  const dark='@media (prefers-color-scheme:dark){.m-page{background:#0D0A1A!important}.m-card{background:#1B1436!important;border-color:rgba(255,255,255,.12)!important}.m-box{background:#241a45!important;border-color:rgba(255,255,255,.14)!important}.m-h{color:#F7E7C4!important}.m-tx{color:#ECE6F7!important}.m-soft{color:#A99CC4!important}.m-acc,a.m-acc{color:#88B8C5!important}.m-btn{background:#88B8C5!important;color:#1a0f28!important}.m-foot,.m-foot a{color:#8f86a6!important}}';
+  return '<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="light dark"><style>'+dark+ff+'</style></head><body class="m-page" style="margin:0;background:#FBF3E7">'
+    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="m-page" style="background:#FBF3E7"><tr><td align="center" class="m-page" style="padding:24px 14px"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
     +'<tr><td style="padding:0"><img src="'+NL_BASE+'/newsletter-header.jpg" width="600" style="width:100%;display:block;border-radius:18px 18px 0 0"></td></tr>'
-    +'<tr><td style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'+inner+'</td></tr>'
-    +'<tr><td style="padding:16px 26px 6px"><div style="'+NL_BODY+';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="#" style="color:#9a90ac">Hier abmelden</a>.</div></td></tr>'
+    +'<tr><td class="m-card" style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'+inner+'</td></tr>'
+    +'<tr><td class="m-page" style="padding:16px 26px 6px"><div class="m-foot" style="'+NL_BODY+';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="#" style="color:#9a90ac">Hier abmelden</a>.</div></td></tr>'
     +'</table></td></tr></table></body></html>';
 }
 function nlPreview(){ nlLoad(); const f=$('nl-frame'); if(!f)return; f.style.display='block'; f.srcdoc=nlWrapPreview(nlBuildInner()); }

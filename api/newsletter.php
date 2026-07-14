@@ -77,22 +77,35 @@ function vg_mail_shell(string $inner, string $footer, array $cfg): string {
     $base = vg_site_url($cfg);
     $ff = "@font-face{font-family:'Oswald';font-weight:200 700;font-display:swap;src:url('$base/assets/fonts/oswald-variable.woff2') format('woff2')}"
         . "@font-face{font-family:'Inter';font-weight:100 900;font-display:swap;src:url('$base/assets/fonts/inter-variable.woff2') format('woff2')}";
-    // color-scheme + bgcolor-Attribute halten den hellen Hintergrund auch in
-    // Mail-Clients mit Dark-Mode (Outlook faerbt reine style-Backgrounds sonst
-    // dunkel um). Kein Garant bei jedem Client, aber der beste verfuegbare Weg.
+    // Dark-Mode: unterstuetzt der Client prefers-color-scheme (Apple Mail, iOS
+    // und weitere), zeigt die Mail die Dark-Optik der Website (dunkler Grund,
+    // helle Schrift, blauer Akzent). Klassen tragen die Umschaltung, die
+    // Inline-Styles bleiben die helle Standard-Darstellung fuer Clients ohne
+    // Media-Query-Support (Gmail, Outlook). Farben aus index.html (:root dark).
+    $dark = '@media (prefers-color-scheme:dark){'
+        . '.m-page{background:#0D0A1A!important}'
+        . '.m-card{background:#1B1436!important;border-color:rgba(255,255,255,.12)!important}'
+        . '.m-box{background:#241a45!important;border-color:rgba(255,255,255,.14)!important}'
+        . '.m-h{color:#F7E7C4!important}'
+        . '.m-tx{color:#ECE6F7!important}'
+        . '.m-soft{color:#A99CC4!important}'
+        . '.m-acc,a.m-acc{color:#88B8C5!important}'
+        . '.m-btn{background:#88B8C5!important;color:#1a0f28!important}'
+        . '.m-foot,.m-foot a{color:#8f86a6!important}'
+        . '}';
     return '<!doctype html><html lang="de"><head><meta charset="utf-8">'
          . '<meta name="viewport" content="width=device-width,initial-scale=1">'
-         . '<meta name="color-scheme" content="light">'
-         . '<meta name="supported-color-schemes" content="light">'
-         . '<style>:root{color-scheme:light}' . $ff . '</style></head>'
-         . '<body style="margin:0;padding:0;background:#FBF3E7">'
-         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#FBF3E7" style="background:#FBF3E7"><tr><td align="center" bgcolor="#FBF3E7" style="padding:24px 14px">'
+         . '<meta name="color-scheme" content="light dark">'
+         . '<meta name="supported-color-schemes" content="light dark">'
+         . '<style>' . $dark . $ff . '</style></head>'
+         . '<body class="m-page" style="margin:0;padding:0;background:#FBF3E7">'
+         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#FBF3E7" class="m-page" style="background:#FBF3E7"><tr><td align="center" bgcolor="#FBF3E7" class="m-page" style="padding:24px 14px">'
          . '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
          . '<tr><td style="padding:0"><a href="' . $base . '/"><img src="' . $base . '/newsletter-header.jpg" width="600" alt="ViceGuide" style="width:100%;display:block;border-radius:18px 18px 0 0"></a></td></tr>'
-         . '<tr><td bgcolor="#FFF9EF" style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'
+         . '<tr><td bgcolor="#FFF9EF" class="m-card" style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'
          . $inner
          . '</td></tr>'
-         . '<tr><td bgcolor="#FBF3E7" style="padding:16px 26px 6px">' . $footer . '</td></tr>'
+         . '<tr><td bgcolor="#FBF3E7" class="m-page" style="padding:16px 26px 6px">' . $footer . '</td></tr>'
          . '</table></td></tr></table></body></html>';
 }
 
@@ -100,8 +113,8 @@ function vg_mail_shell(string $inner, string $footer, array $cfg): string {
 function vg_newsletter_wrap(string $inner, string $unsubUrl, array $cfg): string {
     $BODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
     $unsub = htmlspecialchars($unsubUrl, ENT_QUOTES, 'UTF-8');
-    $footer = '<div style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="' . $unsub . '" style="color:#9a90ac">Hier abmelden</a>.</div>'
-            . '<div style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6;margin-top:8px">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>';
+    $footer = '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="' . $unsub . '" style="color:#9a90ac">Hier abmelden</a>.</div>'
+            . '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6;margin-top:8px">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>';
     return vg_mail_shell($inner, $footer, $cfg);
 }
 
@@ -199,20 +212,20 @@ if ($method === 'POST') {
     $discordUrl = 'https://discord.gg/MNmMG3xNfA';   // gleicher Invite wie in der Community-Sektion (index.html)
     $HEAD = "font-family:'Oswald','Arial Narrow',Arial,sans-serif";
     $BODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
-    $vgLink = '<a href="' . $base . '/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>';
-    $inner = '<div style="' . $HEAD . ';font-size:24px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 12px">Fast geschafft!</div>'
-           . '<div style="' . $BODY . ';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">Danke für dein Interesse am ' . $vgLink . '-Newsletter. Bestätige deine Anmeldung mit einem Klick, dann bekommst du ab sofort die wichtigsten GTA-6-News direkt per Mail.</div>'
-           . '<div style="margin:0 0 24px"><a href="' . htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#ffffff;text-decoration:none;' . $BODY . ';font-size:15px;font-weight:700;padding:13px 26px;border-radius:10px">Anmeldung bestätigen</a></div>'
-           . '<div style="' . $BODY . ';font-size:14px;color:#4a4458;line-height:1.6;margin:0 0 10px">Tritt auch gerne unserem Discord bei:</div>'
-           . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background:#ffffff;border:1px solid #ecdfca;border-radius:12px;margin:0 0 22px"><tr><td style="padding:13px 15px">'
+    $vgLink = '<a class="m-acc" href="' . $base . '/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>';
+    $inner = '<div class="m-h" style="' . $HEAD . ';font-size:24px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 12px">Fast geschafft!</div>'
+           . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">Danke für dein Interesse am ' . $vgLink . '-Newsletter. Bestätige deine Anmeldung mit einem Klick, dann bekommst du ab sofort die wichtigsten GTA-6-News direkt per Mail.</div>'
+           . '<div style="margin:0 0 24px"><a class="m-btn" href="' . htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#ffffff;text-decoration:none;' . $BODY . ';font-size:15px;font-weight:700;padding:13px 26px;border-radius:10px">Anmeldung bestätigen</a></div>'
+           . '<div class="m-tx" style="' . $BODY . ';font-size:14px;color:#4a4458;line-height:1.6;margin:0 0 10px">Tritt auch gerne unserem Discord bei:</div>'
+           . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="background:#ffffff;border:1px solid #ecdfca;border-radius:12px;margin:0 0 22px"><tr><td style="padding:13px 15px">'
            . '<a href="' . $discordUrl . '" style="text-decoration:none;display:block"><table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>'
            . '<td width="50" style="vertical-align:middle"><div style="width:40px;height:40px;border-radius:9px;background:#5865F2;color:#ffffff;text-align:center;line-height:40px;font-size:20px">&#128172;</div></td>'
            . '<td style="vertical-align:middle;padding-left:12px">'
-           . '<div style="' . $HEAD . ';font-size:17px;font-weight:700;color:#221041;line-height:1.2">Discord beitreten</div>'
-           . '<div style="' . $BODY . ';font-size:13px;color:#6b6478;line-height:1.4">Chatten, Fragen und News in Echtzeit mit anderen GTA-6-Fans</div>'
+           . '<div class="m-h" style="' . $HEAD . ';font-size:17px;font-weight:700;color:#221041;line-height:1.2">Discord beitreten</div>'
+           . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#6b6478;line-height:1.4">Chatten, Fragen und News in Echtzeit mit anderen GTA-6-Fans</div>'
            . '</td></tr></table></a></td></tr></table>'
-           . '<div style="' . $BODY . ';font-size:13px;color:#8a7fa5;line-height:1.6">Wenn du dich nicht angemeldet hast, ignorier diese Mail einfach, dann passiert nichts.</div>';
-    $footer = '<div style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>';
+           . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#8a7fa5;line-height:1.6">Wenn du dich nicht angemeldet hast, ignorier diese Mail einfach, dann passiert nichts.</div>';
+    $footer = '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>';
     vg_send_mail($cfg, $email, 'Bitte bestätige deine Newsletter-Anmeldung', vg_mail_shell($inner, $footer, $cfg), [], vg_newsletter_opts($cfg));
     nl_json($neutral);
 }
