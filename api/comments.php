@@ -74,16 +74,17 @@ function vg_comment_notify(array $cfg, PDO $pdo, string $to, string $articleId, 
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $safeText = nl2br(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $q = $quote ? '<p style="color:#666;border-left:3px solid #ccc;padding-left:10px;margin:0 0 12px">' . htmlspecialchars($quote, ENT_QUOTES, 'UTF-8') . '</p>' : '';
-        $html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222">'
-              . '<p><b>' . $kind . '</b> zu &bdquo;' . $safeTitle . '&ldquo;</p>'
-              . '<p><b>' . $safeName . '</b> schreibt:</p>'
-              . $q
-              . '<p>' . $safeText . '</p>'
-              . '<p style="margin-top:18px"><a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;font-weight:700;padding:11px 20px;border-radius:10px">Zum Artikel und antworten</a></p>'
-              . '<hr style="border:none;border-top:1px solid #ddd;margin:22px 0"><p style="font-size:12px;color:#999">Automatische Benachrichtigung von ViceGuide.</p>'
-              . '</div>';
-        vg_send_mail($cfg, $to, $kind . ' auf ViceGuide: ' . $title, $html);
+        $HEAD = "font-family:'Oswald','Arial Narrow',Arial,sans-serif";
+        $BODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
+        $q = $quote ? '<div class="m-soft" style="' . $BODY . ';font-size:14px;color:#6b6478;border-left:3px solid #ecdfca;padding-left:12px;margin:0 0 14px;line-height:1.5">' . htmlspecialchars($quote, ENT_QUOTES, 'UTF-8') . '</div>' : '';
+        $inner = '<div class="m-h" style="' . $HEAD . ';font-size:22px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 6px">' . $kind . '</div>'
+               . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#8a7fa5;margin:0 0 16px">zu &bdquo;' . $safeTitle . '&ldquo;</div>'
+               . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#221041;font-weight:700;margin:0 0 8px">' . $safeName . ' schreibt:</div>'
+               . $q
+               . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#4a4458;line-height:1.6;margin:0 0 20px">' . $safeText . '</div>'
+               . '<div><a class="m-btn" href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;' . $BODY . ';font-size:14px;font-weight:700;padding:12px 22px;border-radius:10px">Zum Artikel und antworten</a></div>';
+        $footer = '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Automatische Benachrichtigung von ViceGuide.</div>';
+        vg_send_mail($cfg, $to, $kind . ' auf ViceGuide: ' . $title, vg_mail_shell($inner, $footer, $cfg));
     } catch (Throwable $e) { /* Versand ist Beiwerk, nie den Request abbrechen */ }
 }
 
