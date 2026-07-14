@@ -736,8 +736,8 @@
 </div>
 
 <style>
-  .nl-box{padding:18px 20px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface-2);flex:1 1 300px;max-width:380px}
-  .foot-bottom{max-width:1400px;margin:20px auto 0;padding-top:16px;border-top:1px solid var(--line)}
+  .nl-box{padding:18px 20px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface-2);flex:0 1 360px;max-width:380px}
+  .foot-left{flex:1 1 440px;max-width:640px}
   @media(max-width:760px){.nl-box{max-width:none;flex-basis:100%}}
   .nl-h{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;letter-spacing:.3px}
   .nl-p{font-size:13.5px;color:var(--text-soft);margin:4px 0 12px;line-height:1.55}
@@ -756,9 +756,12 @@
   @media(max-width:640px){.notif-fab{bottom:80px;left:16px;width:48px;height:48px;font-size:20px}}
 </style>
 <footer><div class="foot">
-  <div><div class="fn">Vice<span class="vc">Guide</span></div>
-  <p id="foot-secret" style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;cursor:default;user-select:none">Miami, bei Tag und bei Nacht. 🌴</p></div>
-  <p class="disc"><b>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</b> Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
+  <div class="foot-left">
+    <div class="fn">Vice<span class="vc">Guide</span></div>
+    <p id="foot-secret" style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;cursor:default;user-select:none">Miami, bei Tag und bei Nacht. 🌴</p>
+    <p class="disc"><b>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</b> Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
+    <div class="legal-links"><a href="/impressum" onclick="return legalClick(event,'impressum')">Impressum</a><span>·</span><a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutz</a></div>
+  </div>
   <div class="nl-box" id="nl-box">
     <div class="nl-h">📧 Newsletter</div>
     <p class="nl-p">Die wichtigsten GTA-6-News direkt per Mail: neue Trailer, bestätigte Ankündigungen von Rockstar und die großen Leaks. Kein Spam, jederzeit abbestellbar.</p>
@@ -769,8 +772,7 @@
     <div class="nl-msg" id="nl-msg"></div>
     <p class="nl-legal">Mit der Anmeldung willigst du in den Versand des Newsletters ein. Wir schicken dir zuerst eine Bestätigungsmail (Double-Opt-In). Details in der <a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutzerklärung</a>.</p>
   </div>
-</div>
-<div class="foot-bottom"><div class="legal-links"><a href="/impressum" onclick="return legalClick(event,'impressum')">Impressum</a><span>·</span><a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutz</a></div></div></footer>
+</div></footer>
 
 <!-- Detail-Modal (Datenbank) -->
 <div class="ov" id="ov" onclick="if(event.target.id==='ov')closeModal()"><div class="modal" id="modal"></div></div>
@@ -2157,7 +2159,7 @@ async function submitNewsletter(){
     const res=await fetch('api/newsletter.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
     const data=await res.json().catch(()=>({}));
     if(!res.ok){ msg.textContent=data.error||'Anmeldung fehlgeschlagen.'; msg.className='nl-msg err'; }
-    else { msg.textContent=data.message||'Fast geschafft. Bitte bestätige den Link in deiner E-Mail.'; msg.className='nl-msg ok'; el.value=''; }
+    else { msg.innerHTML='Fast geschafft! Wir haben eine Bestätigungsmail an <b>'+esc(email)+'</b> geschickt. Bitte klick den Link darin, um die Anmeldung abzuschließen. Ist sie nicht im Posteingang, schau bitte im <b>Spam-Ordner</b> nach (Absender: newsletter@viceguide.de) und markiere sie als „Kein Spam".'; msg.className='nl-msg ok'; el.value=''; }
   }catch(e){ msg.textContent='Anmeldung fehlgeschlagen, bitte später erneut versuchen.'; msg.className='nl-msg err'; }
   finally{ btn.disabled=false; btn.textContent=lbl; }
 }
