@@ -801,7 +801,7 @@
 
 <div class="toast" id="toast"></div>
 <!-- Admin: Benachrichtigung bei neuen Kommentaren (nur eingeloggt sichtbar) -->
-<button class="notif-fab" id="notif-fab" onclick="openNotif()" style="display:none" title="Neue Kommentare" aria-label="Neue Kommentare">🔔<span class="notif-badge" id="notif-badge" style="display:none">0</span></button>
+<button class="notif-fab" id="notif-fab" style="display:none" title="Neue Kommentare (ziehen zum Verschieben)" aria-label="Neue Kommentare">🔔<span class="notif-badge" id="notif-badge" style="display:none">0</span></button>
 <div class="ov" id="notif" onclick="if(event.target.id==='notif')closeNotif()"><div class="modal" style="max-width:520px"><div class="mbody" id="notif-body"></div></div></div>
 <div class="edit-fab-row">
   <button class="edit-fab discard" id="edit-fab-discard" onclick="discardDrafts()" style="display:none">Verwerfen</button>
@@ -2082,17 +2082,22 @@ async function deleteComment(artId,i,id){
    erhoehen den Zaehler an der Glocke unten links. Das Popup zeigt sie mit Link
    zum Artikel und einer Direktantwort. Zusaetzlich geht bei jedem fremden
    Kommentar serverseitig eine Mail raus (api/comments.php POST). */
-let notifList=[], notifTimer=null, notifPrevSeen=0;
+let notifList=[], notifTimer=null, notifPrevSeen=0, notifShowAll=false;
 let notifSeen=0; try{ notifSeen=parseInt(localStorage.getItem('vg-notif-seen')||'0',10)||0; }catch(e){}
+/* Aus MEINER Übersicht ausgeblendete Kommentar-IDs (nur Anzeige im Backend,
+   der echte Kommentar bleibt bestehen). Dauerhaft im localStorage. */
+let notifDismissed=new Set(); try{ notifDismissed=new Set(JSON.parse(localStorage.getItem('vg-notif-dismissed')||'[]')); }catch(e){}
+function saveNotifDismissed(){ try{ localStorage.setItem('vg-notif-dismissed',JSON.stringify([...notifDismissed].slice(-1000))); }catch(e){} }
+let notifHidden=false; try{ notifHidden=localStorage.getItem('vg-notif-hidden')==='1'; }catch(e){}
 async function pollNotif(){
   const fab=$('notif-fab');
-  if(!isAdmin){ if(fab) fab.style.display='none'; return; }
+  if(!isAdmin||notifHidden){ if(fab) fab.style.display='none'; return; }
   try{
     const res=await fetch('api/comments.php?recent=1&voter='+encodeURIComponent(voterId),{cache:'no-store'});
     if(!res.ok) return;
     const data=await res.json();
-    notifList=(data.comments||[]).filter(c=>!c.own);
-    if(fab) fab.style.display='flex';
+    notifList=(data.comments||[]).filter(c=>!c.own && !notifDismissed.has(c.id));
+    if(fab){ fab.style.display='flex'; notifApplyPos(); }
     const unseen=notifList.filter(c=>c.id>notifSeen).length;
     const badge=$('notif-badge');
     if(badge){ if(unseen>0){ badge.textContent=unseen>9?'9+':String(unseen); badge.style.display='block'; } else { badge.style.display='none'; } }
@@ -2100,16 +2105,42 @@ async function pollNotif(){
 }
 function startNotifPolling(){
   if(!isAdmin) return;
+  notifInitDrag();
   pollNotif();
   if(!notifTimer) notifTimer=setInterval(pollNotif,60000);
 }
+/* Gespeicherte Position anwenden (frei verschiebbar per Drag). */
+function notifApplyPos(){
+  const fab=$('notif-fab'); if(!fab) return;
+  let pos=null; try{ pos=JSON.parse(localStorage.getItem('vg-notif-pos')||'null'); }catch(e){}
+  if(pos&&typeof pos.left==='number'){
+    fab.style.left=Math.max(4,Math.min(window.innerWidth-fab.offsetWidth-4,pos.left))+'px';
+    fab.style.top=Math.max(4,Math.min(window.innerHeight-fab.offsetHeight-4,pos.top))+'px';
+    fab.style.right='auto'; fab.style.bottom='auto';
+  }
+}
+/* Drag zum Verschieben, Klick (ohne Ziehen) öffnet das Popup. */
+let notifDrag={on:false,moved:false};
+function notifInitDrag(){
+  const fab=$('notif-fab'); if(!fab||fab.dataset.drag) return; fab.dataset.drag='1';
+  let sx,sy,ox,oy;
+  const start=(x,y)=>{ notifDrag.on=true; notifDrag.moved=false; sx=x; sy=y; const r=fab.getBoundingClientRect(); ox=r.left; oy=r.top; };
+  const move=(x,y)=>{ if(!notifDrag.on) return; const dx=x-sx, dy=y-sy; if(Math.abs(dx)+Math.abs(dy)>5) notifDrag.moved=true; if(!notifDrag.moved) return;
+    const nx=Math.max(4,Math.min(window.innerWidth-fab.offsetWidth-4,ox+dx)), ny=Math.max(4,Math.min(window.innerHeight-fab.offsetHeight-4,oy+dy));
+    fab.style.left=nx+'px'; fab.style.top=ny+'px'; fab.style.right='auto'; fab.style.bottom='auto'; };
+  const end=()=>{ if(!notifDrag.on) return; notifDrag.on=false; if(notifDrag.moved){ const r=fab.getBoundingClientRect(); try{ localStorage.setItem('vg-notif-pos',JSON.stringify({left:Math.round(r.left),top:Math.round(r.top)})); }catch(e){} } };
+  fab.addEventListener('mousedown',e=>{ e.preventDefault(); start(e.clientX,e.clientY); });
+  document.addEventListener('mousemove',e=>move(e.clientX,e.clientY));
+  document.addEventListener('mouseup',end);
+  fab.addEventListener('touchstart',e=>{ const t=e.touches[0]; start(t.clientX,t.clientY); },{passive:true});
+  document.addEventListener('touchmove',e=>{ if(notifDrag.on){ const t=e.touches[0]; move(t.clientX,t.clientY); if(notifDrag.moved) e.preventDefault(); } },{passive:false});
+  document.addEventListener('touchend',end);
+  fab.addEventListener('click',e=>{ if(notifDrag.moved){ e.preventDefault(); e.stopPropagation(); notifDrag.moved=false; return; } openNotif(); });
+}
 function openNotif(){
   notifPrevSeen=notifSeen;
-  const body=$('notif-body');
-  const items=notifList.slice(0,30);
-  body.innerHTML=`<button class="mclose" style="position:static;float:right;margin:-4px 0 0" onclick="closeNotif()">×</button>
-    <h3 style="margin:0 0 14px">Neue Kommentare</h3>
-    ${items.length?items.map(notifItemHtml).join(''):'<div class="cm-note">Noch keine Kommentare.</div>'}`;
+  notifShowAll=false;
+  notifRender();
   $('notif').classList.add('show');
   if(notifList.length){
     notifSeen=Math.max(notifSeen,...notifList.map(c=>c.id));
@@ -2117,7 +2148,26 @@ function openNotif(){
   }
   const badge=$('notif-badge'); if(badge) badge.style.display='none';
 }
+function notifRender(){
+  const body=$('notif-body'); if(!body) return;
+  const all=notifList;
+  const shown=notifShowAll?all:all.slice(0,3);
+  const more=all.length-shown.length;
+  body.innerHTML=`<button class="mclose" style="position:static;float:right;margin:-4px 0 0" onclick="closeNotif()">×</button>
+    <h3 style="margin:0 0 3px">Neue Kommentare</h3>
+    <div style="font-size:12px;color:var(--text-soft);margin:0 0 12px">${all.length} in deiner Übersicht</div>
+    ${shown.length?shown.map(notifItemHtml).join(''):'<div class="cm-note">Keine neuen Kommentare.</div>'}
+    ${more>0?`<button class="cm-act" style="width:100%;margin-top:2px" onclick="notifShowAll=true;notifRender()">Weitere ${more} anzeigen</button>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      ${all.length?'<button class="cm-act" onclick="notifClearAll()">Liste leeren</button>':''}
+      <button class="cm-act" onclick="notifHide()">🔕 Glocke ausblenden</button>
+    </div>`;
+}
 function closeNotif(){ $('notif').classList.remove('show'); }
+function notifDismiss(id){ notifDismissed.add(id); saveNotifDismissed(); notifList=notifList.filter(c=>c.id!==id); notifRender(); }
+function notifClearAll(){ notifList.forEach(c=>notifDismissed.add(c.id)); saveNotifDismissed(); notifList=[]; notifRender(); const badge=$('notif-badge'); if(badge) badge.style.display='none'; }
+function notifHide(){ notifHidden=true; try{ localStorage.setItem('vg-notif-hidden','1'); }catch(e){} const fab=$('notif-fab'); if(fab) fab.style.display='none'; closeNotif(); toast('Glocke ausgeblendet. Im Redaktions-Panel wieder einblendbar.'); }
+function notifToggleVisible(){ notifHidden=!notifHidden; try{ notifHidden?localStorage.setItem('vg-notif-hidden','1'):localStorage.removeItem('vg-notif-hidden'); }catch(e){} if(notifHidden){ const fab=$('notif-fab'); if(fab) fab.style.display='none'; toast('Glocke ausgeblendet.'); } else { pollNotif(); toast('Glocke eingeblendet.'); } }
 function notifItemHtml(c){
   const isNew=c.id>notifPrevSeen;
   const snippet=esc(c.text.length>170?c.text.slice(0,170)+'…':c.text);
@@ -2128,6 +2178,7 @@ function notifItemHtml(c){
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
       <button class="cm-act" onclick="notifOpen('${esc(c.article_id)}')">↗ Öffnen</button>
       <button class="cm-act" onclick="notifToggleReply(${c.id})">↩ Direkt antworten</button>
+      <button class="cm-act" onclick="notifDismiss(${c.id})" title="Nur aus deiner Übersicht entfernen, der Kommentar bleibt">✕ Ausblenden</button>
     </div>
     <div id="nrb-${c.id}" style="display:none">
       <textarea id="nr-${c.id}" class="cm-ta" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
@@ -3205,6 +3256,8 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Wartung:</div>
     <button onclick="bulkCredit()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">Alle Bildquellen auf „Rockstar" setzen</button>
+    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Kommentar-Glocke:</div>
+    <button onclick="notifToggleVisible()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">🔔 Kommentar-Glocke ein-/ausblenden</button>
   </details>
   <details style="margin-top:18px;opacity:.6">
     <summary style="font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-soft);cursor:pointer">KI-Recherche direkt hier (aktuell inaktiv)</summary>
