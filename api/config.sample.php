@@ -43,6 +43,14 @@ return [
     'smtp_host'    => '',                    // z.B. 'smtp.hostinger.com'
     'smtp_port'    => 465,
     'smtp_user'    => '',                    // z.B. 'info@viceguide.de'
-    'smtp_pass'    => '',                    // Passwort des Postfachs
+    'smtp_pass'    => '',                    // Passwort des info-Postfachs
     'smtp_secure'  => 'ssl',                 // 'ssl' (465), 'tls' (587) oder 'none'
+
+    // Eigene Absender-Identitaet fuer den Newsletter. Der Newsletter (und die
+    // Bestaetigungsmail) gehen ausschliesslich von newsletter@viceguide.de aus,
+    // authentifiziert ueber das gleichnamige Postfach. Host/Port/Verschluesselung
+    // sind dieselben wie oben, nur Benutzer und Passwort sind eigene.
+    'newsletter_from'       => 'ViceGuide <newsletter@viceguide.de>',
+    'newsletter_smtp_user'  => 'newsletter@viceguide.de',
+    'newsletter_smtp_pass'  => '',           // Passwort des newsletter-Postfachs
 ];

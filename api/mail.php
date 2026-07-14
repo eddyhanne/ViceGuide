@@ -1,22 +1,25 @@
 <?php
 /*
- * Gemeinsamer Mailversand fuer ViceGuide (Kommentar-Benachrichtigung an den
- * Admin und Newsletter).
+ * Gemeinsamer Mailversand fuer ViceGuide.
  *
- * Zwei Wege, automatisch gewaehlt:
- *  1. Authentifiziertes SMTP ueber ein echtes Postfach (empfohlen, z.B.
- *     info@viceguide.de bei Hostinger). Dann signiert der Hostinger-Mailserver
- *     die Mail mit DKIM, die Zustellbarkeit ist deutlich besser. Aktiv, sobald
- *     smtp_host und smtp_user in config.php gesetzt sind.
- *  2. Fallback auf die PHP-Funktion mail(), wenn kein SMTP konfiguriert ist.
- *     Ohne saubere SPF/DKIM/DMARC-Eintraege landet das leicht im Spam.
+ * Zwei Absender-Identitaeten:
+ *  - Standard (info@viceguide.de): Kommentar-Benachrichtigung an den Admin.
+ *  - Newsletter (newsletter@viceguide.de): alle Newsletter-Mails. Die
+ *    Newsletter-Identitaet wird per $opts an vg_send_mail() uebergeben
+ *    (from + eigene SMTP-Zugangsdaten), siehe api/newsletter.php.
+ *
+ * Zwei Versandwege, automatisch gewaehlt:
+ *  1. Authentifiziertes SMTP ueber ein echtes Postfach (empfohlen, DKIM-signiert
+ *     durch Hostinger, bessere Zustellbarkeit). Aktiv, sobald smtp_host gesetzt
+ *     und ein SMTP-Benutzer vorhanden ist.
+ *  2. Fallback auf PHP mail(), wenn kein SMTP konfiguriert ist.
  *
  * vg_send_mail() gibt true/false zurueck und wirft nie: ein fehlgeschlagener
  * Versand darf nie den aufrufenden Endpunkt abbrechen.
  */
 
 function vg_mail_from(array $cfg): string {
-    return trim((string)($cfg['mail_from'] ?? '')) ?: 'ViceGuide <no-reply@viceguide.de>';
+    return trim((string)($cfg['mail_from'] ?? '')) ?: 'ViceGuide <info@viceguide.de>';
 }
 
 function vg_site_url(array $cfg): string {
@@ -30,22 +33,31 @@ function vg_extract_addr(string $s): string {
     return filter_var($s, FILTER_VALIDATE_EMAIL) ? $s : '';
 }
 
-function vg_send_mail(array $cfg, string $to, string $subject, string $html, array $extraHeaders = []): bool {
+/* $opts kann die Absender-Identitaet fuer diesen einen Versand ueberschreiben:
+   'from'      -> Absender-Header (z.B. 'ViceGuide <newsletter@viceguide.de>')
+   'smtp_user' -> SMTP-Benutzer, unter dem authentifiziert wird
+   'smtp_pass' -> zugehoeriges Passwort
+   Fehlt ein Wert, greift der jeweilige Standard aus config.php. */
+function vg_send_mail(array $cfg, string $to, string $subject, string $html, array $extraHeaders = [], array $opts = []): bool {
     $to = trim($to);
     if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
 
-    if (!empty($cfg['smtp_host']) && !empty($cfg['smtp_user'])) {
-        return vg_smtp_send($cfg, $to, $subject, $html, $extraHeaders);
+    $from     = trim((string)($opts['from'] ?? '')) ?: vg_mail_from($cfg);
+    $smtpUser = trim((string)($opts['smtp_user'] ?? ($cfg['smtp_user'] ?? '')));
+    $smtpPass = (string)($opts['smtp_pass'] ?? ($cfg['smtp_pass'] ?? ''));
+
+    if (!empty($cfg['smtp_host']) && $smtpUser !== '') {
+        return vg_smtp_send($cfg, $to, $subject, $html, $extraHeaders, $from, $smtpUser, $smtpPass);
     }
-    return vg_mail_native($cfg, $to, $subject, $html, $extraHeaders);
+    return vg_mail_native($from, $to, $subject, $html, $extraHeaders);
 }
 
 /* Klassischer Versand ueber PHP mail(). */
-function vg_mail_native(array $cfg, string $to, string $subject, string $html, array $extraHeaders): bool {
+function vg_mail_native(string $from, string $to, string $subject, string $html, array $extraHeaders): bool {
     $headers = [
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
-        'From: ' . vg_mail_from($cfg),
+        'From: ' . $from,
     ];
     foreach ($extraHeaders as $h) {
         if (is_string($h) && $h !== '') $headers[] = $h;
@@ -59,20 +71,18 @@ function vg_mail_native(array $cfg, string $to, string $subject, string $html, a
 }
 
 /* Versand ueber authentifiziertes SMTP (AUTH LOGIN). Selbst gehaltener,
-   dependency-freier Mini-Client. Unterstuetzt drei Modi (smtp_secure):
-   'ssl' (implizites TLS, meist Port 465), 'tls' (STARTTLS, meist Port 587)
-   und 'none' (ungesichert, nur fuer lokale Tests). */
-function vg_smtp_send(array $cfg, string $to, string $subject, string $html, array $extraHeaders): bool {
+   dependency-freier Mini-Client. Absender und Zugangsdaten werden uebergeben,
+   damit verschiedene Kanaele (info@ / newsletter@) je eigene Identitaeten
+   nutzen koennen. Modi (smtp_secure): 'ssl' (implizites TLS, meist Port 465),
+   'tls' (STARTTLS, meist Port 587), 'none' (ungesichert, nur fuer Tests). */
+function vg_smtp_send(array $cfg, string $to, string $subject, string $html, array $extraHeaders, string $fromHeader, string $user, string $pass): bool {
     try {
         $host   = (string)$cfg['smtp_host'];
         $port   = (int)($cfg['smtp_port'] ?? 465);
-        $user   = (string)$cfg['smtp_user'];
-        $pass   = (string)($cfg['smtp_pass'] ?? '');
         $secure = strtolower((string)($cfg['smtp_secure'] ?? ($port === 587 ? 'tls' : 'ssl')));
         $timeout = 15;
 
-        $fromHeader = vg_mail_from($cfg);
-        $fromAddr   = vg_extract_addr($fromHeader) ?: $user;
+        $fromAddr = vg_extract_addr($fromHeader) ?: $user;
         $ehlo = parse_url(vg_site_url($cfg), PHP_URL_HOST) ?: 'localhost';
 
         $transport = ($secure === 'ssl') ? "ssl://$host:$port" : "tcp://$host:$port";

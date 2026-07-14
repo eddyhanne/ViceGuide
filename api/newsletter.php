@@ -54,6 +54,20 @@ function nl_token(): string {
     return bin2hex(random_bytes(20));
 }
 
+/* Absender-Identitaet fuer alle Newsletter-Mails: ausschliesslich
+   newsletter@viceguide.de (eigenes Postfach mit eigenen SMTP-Zugangsdaten).
+   Faellt nur zurueck, wenn die newsletter_*-Schluessel in config.php fehlen. */
+function vg_newsletter_opts(array $cfg): array {
+    $from = trim((string)($cfg['newsletter_from'] ?? '')) ?: 'ViceGuide <newsletter@viceguide.de>';
+    $opts = ['from' => $from];
+    $user = trim((string)($cfg['newsletter_smtp_user'] ?? ''));
+    if ($user !== '') {
+        $opts['smtp_user'] = $user;
+        $opts['smtp_pass'] = (string)($cfg['newsletter_smtp_pass'] ?? '');
+    }
+    return $opts;
+}
+
 /* Rahmt den Newsletter-Inhalt mit Kopf, Abmeldelink und Fan-Hinweis. */
 function vg_newsletter_wrap(string $inner, string $unsubUrl, array $cfg): string {
     return '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:600px;margin:0 auto">'
@@ -114,11 +128,12 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'send') {
     // Reine Textzeilen sollen als Absaetze ankommen, eingefuegtes HTML bleibt erhalten.
     $bodyHtml = (strip_tags($body) === $body) ? nl2br($body) : $body;
     $rows = $pdo->query("SELECT email, token FROM newsletter_subscribers WHERE status='confirmed'")->fetchAll();
+    $nlOpts = vg_newsletter_opts($cfg);
     $sent = 0; $failed = 0;
     foreach ($rows as $r) {
         $unsub = vg_site_url($cfg) . '/api/newsletter.php?unsubscribe=' . rawurlencode($r['token']);
         $html = vg_newsletter_wrap($bodyHtml, $unsub, $cfg);
-        $ok = vg_send_mail($cfg, $r['email'], $subject, $html, ['List-Unsubscribe: <' . $unsub . '>']);
+        $ok = vg_send_mail($cfg, $r['email'], $subject, $html, ['List-Unsubscribe: <' . $unsub . '>'], $nlOpts);
         if ($ok) $sent++; else $failed++;
     }
     nl_json(['ok' => true, 'sent' => $sent, 'failed' => $failed]);
@@ -162,7 +177,7 @@ if ($method === 'POST') {
           . '<p><a href="' . htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px">Anmeldung bestätigen</a></p>'
           . '<p style="font-size:13px;color:#666">Wenn du dich nicht angemeldet hast, ignorier diese Mail einfach, dann passiert nichts.</p>'
           . '</div>';
-    vg_send_mail($cfg, $email, 'Bitte bestätige deine Newsletter-Anmeldung', $html);
+    vg_send_mail($cfg, $email, 'Bitte bestätige deine Newsletter-Anmeldung', $html, [], vg_newsletter_opts($cfg));
     nl_json($neutral);
 }
 
