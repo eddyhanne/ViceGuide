@@ -122,12 +122,29 @@ function vg_newsletter_wrap(string $inner, string $unsubUrl, array $cfg): string
 if ($method === 'GET' && isset($_GET['confirm'])) {
     $token = substr(trim((string)$_GET['confirm']), 0, 64);
     if ($token === '') nl_page('Link unvollständig', 'Dieser Bestätigungslink ist unvollständig.', $cfg);
-    $st = $pdo->prepare('SELECT id, status FROM newsletter_subscribers WHERE token = ? LIMIT 1');
+    $st = $pdo->prepare('SELECT id, email, status FROM newsletter_subscribers WHERE token = ? LIMIT 1');
     $st->execute([$token]);
     $row = $st->fetch();
     if (!$row) nl_page('Link ungültig', 'Dieser Bestätigungslink ist nicht mehr gültig. Melde dich bei Bedarf einfach erneut an.', $cfg);
     if ($row['status'] !== 'confirmed') {
         $pdo->prepare("UPDATE newsletter_subscribers SET status='confirmed', confirmed_at=CURRENT_TIMESTAMP WHERE id=?")->execute([$row['id']]);
+        /* Admin benachrichtigen, aber nur bei der echten Erst-Bestaetigung
+           (nicht bei erneutem Klick auf den Link). notify_email leer = aus.
+           Fehler beim Versand duerfen die Bestaetigung nie stoeren. */
+        $notify = trim((string)($cfg['notify_email'] ?? ''));
+        if ($notify !== '') {
+            try {
+                $cnt = (int)$pdo->query("SELECT COUNT(*) FROM newsletter_subscribers WHERE status='confirmed'")->fetchColumn();
+                $safeEmail = htmlspecialchars((string)$row['email'], ENT_QUOTES, 'UTF-8');
+                $html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222">'
+                      . '<p><b>Neuer Newsletter-Abonnent</b></p>'
+                      . '<p>' . $safeEmail . ' hat die Anmeldung soeben bestätigt.</p>'
+                      . '<p>Bestätigte Abonnenten insgesamt: ' . $cnt . '.</p>'
+                      . '<hr style="border:none;border-top:1px solid #ddd;margin:18px 0"><p style="font-size:12px;color:#999">Automatische Benachrichtigung von ViceGuide.</p>'
+                      . '</div>';
+                vg_send_mail($cfg, $notify, 'Neuer Newsletter-Abonnent auf ViceGuide', $html);
+            } catch (Throwable $e) { /* Versand ist Beiwerk */ }
+        }
     }
     nl_page('Anmeldung bestätigt', 'Danke, deine Anmeldung zum ViceGuide-Newsletter ist bestätigt. Du bekommst ab jetzt die wichtigen GTA-6-News.', $cfg);
 }
