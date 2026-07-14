@@ -80,6 +80,40 @@ $showUpdated = $pubTs && $updTs && ($updTs - $pubTs) > 86400;
 $summary = trim($row['summary'] ?: $row['lead'] ?: '');
 $content = json_decode($row['content_json'] ?? '[]', true) ?: [];
 $sources = json_decode($row['sources_json'] ?? '[]', true) ?: [];
+
+// Kommentare serverseitig rendern: macht sie zu indexierbarem, nutzergeneriertem
+// Inhalt (SEO), sonst laedt sie nur das clientseitige JavaScript per API nach und
+// Google sieht sie praktisch nie. Fuer echte Besucher ueberschreibt
+// renderComments() den Bereich beim Laden mit der interaktiven Fassung.
+$cmStmt = $pdo->prepare('SELECT id, parent_id, name, text, quote, created_at FROM comments WHERE article_id = ? ORDER BY created_at ASC');
+$cmStmt->execute([$slug]);
+$cmRows = $cmStmt->fetchAll();
+$cmCount = count($cmRows);
+$cmHtml = '';
+if ($cmRows) {
+    $byId = [];
+    foreach ($cmRows as $r) { $r['replies'] = []; $byId[$r['id']] = $r; }
+    $roots = [];
+    foreach ($byId as $id => &$r) {
+        $pid = $r['parent_id'] ? (int)$r['parent_id'] : null;
+        if ($pid && isset($byId[$pid])) { $byId[$pid]['replies'][] = &$r; } else { $roots[] = &$r; }
+    }
+    unset($r);
+    $renderCm = function ($list, $depth) use (&$renderCm) {
+        $h = '';
+        foreach ($list as $c) {
+            $h .= '<div class="cm-item' . ($depth ? ' cm-reply' : '') . '">'
+                . '<div class="cm-top"><span class="cm-name">' . vg_esc($c['name']) . '</span><span class="cm-ts">' . vg_esc(vg_fmt_date($c['created_at'])) . '</span></div>'
+                . ($c['quote'] ? '<div class="cm-quote">' . vg_esc($c['quote']) . '</div>' : '')
+                . '<div class="cm-body">' . nl2br(vg_esc($c['text'])) . '</div>';
+            if (!empty($c['replies'])) $h .= '<div class="cm-children">' . $renderCm($c['replies'], $depth + 1) . '</div>';
+            $h .= '</div>';
+        }
+        return $h;
+    };
+    $cmHtml = '<h3 class="cm-h">Kommentare <span class="cm-c">' . $cmCount . '</span></h3>'
+            . '<div class="cm-list">' . $renderCm($roots, 0) . '</div>';
+}
 $hasImg = !empty($row['img']);
 $canonical = 'https://viceguide.de/artikel/' . $slug;
 $imgUrl = $hasImg ? ('https://viceguide.de/api/article_image.php?id=' . urlencode($slug)) : 'https://viceguide.de/og-image.jpg';
@@ -152,6 +186,7 @@ $articleLd = json_encode([
     'author' => ['@type' => 'Person', 'name' => $row['author'] ?: 'Eddy Hanné'],
     'publisher' => ['@type' => 'Organization', 'name' => 'ViceGuide'],
     'mainEntityOfPage' => $canonical,
+    'commentCount' => $cmCount,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 // BreadcrumbList: Startseite > News & Gerüchte > Artikel. Hilft Google, die
 // Hierarchie zu verstehen, und kann die Breadcrumb im Suchergebnis anzeigen.
@@ -229,6 +264,9 @@ foreach ($moreStmt->fetchAll() as $m) {
 }
 if ($moreHtml !== '') {
     $body['<div class="more-grid" id="a-more"></div>'] = '<div class="more-grid" id="a-more">' . $moreHtml . '</div>';
+}
+if ($cmHtml !== '') {
+    $body['<section class="comments" id="a-comments"></section>'] = '<section class="comments" id="a-comments">' . $cmHtml . '</section>';
 }
 foreach ($body as $search => $replace) {
     $html = str_replace($search, $replace, $html);
