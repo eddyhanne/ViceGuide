@@ -1439,7 +1439,7 @@ function openImgEd(kind,secId,i){
   const d = isDraft ? aiDraft : isSection ? (SECTION_IMG[secId]||(SECTION_IMG[secId]={})) : (kind==='guide' ? GUIDES[i] : DB[secId][i]);
   const f=d.imgfit||{};
   const name = isDraft ? (d.title||'Neuer Artikel') : isSection ? ((SECTIONS.find(s=>s.id===secId)||{}).label || GCAT[secId]?.name || 'Rubrik') : (kind==='guide' ? d.title : d.name);
-  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||'Rockstar'};
+  ieState={kind,sec:secId,i,name,img:d.img||null,imgChanged:false,zoom:f.zoom||1,x:(f.x!=null?f.x:50),y:(f.y!=null?f.y:50),credit:d.credit||''};
   $('ie-title').textContent='Bearbeiten: '+name;
   $('ie-credit').value=ieState.credit;
   $('ie-zoom').value=ieState.zoom;
@@ -1573,7 +1573,11 @@ async function ieApply(){
   } else if(ieState.img){
     d.imgfit=newImgfit;
   }
-  if(cr) d.credit=cr; else delete d.credit;
+  /* Immer setzen (auch leer), damit eine bewusst entfernte Quelle als leerer
+     Wert an den Server geht. Wuerde der Key beim Leeren geloescht, bliebe er im
+     Payload aus und der Entwurf-Merge (api/articles.php, api/db_entries.php)
+     wuerde den alten Wert behalten, die Entfernung schluege nie durch. */
+  d.credit=cr;
 
   if(isDraft){ closeImgEd(); renderAipvHero(); return; }
   if(ieState.kind==='section'){
