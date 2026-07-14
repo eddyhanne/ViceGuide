@@ -34,7 +34,7 @@ function vg_db(): array {
        Deployment oder ein noch ausstehendes Schema-Upgrade). */
     $schemaReady = false;
     try {
-        $pdo->query('SELECT id, author_token FROM comments LIMIT 1');
+        $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token FROM comments LIMIT 1');
         $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
@@ -55,6 +55,9 @@ function vg_db(): array {
             text TEXT NOT NULL,
             quote TEXT NULL,
             author_token TEXT NULL,
+            author_email TEXT NULL,
+            notify_replies INTEGER NOT NULL DEFAULT 0,
+            reply_token TEXT NULL,
             likes INTEGER NOT NULL DEFAULT 0,
             dislikes INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -144,8 +147,18 @@ function vg_db(): array {
         }
         try {
             $cols = $pdo->query("PRAGMA table_info(comments)")->fetchAll();
-            if (!in_array('author_token', array_column($cols, 'name'), true)) {
+            $cnames = array_column($cols, 'name');
+            if (!in_array('author_token', $cnames, true)) {
                 $pdo->exec('ALTER TABLE comments ADD COLUMN author_token TEXT');
+            }
+            if (!in_array('author_email', $cnames, true)) {
+                $pdo->exec('ALTER TABLE comments ADD COLUMN author_email TEXT');
+            }
+            if (!in_array('notify_replies', $cnames, true)) {
+                $pdo->exec('ALTER TABLE comments ADD COLUMN notify_replies INTEGER NOT NULL DEFAULT 0');
+            }
+            if (!in_array('reply_token', $cnames, true)) {
+                $pdo->exec('ALTER TABLE comments ADD COLUMN reply_token TEXT');
             }
         } catch (Throwable $e) {
             // s.o.
@@ -159,6 +172,9 @@ function vg_db(): array {
             text TEXT NOT NULL,
             quote TEXT NULL,
             author_token VARCHAR(100) NULL,
+            author_email VARCHAR(190) NULL,
+            notify_replies TINYINT NOT NULL DEFAULT 0,
+            reply_token VARCHAR(64) NULL,
             likes INT NOT NULL DEFAULT 0,
             dislikes INT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -254,6 +270,12 @@ function vg_db(): array {
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'author_token'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN author_token VARCHAR(100) NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'author_email'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN author_email VARCHAR(190) NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'notify_replies'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN notify_replies TINYINT NOT NULL DEFAULT 0'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'reply_token'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN reply_token VARCHAR(64) NULL'); }
         } catch (Throwable $e) {
             // s.o.
         }

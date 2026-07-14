@@ -169,6 +169,24 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'send') {
     nl_json(['ok' => true, 'sent' => $sent, 'failed' => $failed]);
 }
 
+/* ---- Admin: Test-Newsletter an eine einzelne Adresse ---- */
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'test') {
+    vg_require_admin($cfg);
+    $b = json_decode(file_get_contents('php://input'), true) ?: [];
+    $subject = trim((string)($b['subject'] ?? ''));
+    $body = trim((string)($b['body'] ?? ''));
+    $to = strtolower(trim((string)($b['email'] ?? '')));
+    if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) nl_json(['error' => 'Bitte eine gültige Test-Adresse angeben.'], 400);
+    if ($subject === '' || $body === '') nl_json(['error' => 'Betreff und Inhalt sind erforderlich.'], 400);
+    $bodyHtml = (strip_tags($body) === $body) ? nl2br($body) : $body;
+    // Test-Mail sieht aus wie das Original inkl. funktionierendem Abmeldelink
+    // (verweist hier neutral auf die Startseite, da kein echter Abonnent).
+    $unsub = vg_site_url($cfg) . '/';
+    $html = vg_newsletter_wrap($bodyHtml, $unsub, $cfg);
+    $ok = vg_send_mail($cfg, $to, '[Test] ' . $subject, $html, ['List-Unsubscribe: <' . $unsub . '>'], vg_newsletter_opts($cfg));
+    nl_json(['ok' => $ok, 'to' => $to]);
+}
+
 /* ---- Admin: Abonnent loeschen ---- */
 if ($method === 'POST' && ($_GET['action'] ?? '') === 'delete') {
     vg_require_admin($cfg);

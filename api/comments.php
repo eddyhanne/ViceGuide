@@ -88,6 +88,78 @@ function vg_comment_notify(array $cfg, PDO $pdo, string $to, string $articleId, 
     } catch (Throwable $e) { /* Versand ist Beiwerk, nie den Request abbrechen */ }
 }
 
+/* Benachrichtigung an den Verfasser eines Kommentars, wenn jemand darauf
+   antwortet. Nur wenn der Verfasser dem beim Schreiben zugestimmt und eine
+   Mail hinterlegt hat (notify_replies + author_email). Enthaelt einen
+   Abmeldelink (noreply-Token), mit dem er alle weiteren Antwort-Mails
+   abstellen kann. Versandfehler duerfen das Anlegen nie stoeren. */
+function vg_reply_notify(array $cfg, PDO $pdo, array $parent, string $articleId, string $replyName, string $replyText): void {
+    try {
+        $to = trim((string)($parent['author_email'] ?? ''));
+        if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) return;
+
+        $title = $articleId;
+        try {
+            $st = $pdo->prepare('SELECT title FROM articles WHERE id = ? LIMIT 1');
+            $st->execute([$articleId]);
+            $t = $st->fetchColumn();
+            if ($t) $title = (string)$t;
+        } catch (Throwable $e) { /* Titel nicht kritisch */ }
+
+        $url = vg_site_url($cfg) . '/artikel/' . rawurlencode($articleId) . '#a-comments';
+        $optOut = vg_site_url($cfg) . '/api/comments.php?noreply=' . rawurlencode((string)$parent['reply_token']);
+        $safeName = htmlspecialchars($replyName, ENT_QUOTES, 'UTF-8');
+        $safeText = nl2br(htmlspecialchars($replyText, ENT_QUOTES, 'UTF-8'));
+        $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $safeYours = nl2br(htmlspecialchars(mb_substr((string)$parent['text'], 0, 200), ENT_QUOTES, 'UTF-8'));
+        $HEAD = "font-family:'Oswald','Arial Narrow',Arial,sans-serif";
+        $BODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
+        $inner = '<div class="m-h" style="' . $HEAD . ';font-size:22px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 6px">Neue Antwort auf deinen Kommentar</div>'
+               . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#8a7fa5;margin:0 0 16px">zu &bdquo;' . $safeTitle . '&ldquo;</div>'
+               . '<div class="m-soft" style="' . $BODY . ';font-size:14px;color:#6b6478;border-left:3px solid #ecdfca;padding-left:12px;margin:0 0 14px;line-height:1.5">Dein Kommentar: ' . $safeYours . '</div>'
+               . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#221041;font-weight:700;margin:0 0 8px">' . $safeName . ' antwortet:</div>'
+               . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#4a4458;line-height:1.6;margin:0 0 20px">' . $safeText . '</div>'
+               . '<div><a class="m-btn" href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;' . $BODY . ';font-size:14px;font-weight:700;padding:12px 22px;border-radius:10px">Zur Antwort und selbst antworten</a></div>';
+        $footer = '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du bei diesem Kommentar Antwort-Benachrichtigungen aktiviert hast. <a href="' . htmlspecialchars($optOut, ENT_QUOTES, 'UTF-8') . '" style="color:#9a90ac">Keine Antwort-Mails mehr</a>.</div>';
+        vg_send_mail($cfg, $to, 'Neue Antwort auf deinen Kommentar bei ViceGuide', vg_mail_shell($inner, $footer, $cfg), ['List-Unsubscribe: <' . $optOut . '>']);
+    } catch (Throwable $e) { /* Versand ist Beiwerk */ }
+}
+
+/* Opt-out aus der Antwort-Benachrichtigungs-Mail (Klick landet im Browser).
+   Schaltet alle Antwort-Benachrichtigungen fuer die zugehoerige Mailadresse ab,
+   nicht nur fuer diesen einen Kommentar, damit ein Klick wirklich Ruhe gibt. */
+if ($method === 'GET' && isset($_GET['noreply'])) {
+    header('Content-Type: text/html; charset=utf-8');
+    $token = substr(trim((string)$_GET['noreply']), 0, 64);
+    $done = false;
+    if ($token !== '') {
+        $st = $pdo->prepare('SELECT author_email FROM comments WHERE reply_token = ? LIMIT 1');
+        $st->execute([$token]);
+        $email = trim((string)$st->fetchColumn());
+        if ($email !== '') {
+            $pdo->prepare('UPDATE comments SET notify_replies = 0 WHERE author_email = ?')->execute([$email]);
+            $done = true;
+        }
+    }
+    $msg = $done
+        ? 'Erledigt. Du bekommst keine Benachrichtigungen mehr, wenn jemand auf deine Kommentare antwortet.'
+        : 'Dieser Link ist nicht mehr gültig. Vermutlich sind die Benachrichtigungen bereits aus.';
+    $site = htmlspecialchars(vg_site_url($cfg), ENT_QUOTES, 'UTF-8');
+    echo '<!doctype html><html lang="de"><head><meta charset="utf-8">'
+       . '<meta name="viewport" content="width=device-width,initial-scale=1">'
+       . '<meta name="robots" content="noindex">'
+       . '<title>Antwort-Benachrichtigungen &middot; ViceGuide</title>'
+       . '<style>body{margin:0;background:#12101a;color:#f2f0f7;font-family:system-ui,Arial,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}'
+       . '.card{max-width:440px;text-align:center;background:#1c1930;border:1px solid #2e2a45;border-radius:18px;padding:34px}'
+       . '.br{font-weight:800;font-size:22px;margin-bottom:18px}.vc{color:#88B8C5}'
+       . 'h1{font-size:21px;margin:0 0 12px}p{color:#c9c5d8;line-height:1.6;margin:0 0 20px}'
+       . 'a.btn{display:inline-block;color:#12101a;background:#88B8C5;text-decoration:none;font-weight:700;padding:11px 22px;border-radius:11px}</style></head>'
+       . '<body><div class="card"><div class="br">Vice<span class="vc">Guide</span></div>'
+       . '<h1>Antwort-Benachrichtigungen</h1><p>' . $msg . '</p>'
+       . '<a class="btn" href="' . $site . '/">Zu ViceGuide</a></div></body></html>';
+    exit;
+}
+
 if ($method === 'GET' && isset($_GET['recent'])) {
     /* Fuer das Admin-Benachrichtigungs-Popup: die letzten Kommentare ueber alle
        Artikel, mit Artikeltitel und own-Flag (eigene Kommentare filtert der
@@ -137,8 +209,21 @@ if ($method === 'POST') {
     /* Anonymes Wähler-Token als Autor-Kennung merken, damit man den eigenen
        Kommentar spaeter nicht selbst bewerten kann (siehe PATCH und GET own). */
     $author = substr(trim((string)($b['voter'] ?? '')), 0, 100) ?: null;
-    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token) VALUES (?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author]);
+
+    /* Optionale Antwort-Benachrichtigung: nur speichern, wenn der Verfasser
+       zugestimmt (notifyReplies) UND eine gueltige Mail hinterlegt hat. Sonst
+       wird bewusst keine Mailadresse gespeichert (Datensparsamkeit). */
+    $wantNotify = !empty($b['notifyReplies']);
+    $email = strtolower(trim((string)($b['email'] ?? '')));
+    $authorEmail = null; $notifyReplies = 0; $replyToken = null;
+    if ($wantNotify && $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && mb_strlen($email) <= 190) {
+        $authorEmail = $email;
+        $notifyReplies = 1;
+        $replyToken = bin2hex(random_bytes(20));
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token, author_email, notify_replies, reply_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author, $authorEmail, $notifyReplies, $replyToken]);
     $newId = (int)$pdo->lastInsertId();
 
     /* Benachrichtigung an den Betreiber, aber nicht fuer eigene Kommentare:
@@ -147,6 +232,22 @@ if ($method === 'POST') {
     $notify = trim((string)($cfg['notify_email'] ?? ''));
     if ($notify !== '' && !vg_is_admin()) {
         vg_comment_notify($cfg, $pdo, $notify, $articleId, $name, $text, $quote ?: null, $parentId);
+    }
+
+    /* Antwort-Benachrichtigung an den Verfasser des Eltern-Kommentars, wenn er
+       sie aktiviert hat. Nicht an sich selbst schicken (gleiches Autor-Token). */
+    if ($parentId) {
+        try {
+            $ps = $pdo->prepare('SELECT text, author_token, author_email, notify_replies, reply_token FROM comments WHERE id = ? LIMIT 1');
+            $ps->execute([$parentId]);
+            $parent = $ps->fetch();
+            if ($parent && (int)$parent['notify_replies'] === 1 && !empty($parent['author_email'])) {
+                $sameAuthor = $author !== null && !empty($parent['author_token']) && hash_equals((string)$parent['author_token'], (string)$author);
+                if (!$sameAuthor) {
+                    vg_reply_notify($cfg, $pdo, $parent, $articleId, $name, $text);
+                }
+            }
+        } catch (Throwable $e) { /* Versand ist Beiwerk */ }
     }
     vg_out(['ok' => true, 'id' => $newId], 201);
 }

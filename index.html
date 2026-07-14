@@ -437,6 +437,8 @@
   .cm-in:focus,.cm-ta:focus{border-color:var(--accent)}
   .cm-ta{resize:vertical}
   .cm-btn{font-weight:700;font-size:14px;padding:11px 20px;border-radius:10px;color:var(--btn-text);background:var(--btn-bg)}
+  .cm-notify{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin:0 0 10px;cursor:pointer;line-height:1.4}
+  .cm-notify input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--accent);cursor:pointer}
   .cm-note{font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:10px;line-height:1.5}
   .cm-list{display:flex;flex-direction:column;gap:12px}
   .cm-item{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
@@ -1968,6 +1970,22 @@ try{ voterId=localStorage.getItem('vg-voter')||''; if(!voterId){ voterId=(self.c
    bei Folge-Kommentaren/Antworten den Namen nicht neu eintippen muss. */
 let savedCmName=''; try{ savedCmName=localStorage.getItem('vg-name')||''; }catch(e){}
 function rememberName(n){ if(n&&n!=='Gast'){ savedCmName=n; try{ localStorage.setItem('vg-name',n); }catch(e){} } }
+/* Antwort-Benachrichtigung: zuletzt genutzte Mail und Wunsch merken, damit man
+   sie bei Folge-Kommentaren nicht neu eintippt. */
+let savedCmEmail=''; try{ savedCmEmail=localStorage.getItem('vg-email')||''; }catch(e){}
+let savedCmNotify=false; try{ savedCmNotify=localStorage.getItem('vg-notify-replies')==='1'; }catch(e){}
+function rememberContact(email,notify){
+  savedCmEmail=email||''; savedCmNotify=!!notify;
+  try{ localStorage.setItem('vg-email',savedCmEmail); localStorage.setItem('vg-notify-replies',notify?'1':'0'); }catch(e){}
+}
+/* Baut die optionalen Benachrichtigungsfelder (Checkbox + Mailfeld) fuer das
+   Kommentar- und jedes Antwortformular. sfx haelt die IDs eindeutig. */
+function cmNotifyHtml(sfx){
+  const em=esc(savedCmEmail).replace(/"/g,'&quot;');
+  return `<label class="cm-notify"><input type="checkbox" id="cn-${sfx}" ${savedCmNotify?'checked':''} onchange="cmSyncEmail('${sfx}')"> Benachrichtige mich per E-Mail, wenn jemand antwortet</label>
+    <input id="ce-${sfx}" class="cm-in" type="email" maxlength="190" placeholder="Deine E-Mail (nur für die Benachrichtigung)" value="${em}" style="${savedCmNotify?'':'display:none'}">`;
+}
+function cmSyncEmail(sfx){ const c=$('cn-'+sfx), e=$('ce-'+sfx); if(c&&e){ e.style.display=c.checked?'block':'none'; if(c.checked) e.focus(); } }
 let cmIndex={};
 function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
 async function renderComments(i){
@@ -1991,6 +2009,7 @@ function renderCommentsUI(i,artId,list){
     <div class="cm-form">
       <input id="cm-name" class="cm-in" type="text" placeholder="Dein Name" maxlength="40" value="${esc(savedCmName).replace(/"/g,'&quot;')}">
       <textarea id="cm-text" class="cm-ta" rows="3" placeholder="Schreib etwas Nettes oder Schlaues…" maxlength="800"></textarea>
+      ${cmNotifyHtml('main')}
       <button class="cm-btn" onclick="addComment('${artId}',${i})">Kommentar posten</button>
     </div>
     <div class="cm-list">${list.length?list.map(c=>cmHtml(artId,i,c,0)).join(''):'<div class="cm-empty">Sei der oder die Erste, die hier kommentiert.</div>'}</div>`;
@@ -2017,17 +2036,29 @@ function cmHtml(artId,i,c,depth){
     <div class="cm-replybox" id="rb-${c.id}" style="display:none">
       <input class="cm-in" id="rn-${c.id}" type="text" placeholder="Dein Name" maxlength="40" value="${esc(savedCmName).replace(/"/g,'&quot;')}">
       <textarea class="cm-ta" id="rt-${c.id}" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
+      ${cmNotifyHtml(c.id)}
       <button class="cm-btn cm-btn-sm" onclick="addReply('${artId}',${i},${c.id})">Antwort posten</button>
     </div>
     ${replies?`<div class="cm-children">${replies}</div>`:''}
   </div>`;
 }
+/* Liest die optionalen Benachrichtigungsfelder aus (Checkbox + Mail). Gibt bei
+   fehlender/ungueltiger Mail trotz Haken null zurueck und meldet das. */
+function cmReadNotify(sfx){
+  const c=$('cn-'+sfx), e=$('ce-'+sfx);
+  const want=!!(c&&c.checked); const email=((e&&e.value)||'').trim();
+  if(want){
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Bitte eine gültige E-Mail für die Benachrichtigung angeben.'); return null; }
+  }
+  return {notifyReplies:want,email:want?email:''};
+}
 async function addComment(artId,i){
   const n=($('cm-name').value||'').trim()||'Gast', t=($('cm-text').value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
-  rememberName(n);
+  const nf=cmReadNotify('main'); if(nf===null) return;
+  rememberName(n); rememberContact(nf.email,nf.notifyReplies);
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,voter:voterId})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email})});
     if(!res.ok) throw new Error();
     toast('Kommentar gepostet ✦');
     renderComments(i);
@@ -2056,11 +2087,12 @@ function toggleReply(id){
 async function addReply(artId,i,parentId){
   const n=(($('rn-'+parentId)||{}).value||'').trim()||'Gast', t=(($('rt-'+parentId)||{}).value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
-  rememberName(n);
+  const nf=cmReadNotify(parentId); if(nf===null) return;
+  rememberName(n); rememberContact(nf.email,nf.notifyReplies);
   const p=cmIndex[parentId];
   const quote=p?(p.name+': '+(p.text.length>90?p.text.slice(0,90)+'…':p.text)):'';
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote,voter:voterId})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email})});
     if(!res.ok) throw new Error();
     toast('Antwort gepostet ✦');
     renderComments(i);
@@ -2258,6 +2290,7 @@ async function nlShowSubs(){
   box.innerHTML=sect('Aktiv',grp('confirmed'),'Noch keine aktiven Abonnenten.',false)
     +sect('Offen, noch nicht bestätigt',grp('pending'),'Keine offenen.',true)
     +sect('Abgemeldet',grp('unsubscribed'),'Keine Abmeldungen.',true);
+  const cnt=$('nl-subs-count'); if(cnt) cnt.textContent=grp('confirmed').length+' aktiv';
 }
 /* Loescht einen Abonnenten dauerhaft aus der Datenbank (nur Panel, nur Admin).
    Gedacht fuer offene, nie bestaetigte Anmeldungen und alte Abmeldungen, die
@@ -2428,8 +2461,8 @@ function nlWrapPreview(inner){
   const ff="@font-face{font-family:'Oswald';font-weight:200 700;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/oswald-variable.woff2') format('woff2')}@font-face{font-family:'Inter';font-weight:100 900;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/inter-variable.woff2') format('woff2')}";
   const dark='@media (prefers-color-scheme:dark){.m-page{background:#0D0A1A!important}.m-card{background:#1B1436!important;border-color:rgba(255,255,255,.12)!important}.m-box{background:#241a45!important;border-color:rgba(255,255,255,.14)!important}.m-h{color:#F7E7C4!important}.m-tx{color:#ECE6F7!important}.m-soft{color:#A99CC4!important}.m-acc,a.m-acc{color:#88B8C5!important}.m-btn{background:#88B8C5!important;color:#1a0f28!important}.m-foot,.m-foot a{color:#8f86a6!important}}';
   return '<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="light dark"><style>'+dark+ff+'</style></head><body class="m-page" style="margin:0;background:#FBF3E7">'
-    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="m-page" style="background:#FBF3E7"><tr><td align="center" class="m-page" style="padding:24px 14px"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
-    +'<tr><td style="padding:0"><img src="'+NL_BASE+'/newsletter-header.jpg" width="600" style="width:100%;display:block;border-radius:18px 18px 0 0"></td></tr>'
+    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="m-page" style="background:#FBF3E7"><tr><td align="center" class="m-page" style="padding:24px 14px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">'
+    +'<tr><td style="padding:0"><img src="'+NL_BASE+'/newsletter-header.jpg" width="600" style="width:100%;max-width:100%;height:auto;display:block;border-radius:18px 18px 0 0"></td></tr>'
     +'<tr><td class="m-card" style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'+inner+'</td></tr>'
     +'<tr><td class="m-page" style="padding:16px 26px 6px"><div class="m-foot" style="'+NL_BODY+';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="#" style="color:#9a90ac">Hier abmelden</a>.</div></td></tr>'
     +'</table></td></tr></table></body></html>';
@@ -2452,6 +2485,29 @@ async function sendNewsletter(){
     if(!res.ok){ out.textContent=d.error||'Versand fehlgeschlagen.'; }
     else { out.textContent=`Gesendet: ${d.sent||0}${d.failed?(', fehlgeschlagen: '+d.failed):''}.`; }
   }catch(e){ out.textContent='Versand fehlgeschlagen.'; }
+  finally{ btn.disabled=false; btn.textContent=lbl; }
+}
+/* Schickt den aktuellen Entwurf als Test nur an die eigene Adresse, bevor er an
+   alle Abonnenten geht. Betreff bekommt serverseitig ein [Test]-Praefix. */
+const NL_TEST_EMAIL='hanneeddy@gmail.com';
+async function sendNewsletterTest(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  nlSyncFields();
+  const out=$('nl-send-result');
+  const subj=(nlDraft.subject||'').trim();
+  if(!subj){ out.textContent='Bitte einen Betreff eingeben.'; return; }
+  if(!nlDraft.arts.length && !nlDraft.entries.length && !(nlDraft.intro||'').trim()){ out.textContent='Der Newsletter ist leer.'; return; }
+  const to=(prompt('Test-Newsletter an welche Adresse senden?',NL_TEST_EMAIL)||'').trim();
+  if(!to) return;
+  const inner=nlBuildInner();
+  const btn=$('nl-test-btn'); btn.disabled=true; const lbl=btn.textContent; btn.textContent='Sende Test…';
+  try{
+    const res=await fetch('api/newsletter.php?action=test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subj,body:inner,email:to})});
+    const d=await res.json().catch(()=>({}));
+    if(!res.ok){ out.textContent=d.error||'Test-Versand fehlgeschlagen.'; }
+    else if(d.ok){ out.textContent='Test-Newsletter an '+to+' gesendet.'; }
+    else { out.textContent='Test-Versand fehlgeschlagen (Mailserver hat abgelehnt).'; }
+  }catch(e){ out.textContent='Test-Versand fehlgeschlagen.'; }
   finally{ btn.disabled=false; btn.textContent=lbl; }
 }
 
@@ -3228,16 +3284,19 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button onclick="nlPreview()" style="width:100%;margin-top:14px;font-weight:600;font-size:14px;padding:11px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">👁 Vorschau aktualisieren</button>
     <iframe id="nl-frame" title="Newsletter-Vorschau" style="width:100%;height:440px;border:1.5px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;display:none"></iframe>
 
-    <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;margin-top:12px;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
+    <button id="nl-test-btn" onclick="sendNewsletterTest()" style="width:100%;margin-top:12px;font-weight:700;font-size:14px;padding:12px;border-radius:11px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✉️ Testmail an mich senden</button>
+    <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;margin-top:8px;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
     <button onclick="discardNl()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Verwerfen</button>
     <div id="nl-send-result" style="font-family:'Space Mono';font-size:12px;margin-top:10px;line-height:1.6;color:var(--text-soft)"></div>
-    <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:12px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button onclick="nlShowSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">👥 Abonnenten anzeigen</button>
-        <button onclick="nlExportSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Als CSV exportieren</button>
-      </div>
-      <div id="nl-subs" style="margin-top:10px"></div>
+  </details>
+  <details ontoggle="if(this.open) nlShowSubs()" style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
+    <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">👥 Abonnenten <span id="nl-subs-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Aktive, offene und abgemeldete Abonnenten. Offene und abgemeldete Einträge lassen sich per Kreuz dauerhaft entfernen.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="nlShowSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">🔄 Aktualisieren</button>
+      <button onclick="nlExportSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Als CSV exportieren</button>
     </div>
+    <div id="nl-subs" style="margin-top:10px"></div>
   </details>
   <details style="margin-top:6px">
     <summary style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-soft);cursor:pointer">Sicherung & Wartung</summary>
@@ -3320,7 +3379,8 @@ const LEGAL={
    <h4>4. Eingebettete Videos (YouTube)</h4>
    <p>Im Bereich „Videos“ und teils in Artikeln werden YouTube-Videos eingebettet. Es wird der erweiterte Datenschutzmodus („youtube-nocookie“) genutzt. Erst beim Starten eines Videos werden Daten (u.a. deine IP-Adresse) an YouTube/Google übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Anbieter: Google Ireland Limited.</p>
    <h4>5. Kommentarfunktion</h4>
-   <p>Du kannst Artikel kommentieren und auf Kommentare antworten. Gespeichert werden der von dir gewählte Name (ein Pseudonym ist möglich, ein Klarname ist nicht nötig), dein Kommentartext, ein optionales Zitat des beantworteten Kommentars sowie Datum und Uhrzeit. Eine Angabe deiner E-Mail-Adresse ist für Kommentare nicht erforderlich.</p>
+   <p>Du kannst Artikel kommentieren und auf Kommentare antworten. Gespeichert werden der von dir gewählte Name (ein Pseudonym ist möglich, ein Klarname ist nicht nötig), dein Kommentartext, ein optionales Zitat des beantworteten Kommentars sowie Datum und Uhrzeit. Eine Angabe deiner E-Mail-Adresse ist für Kommentare grundsätzlich nicht erforderlich.</p>
+   <p>Optional kannst du beim Kommentieren eine E-Mail-Adresse angeben und aktiv anhaken, dass wir dich benachrichtigen, wenn jemand auf deinen Kommentar antwortet. Nur in diesem Fall speichern wir deine E-Mail-Adresse und nutzen sie ausschließlich für diese Antwort-Benachrichtigungen. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Jede dieser Benachrichtigungen enthält einen Abmeldelink, mit dem du die Benachrichtigungen jederzeit mit einem Klick abstellst. Ohne gesetzten Haken wird keine E-Mail-Adresse gespeichert.</p>
    <p>Zur Missbrauchsvermeidung, insbesondere um pro Kommentar nur eine Bewertung je Person zuzulassen, speichern wir zusätzlich eine anonyme, zufällige Kennung in deinem Browser (localStorage) und, falls diese fehlt, einen gekürzten, nicht umkehrbaren Hash deiner IP-Adresse. Die Kommentardaten werden in unserer Datenbank beim Hoster gespeichert und bleiben sichtbar, bis der Kommentar gelöscht wird. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden Kommentar- und Community-Funktion). Du kannst die Löschung deines Kommentars jederzeit über die unten genannte Kontaktadresse verlangen.</p>
    <h4>6. Newsletter</h4>
    <p>Du kannst unseren Newsletter abonnieren, um über wichtige GTA-6-News informiert zu werden. Wir nutzen das Double-Opt-In-Verfahren: Nach deiner Anmeldung senden wir eine E-Mail an die angegebene Adresse mit der Bitte, das Abonnement über einen Link zu bestätigen. Erst nach dieser Bestätigung erhältst du den Newsletter.</p>
