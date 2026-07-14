@@ -2191,6 +2191,36 @@ async function loadNewsletterStats(){
     el.textContent=`${c.confirmed||0} bestätigt · ${c.pending||0} offen`;
   }catch(e){}
 }
+/* Abonnenten-Liste im Panel: aktiv (confirmed), offen (pending) und abgemeldet
+   (unsubscribed) getrennt. Daten kommen aus api/newsletter.php (nur Admin). */
+async function nlFetchSubs(){ try{ const res=await fetch('api/newsletter.php',{cache:'no-store'}); if(!res.ok) return {err:res.status}; return await res.json(); }catch(e){ return {err:1}; } }
+async function nlShowSubs(){
+  const box=$('nl-subs'); if(!box) return;
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  box.textContent='Lade…';
+  const d=await nlFetchSubs();
+  if(!d||d.err){ box.textContent='Konnte nicht laden (nur eingeloggt sichtbar).'; return; }
+  const subs=d.subscribers||[];
+  const grp=s=>subs.filter(x=>x.status===s);
+  const row=x=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px"><span style="word-break:break-all">${esc(x.email)}</span><span style="color:var(--text-soft);white-space:nowrap;font-size:11px">${x.confirmed_at?fmtCommentDate(x.confirmed_at):(x.created_at?fmtCommentDate(x.created_at):'')}</span></div>`;
+  const sect=(t,arr,empty)=>`<div class="nl-lbl">${t} (${arr.length})</div>`+(arr.length?arr.map(row).join(''):`<div style="font-size:12px;color:var(--text-soft);padding:2px 0">${empty}</div>`);
+  box.innerHTML=sect('Aktiv',grp('confirmed'),'Noch keine aktiven Abonnenten.')
+    +sect('Offen, noch nicht bestätigt',grp('pending'),'Keine offenen.')
+    +sect('Abgemeldet',grp('unsubscribed'),'Keine Abmeldungen.');
+}
+async function nlExportSubs(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const d=await nlFetchSubs();
+  if(!d||d.err){ toast('Konnte nicht laden.'); return; }
+  const subs=d.subscribers||[];
+  const lbl={confirmed:'aktiv',pending:'offen',unsubscribed:'abgemeldet'};
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+  const lines=['E-Mail,Status,Angemeldet,Bestaetigt'];
+  subs.forEach(x=>lines.push([q(x.email),q(lbl[x.status]||x.status),q(x.created_at||''),q(x.confirmed_at||'')].join(',')));
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='viceguide-newsletter-abonnenten.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('CSV heruntergeladen.');
+}
 /* Erzeugt aus den neuesten Artikeln einen fertigen Newsletter-Entwurf (Betreff
    plus HTML-Karten mit Bild, Titel, Teaser und "Weiterlesen"-Link). Der Admin
    kann danach im Textfeld frei anpassen, umsortieren oder Karten loeschen, bevor
@@ -3160,6 +3190,13 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;margin-top:12px;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
     <button onclick="discardNl()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Verwerfen</button>
     <div id="nl-send-result" style="font-family:'Space Mono';font-size:12px;margin-top:10px;line-height:1.6;color:var(--text-soft)"></div>
+    <div style="border-top:1px dashed var(--line);margin-top:16px;padding-top:12px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="nlShowSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">👥 Abonnenten anzeigen</button>
+        <button onclick="nlExportSubs()" style="flex:1 1 170px;font-weight:600;font-size:14px;padding:10px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Als CSV exportieren</button>
+      </div>
+      <div id="nl-subs" style="margin-top:10px"></div>
+    </div>
   </details>
   <details style="margin-top:6px">
     <summary style="font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-soft);cursor:pointer">Sicherung & Wartung</summary>
