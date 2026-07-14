@@ -2281,7 +2281,7 @@ function nlTextBlock(t){ if(!t||!t.trim())return''; const h=nlAutolink(esc(t).re
 function nlMidBlock(t){ if(!t||!t.trim())return''; return '<div style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">'+esc(t.replace(/\n/g,' '))+'</div>'; }
 function nlCard(o){
   const border=o.accent?'2px solid #D00059':'1px solid #ecdfca';
-  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
     +'<td width="140" style="padding:0;vertical-align:top"><a href="'+o.url+'"><img src="'+o.img+'" width="140" alt="" style="width:140px;height:120px;object-fit:cover;display:block"></a></td>'
     +'<td style="padding:12px 16px;vertical-align:top">'
     +(o.label?'<div style="'+NL_BODY+';font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#D00059;text-transform:uppercase;margin:0 0 5px">'+(o.accent?'★ ':'')+esc(o.label)+'</div>':'')
@@ -2292,7 +2292,7 @@ function nlCard(o){
 }
 function nlCountdownHtml(){
   const days=Math.max(0,Math.ceil((Date.UTC(2026,10,19)-Date.now())/86400000));
-  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px"><tr><td align="center" style="background:#FFFFFF;border:1px solid #ecdfca;border-radius:14px;padding:16px 20px">'
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px"><tr><td align="center" bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #ecdfca;border-radius:14px;padding:16px 20px">'
     +'<div style="'+NL_BODY+';font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7fa5;margin:0 0 4px">Countdown bis zum Release</div>'
     +'<div style="'+NL_HEAD+';font-size:30px;font-weight:700;color:#221041;line-height:1.05">noch <span style="color:#D00059">'+days+' Tage</span></div>'
     +'<div style="'+NL_BODY+';font-size:13px;color:#8a7fa5;margin:4px 0 0">19. November 2026</div></td></tr></table>';
@@ -2305,7 +2305,7 @@ function nlBuildInner(){
   arts.forEach((a,idx)=>{
     const url=NL_BASE+'/artikel/'+encodeURIComponent(a.id), img=NL_BASE+'/api/article_image.php?id='+encodeURIComponent(a.id);
     if(a.top&&idx===0){
-      html+='<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;background:#ffffff;border:2px solid #D00059;border-radius:16px;overflow:hidden">'
+      html+='<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="margin:0 0 18px;background:#ffffff;border:2px solid #D00059;border-radius:16px;overflow:hidden">'
         +'<tr><td style="padding:0"><a href="'+url+'"><img src="'+img+'" width="560" alt="" style="width:100%;display:block"></a></td></tr>'
         +'<tr><td style="padding:18px 22px 22px">'
         +'<div style="'+NL_BODY+';font-size:12px;font-weight:700;letter-spacing:.8px;color:#D00059;text-transform:uppercase;margin:0 0 8px">&#9733; Top-Story</div>'
