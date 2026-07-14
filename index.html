@@ -193,12 +193,15 @@
   .p-reltile:not(.has-img) .p-rtx{padding-left:16px}
   .p-reltile .p-rn{color:var(--text-soft)}
   @media(max-width:760px){
-    .p-hl{grid-template-columns:1fr}
+    .p-hl{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:4px;scrollbar-width:none}
+    .p-hl::-webkit-scrollbar{display:none}
+    .p-hl .pcard{flex:0 0 82%;scroll-snap-align:start}
     .p-rgrid{grid-template-columns:1fr}
     .p-rgrid .p-rthumb{width:130px}
     .p-relgrid{grid-template-columns:1fr 1fr}
     .p-relgrid .p-rthumb{width:64px}
     .p-news{grid-template-columns:1fr}
+    .p-news .p-nrow:nth-child(n+3){display:none}
   }
 
   /* section header */
