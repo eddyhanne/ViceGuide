@@ -272,6 +272,7 @@ Logo, Wallpaper und alle DB-/Artikel-Bilder liegen als **base64-Data-URIs** dire
 ### Code-Stil
 - CSS und JS bleiben inline in `index.html`. Assets als base64, außer Fonts.
 - **Theming ausschließlich über CSS Custom Properties.** Nie feste Farbwerte hart schreiben, immer die `--variable`. Dark Mode ist die CSS-Basis (`:root`), Light Mode überschreibt (`:root[data-theme="light"]`). Light Mode ist Standard-Theme, per `localStorage` (`vg-theme`) gemerkt.
+- **Akzentfarbe ist bewusst modusabhängig (nicht eine Farbe für beide Modi).** Light Mode nutzt Pink (`--accent:#D00059`), Dark Mode Blau (`--accent:#88B8C5`). Die Sekundärfarbe `--accent-2` ist in beiden Modi an die jeweilige Hauptfarbe angeglichen (Light `#D00059`, Dark `#88B8C5`), damit keine dritte, fahle Farbe (früher Minz-Türkis `#12B5B0` bzw. Purple `#8B5CF6`) dazwischenfunkt. Auch die Chip-Farben (`--ntag-*`) folgen pro Modus der Hauptfarbe (Light pinkstichig, Dark blaustichig). Das ist eine bewusste Design-Entscheidung ("Pink am Tag, Blau in der Nacht", siehe Abschnitt 5), kein Versehen: einen Akzent nicht auf eine einzige Farbe für beide Modi zurückvereinheitlichen.
 - Vanilla JS, keine Transpilation. Funktionsnamen sprechend (`openAdmin`, `toggleEdit`, `ieApply`, `renderView`, `toggleTheme`).
 - **Keine Gedankenstriche, kein generischer KI-Ton** (Abschnitt 0).
 - PHP: kleine Skripte pro Endpunkt, PDO mit Prepared Statements (nie String-Konkatenation für SQL), `vg_require_admin($cfg)` als Gate vor jeder schreibenden Aktion.
@@ -315,6 +316,7 @@ php -S localhost:8000 -t .
 - **Single-File-HTML statt Framework.** Einfach zu hosten, sofort lauffähig, kein Build-Overhead.
 - **Zwei-Phasen-Struktur (pre/rel), Phase 2 gesperrt.** An den Spiel-Lebenszyklus gekoppelt.
 - **Dual-Theme mit Umschalter,** Light Mode als Standard, per `localStorage`.
+- **Modusabhängige Akzentfarbe (Pink am Tag, Blau in der Nacht).** Ursprünglich war der Akzent Pink/Magenta in beiden Modi. Nach einem Redesign-Durchlauf mit dem Betreiber ist der Akzent jetzt bewusst je Modus verschieden: Light Mode Pink (`#D00059`), Dark Mode Blau (`#88B8C5`). Grund: ein einzelnes Blau wirkte im Light Mode zu blass, ein einzelnes Pink im Dark Mode zu grell. Die frühere Zweitfarbe (`--accent-2`, Minz-Türkis im Light, Purple im Dark) fiel dabei weg und wurde an die Hauptfarbe angeglichen, weil sie sonst als dritte Farbe fahl dazwischenwirkte (u. a. bei der "ab 19.11.2026"-Pille). Die pinken Text-Labels, die der Betreiber selbst in die Titelbilder einbrennt, werden künftig weggelassen bzw. neutral gehalten, damit sie in beiden Modi passen.
 - **Eigene Grafik statt Rockstar-Material.**
 - **Fonts selbst gehostet statt Google Fonts.** DSGVO plus Caching-Vorteil.
 - **Bilder automatisch komprimiert.** Jedes im Editiermodus hochgeladene Bild wird clientseitig per Canvas auf max. 1100px verkleinert und als WebP kodiert (Fallback JPEG). Grund: eine frühe Version ohne Kompression ließ `database.json` auf über 40 MB anwachsen.
