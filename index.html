@@ -2183,6 +2183,36 @@ async function loadNewsletterStats(){
     el.textContent=`${c.confirmed||0} bestätigt · ${c.pending||0} offen`;
   }catch(e){}
 }
+/* Erzeugt aus den neuesten Artikeln einen fertigen Newsletter-Entwurf (Betreff
+   plus HTML-Karten mit Bild, Titel, Teaser und "Weiterlesen"-Link). Der Admin
+   kann danach im Textfeld frei anpassen, umsortieren oder Karten loeschen, bevor
+   er sendet. Bilder ueber die absolute api/article_image.php-URL (im Mail-Client
+   abrufbar), Links auf die echten Artikel-URLs. */
+function buildNewsletterDraft(){
+  const base='https://viceguide.de';
+  const arts=(GUIDES||[]).slice().filter(g=>g&&g.id&&g.title)
+    .sort((a,b)=> new Date(b.date||b.article_date||0) - new Date(a.date||a.article_date||0))
+    .slice(0,5);
+  if(!arts.length){ toast('Keine Artikel gefunden.'); return; }
+  const cards=arts.map(g=>{
+    const url=base+'/artikel/'+encodeURIComponent(g.id);
+    const cat=(typeof GCAT!=='undefined'&&GCAT[g.cat]&&GCAT[g.cat].name)?GCAT[g.cat].name:'News';
+    const teaser=g.summary||g.lead||'';
+    const img=g.img?`<a href="${url}" style="text-decoration:none"><img src="${base}/api/article_image.php?id=${encodeURIComponent(g.id)}" width="600" alt="${esc(g.title)}" style="width:100%;max-width:600px;border-radius:10px;display:block;margin:0 0 12px"></a>\n`:'';
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px"><tr><td>
+${img}<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#D00059;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 0 4px">${esc(cat)}</div>
+<a href="${url}" style="text-decoration:none"><div style="font-family:Arial,Helvetica,sans-serif;font-size:19px;font-weight:700;color:#221041;line-height:1.3;margin:0 0 6px">${esc(g.title)}</div></a>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#4a4458;line-height:1.55;margin:0 0 12px">${esc(teaser)}</div>
+<a href="${url}" style="display:inline-block;background:#D00059;color:#ffffff;text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;padding:9px 18px;border-radius:8px">Weiterlesen</a>
+</td></tr></table>`;
+  }).join('\n');
+  const intro=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#221041;line-height:1.6;margin:0 0 22px">Die wichtigsten GTA-6-News auf einen Blick. Viel Spaß beim Lesen.</p>`;
+  $('nl-subject').value='GTA 6 Wochenrückblick: '+arts[0].title;
+  $('nl-body').value=intro+'\n'+cards;
+  const det=$('nl-body').closest('details'); if(det) det.open=true;
+  const out=$('nl-send-result'); if(out) out.textContent='Entwurf aus den '+arts.length+' neuesten Artikeln erzeugt. Jetzt anpassen und dann senden.';
+  toast('Wochenrückblick-Entwurf erzeugt ✦');
+}
 async function sendNewsletter(){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const subj=($('nl-subject').value||'').trim(), body=($('nl-body').value||'').trim();
@@ -2969,8 +2999,9 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📧 Newsletter <span id="nl-adm-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
     <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Betreff und Inhalt eingeben und an alle <b>bestätigten</b> Abonnenten senden. Reiner Text wird automatisch umbrochen, einfaches HTML ist erlaubt. Ein Abmeldelink hängt automatisch an jeder Mail.</p>
+    <button onclick="buildNewsletterDraft()" style="width:100%;margin-bottom:12px;font-weight:700;font-size:14px;padding:11px;border-radius:10px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✨ Wochenrückblick aus neuesten Artikeln erzeugen</button>
     <input id="nl-subject" type="text" placeholder="Betreff" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:8px">
-    <textarea id="nl-body" rows="6" placeholder="Newsletter-Inhalt…" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
+    <textarea id="nl-body" rows="10" placeholder="Newsletter-Inhalt…" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
     <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
     <div id="nl-send-result" style="font-family:'Space Mono';font-size:12px;margin-top:10px;line-height:1.6;color:var(--text-soft)"></div>
   </details>
