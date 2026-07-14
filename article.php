@@ -107,7 +107,7 @@ $html = file_get_contents(__DIR__ . '/index.html');
 $head = [
     '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
         '<title>' . vg_esc($pageTitle) . '</title>',
-    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Gerüchte, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
+    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
         '<meta name="description" content="' . vg_esc($summary) . '">',
     '<meta property="og:type" content="website">' =>
         '<meta property="og:type" content="article">',
@@ -153,9 +153,21 @@ $articleLd = json_encode([
     'publisher' => ['@type' => 'Organization', 'name' => 'ViceGuide'],
     'mainEntityOfPage' => $canonical,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+// BreadcrumbList: Startseite > News & Gerüchte > Artikel. Hilft Google, die
+// Hierarchie zu verstehen, und kann die Breadcrumb im Suchergebnis anzeigen.
+$breadcrumbLd = json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => 'https://viceguide.de/'],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Gerüchte', 'item' => 'https://viceguide.de/news'],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $row['title'], 'item' => $canonical],
+    ],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $html = str_replace(
     '<style>',
-    '<script type="application/ld+json">' . $articleLd . '</script>' . "\n" . '<style>',
+    '<script type="application/ld+json">' . $articleLd . '</script>' . "\n"
+        . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n" . '<style>',
     $html
 );
 
@@ -196,6 +208,21 @@ if ($sources) {
     }
     $body['<div class="sources" id="a-sources" style="display:none"><b>Quellen dieses Artikels</b><div id="a-src"></div></div>'] =
         '<div class="sources" id="a-sources" style="display:block"><b>Quellen dieses Artikels</b><div id="a-src">' . $srcHtml . '</div></div>';
+}
+/* Interne Verlinkung fuer Crawler: den "Mehr Artikel"-Block serverseitig mit
+   echten Links fuellen (gleiche Kategorie zuerst, dann neueste). Ankertext ist
+   der Artikeltitel, das ist das SEO-relevante Signal. Fuer normale Besucher
+   ueberschreibt openArticle() den Block beim Laden ohnehin clientseitig. */
+$moreStmt = $pdo->prepare('SELECT id, title, article_date FROM articles WHERE id <> ? ORDER BY (cat = ?) DESC, article_date DESC LIMIT 6');
+$moreStmt->execute([$row['id'], $row['cat']]);
+$moreHtml = '';
+foreach ($moreStmt->fetchAll() as $m) {
+    $moreHtml .= '<a class="mcard" href="/artikel/' . vg_esc($m['id']) . '">'
+        . '<div class="mcb"><span class="mt">' . vg_esc($m['title']) . '</span>'
+        . '<span class="mdate">' . vg_esc(vg_fmt_date($m['article_date'])) . '</span></div></a>';
+}
+if ($moreHtml !== '') {
+    $body['<div class="more-grid" id="a-more"></div>'] = '<div class="more-grid" id="a-more">' . $moreHtml . '</div>';
 }
 foreach ($body as $search => $replace) {
     $html = str_replace($search, $replace, $html);
