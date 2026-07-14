@@ -68,16 +68,30 @@ function vg_newsletter_opts(array $cfg): array {
     return $opts;
 }
 
-/* Rahmt den Newsletter-Inhalt mit Kopf, Abmeldelink und Fan-Hinweis. */
+/* Rahmt den vom Client gebauten Newsletter-Inhalt ($inner) in das feste
+   Mail-Template: heller Hintergrund wie die Website, Kopf-Bild (freigestelltes
+   Logo auf Palmen-Hintergrund, gerendert aus dem Homepage-Hero), Website-
+   Schriften per @font-face und der (pro Empfaenger eigene) Abmeldelink. */
 function vg_newsletter_wrap(string $inner, string $unsubUrl, array $cfg): string {
-    return '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:600px;margin:0 auto">'
-         . '<div style="font-weight:800;font-size:20px;margin-bottom:16px">Vice<span style="color:#D00059">Guide</span></div>'
+    $base = vg_site_url($cfg);
+    $ff = "@font-face{font-family:'Oswald';font-weight:200 700;font-display:swap;src:url('$base/assets/fonts/oswald-variable.woff2') format('woff2')}"
+        . "@font-face{font-family:'Inter';font-weight:100 900;font-display:swap;src:url('$base/assets/fonts/inter-variable.woff2') format('woff2')}";
+    $BODY = "font-family:'Inter',Arial,Helvetica,sans-serif";
+    $unsub = htmlspecialchars($unsubUrl, ENT_QUOTES, 'UTF-8');
+    return '<!doctype html><html lang="de"><head><meta charset="utf-8">'
+         . '<meta name="viewport" content="width=device-width,initial-scale=1">'
+         . '<style>' . $ff . '</style></head>'
+         . '<body style="margin:0;padding:0;background:#FBF3E7">'
+         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF3E7"><tr><td align="center" style="padding:24px 14px">'
+         . '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
+         . '<tr><td style="padding:0"><a href="' . $base . '/"><img src="' . $base . '/newsletter-header.jpg" width="600" alt="ViceGuide" style="width:100%;display:block;border-radius:18px 18px 0 0"></a></td></tr>'
+         . '<tr><td style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'
          . $inner
-         . '<hr style="border:none;border-top:1px solid #ddd;margin:24px 0">'
-         . '<p style="font-size:12px;color:#999">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. '
-         . '<a href="' . htmlspecialchars($unsubUrl, ENT_QUOTES, 'UTF-8') . '" style="color:#999">Hier abmelden</a>.</p>'
-         . '<p style="font-size:12px;color:#999">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</p>'
-         . '</div>';
+         . '</td></tr>'
+         . '<tr><td style="padding:16px 26px 6px">'
+         . '<div style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="' . $unsub . '" style="color:#9a90ac">Hier abmelden</a>.</div>'
+         . '<div style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6;margin-top:8px">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>'
+         . '</td></tr></table></td></tr></table></body></html>';
 }
 
 /* ---- Anmeldung bestaetigen (Double-Opt-In) ---- */

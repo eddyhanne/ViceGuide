@@ -742,6 +742,8 @@
   .nl-form-col{flex:1 1 300px}
   .nl-legal-col{flex:1 1 220px;font-size:11.5px;color:var(--text-soft);line-height:1.55;padding-top:2px}
   .nl-legal-col a{color:var(--accent);text-decoration:underline}
+  .nl-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-soft);margin:15px 0 6px}
+  .nl-fld{width:100%;font-family:'Inter';font-size:14px;padding:9px 11px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--text)}
   @media(max-width:720px){.foot{gap:26px}.nl-box{flex-basis:100%;order:-1}}
   .nl-h{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;letter-spacing:.3px}
   .nl-p{font-size:13.5px;color:var(--text-soft);margin:4px 0 12px;line-height:1.55}
@@ -2194,40 +2196,158 @@ async function loadNewsletterStats(){
    kann danach im Textfeld frei anpassen, umsortieren oder Karten loeschen, bevor
    er sendet. Bilder ueber die absolute api/article_image.php-URL (im Mail-Client
    abrufbar), Links auf die echten Artikel-URLs. */
-function buildNewsletterDraft(){
-  const base='https://viceguide.de';
-  const arts=(GUIDES||[]).slice().filter(g=>g&&g.id&&g.title)
-    .sort((a,b)=> new Date(b.date||b.article_date||0) - new Date(a.date||a.article_date||0))
-    .slice(0,5);
-  if(!arts.length){ toast('Keine Artikel gefunden.'); return; }
-  const cards=arts.map(g=>{
-    const url=base+'/artikel/'+encodeURIComponent(g.id);
-    const cat=(typeof GCAT!=='undefined'&&GCAT[g.cat]&&GCAT[g.cat].name)?GCAT[g.cat].name:'News';
-    const teaser=g.summary||g.lead||'';
-    const img=g.img?`<a href="${url}" style="text-decoration:none"><img src="${base}/api/article_image.php?id=${encodeURIComponent(g.id)}" width="600" alt="${esc(g.title)}" style="width:100%;max-width:600px;border-radius:10px;display:block;margin:0 0 12px"></a>\n`:'';
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px"><tr><td>
-${img}<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#D00059;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 0 4px">${esc(cat)}</div>
-<a href="${url}" style="text-decoration:none"><div style="font-family:Arial,Helvetica,sans-serif;font-size:19px;font-weight:700;color:#221041;line-height:1.3;margin:0 0 6px">${esc(g.title)}</div></a>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#4a4458;line-height:1.55;margin:0 0 12px">${esc(teaser)}</div>
-<a href="${url}" style="display:inline-block;background:#D00059;color:#ffffff;text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;padding:9px 18px;border-radius:8px">Weiterlesen</a>
-</td></tr></table>`;
-  }).join('\n');
-  const intro=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#221041;line-height:1.6;margin:0 0 22px">Die wichtigsten GTA-6-News auf einen Blick. Viel Spaß beim Lesen.</p>`;
-  $('nl-subject').value='GTA 6 Wochenrückblick: '+arts[0].title;
-  $('nl-body').value=intro+'\n'+cards;
-  const det=$('nl-body').closest('details'); if(det) det.open=true;
-  const out=$('nl-send-result'); if(out) out.textContent='Entwurf aus den '+arts.length+' neuesten Artikeln erzeugt. Jetzt anpassen und dann senden.';
+/* ===== Newsletter-Editor =====
+   Der Admin baut den Newsletter strukturiert zusammen (Artikel und
+   Datenbank-Einträge auswählen, Top-Story/Highlight markieren, Teaser und
+   optionale Texte bearbeiten, Countdown-Position). Der Entwurf liegt in
+   nlDraft und in localStorage (überlebt Zuklappen). nlBuildInner() erzeugt
+   daraus den Mail-Inhalt (ohne Kopf/Fuß, die kommen serverseitig in
+   vg_newsletter_wrap dazu), nlWrapPreview() spiegelt das Server-Template
+   für die Live-Vorschau im iframe. */
+const NL_BASE='https://viceguide.de';
+const NL_HEAD="font-family:'Oswald','Arial Narrow',Arial,sans-serif";
+const NL_BODY="font-family:'Inter',Arial,Helvetica,sans-serif";
+const NL_SEC_LABEL={characters:'Charakter',vehicles:'Fahrzeug',weapons:'Waffe',wildlife:'Wildtier',gangs:'Gang',radio:'Radio',activities:'Aktivität',locations:'Ort'};
+const NL_SEC_PLURAL={characters:'Charaktere',vehicles:'Fahrzeuge',weapons:'Waffen',wildlife:'Wildtiere',gangs:'Gangs',radio:'Radio',activities:'Aktivitäten',locations:'Orte'};
+const NL_SEC_PFX={characters:'charaktere',vehicles:'fahrzeuge',weapons:'waffen',wildlife:'wildtiere',gangs:'gangs',radio:'radio',activities:'aktivitaeten',locations:'orte'};
+let nlDraft=null;
+function nlDefault(){ return {subject:'', intro:'Hey! Dein GTA-6-Update von ViceGuide: die wichtigsten News und Einträge der letzten Tage, kompakt auf einen Blick.', mid:'', outro:'', cd:'top', arts:[], entries:[]}; }
+function nlLoad(){ if(nlDraft) return; try{ nlDraft=JSON.parse(localStorage.getItem('vg-nl-draft')||'null'); }catch(e){} if(!nlDraft||typeof nlDraft!=='object'){ nlDraft=nlDefault(); } nlDraft.arts=nlDraft.arts||[]; nlDraft.entries=nlDraft.entries||[]; }
+function nlPersist(){ try{ localStorage.setItem('vg-nl-draft',JSON.stringify(nlDraft)); }catch(e){} }
+function nlSyncFields(){ nlLoad(); if($('nl-subject'))nlDraft.subject=$('nl-subject').value; if($('nl-intro'))nlDraft.intro=$('nl-intro').value; if($('nl-mid'))nlDraft.mid=$('nl-mid').value; if($('nl-outro'))nlDraft.outro=$('nl-outro').value; if($('nl-cd'))nlDraft.cd=$('nl-cd').value; }
+function nlSave(){ nlSyncFields(); nlPersist(); }
+function nlArr(kind){ return kind==='art'?nlDraft.arts:nlDraft.entries; }
+function nlInit(){
+  nlLoad();
+  const latest=(GUIDES||[]).slice().filter(g=>g&&g.id&&g.title).sort((a,b)=>new Date(b.date||b.article_date||0)-new Date(a.date||a.article_date||0)).slice(0,5);
+  if(!latest.length){ toast('Keine Artikel gefunden.'); return; }
+  nlDraft.arts=latest.map((g,i)=>({id:g.id,title:g.title,teaser:g.summary||g.lead||'',top:i===0}));
+  if(!nlDraft.subject) nlDraft.subject='GTA 6 Wochenrückblick: '+latest[0].title;
+  nlPersist(); nlFillFields();
   toast('Wochenrückblick-Entwurf erzeugt ✦');
 }
+function nlFillFields(){
+  nlLoad();
+  if($('nl-subject'))$('nl-subject').value=nlDraft.subject||'';
+  if($('nl-intro'))$('nl-intro').value=nlDraft.intro||'';
+  if($('nl-mid'))$('nl-mid').value=nlDraft.mid||'';
+  if($('nl-outro'))$('nl-outro').value=nlDraft.outro||'';
+  if($('nl-cd'))$('nl-cd').value=nlDraft.cd||'top';
+  nlRenderArts(); nlRenderEntries(); nlFillAddSelects();
+}
+function nlRenderArts(){ const b=$('nl-arts'); if(!b)return; b.innerHTML=nlDraft.arts.length?nlDraft.arts.map((a,i)=>nlRow('art',a,i)).join(''):'<div style="font-size:12px;color:var(--text-soft);padding:3px 0">Noch keine Artikel. „Wochenrückblick erzeugen" oder unten hinzufügen.</div>'; }
+function nlRenderEntries(){ const b=$('nl-entries'); if(!b)return; b.innerHTML=nlDraft.entries.length?nlDraft.entries.map((e,i)=>nlRow('entry',e,i)).join(''):'<div style="font-size:12px;color:var(--text-soft);padding:3px 0">Keine Einträge. Optional unten hinzufügen.</div>'; }
+function nlRow(kind,o,i){
+  const isArt=kind==='art';
+  const flag=isArt?o.top:o.highlight;
+  const flagLabel=isArt?'Top-Story':'Highlight';
+  const thumb=isArt?(NL_BASE+'/api/article_image.php?id='+encodeURIComponent(o.id)):(o._id?NL_BASE+'/api/entry_image.php?id='+encodeURIComponent(o._id):'');
+  const bg=thumb?`background:#d8cdbb url('${thumb}') center/cover no-repeat`:'background:#d8cdbb';
+  const bd=flag?'var(--accent)':'var(--line)';
+  return `<div style="display:flex;gap:9px;border:1.5px solid ${bd};border-radius:11px;padding:9px;margin-bottom:9px;background:var(--surface-2)">
+    <div style="width:54px;height:54px;border-radius:8px;flex:0 0 54px;${bg}"></div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-weight:700;font-size:13px;line-height:1.2">${esc(o.title)}</span>${flag?`<span style="font-size:9px;font-weight:700;text-transform:uppercase;color:#fff;background:var(--accent);border-radius:5px;padding:1px 5px">★ ${flagLabel}</span>`:''}</div>
+      ${(!isArt&&o.secLabel)?`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--accent);margin:2px 0">${esc(o.secLabel)}</div>`:''}
+      <textarea rows="2" oninput="nlTeaser('${kind}',${i},this.value)" style="width:100%;font-family:'Inter';font-size:12px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-top:4px;resize:vertical">${esc(o.teaser||'')}</textarea>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;flex:0 0 auto">
+      <button title="${flagLabel} markieren" onclick="nlFlag('${kind}',${i})" style="width:30px;height:26px;border:1.5px solid ${bd};border-radius:6px;background:${flag?'var(--accent)':'var(--surface)'};color:${flag?'#fff':'var(--text)'};cursor:pointer">★</button>
+      <button title="nach oben" onclick="nlMove('${kind}',${i},-1)" style="width:30px;height:26px;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">↑</button>
+      <button title="nach unten" onclick="nlMove('${kind}',${i},1)" style="width:30px;height:26px;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">↓</button>
+      <button title="entfernen" onclick="nlRemove('${kind}',${i})" style="width:30px;height:26px;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:#c0392b;cursor:pointer">✕</button>
+    </div>
+  </div>`;
+}
+function nlTeaser(kind,i,v){ const a=nlArr(kind); if(a[i]){ a[i].teaser=v; nlPersist(); } }
+function nlFlag(kind,i){ const a=nlArr(kind); if(!a[i])return; if(kind==='art'){ const on=!a[i].top; a.forEach(x=>x.top=false); a[i].top=on; } else { a[i].highlight=!a[i].highlight; } nlPersist(); kind==='art'?nlRenderArts():nlRenderEntries(); }
+function nlMove(kind,i,d){ const a=nlArr(kind); const j=i+d; if(j<0||j>=a.length)return; const t=a[i];a[i]=a[j];a[j]=t; nlPersist(); kind==='art'?nlRenderArts():nlRenderEntries(); }
+function nlRemove(kind,i){ const a=nlArr(kind); a.splice(i,1); nlPersist(); kind==='art'?nlRenderArts():nlRenderEntries(); nlFillAddSelects(); }
+function nlFillAddSelects(){
+  const sa=$('nl-add-art');
+  if(sa){ const have=new Set(nlDraft.arts.map(a=>a.id)); sa.innerHTML='<option value="">+ Artikel hinzufügen…</option>'+(GUIDES||[]).filter(g=>g&&g.id&&!have.has(g.id)).map(g=>`<option value="${esc(g.id)}">${esc(g.title)}</option>`).join(''); }
+  const se=$('nl-add-entry');
+  if(se){ const have=new Set(nlDraft.entries.map(e=>e.sec+':'+e._id)); let opts='<option value="">+ Datenbank-Eintrag hinzufügen…</option>';
+    Object.keys(NL_SEC_PLURAL).forEach(sec=>{ const list=(DB[sec]||[]).filter(e=>e&&(e._id!=null)&&!have.has(sec+':'+e._id)); if(!list.length)return; opts+=`<optgroup label="${NL_SEC_PLURAL[sec]}">`+list.map(e=>`<option value="${sec}:${e._id}">${esc(e.name)}</option>`).join('')+'</optgroup>'; });
+    se.innerHTML=opts;
+  }
+}
+function nlAddArticle(id){ if(!id)return; const g=(GUIDES||[]).find(x=>x.id===id); if(!g)return; nlDraft.arts.push({id:g.id,title:g.title,teaser:g.summary||g.lead||'',top:false}); nlPersist(); nlRenderArts(); nlFillAddSelects(); }
+function nlAddEntry(val){ if(!val)return; const idx=val.indexOf(':'); const sec=val.slice(0,idx), idStr=val.slice(idx+1); const e=(DB[sec]||[]).find(x=>String(x._id)===idStr); if(!e)return; nlDraft.entries.push({sec,_id:e._id,slug:e.slug||slugify(e.name||''),title:e.name,secLabel:NL_SEC_LABEL[sec]||'Eintrag',pfx:NL_SEC_PFX[sec]||sec,teaser:(e.desc||'').slice(0,120),highlight:false}); nlPersist(); nlRenderEntries(); nlFillAddSelects(); }
+function nlAutolink(h){ return h.replace('ViceGuide','<a href="'+NL_BASE+'/" style="color:#D00059;font-weight:700;text-decoration:none">ViceGuide</a>'); }
+function nlTextBlock(t){ if(!t||!t.trim())return''; const h=nlAutolink(esc(t).replace(/\n/g,'<br>')); return '<div style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">'+h+'</div>'; }
+function nlCard(o){
+  const border=o.accent?'2px solid #D00059':'1px solid #ecdfca';
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px;background:#ffffff;border:'+border+';border-radius:14px;overflow:hidden"><tr>'
+    +'<td width="140" style="padding:0;vertical-align:top"><a href="'+o.url+'"><img src="'+o.img+'" width="140" alt="" style="width:140px;height:120px;object-fit:cover;display:block"></a></td>'
+    +'<td style="padding:12px 16px;vertical-align:top">'
+    +(o.label?'<div style="'+NL_BODY+';font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#D00059;text-transform:uppercase;margin:0 0 5px">'+(o.accent?'★ ':'')+esc(o.label)+'</div>':'')
+    +'<div style="'+NL_HEAD+';font-size:18px;font-weight:600;color:#221041;line-height:1.25;margin:0 0 6px">'+esc(o.title)+'</div>'
+    +(o.teaser?'<div style="'+NL_BODY+';font-size:13px;color:#6b6478;line-height:1.5;margin:0 0 8px">'+esc(o.teaser)+'</div>':'')
+    +'<a href="'+o.url+'" style="'+NL_BODY+';font-size:13px;font-weight:700;color:#D00059;text-decoration:none">'+o.cta+' &rarr;</a>'
+    +'</td></tr></table>';
+}
+function nlCountdownHtml(){
+  const days=Math.max(0,Math.ceil((Date.UTC(2026,10,19)-Date.now())/86400000));
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px"><tr><td align="center" style="background:#FFFFFF;border:1px solid #ecdfca;border-radius:14px;padding:16px 20px">'
+    +'<div style="'+NL_BODY+';font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7fa5;margin:0 0 4px">Countdown bis zum Release</div>'
+    +'<div style="'+NL_HEAD+';font-size:30px;font-weight:700;color:#221041;line-height:1.05">noch <span style="color:#D00059">'+days+' Tage</span></div>'
+    +'<div style="'+NL_BODY+';font-size:13px;color:#8a7fa5;margin:4px 0 0">19. November 2026</div></td></tr></table>';
+}
+function nlBuildInner(){
+  nlSyncFields();
+  let html=nlTextBlock(nlDraft.intro);
+  if(nlDraft.cd==='top') html+=nlCountdownHtml();
+  const arts=nlDraft.arts.slice().sort((a,b)=>(b.top?1:0)-(a.top?1:0));
+  arts.forEach((a,idx)=>{
+    const url=NL_BASE+'/artikel/'+encodeURIComponent(a.id), img=NL_BASE+'/api/article_image.php?id='+encodeURIComponent(a.id);
+    if(a.top&&idx===0){
+      html+='<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;background:#ffffff;border:2px solid #D00059;border-radius:16px;overflow:hidden">'
+        +'<tr><td style="padding:0"><a href="'+url+'"><img src="'+img+'" width="560" alt="" style="width:100%;display:block"></a></td></tr>'
+        +'<tr><td style="padding:18px 22px 22px">'
+        +'<div style="'+NL_BODY+';font-size:12px;font-weight:700;letter-spacing:.8px;color:#D00059;text-transform:uppercase;margin:0 0 8px">&#9733; Top-Story</div>'
+        +'<div style="'+NL_HEAD+';font-size:26px;font-weight:700;color:#221041;line-height:1.2;margin:0 0 10px">'+esc(a.title)+'</div>'
+        +(a.teaser?'<div style="'+NL_BODY+';font-size:15px;color:#4a4458;line-height:1.6;margin:0 0 16px">'+esc(a.teaser)+'</div>':'')
+        +'<a href="'+url+'" style="display:inline-block;background:#D00059;color:#fff;text-decoration:none;'+NL_BODY+';font-size:14px;font-weight:700;padding:11px 22px;border-radius:9px">Ganzen Artikel lesen</a>'
+        +'</td></tr></table>';
+      if(arts.length>1) html+='<div style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:6px 0 12px">Mehr aus dieser Woche</div>';
+    } else {
+      html+=nlCard({url,img,label:'',title:a.title,teaser:a.teaser,cta:'Weiterlesen'});
+    }
+  });
+  html+=nlTextBlock(nlDraft.mid);
+  const ents=nlDraft.entries.slice().sort((a,b)=>(b.highlight?1:0)-(a.highlight?1:0));
+  ents.forEach(e=>{
+    const url=NL_BASE+'/'+(e.pfx||'')+'/'+(e.slug||''), img=e._id!=null?NL_BASE+'/api/entry_image.php?id='+encodeURIComponent(e._id):'';
+    html+=nlCard({url,img,label:e.secLabel||'',title:e.title,teaser:e.teaser,cta:'Zum Eintrag',accent:!!e.highlight});
+  });
+  html+=nlTextBlock(nlDraft.outro);
+  if(nlDraft.cd==='bottom') html+=nlCountdownHtml();
+  return html;
+}
+function nlWrapPreview(inner){
+  const ff="@font-face{font-family:'Oswald';font-weight:200 700;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/oswald-variable.woff2') format('woff2')}@font-face{font-family:'Inter';font-weight:100 900;font-display:swap;src:url('"+NL_BASE+"/assets/fonts/inter-variable.woff2') format('woff2')}";
+  return '<!doctype html><html><head><meta charset="utf-8"><style>'+ff+'</style></head><body style="margin:0;background:#FBF3E7">'
+    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF3E7"><tr><td align="center" style="padding:24px 14px"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px">'
+    +'<tr><td style="padding:0"><img src="'+NL_BASE+'/newsletter-header.jpg" width="600" style="width:100%;display:block;border-radius:18px 18px 0 0"></td></tr>'
+    +'<tr><td style="padding:24px 26px 28px;background:#FFF9EF;border:1px solid #ecdfca;border-top:none;border-radius:0 0 18px 18px">'+inner+'</td></tr>'
+    +'<tr><td style="padding:16px 26px 6px"><div style="'+NL_BODY+';font-size:12px;color:#9a90ac;line-height:1.6">Du bekommst diese Mail, weil du dich beim ViceGuide-Newsletter angemeldet hast. <a href="#" style="color:#9a90ac">Hier abmelden</a>.</div></td></tr>'
+    +'</table></td></tr></table></body></html>';
+}
+function nlPreview(){ nlLoad(); const f=$('nl-frame'); if(!f)return; f.style.display='block'; f.srcdoc=nlWrapPreview(nlBuildInner()); }
+function discardNl(){ if(!confirm('Newsletter-Entwurf wirklich verwerfen?'))return; nlDraft=nlDefault(); try{localStorage.removeItem('vg-nl-draft');}catch(e){} nlFillFields(); const f=$('nl-frame'); if(f){f.style.display='none';f.srcdoc='';} const out=$('nl-send-result'); if(out) out.textContent='Entwurf verworfen.'; }
 async function sendNewsletter(){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
-  const subj=($('nl-subject').value||'').trim(), body=($('nl-body').value||'').trim();
+  nlSyncFields();
   const out=$('nl-send-result');
-  if(!subj||!body){ out.textContent='Betreff und Inhalt sind erforderlich.'; return; }
+  const subj=(nlDraft.subject||'').trim();
+  if(!subj){ out.textContent='Bitte einen Betreff eingeben.'; return; }
+  if(!nlDraft.arts.length && !nlDraft.entries.length && !(nlDraft.intro||'').trim()){ out.textContent='Der Newsletter ist leer.'; return; }
+  const inner=nlBuildInner();
   if(!confirm('Newsletter jetzt an alle bestätigten Abonnenten senden?')) return;
   const btn=$('nl-send-btn'); btn.disabled=true; const lbl=btn.textContent; btn.textContent='Sende…';
   try{
-    const res=await fetch('api/newsletter.php?action=send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subj,body})});
+    const res=await fetch('api/newsletter.php?action=send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subj,body:inner})});
     const d=await res.json().catch(()=>({}));
     if(!res.ok){ out.textContent=d.error||'Versand fehlgeschlagen.'; }
     else { out.textContent=`Gesendet: ${d.sent||0}${d.failed?(', fehlgeschlagen: '+d.failed):''}.`; }
@@ -2533,7 +2653,7 @@ $('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
 /* Admin / KI */
-function openAdmin(){const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();setTimeout(()=>$('draft-json').focus(),80);}
+function openAdmin(){const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
 /* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
@@ -3004,11 +3124,37 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
   </div>
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📧 Newsletter <span id="nl-adm-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
-    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Betreff und Inhalt eingeben und an alle <b>bestätigten</b> Abonnenten senden. Reiner Text wird automatisch umbrochen, einfaches HTML ist erlaubt. Ein Abmeldelink hängt automatisch an jeder Mail.</p>
-    <button onclick="buildNewsletterDraft()" style="width:100%;margin-bottom:12px;font-weight:700;font-size:14px;padding:11px;border-radius:10px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✨ Wochenrückblick aus neuesten Artikeln erzeugen</button>
-    <input id="nl-subject" type="text" placeholder="Betreff" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:8px">
-    <textarea id="nl-body" rows="10" placeholder="Newsletter-Inhalt…" style="width:100%;font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
-    <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Wochenrückblick erzeugen, dann anpassen. Alles ist optional, leere Felder werden weggelassen und die Mail bleibt sauber.</p>
+    <button onclick="nlInit()" style="width:100%;margin-bottom:6px;font-weight:700;font-size:14px;padding:11px;border-radius:10px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✨ Wochenrückblick aus neuesten Artikeln erzeugen</button>
+
+    <div class="nl-lbl">Betreff</div>
+    <input id="nl-subject" type="text" placeholder="Betreff" class="nl-fld" oninput="nlSave()">
+
+    <div class="nl-lbl">Intro-Text</div>
+    <textarea id="nl-intro" rows="3" class="nl-fld" oninput="nlSave()"></textarea>
+
+    <div class="nl-lbl">Artikel</div>
+    <div id="nl-arts"></div>
+    <select id="nl-add-art" class="nl-fld" style="margin-top:8px" onchange="nlAddArticle(this.value);this.value=''"><option value="">+ Artikel hinzufügen…</option></select>
+
+    <div class="nl-lbl">Text zwischen News und Einträgen (optional)</div>
+    <textarea id="nl-mid" rows="2" class="nl-fld" placeholder="z.B. Diese Woche im Fokus: seltene Fahrzeuge und ihre Fundorte" oninput="nlSave()"></textarea>
+
+    <div class="nl-lbl">Datenbank-Einträge</div>
+    <div id="nl-entries"></div>
+    <select id="nl-add-entry" class="nl-fld" style="margin-top:8px" onchange="nlAddEntry(this.value);this.value=''"><option value="">+ Datenbank-Eintrag hinzufügen…</option></select>
+
+    <div class="nl-lbl">Abschlusstext (optional)</div>
+    <textarea id="nl-outro" rows="2" class="nl-fld" placeholder="z.B. Bis nächste Woche, bleibt dran." oninput="nlSave()"></textarea>
+
+    <div class="nl-lbl">Release-Countdown</div>
+    <select id="nl-cd" class="nl-fld" onchange="nlSave()"><option value="top">oben (nach dem Intro)</option><option value="bottom">unten (vor dem Abschluss)</option><option value="off">ausblenden</option></select>
+
+    <button onclick="nlPreview()" style="width:100%;margin-top:14px;font-weight:600;font-size:14px;padding:11px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">👁 Vorschau aktualisieren</button>
+    <iframe id="nl-frame" title="Newsletter-Vorschau" style="width:100%;height:440px;border:1.5px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;display:none"></iframe>
+
+    <button id="nl-send-btn" onclick="sendNewsletter()" style="width:100%;margin-top:12px;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">An bestätigte Abonnenten senden</button>
+    <button onclick="discardNl()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Verwerfen</button>
     <div id="nl-send-result" style="font-family:'Space Mono';font-size:12px;margin-top:10px;line-height:1.6;color:var(--text-soft)"></div>
   </details>
   <details style="margin-top:6px">
