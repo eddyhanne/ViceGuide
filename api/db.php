@@ -28,7 +28,7 @@ function vg_db(): array {
        Deployment oder ein noch ausstehendes Schema-Upgrade). */
     $schemaReady = false;
     try {
-        $pdo->query('SELECT id FROM comments LIMIT 1');
+        $pdo->query('SELECT id, author_token FROM comments LIMIT 1');
         $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
@@ -47,6 +47,7 @@ function vg_db(): array {
             name TEXT NOT NULL,
             text TEXT NOT NULL,
             quote TEXT NULL,
+            author_token TEXT NULL,
             likes INTEGER NOT NULL DEFAULT 0,
             dislikes INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -125,6 +126,14 @@ function vg_db(): array {
         } catch (Throwable $e) {
             // s.o.
         }
+        try {
+            $cols = $pdo->query("PRAGMA table_info(comments)")->fetchAll();
+            if (!in_array('author_token', array_column($cols, 'name'), true)) {
+                $pdo->exec('ALTER TABLE comments ADD COLUMN author_token TEXT');
+            }
+        } catch (Throwable $e) {
+            // s.o.
+        }
     } else {
         $pdo->exec('CREATE TABLE IF NOT EXISTS comments (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -133,6 +142,7 @@ function vg_db(): array {
             name VARCHAR(60) NOT NULL,
             text TEXT NOT NULL,
             quote TEXT NULL,
+            author_token VARCHAR(100) NULL,
             likes INT NOT NULL DEFAULT 0,
             dislikes INT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -211,6 +221,12 @@ function vg_db(): array {
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json MEDIUMTEXT NULL'); }
             $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'pinned'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN pinned TINYINT NOT NULL DEFAULT 0'); }
+        } catch (Throwable $e) {
+            // s.o.
+        }
+        try {
+            $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'author_token'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN author_token VARCHAR(100) NULL'); }
         } catch (Throwable $e) {
             // s.o.
         }

@@ -27,12 +27,18 @@ function vg_body(): array {
     return is_array($data) ? $data : [];
 }
 
-function vg_buildTree(array $rows): array {
+function vg_buildTree(array $rows, string $voter = ''): array {
     $byId = [];
     foreach ($rows as $r) {
         $r['id'] = (int)$r['id'];
         $r['likes'] = (int)$r['likes'];
         $r['dislikes'] = (int)$r['dislikes'];
+        /* Eigener Kommentar? Vergleich des mitgeschickten Wähler-Tokens mit dem
+           beim Anlegen gespeicherten Autor-Token. Das Token selbst wird nie
+           ausgeliefert (nur das abgeleitete Flag), damit keine fremden Tokens
+           nach aussen sichtbar werden. */
+        $r['own'] = ($voter !== '' && !empty($r['author_token']) && hash_equals((string)$r['author_token'], $voter));
+        unset($r['author_token']);
         $r['replies'] = [];
         $byId[$r['id']] = $r;
     }
@@ -52,9 +58,10 @@ function vg_buildTree(array $rows): array {
 if ($method === 'GET') {
     $articleId = trim($_GET['article'] ?? '');
     if ($articleId === '') vg_out(['error' => 'article fehlt'], 400);
-    $stmt = $pdo->prepare('SELECT id, parent_id, name, text, quote, likes, dislikes, created_at FROM comments WHERE article_id = ? ORDER BY created_at ASC');
+    $voter = substr(trim((string)($_GET['voter'] ?? '')), 0, 100);
+    $stmt = $pdo->prepare('SELECT id, parent_id, name, text, quote, author_token, likes, dislikes, created_at FROM comments WHERE article_id = ? ORDER BY created_at ASC');
     $stmt->execute([$articleId]);
-    vg_out(['comments' => vg_buildTree($stmt->fetchAll())]);
+    vg_out(['comments' => vg_buildTree($stmt->fetchAll(), $voter)]);
 }
 
 if ($method === 'POST') {
@@ -67,8 +74,11 @@ if ($method === 'POST') {
 
     if ($articleId === '' || $text === '') vg_out(['error' => 'article und text sind erforderlich'], 400);
 
-    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote) VALUES (?, ?, ?, ?, ?)');
-    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null]);
+    /* Anonymes Wähler-Token als Autor-Kennung merken, damit man den eigenen
+       Kommentar spaeter nicht selbst bewerten kann (siehe PATCH und GET own). */
+    $author = substr(trim((string)($b['voter'] ?? '')), 0, 100) ?: null;
+    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token) VALUES (?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author]);
     vg_out(['ok' => true, 'id' => (int)$pdo->lastInsertId()], 201);
 }
 
@@ -90,6 +100,16 @@ if ($method === 'PATCH') {
         $voter = 'ip:' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|' . ($cfg['admin_hash'] ?? '')), 0, 40);
     }
     $voter = substr($voter, 0, 100);
+
+    /* Eigenen Kommentar nicht selbst bewerten. Autor-Token beim Anlegen
+       gespeichert (POST), hier gegen den abstimmenden Wähler geprüft. */
+    $own = $pdo->prepare('SELECT likes, dislikes, author_token FROM comments WHERE id = ?');
+    $own->execute([$id]);
+    $ownRow = $own->fetch();
+    if (!$ownRow) vg_out(['error' => 'Kommentar nicht gefunden'], 404);
+    if (!empty($ownRow['author_token']) && hash_equals((string)$ownRow['author_token'], $voter)) {
+        vg_out(['ok' => true, 'own' => true, 'likes' => (int)$ownRow['likes'], 'dislikes' => (int)$ownRow['dislikes']]);
+    }
 
     $chk = $pdo->prepare('SELECT 1 FROM comment_votes WHERE comment_id = ? AND voter = ? LIMIT 1');
     $chk->execute([$id, $voter]);

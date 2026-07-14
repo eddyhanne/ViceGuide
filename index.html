@@ -769,7 +769,7 @@ let GUIDES=[{"cat": "news", "title": "Release, Preis & Editionen: der komplette 
 /* Guides: Phasen-Struktur (News-Bereich) */
 const GROUPS=[
  {key:"pre",label:"Jetzt aktuell · bis zum Release",badge:"Live",badgeClass:"now",note:"News, Gerüchte, Spekulationen und Infohäppchen.",
-  cats:[{id:"news",name:"News & Updates",icon:"📰"},{id:"leaks",name:"Gerüchte & Spekulationen",icon:"🕵️"},{id:"trailer",name:"Trailer-Analysen",icon:"🎬"},{id:"story",name:"Charaktere & Story",icon:"🎭"},{id:"map",name:"Map & Setting",icon:"🗺️"},{id:"community",name:"Community & Infohäppchen",icon:"💬"}]},
+  cats:[{id:"news",name:"News & Updates",icon:"📰"},{id:"leaks",name:"Gerüchteküche",icon:"🕵️"},{id:"trailer",name:"Trailer-Analysen",icon:"🎬"},{id:"story",name:"Charaktere & Story",icon:"🎭"},{id:"map",name:"Map & Setting",icon:"🗺️"},{id:"community",name:"Community & Infohäppchen",icon:"💬"}]},
  {key:"rel",label:"Ab Release-Day",badge:"Ab Release",badgeClass:"later",locked:true,note:"Die echten In-Game-Guides. Schalten zum Release frei.",
   cats:[{id:"money",name:"Geld verdienen",icon:"💸"},{id:"missions",name:"Missionen & Walkthroughs",icon:"🎯"},{id:"tips",name:"Tipps & Tricks",icon:"💡"},{id:"online",name:"Online-Modus",icon:"🌐"},{id:"secrets",name:"Secrets & Easter Eggs",icon:"🥚"},{id:"collect",name:"Sammelobjekte & Fundorte",icon:"🧭"},{id:"veh",name:"Fahrzeuge & Tuning",icon:"🚗"},{id:"weap",name:"Waffen & Ausrüstung",icon:"🔫"},{id:"trophies",name:"Trophäen & Erfolge",icon:"🏆"},{id:"beginner",name:"Anfänger-Guides",icon:"🎮"},{id:"customization",name:"Charakter & Anpassung",icon:"🎨"},{id:"business",name:"Immobilien & Business",icon:"🏢"}]},
 ];
@@ -1915,7 +1915,7 @@ async function renderComments(i){
   const g=GUIDES[i]; const artId=g.id||slugify(g.title);
   box.innerHTML=`<h3 class="cm-h">Kommentare</h3><div class="cm-note">Kommentare werden geladen…</div>`;
   try{
-    const res=await fetch('api/comments.php?article='+encodeURIComponent(artId));
+    const res=await fetch('api/comments.php?article='+encodeURIComponent(artId)+'&voter='+encodeURIComponent(voterId));
     if(!res.ok) throw new Error();
     const data=await res.json();
     const list=data.comments||[];
@@ -1938,17 +1938,19 @@ function renderCommentsUI(i,artId,list){
 function cmHtml(artId,i,c,depth){
   const replies=(c.replies||[]).map(r=>cmHtml(artId,i,r,depth+1)).join('');
   const quote=c.quote?`<div class="cm-quote">${esc(c.quote)}</div>`:'';
-  const voted=votedIds.has(c.id);
+  const own=!!c.own;
+  const voted=votedIds.has(c.id)||own;
   const upCls='cm-act'+(voted?' locked':'');
   const dnCls='cm-act'+(voted?' locked':'');
   const dis=voted?'disabled':'';
+  const voteTitle=own?' title="Dein eigener Kommentar, den kannst du nicht bewerten"':'';
   const delBtn=editMode?`<button class="cm-act cm-del" onclick="deleteComment('${artId}',${i},${c.id})">🗑 Löschen</button>`:'';
   return `<div class="cm-item ${depth?'cm-reply':''}">
     <div class="cm-top"><span class="cm-name">${esc(c.name)}</span><span class="cm-ts">${fmtCommentDate(c.created_at)}</span></div>
     ${quote}<div class="cm-body">${esc(c.text)}</div>
     <div class="cm-actions">
-      <button class="${upCls}" ${dis} onclick="voteC('${artId}',${i},${c.id},1)">▲ <span>${c.likes}</span></button>
-      <button class="${dnCls}" ${dis} onclick="voteC('${artId}',${i},${c.id},-1)">▼ <span>${c.dislikes}</span></button>
+      <button class="${upCls}" ${dis}${voteTitle} onclick="voteC('${artId}',${i},${c.id},1)">▲ <span>${c.likes}</span></button>
+      <button class="${dnCls}" ${dis}${voteTitle} onclick="voteC('${artId}',${i},${c.id},-1)">▼ <span>${c.dislikes}</span></button>
       <button class="cm-act cm-reply-btn" onclick="toggleReply(${c.id})">↩ Antworten</button>
       ${delBtn}
     </div>
@@ -1964,7 +1966,7 @@ async function addComment(artId,i){
   const n=($('cm-name').value||'').trim()||'Gast', t=($('cm-text').value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,voter:voterId})});
     if(!res.ok) throw new Error();
     toast('Kommentar gepostet ✦');
     renderComments(i);
@@ -1979,7 +1981,8 @@ async function voteC(artId,i,id,dir){
     const res=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,dir:dir>0?'up':'down',voter:voterId})});
     if(!res.ok) throw new Error();
     const data=await res.json().catch(()=>({}));
-    if(data&&data.already) toast('Du hast bereits abgestimmt.');
+    if(data&&data.own) toast('Deinen eigenen Kommentar kannst du nicht bewerten.');
+    else if(data&&data.already) toast('Du hast bereits abgestimmt.');
     renderComments(i);
   }catch(e){ votedIds.delete(id); saveVoted(); toast('Abstimmen fehlgeschlagen.'); }
 }
@@ -1995,7 +1998,7 @@ async function addReply(artId,i,parentId){
   const p=cmIndex[parentId];
   const quote=p?(p.name+': '+(p.text.length>90?p.text.slice(0,90)+'…':p.text)):'';
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote,voter:voterId})});
     if(!res.ok) throw new Error();
     toast('Antwort gepostet ✦');
     renderComments(i);
