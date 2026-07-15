@@ -3266,7 +3266,7 @@ async function updateArticleFromJson(g){
   const idx=(GUIDES||[]).findIndex(x=>x.id===g.id);
   if(idx<0){ toast('Artikel nicht gefunden.'); return; }
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
-  const fields=['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit'];
+  const fields=['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit','tldr'];
   const payload={id:g.id};
   fields.forEach(k=>{ if(k in g && g[k]!==undefined) payload[k]=g[k]; });
   try{
