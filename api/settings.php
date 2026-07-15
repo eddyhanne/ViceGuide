@@ -56,6 +56,7 @@ if ($method === 'GET') {
     $dbo   = vg_setting_get($pdo, 'db_section_order');
     $go    = vg_setting_get($pdo, 'guides_cat_order');
     $feat  = vg_setting_get($pdo, 'featured_tiles');
+    $fent  = vg_setting_get($pdo, 'featured_entries');
     header('Cache-Control: public, max-age=120, stale-while-revalidate=600');
     vg_out_set([
         'news_cat_order'   => $order ? (json_decode($order, true) ?: []) : [],
@@ -63,6 +64,7 @@ if ($method === 'GET') {
         'db_section_order' => $dbo ? (json_decode($dbo, true) ?: []) : [],
         'guides_cat_order' => $go ? (json_decode($go, true) ?: []) : [],
         'featured_tiles'   => $feat ? (json_decode($feat, true) ?: []) : [],
+        'featured_entries' => $fent ? (json_decode($fent, true) ?: []) : [],
     ]);
 }
 
@@ -84,6 +86,9 @@ if ($method === 'PUT') {
     }
     if (array_key_exists('featured_tiles', $b)) {
         vg_setting_set($pdo, 'featured_tiles', json_encode(array_values((array)$b['featured_tiles']), JSON_UNESCAPED_UNICODE));
+    }
+    if (array_key_exists('featured_entries', $b)) {
+        vg_setting_set($pdo, 'featured_entries', json_encode(array_values((array)$b['featured_entries']), JSON_UNESCAPED_UNICODE));
     }
     vg_out_set(['ok' => true]);
 }

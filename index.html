@@ -196,6 +196,14 @@
   :root[data-theme="light"] .p-rtile.feat{border-color:rgba(208,0,89,.42);box-shadow:0 5px 20px -7px rgba(208,0,89,.42)}
   .p-rstar{position:absolute;top:6px;right:6px;z-index:3;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text-soft);font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
   .p-rstar.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+  .card.feat{border-color:var(--accent);box-shadow:0 6px 20px -8px var(--accent)}
+  :root[data-theme="light"] .card.feat{border-color:rgba(208,0,89,.42);box-shadow:0 5px 20px -7px rgba(208,0,89,.42)}
+  .dbrow.feat{border-color:var(--accent);box-shadow:0 4px 16px -9px var(--accent)}
+  :root[data-theme="light"] .dbrow.feat{border-color:rgba(208,0,89,.42);box-shadow:0 4px 16px -9px rgba(208,0,89,.42)}
+  .card-star{position:absolute;top:8px;left:40px;z-index:6;width:26px;height:26px;display:grid;place-items:center;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:1;border:0;cursor:pointer;padding:0}
+  .card-star.on{background:var(--accent);color:var(--bg)}
+  .dbrow-star{cursor:pointer;flex-shrink:0;font-size:15px;line-height:1;padding:3px 7px;border-radius:7px;color:var(--text-soft)}
+  .dbrow-star.on{color:var(--accent)}
   .p-relgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
   .p-reltile{background:var(--bg-2)}
   .p-reltile:hover{border-color:var(--line);transform:none}
@@ -875,7 +883,7 @@ const PILLAR_LABEL={home:'Start-Hub',news:'News & Leaks'};
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
 const DB_LOCKED=GROUPS[1].cats.filter(c=>c.id==='trophies'||c.id==='collect');
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[]};
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[],featuredEntries:[]};
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
@@ -1064,6 +1072,14 @@ function portalNewsHtml(){
 function goNewsCat(catId){ go('news'); if(catId && catId!=='Alle'){ newsCat=catId; newsView='cards'; renderNews(); } }
 /* Reihenfolge und Hervorhebung der Kacheln, serverseitig gespeichert (DB_SETTINGS). */
 function isFeatured(id){ return (DB_SETTINGS.featured||[]).includes(id); }
+/* Hervorhebung einzelner Datenbank-Eintraege (z.B. Jason Duval, ein bestimmtes
+   Auto). Wie bei den Rubrik-Kacheln: freie Auswahl ohne Limit, gilt fuer alle
+   Besucher (serverseitig in api/settings.php), im Editiermodus per Stern
+   umschaltbar. Schluessel ist die interne Zeilen-ID (_id) als String. */
+function isEntryFeat(id){ return (DB_SETTINGS.featuredEntries||[]).map(String).includes(String(id)); }
+function entryStar(d){ if(!editMode||d._id==null) return ''; const on=isEntryFeat(d._id); return `<button type="button" class="card-star ${on?'on':''}" onclick="toggleEntryFeat('${d._id}',event)" title="${on?'Hervorhebung entfernen':'Hervorheben'}">✦</button>`; }
+function entryStarRow(d){ if(!editMode||d._id==null) return ''; const on=isEntryFeat(d._id); return `<span class="dbrow-star ${on?'on':''}" onclick="toggleEntryFeat('${d._id}',event)" title="${on?'Hervorhebung entfernen':'Hervorheben'}">✦</span>`; }
+function toggleEntryFeat(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} const f=new Set((DB_SETTINGS.featuredEntries||[]).map(String)); const k=String(id); if(f.has(k))f.delete(k); else f.add(k); DB_SETTINGS.featuredEntries=[...f]; const sec=SECTIONS.find(s=>s.id===current); if(sec&&sec.type==='db') drawDB(sec); saveDbSettings(); }
 function orderedDbSecs(){ const secs=SECTIONS.filter(s=>s.type==='db'); const o=(DB_SETTINGS.dbOrder||[]).filter(id=>secs.some(s=>s.id===id)); const rest=secs.filter(s=>!o.includes(s.id)).map(s=>s.id); return [...o,...rest].map(id=>secs.find(s=>s.id===id)).filter(Boolean); }
 function orderedGuideCats(){ const o=(DB_SETTINGS.guidesOrder||[]).filter(id=>GUIDES_CATS.some(c=>c.id===id)); const rest=GUIDES_CATS.filter(c=>!o.includes(c.id)).map(c=>c.id); return [...o,...rest].map(id=>GUIDES_CATS.find(c=>c.id===id)).filter(Boolean); }
 function tileDragAttrs(id,world){ return editMode?` draggable="true" ondragstart="tileDragStart(event,'${id}','${world}')" ondragover="tileDragOver(event)" ondrop="tileDrop(event,'${id}','${world}')" ondragend="tileDragEnd(event)"`:''; }
@@ -1084,7 +1100,7 @@ function tileDragEnd(e){ tileDrag=null; }
 function tileDrop(e,targetId,world){ e.preventDefault(); if(!tileDrag||tileDrag.world!==world||tileDrag.id===targetId){return;} const ids=(world==='db'?orderedDbSecs().map(s=>s.id):orderedGuideCats().map(c=>c.id)); const from=ids.indexOf(tileDrag.id),to=ids.indexOf(targetId); if(from<0||to<0)return; ids.splice(to,0,ids.splice(from,1)[0]); if(world==='db') DB_SETTINGS.dbOrder=ids; else DB_SETTINGS.guidesOrder=ids; tileDrag=null; rerenderTiles(); saveDbSettings(); }
 function toggleFeatured(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} const f=new Set(DB_SETTINGS.featured||[]); if(f.has(id))f.delete(id); else f.add(id); DB_SETTINGS.featured=[...f]; rerenderTiles(); saveDbSettings(); }
 function rerenderTiles(){ if(current==='home')renderHome(); else if(current==='datenbank')renderDbHub(); else if(current==='guides')renderGuidesHub(); }
-async function saveDbSettings(){ if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; } try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({db_section_order:DB_SETTINGS.dbOrder,guides_cat_order:DB_SETTINGS.guidesOrder,featured_tiles:DB_SETTINGS.featured})}); if(!r.ok) throw new Error(); toast('Kachel-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); } }
+async function saveDbSettings(){ if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; } try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({db_section_order:DB_SETTINGS.dbOrder,guides_cat_order:DB_SETTINGS.guidesOrder,featured_tiles:DB_SETTINGS.featured,featured_entries:DB_SETTINGS.featuredEntries})}); if(!r.ok) throw new Error(); toast('Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); } }
 /* Startseite, Welt 1: Datenbank (aktive Rubriken plus gesperrte Teaser), Ueberschrift verlinkt auf den Hub. */
 function portalDbHtml(){
   return `<div class="p-sh"><h2>Datenbank</h2><a class="p-more" style="margin-left:auto" href="/datenbank/" onclick="return goClick(event,'datenbank')">Alle Rubriken \u2192</a></div><div class="p-rgrid">${dbTilesHtml()}</div>`;
@@ -1335,8 +1351,9 @@ function drawDB(sec){
       const clickAttr=editMode?`openImgEd('db','${sid}',${gi})`:`return entryClick(event,'${sid}',${gi})`;
       const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sid}',${gi})}"`:'';
       const ct = cross ? (s?s.label:'') : canonCat(sid,d.cat);
-      return `<${tag} class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
-        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${ct}</span>${badge}${delBtn}</${tag}>`;
+      const feat=isEntryFeat(d._id)?' feat':'';
+      return `<${tag} class="dbrow ${editMode?'editing':''}${feat}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${ct}</span>${entryStarRow(d)}${badge}${delBtn}</${tag}>`;
     }).join('');
   } else {
     grid.innerHTML=items.map(it=>{
@@ -1348,8 +1365,9 @@ function drawDB(sec){
       const clickAttr=editMode?`openImgEd('db','${sid}',${gi})`:`return entryClick(event,'${sid}',${gi})`;
       const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sid}',${gi})}"`:'';
       const ct = cross ? (s?s.label:'') : canonCat(sid,d.cat);
-      return `<${tag} class="card ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
-        ${cardVisual(s,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${ct}</span></div></${tag}>`;
+      const feat=isEntryFeat(d._id)?' feat':'';
+      return `<${tag} class="card ${editMode?'editing':''}${feat}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
+        ${cardVisual(s,d)}${entryStar(d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${ct}</span></div></${tag}>`;
     }).join('');
   }
 }
@@ -3403,7 +3421,7 @@ async function loadExternal(){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
   }
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
-  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; } } }catch(e){}
+  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; DB_SETTINGS.featuredEntries=Array.isArray(d.featured_entries)?d.featured_entries:[]; } } }catch(e){}
   await checkAdminSession();
   restoreEditMode();
   if(!gquery.trim())renderView();
