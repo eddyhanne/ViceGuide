@@ -109,11 +109,12 @@
   .brand{display:flex;align-items:center;cursor:pointer;user-select:none;flex-shrink:0}
   .brand-logo{height:42px;width:auto;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4));transition:transform .3s}
   .brand:hover .brand-logo{transform:scale(1.05) rotate(-2deg)}
-  .searchwrap{flex:1;max-width:560px;position:relative;margin:0 auto}
-  .searchwrap input{width:100%;font-family:'Inter';font-size:15px;color:var(--text);padding:11px 16px 11px 42px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);outline:none;transition:.2s}
+  .searchwrap{flex:1;max-width:560px;position:relative;margin:0 auto;min-width:0}
+  .searchwrap input{width:100%;min-width:0;font-family:'Inter';font-size:15px;color:var(--text);padding:11px 16px 11px 42px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);outline:none;transition:.2s}
   .searchwrap input:focus{border-color:var(--accent)}
   .searchwrap .ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--accent);pointer-events:none}
   .theme-toggle{height:38px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:13px;font-weight:600;color:var(--text);transition:border-color .2s,color .2s;flex-shrink:0;white-space:nowrap}
+  @media(max-width:560px){ .top-inner{gap:10px;padding:0 12px} .theme-toggle{padding:0 10px} .theme-toggle #tlbl{display:none} }
   .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
   .theme-toggle #tico{font-size:15px;line-height:1}
 
@@ -327,7 +328,7 @@
   .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease} .acc-inner{padding:2px 18px 10px}
   .acc-latest{font-family:'Space Mono';font-size:11px;color:var(--text-soft);padding:12px 0 2px}
   .sub{display:block;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
-  .sub-top{display:flex;align-items:baseline;gap:8px} .sub .st{font-weight:600;font-size:15px;color:var(--heading)}
+  .sub-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap} .sub .st{font-weight:600;font-size:15px;color:var(--heading);min-width:0;overflow-wrap:anywhere;flex:1 1 auto}
   .sub .meta{margin-left:auto;font-family:'Space Mono';font-size:10.5px;color:var(--text-soft)}
   .sub:hover .st{color:var(--accent)} .sub .sd{font-size:13.5px;color:var(--text-soft);margin-top:3px}
   .rel-list{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 14px}
@@ -855,7 +856,7 @@ const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 const PILLARS=['home','news','datenbank','guides','map','videos','community'];
 /* Kurzlabels nur fuer die Navigations-Saeulen (die Sektion selbst behaelt ihr
    ausfuehrliches Label fuer Ueberschriften, Breadcrumbs und SSR). */
-const PILLAR_LABEL={home:'Start',news:'News & Leaks'};
+const PILLAR_LABEL={home:'Start / Hub',news:'News & Leaks'};
 /* Zwei Welten fuer die gesperrten Phase-2-Kacheln: Ratgeber unter Guides,
    Listen (Trophaeen, Sammelobjekte) als kuenftige Datenbank-Rubriken. */
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
