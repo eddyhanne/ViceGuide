@@ -192,6 +192,9 @@
   .p-rn{font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading)}
   .p-rc{font-family:'Space Mono';font-size:11px;color:var(--text-soft)}
   .p-redit{position:absolute;top:6px;left:6px;z-index:2;font-family:'Space Mono';font-size:10px;font-weight:700;background:rgba(0,0,0,.62);color:#fff;padding:3px 7px;border-radius:6px}
+  .p-rtile.feat{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+  .p-rstar{position:absolute;top:6px;right:6px;z-index:3;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text-soft);font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
+  .p-rstar.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
   .p-relgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
   .p-reltile{background:var(--bg-2)}
   .p-reltile:hover{border-color:var(--line);transform:none}
@@ -862,7 +865,7 @@ const PILLAR_LABEL={home:'Start / Hub',news:'News & Leaks'};
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
 const DB_LOCKED=GROUPS[1].cats.filter(c=>c.id==='trophies'||c.id==='collect');
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''};
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[]};
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
@@ -1049,12 +1052,29 @@ function portalNewsHtml(){
 /* Direkt in eine News-Kategorie springen (aus dem Artikel-Tag oder der
    Portal-Newsliste): oeffnet /news in der Kachel-Ansicht mit gesetztem Filter. */
 function goNewsCat(catId){ go('news'); if(catId && catId!=='Alle'){ newsCat=catId; newsView='cards'; renderNews(); } }
-/* Eine aktive Datenbank-Rubrik als Kachel (mit Eintragszahl, im Editiermodus Klick aufs Rubrik-Bild). */
-function activeDbTile(s){const n=(DB[s.id]||[]).length;const meta=SECTION_IMG[s.id];const thumb=(meta&&meta.img)?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:`<span class="p-rthumb p-rthumb-ph">${secIcon(s.id)}</span>`;const clickAttr=editMode?`onclick="return sectionImgClick(event,'${s.id}')"`:`onclick="return goClick(event,'${s.id}')"`;const editBadge=editMode?'<span class="p-redit">\u270e Bild</span>':'';return `<a class="p-rtile" href="${sectionHref(s.id)}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Eintr\u00e4ge'}</span></span></a>`;}
-/* Eine gesperrte Kachel (Phase-2-Rubrik/Guide, "ab Release"). */
-function lockedTile(c){const meta=SECTION_IMG[c.id]; const hasImg=meta&&meta.img;const thumb=hasImg?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:'';const editBadge=editMode?'<span class="p-redit">\u270e Bild</span>':'';const clickAttr=editMode?`onclick="sectionImgClick(event,'${c.id}')" style="cursor:pointer"`:'';return `<div class="p-rtile p-reltile${hasImg?' has-img':''}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span><span class="p-rlk">\u{1F512}</span></div>`;}
-function dbTilesHtml(){return SECTIONS.filter(s=>s.type==='db').map(activeDbTile).join('')+DB_LOCKED.map(lockedTile).join('');}
-function guideTilesHtml(){return GUIDES_CATS.map(lockedTile).join('');}
+/* Reihenfolge und Hervorhebung der Kacheln, serverseitig gespeichert (DB_SETTINGS). */
+function isFeatured(id){ return (DB_SETTINGS.featured||[]).includes(id); }
+function orderedDbSecs(){ const secs=SECTIONS.filter(s=>s.type==='db'); const o=(DB_SETTINGS.dbOrder||[]).filter(id=>secs.some(s=>s.id===id)); const rest=secs.filter(s=>!o.includes(s.id)).map(s=>s.id); return [...o,...rest].map(id=>secs.find(s=>s.id===id)).filter(Boolean); }
+function orderedGuideCats(){ const o=(DB_SETTINGS.guidesOrder||[]).filter(id=>GUIDES_CATS.some(c=>c.id===id)); const rest=GUIDES_CATS.filter(c=>!o.includes(c.id)).map(c=>c.id); return [...o,...rest].map(id=>GUIDES_CATS.find(c=>c.id===id)).filter(Boolean); }
+function tileDragAttrs(id,world){ return editMode?` draggable="true" ondragstart="tileDragStart(event,'${id}','${world}')" ondragover="tileDragOver(event)" ondrop="tileDrop(event,'${id}','${world}')" ondragend="tileDragEnd(event)"`:''; }
+function tileStar(id){ return editMode?`<button type="button" class="p-rstar ${isFeatured(id)?'on':''}" onclick="toggleFeatured('${id}',event)" title="${isFeatured(id)?'Hervorhebung entfernen':'Hervorheben'}">✦</button>`:''; }
+/* Eine aktive Datenbank-Rubrik als Kachel (sortierbar, hervorhebbar; im Editiermodus Klick aufs Rubrik-Bild). */
+function activeDbTile(s){const n=(DB[s.id]||[]).length;const meta=SECTION_IMG[s.id];const thumb=(meta&&meta.img)?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:`<span class="p-rthumb p-rthumb-ph">${secIcon(s.id)}</span>`;const clickAttr=editMode?`onclick="return sectionImgClick(event,'${s.id}')"`:`onclick="return goClick(event,'${s.id}')"`;const editBadge=editMode?'<span class="p-redit">✎ Bild</span>':'';return `<a class="p-rtile${isFeatured(s.id)?' feat':''}" href="${sectionHref(s.id)}" ${clickAttr}${tileDragAttrs(s.id,'db')}>${tileStar(s.id)}${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${s.label}</span><span class="p-rc">${n} ${n===1?'Eintrag':'Einträge'}</span></span></a>`;}
+/* Gesperrte DB-Rubrik (Trophaeen/Sammelobjekte): fester Platz am Ende, nicht sortierbar. */
+function lockedTile(c){const meta=SECTION_IMG[c.id]; const hasImg=meta&&meta.img;const thumb=hasImg?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:'';const editBadge=editMode?'<span class="p-redit">✎ Bild</span>':'';const clickAttr=editMode?`onclick="sectionImgClick(event,'${c.id}')" style="cursor:pointer"`:'';return `<div class="p-rtile p-reltile${hasImg?' has-img':''}" ${clickAttr}>${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span><span class="p-rlk">\u{1F512}</span></div>`;}
+/* Guide-Kachel (gesperrt, aber sortierbar und hervorhebbar). Schloss nur ausserhalb des Editiermodus, damit im Editiermodus der Stern oben rechts Platz hat. */
+function guideTile(c){const meta=SECTION_IMG[c.id]; const hasImg=meta&&meta.img;const thumb=hasImg?`<span class="p-rthumb" style="background-image:url('${meta.img}')"></span>`:'';const editBadge=editMode?'<span class="p-redit">✎ Bild</span>':'';const clickAttr=editMode?`onclick="sectionImgClick(event,'${c.id}')" style="cursor:pointer"`:'';const lock=editMode?'':'<span class="p-rlk">\u{1F512}</span>';return `<div class="p-rtile p-reltile${hasImg?' has-img':''}${isFeatured(c.id)?' feat':''}" ${clickAttr}${tileDragAttrs(c.id,'guides')}>${tileStar(c.id)}${editBadge}${thumb}<span class="p-rtx"><span class="p-rn">${c.name}</span><span class="p-rc">Ab Release</span></span>${lock}</div>`;}
+function dbTilesHtml(){return orderedDbSecs().map(activeDbTile).join('')+DB_LOCKED.map(lockedTile).join('');}
+function guideTilesHtml(){return orderedGuideCats().map(guideTile).join('');}
+/* Drag-and-drop-Sortierung und Hervorhebung der Kacheln (nur Editiermodus). */
+let tileDrag=null;
+function tileDragStart(e,id,world){ tileDrag={id,world}; try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id);}catch(_){} }
+function tileDragOver(e){ e.preventDefault(); try{e.dataTransfer.dropEffect='move';}catch(_){} }
+function tileDragEnd(e){ tileDrag=null; }
+function tileDrop(e,targetId,world){ e.preventDefault(); if(!tileDrag||tileDrag.world!==world||tileDrag.id===targetId){return;} const ids=(world==='db'?orderedDbSecs().map(s=>s.id):orderedGuideCats().map(c=>c.id)); const from=ids.indexOf(tileDrag.id),to=ids.indexOf(targetId); if(from<0||to<0)return; ids.splice(to,0,ids.splice(from,1)[0]); if(world==='db') DB_SETTINGS.dbOrder=ids; else DB_SETTINGS.guidesOrder=ids; tileDrag=null; rerenderTiles(); saveDbSettings(); }
+function toggleFeatured(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} const f=new Set(DB_SETTINGS.featured||[]); if(f.has(id))f.delete(id); else f.add(id); DB_SETTINGS.featured=[...f]; rerenderTiles(); saveDbSettings(); }
+function rerenderTiles(){ if(current==='home')renderHome(); else if(current==='datenbank')renderDbHub(); else if(current==='guides')renderGuidesHub(); }
+async function saveDbSettings(){ if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; } try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({db_section_order:DB_SETTINGS.dbOrder,guides_cat_order:DB_SETTINGS.guidesOrder,featured_tiles:DB_SETTINGS.featured})}); if(!r.ok) throw new Error(); toast('Kachel-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); } }
 /* Startseite, Welt 1: Datenbank (aktive Rubriken plus gesperrte Teaser), Ueberschrift verlinkt auf den Hub. */
 function portalDbHtml(){
   return `<div class="p-sh"><h2>Datenbank</h2><a class="p-more" style="margin-left:auto" href="/datenbank/" onclick="return goClick(event,'datenbank')">Alle Rubriken \u2192</a></div><div class="p-rgrid">${dbTilesHtml()}</div>`;
@@ -3315,7 +3335,7 @@ async function loadExternal(){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
   }
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
-  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; } } }catch(e){}
+  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; } } }catch(e){}
   await checkAdminSession();
   restoreEditMode();
   if(!gquery.trim())renderView();

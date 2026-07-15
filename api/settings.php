@@ -53,10 +53,16 @@ function vg_setting_set($pdo, $k, $v) {
 if ($method === 'GET') {
     $order = vg_setting_get($pdo, 'news_cat_order');
     $pin   = vg_setting_get($pdo, 'news_pinned_cat');
+    $dbo   = vg_setting_get($pdo, 'db_section_order');
+    $go    = vg_setting_get($pdo, 'guides_cat_order');
+    $feat  = vg_setting_get($pdo, 'featured_tiles');
     header('Cache-Control: public, max-age=120, stale-while-revalidate=600');
     vg_out_set([
-        'news_cat_order'  => $order ? (json_decode($order, true) ?: []) : [],
-        'news_pinned_cat' => $pin ?: '',
+        'news_cat_order'   => $order ? (json_decode($order, true) ?: []) : [],
+        'news_pinned_cat'  => $pin ?: '',
+        'db_section_order' => $dbo ? (json_decode($dbo, true) ?: []) : [],
+        'guides_cat_order' => $go ? (json_decode($go, true) ?: []) : [],
+        'featured_tiles'   => $feat ? (json_decode($feat, true) ?: []) : [],
     ]);
 }
 
@@ -69,6 +75,15 @@ if ($method === 'PUT') {
     }
     if (array_key_exists('news_pinned_cat', $b)) {
         vg_setting_set($pdo, 'news_pinned_cat', (string)$b['news_pinned_cat']);
+    }
+    if (array_key_exists('db_section_order', $b)) {
+        vg_setting_set($pdo, 'db_section_order', json_encode(array_values((array)$b['db_section_order']), JSON_UNESCAPED_UNICODE));
+    }
+    if (array_key_exists('guides_cat_order', $b)) {
+        vg_setting_set($pdo, 'guides_cat_order', json_encode(array_values((array)$b['guides_cat_order']), JSON_UNESCAPED_UNICODE));
+    }
+    if (array_key_exists('featured_tiles', $b)) {
+        vg_setting_set($pdo, 'featured_tiles', json_encode(array_values((array)$b['featured_tiles']), JSON_UNESCAPED_UNICODE));
     }
     vg_out_set(['ok' => true]);
 }
