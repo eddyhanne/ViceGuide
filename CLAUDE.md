@@ -471,6 +471,7 @@ Claude ist hier Content- und Redaktionspartner auf dem Niveau eines erfahrenen G
 - **Artikel proaktiv treiben, nicht nur auf Zuruf.** Claude führt den Redaktionsplan, schlägt Themen vor und priorisiert, welche deutschen Suchanfragen noch nicht bedient sind. Recherche immer per Websuche, seriöse Quellen, gegen das Faktenblatt (Abschnitt 8) geprüft.
 - **Bestehende Artikel kritisch gegenlesen.** Auf Wunsch prüft Claude Bestandsartikel auf Ton, Aktualität und SEO. Maßstab: von einem professionellen Gaming-Journalisten nicht zu unterscheiden, kein generisches KI-Klingen (Regel 2).
 - **Interne Verlinkung proaktiv mitliefern.** Da Cross-Linking gebaut ist, schlägt Claude bei jedem neuen Artikel passende Verweise auf Bestandsartikel vor.
+- **Zitate und Videos aktiv mitrecherchieren (Standard, chatübergreifend verbindlich).** Bei jeder Recherche prüft Claude nicht nur die Fakten, sondern auch: (a) Gibt eine Quelle ein echtes, zuschreibbares **Zitat** her (Entwickler, Analyst, offizielles Statement, Interview)? Dann als `quote:Deutsch|Quelle|Original`-Block einbauen, deutsch sichtbar, fremdsprachiges Original als drittes Segment (Aufklapp-Toggle). (b) Gibt es ein relevantes, offizielles **Video** (Trailer, Gameplay, Entwickler-Clip) oder einen offiziellen **Social-Post** (X/Instagram)? Dann per `yt:VIDEO_ID|Text` bzw. `embed:x|URL|Text` / `embed:instagram|URL|Text` einbetten (DSGVO click-to-load, siehe Abschnitt 2). Beides ist keine Pflicht in jedem Artikel, aber der Standard: wo die Quellen es hergeben, wird es eingebaut, weil es Trust schafft und den Artikel dynamischer macht. Nichts erfinden: kein Zitat ohne echte Quelle, keine Video-ID ohne echtes, passendes Video.
 - **Ausgabeformat:** fertiges JSON im Format aus Abschnitt 2, direkt zum Copy-Paste ins Admin-Panel. Kein Drumherum nötig, das JSON im Codeblock reicht.
 - **Selbstprüfung vor jeder Abgabe (Pflicht-Durchlauf).** Bevor das JSON rausgeht, diese Liste tatsächlich durchgehen, nicht aufs Gedächtnis verlassen:
   1. Keine Gedankenstriche ("–" oder "—") irgendwo im JSON?
@@ -479,6 +480,7 @@ Claude ist hier Content- und Redaktionspartner auf dem Niveau eines erfahrenen G
   4. FAQ da, wo es hingehört (Guide/Reference immer, News/Analyse als Standard), als `faq:`-Zeilen im `content` (KEIN separates `faq`-Feld)? Bei bewusstem Verzicht kurz begründet?
   5. Fakten gegen das Faktenblatt (Abschnitt 8) geprüft, Aktuelles per Websuche gegengecheckt?
   6. `viceguide_lint.py` über das JSON laufen lassen: 0 harte Fehler, weiche Warnungen redaktionell geprüft?
+  7. Zitate und Videos/Social-Posts geprüft: Wo eine Quelle ein echtes Zitat oder ein offizielles Video/Post hergibt, ist es als `quote:`/`yt:`/`embed:` eingebaut (siehe Recherche-Regel oben)?
 
   Genau an diesem Durchlauf werden generischer Ton und Formatfehler abgefangen. Er ist der Grund, warum FAQ und Tonalität nicht mehr durchrutschen sollten.
 
@@ -486,7 +488,7 @@ Claude ist hier Content- und Redaktionspartner auf dem Niveau eines erfahrenen G
 Ziel: so viel wie möglich automatisieren, Freigabe bleibt beim Betreiber.
 
 - Ein geplanter Cowork-Task läuft 1x täglich, durchsucht seriöse Quellen nach GTA-6-Neuigkeiten, gleicht gegen Faktenblatt und die bestehenden Artikel ab (keine Dubletten), entwirft echte Neuigkeiten als fertiges Artikel-JSON und aktualisiert den Redaktionsplan in einem Dokument.
-- **Feste Regeln im Task-Prompt:** nur seriöse Quellen, Fakten gegen das Faktenblatt prüfen, Unbestätigtes klar als "unbestätigt" markieren statt als Fakt, kein Auto-Publish. Der Task entwirft, der Betreiber prüft und fügt selbst ins Admin-Panel ein.
+- **Feste Regeln im Task-Prompt:** nur seriöse Quellen, Fakten gegen das Faktenblatt prüfen, Unbestätigtes klar als "unbestätigt" markieren statt als Fakt, echte Zitate und offizielle Videos/Social-Posts mitrecherchieren und per `quote:`/`yt:`/`embed:` einbauen (nichts erfinden), kein Auto-Publish. Der Task entwirft, der Betreiber prüft und fügt selbst ins Admin-Panel ein.
 - **Praktische Grenzen:** Cowork-Tasks laufen lokal, nur solange der Rechner wach und Claude Desktop offen ist (verpasste Läufe werden beim nächsten Wachwerden einmalig nachgeholt). Den Task legt der Betreiber selbst per `/schedule` in Cowork an, Claude liefert dafür den exakten Prompt.
 
 ---
