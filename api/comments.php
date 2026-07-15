@@ -28,12 +28,30 @@ function vg_body(): array {
     return is_array($data) ? $data : [];
 }
 
+/* Serverseitiger Schimpfwort-Filter: ersetzt anstoessige Woerter durch den
+   ersten Buchstaben plus Sternchen (z.B. "Scheisse" -> "S*******"). Der
+   Kommentar wird trotzdem gepostet, nur zensiert. Serverseitig, damit es nicht
+   ueber den Client umgangen werden kann. Wortgrenzen sind Unicode-bewusst,
+   damit harmlose Woerter (z.B. "Grafik") nicht getroffen werden. */
+function vg_censor(string $s): string {
+    static $bad = ['fuck','fucking','motherfucker','shit','bitch','asshole','cunt','bastard',
+        'arschloch','arsch','scheisse','scheiße','scheiss','scheiß','wichser','fotze','hurensohn',
+        'hure','schlampe','fick','ficken','fickt','nutte','missgeburt','spasti','spast','vollidiot','wixer'];
+    foreach ($bad as $w) {
+        $s = preg_replace_callback('/(?<!\p{L})' . preg_quote($w, '/') . '(?!\p{L})/iu',
+            function ($m) { $len = mb_strlen($m[0]); return mb_substr($m[0], 0, 1) . str_repeat('*', max(1, $len - 1)); },
+            $s);
+    }
+    return $s;
+}
+
 function vg_buildTree(array $rows, string $voter = ''): array {
     $byId = [];
     foreach ($rows as $r) {
         $r['id'] = (int)$r['id'];
         $r['likes'] = (int)$r['likes'];
         $r['dislikes'] = (int)$r['dislikes'];
+        $r['spoiler'] = !empty($r['spoiler']) ? 1 : 0;
         /* Eigener Kommentar? Vergleich des mitgeschickten Wähler-Tokens mit dem
            beim Anlegen gespeicherten Autor-Token. Das Token selbst wird nie
            ausgeliefert (nur das abgeleitete Flag), damit keine fremden Tokens
@@ -191,7 +209,7 @@ if ($method === 'GET') {
     $articleId = trim($_GET['article'] ?? '');
     if ($articleId === '') vg_out(['error' => 'article fehlt'], 400);
     $voter = substr(trim((string)($_GET['voter'] ?? '')), 0, 100);
-    $stmt = $pdo->prepare('SELECT id, parent_id, name, text, quote, author_token, likes, dislikes, created_at FROM comments WHERE article_id = ? ORDER BY created_at ASC');
+    $stmt = $pdo->prepare('SELECT id, parent_id, name, text, quote, author_token, likes, dislikes, created_at, spoiler FROM comments WHERE article_id = ? ORDER BY created_at ASC');
     $stmt->execute([$articleId]);
     vg_out(['comments' => vg_buildTree($stmt->fetchAll(), $voter)]);
 }
@@ -199,10 +217,11 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     $b = vg_body();
     $articleId = trim($b['article'] ?? '');
-    $name = mb_substr(trim($b['name'] ?? '') ?: 'Gast', 0, 60);
-    $text = mb_substr(trim($b['text'] ?? ''), 0, 800);
-    $quote = isset($b['quote']) ? mb_substr(trim((string)$b['quote']), 0, 200) : null;
+    $name = vg_censor(mb_substr(trim($b['name'] ?? '') ?: 'Gast', 0, 60));
+    $text = vg_censor(mb_substr(trim($b['text'] ?? ''), 0, 800));
+    $quote = isset($b['quote']) ? vg_censor(mb_substr(trim((string)$b['quote']), 0, 200)) : null;
     $parentId = isset($b['parentId']) && $b['parentId'] ? (int)$b['parentId'] : null;
+    $spoiler = !empty($b['spoiler']) ? 1 : 0;
 
     if ($articleId === '' || $text === '') vg_out(['error' => 'article und text sind erforderlich'], 400);
 
@@ -222,8 +241,8 @@ if ($method === 'POST') {
         $replyToken = bin2hex(random_bytes(20));
     }
 
-    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token, author_email, notify_replies, reply_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author, $authorEmail, $notifyReplies, $replyToken]);
+    $stmt = $pdo->prepare('INSERT INTO comments (article_id, parent_id, name, text, quote, author_token, author_email, notify_replies, reply_token, spoiler) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$articleId, $parentId, $name, $text, $quote ?: null, $author, $authorEmail, $notifyReplies, $replyToken, $spoiler]);
     $newId = (int)$pdo->lastInsertId();
 
     /* Benachrichtigung an den Betreiber, aber nicht fuer eigene Kommentare:
@@ -254,6 +273,15 @@ if ($method === 'POST') {
 
 if ($method === 'PATCH') {
     $b = vg_body();
+    /* Admin schaltet einen Kommentar als Spoiler an/aus (nur eingeloggt). */
+    if (array_key_exists('spoiler', $b)) {
+        vg_require_admin($cfg);
+        $id = (int)($b['id'] ?? 0);
+        if (!$id) vg_out(['error' => 'id erforderlich'], 400);
+        $sp = !empty($b['spoiler']) ? 1 : 0;
+        $pdo->prepare('UPDATE comments SET spoiler = ? WHERE id = ?')->execute([$sp, $id]);
+        vg_out(['ok' => true, 'spoiler' => $sp]);
+    }
     $id = (int)($b['id'] ?? 0);
     $dir = $b['dir'] ?? '';
     if (!$id || !in_array($dir, ['up', 'down'], true)) vg_out(['error' => 'id und dir (up/down) erforderlich'], 400);

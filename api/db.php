@@ -34,7 +34,7 @@ function vg_db(): array {
        Deployment oder ein noch ausstehendes Schema-Upgrade). */
     $schemaReady = false;
     try {
-        $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token FROM comments LIMIT 1');
+        $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token, spoiler FROM comments LIMIT 1');
         $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
@@ -58,6 +58,7 @@ function vg_db(): array {
             author_email TEXT NULL,
             notify_replies INTEGER NOT NULL DEFAULT 0,
             reply_token TEXT NULL,
+            spoiler INTEGER NOT NULL DEFAULT 0,
             likes INTEGER NOT NULL DEFAULT 0,
             dislikes INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -160,6 +161,9 @@ function vg_db(): array {
             if (!in_array('reply_token', $cnames, true)) {
                 $pdo->exec('ALTER TABLE comments ADD COLUMN reply_token TEXT');
             }
+            if (!in_array('spoiler', $cnames, true)) {
+                $pdo->exec('ALTER TABLE comments ADD COLUMN spoiler INTEGER NOT NULL DEFAULT 0');
+            }
         } catch (Throwable $e) {
             // s.o.
         }
@@ -175,6 +179,7 @@ function vg_db(): array {
             author_email VARCHAR(190) NULL,
             notify_replies TINYINT NOT NULL DEFAULT 0,
             reply_token VARCHAR(64) NULL,
+            spoiler TINYINT NOT NULL DEFAULT 0,
             likes INT NOT NULL DEFAULT 0,
             dislikes INT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -276,6 +281,8 @@ function vg_db(): array {
             if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN notify_replies TINYINT NOT NULL DEFAULT 0'); }
             $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'reply_token'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN reply_token VARCHAR(64) NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM comments LIKE 'spoiler'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE comments ADD COLUMN spoiler TINYINT NOT NULL DEFAULT 0'); }
         } catch (Throwable $e) {
             // s.o.
         }

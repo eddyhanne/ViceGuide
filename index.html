@@ -464,6 +464,13 @@
   .cm-ts{font-family:'Space Mono';font-size:10.5px;color:var(--text-soft)}
   .cm-body{font-size:14.5px;color:var(--text);white-space:pre-wrap;word-break:break-word}
   .cm-empty{color:var(--text-soft);font-size:14px;padding:8px 2px}
+  .cm-spoiler{position:relative;border-radius:10px;overflow:hidden}
+  .cm-spoiler .cm-spoiler-body{filter:blur(7px);user-select:none;pointer-events:none;transition:filter .18s ease}
+  .cm-spoiler-btn{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:color-mix(in srgb,var(--card) 62%,transparent);border:1px dashed var(--line);border-radius:10px;color:var(--text-soft);font:600 12.5px var(--f-body,inherit);cursor:pointer;letter-spacing:.02em}
+  .cm-spoiler-btn:hover{color:var(--text);border-color:var(--accent)}
+  .cm-spoiler.open .cm-spoiler-body{filter:none;user-select:auto;pointer-events:auto}
+  .cm-spoiler.open .cm-spoiler-btn{display:none}
+  .cm-spoiler-lbl{color:var(--accent)}
 
   /* News-Ansicht umschalten + Kacheln */
   .news-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -2110,6 +2117,14 @@ function cmNotifyHtml(sfx){
     <input id="ce-${sfx}" class="cm-in" type="email" maxlength="190" placeholder="Deine E-Mail (nur für die Benachrichtigung)" value="${em}" style="${savedCmNotify?'':'display:none'}">`;
 }
 function cmSyncEmail(sfx){ const c=$('cn-'+sfx), e=$('ce-'+sfx); if(c&&e){ e.style.display=c.checked?'block':'none'; if(c.checked) e.focus(); } }
+/* Spoiler-Markierung: der Verfasser kann einen Kommentar als Spoiler kennzeichnen,
+   dann wird er für andere unkenntlich gemacht, bis sie ihn bewusst aufdecken. */
+function cmSpoilerHtml(sfx){
+  return `<label class="cm-notify cm-spoiler-lbl"><input type="checkbox" id="cs-${sfx}"> ⚠ Als Spoiler markieren (Inhalt wird für andere unkenntlich gemacht)</label>`;
+}
+function cmReadSpoiler(sfx){ const c=$('cs-'+sfx); return (c&&c.checked)?1:0; }
+/* Deckt einen als Spoiler markierten Kommentar auf (Klick auf die Overlay-Box). */
+function revealSpoiler(id){ const el=$('sp-'+id); if(el) el.classList.add('open'); }
 let cmIndex={};
 function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
 async function renderComments(i){
@@ -2134,6 +2149,7 @@ function renderCommentsUI(i,artId,list){
       <input id="cm-name" class="cm-in" type="text" placeholder="Dein Name" maxlength="40" value="${esc(savedCmName).replace(/"/g,'&quot;')}">
       <textarea id="cm-text" class="cm-ta" rows="3" placeholder="Schreib etwas Nettes oder Schlaues…" maxlength="800"></textarea>
       ${cmNotifyHtml('main')}
+      ${cmSpoilerHtml('main')}
       <button class="cm-btn" onclick="addComment('${artId}',${i})">Kommentar posten</button>
     </div>
     <div class="cm-list">${list.length?list.map(c=>cmHtml(artId,i,c,0)).join(''):'<div class="cm-empty">Sei der oder die Erste, die hier kommentiert.</div>'}</div>`;
@@ -2148,19 +2164,25 @@ function cmHtml(artId,i,c,depth){
   const dis=voted?'disabled':'';
   const voteTitle=own?' title="Dein eigener Kommentar, den kannst du nicht bewerten"':'';
   const delBtn=editMode?`<button class="cm-act cm-del" onclick="deleteComment('${artId}',${i},${c.id})">🗑 Löschen</button>`:'';
+  const spoilBtn=editMode?`<button class="cm-act" onclick="toggleSpoiler('${artId}',${i},${c.id},${c.spoiler?0:1})" title="Spoiler-Markierung umschalten">${c.spoiler?'👁 Spoiler aus':'⚠ Als Spoiler'}</button>`:'';
+  const body=c.spoiler
+    ? `<div class="cm-spoiler" id="sp-${c.id}"><div class="cm-body cm-spoiler-body">${esc(c.text)}</div><button class="cm-spoiler-btn" onclick="revealSpoiler(${c.id})">⚠ Spoiler anzeigen</button></div>`
+    : `<div class="cm-body">${esc(c.text)}</div>`;
   return `<div class="cm-item ${depth?'cm-reply':''}">
     <div class="cm-top"><span class="cm-name">${esc(c.name)}</span><span class="cm-ts">${fmtCommentDate(c.created_at)}</span></div>
-    ${quote}<div class="cm-body">${esc(c.text)}</div>
+    ${quote}${body}
     <div class="cm-actions">
       <button class="${upCls}" ${dis}${voteTitle} onclick="voteC('${artId}',${i},${c.id},1)">▲ <span>${c.likes}</span></button>
       <button class="${dnCls}" ${dis}${voteTitle} onclick="voteC('${artId}',${i},${c.id},-1)">▼ <span>${c.dislikes}</span></button>
       <button class="cm-act cm-reply-btn" onclick="toggleReply(${c.id})">↩ Antworten</button>
+      ${spoilBtn}
       ${delBtn}
     </div>
     <div class="cm-replybox" id="rb-${c.id}" style="display:none">
       <input class="cm-in" id="rn-${c.id}" type="text" placeholder="Dein Name" maxlength="40" value="${esc(savedCmName).replace(/"/g,'&quot;')}">
       <textarea class="cm-ta" id="rt-${c.id}" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
       ${cmNotifyHtml(c.id)}
+      ${cmSpoilerHtml(c.id)}
       <button class="cm-btn cm-btn-sm" onclick="addReply('${artId}',${i},${c.id})">Antwort posten</button>
     </div>
     ${replies?`<div class="cm-children">${replies}</div>`:''}
@@ -2180,9 +2202,10 @@ async function addComment(artId,i){
   const n=($('cm-name').value||'').trim()||'Gast', t=($('cm-text').value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
   const nf=cmReadNotify('main'); if(nf===null) return;
+  const spoiler=cmReadSpoiler('main');
   rememberName(n); rememberContact(nf.email,nf.notifyReplies);
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email,spoiler})});
     if(!res.ok) throw new Error();
     toast('Kommentar gepostet ✦');
     renderComments(i);
@@ -2212,11 +2235,12 @@ async function addReply(artId,i,parentId){
   const n=(($('rn-'+parentId)||{}).value||'').trim()||'Gast', t=(($('rt-'+parentId)||{}).value||'').trim();
   if(!t){toast('Bitte etwas schreiben.');return;}
   const nf=cmReadNotify(parentId); if(nf===null) return;
+  const spoiler=cmReadSpoiler(parentId);
   rememberName(n); rememberContact(nf.email,nf.notifyReplies);
   const p=cmIndex[parentId];
   const quote=p?(p.name+': '+(p.text.length>90?p.text.slice(0,90)+'…':p.text)):'';
   try{
-    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email})});
+    const res=await fetch('api/comments.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({article:artId,name:n,text:t,parentId,quote,voter:voterId,notifyReplies:nf.notifyReplies,email:nf.email,spoiler})});
     if(!res.ok) throw new Error();
     toast('Antwort gepostet ✦');
     renderComments(i);
@@ -2230,6 +2254,16 @@ async function deleteComment(artId,i,id){
     toast('Kommentar gelöscht.');
     renderComments(i);
   }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
+/* Admin: Spoiler-Markierung eines Kommentars serverseitig umschalten. */
+async function toggleSpoiler(artId,i,id,spoiler){
+  try{
+    const res=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,spoiler})});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    toast(spoiler?'Als Spoiler markiert.':'Spoiler-Markierung entfernt.');
+    renderComments(i);
+  }catch(e){ toast('Umschalten fehlgeschlagen.'); }
 }
 
 /* ---- Kommentar-Benachrichtigung fuer den Admin ----
