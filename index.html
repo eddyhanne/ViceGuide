@@ -368,6 +368,9 @@
   .art-list{margin:0 0 18px;padding-left:22px}
   .art-list li{margin-bottom:9px;font-size:16px;line-height:1.5}
   .art-list li::marker{color:var(--accent)}
+  .art-quote{position:relative;margin:22px 0;padding:18px 22px 18px 26px;background:var(--surface-2);border-left:4px solid var(--accent);border-radius:12px;font-size:17px;line-height:1.6;font-style:italic;color:var(--text)}
+  .art-quote cite{display:block;margin-top:10px;font-size:13px;font-style:normal;font-weight:600;color:var(--text-soft)}
+  .art-quote cite::before{content:"— "}
   .art-faq{margin:22px 0;border-top:1px solid var(--line)}
   .art-faq details{border-bottom:1px solid var(--line)}
   .art-faq summary{cursor:pointer;list-style:none;padding:15px 26px 15px 0;font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading);position:relative}
@@ -2750,6 +2753,14 @@ function renderContentBlock(p,editable,seen){
     const src=parts[0].trim(); const cr=(parts[1]||'').trim(); const narrow=(parts[2]||'').trim()==='narrow';
     const toggle=editable?`<button type="button" class="fig-size-btn" contenteditable="false" onclick="toggleFigSize(event)">${narrow?'Volle Breite':'Schmaler'}</button>`:'';
     return `<figure class="art-fig${narrow?' narrow':''}" data-size="${narrow?'narrow':'full'}"><img src="${src}" alt="${esc(cr||'Artikelbild')}" width="1100" height="688" loading="lazy" onerror="this.closest('figure').style.display='none'">${toggle}${cr?`<figcaption>${cr}</figcaption>`:''}</figure>`;
+  }
+  /* Zitat-Block: "quote:Zitattext|Quelle/Person". Die Quelle ist optional und
+     wird als Zeile darunter genannt (siehe CLAUDE.md: echte, benannte Zitate). */
+  if(p.startsWith('quote:')){
+    const parts=p.slice(6).split('|');
+    const q=(parts[0]||'').trim(); const who=(parts[1]||'').trim();
+    if(!q) return '';
+    return `<blockquote class="art-quote">${renderText(q,seen)}${who?`<cite>${esc(who)}</cite>`:''}</blockquote>`;
   }
   return `<p>${renderText(p,seen)}</p>`;
 }

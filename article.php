@@ -59,6 +59,11 @@ function vg_plain_content(array $content): string {
         } elseif (str_starts_with($text, 'faq:')) {
             $parts = explode('|', substr($text, 4), 2);
             $out .= '<p><strong>' . vg_esc(trim($parts[0] ?? '')) . '</strong> ' . vg_esc(trim($parts[1] ?? '')) . '</p>';
+        } elseif (str_starts_with($text, 'quote:')) {
+            $parts = explode('|', substr($text, 6), 2);
+            $q = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($parts[0] ?? ''));
+            $who = trim($parts[1] ?? '');
+            $out .= '<blockquote>' . vg_esc($q) . ($who ? '<cite>' . vg_esc($who) . '</cite>' : '') . '</blockquote>';
         } else {
             $plain = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $text);
             $out .= '<p>' . vg_esc($plain) . '</p>';

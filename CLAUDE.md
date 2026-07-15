@@ -166,6 +166,7 @@ Es gibt **kein** `tag`-Feld, das sichtbare Label kommt aus `GCAT[cat].name`. `id
 - `"### Zwischenüberschrift"`: eigene Zwischenüberschrift, bekommt automatisch eine Anker-ID fürs Inhaltsverzeichnis.
 - `"img:https://bild-url|Bildunterschrift"`: weiteres Bild im Text (Unterschrift optional). Drittes Segment `|narrow` für ein schmaleres, zentriertes Bild.
 - `"- Ein Punkt"`: Aufzählungspunkt, mehrere ergeben automatisch eine Liste.
+- `"quote:Zitattext|Quelle oder Person"`: hervorgehobener Zitat-Block (Akzent-Balken, kursiv, Quellenzeile darunter). Die Quelle ist optional, sollte aber fast immer dabei sein. **Nutzung, wenn die Quellen es hergeben (Standard, Juli 2026):** Gibt eine Quelle ein echtes, zuschreibbares Zitat her (Entwickler, Analyst, offizielles Statement), wird es als `quote:`-Block eingebaut, mit klarer Zuschreibung ("Leitender QA-Tester, laut Reuters"). Das schafft Trust und macht den Artikel dynamischer. Zitate nie erfinden und nie einer anonymen Sammelformel zuschreiben. Fremdsprachige Zitate dürfen sinngemäß auf Deutsch wiedergegeben und mit Quelle attribuiert werden (übliche Praxis im deutschen Gaming-Journalismus).
 - `"faq:Frage?|Antworttext"`: aufklappbarer FAQ-Eintrag. **Pflicht in jedem Artikel, siehe eigener Block unten.** Mehrere ergeben einen FAQ-Block plus automatisch `FAQPage`-Schema fürs Google-Snippet.
 
 **`tldr`** (optional, top-level, kein Präfix): Array aus 2 bis 5 Stichpunkten, wird als "Auf einen Blick"-Box unter dem Lead angezeigt. Sinnvoll bei längeren oder faktenreichen Artikeln, sonst weglassen.
