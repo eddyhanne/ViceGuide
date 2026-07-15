@@ -320,6 +320,10 @@
   .acc-head .cnt{font-family:'Space Mono';font-size:11.5px;color:var(--text-soft);background:var(--bg-2);padding:4px 10px;border-radius:999px}
   .acc-head .lockbadge{font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text);border:1px solid var(--line);padding:4px 9px;border-radius:999px}
   .acc-head .chev{color:var(--text-soft);transition:.28s;margin-left:8px} .acc-item.open .chev{transform:rotate(90deg);color:var(--accent)}
+  .acc-drag{cursor:grab;color:var(--text-soft);font-size:15px;margin-right:4px;padding:0 2px;flex:0 0 auto}
+  .acc-pin{background:none;border:0;cursor:pointer;font-size:14px;line-height:1;opacity:.35;filter:grayscale(1);padding:2px 6px;margin-left:4px}
+  .acc-pin:hover{opacity:.7} .acc-pin.on{opacity:1;filter:none}
+  .acc-item.nl-editing{outline:1px dashed var(--accent);outline-offset:-1px}
   .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease} .acc-inner{padding:2px 18px 10px}
   .acc-latest{font-family:'Space Mono';font-size:11px;color:var(--text-soft);padding:12px 0 2px}
   .sub{display:block;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
@@ -857,7 +861,7 @@ const PILLAR_LABEL={home:'Start',news:'News & Leaks'};
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
 const DB_LOCKED=GROUPS[1].cats.filter(c=>c.id==='trophies'||c.id==='collect');
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false;
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''};
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
@@ -1031,7 +1035,7 @@ function portalCard(g){
 }
 function portalHighlightsHtml(){
   const p=pinnedGuides(); if(!p.length) return '';
-  return `<div class="p-sh"><h2>News im Fokus</h2><a class="p-more" style="margin-left:auto" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News →</a></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
+  return `<div class="p-sh"><h2>News im Fokus</h2><a class="p-more" style="margin-left:auto" href="${sectionHref('news')}" onclick="return goAllNews(event)">Alle News →</a></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
 }
 function portalNewsHtml(){
   const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
@@ -1039,7 +1043,7 @@ function portalNewsHtml(){
   if(!list.length) return '';
   const cards=list.map(g=>{const idx=GUIDES.indexOf(g);return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"><span class="p-ncat" onclick="event.preventDefault();event.stopPropagation();goNewsCat('${g.cat}')">${GCAT[g.cat]?.name||''}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></a>`;}).join('');
   const catSel=`<select class="p-newscat" onchange="if(this.value){goNewsCat(this.value);this.value='';}"><option value="">Kategorie w\u00e4hlen\u2026</option>${GROUPS[0].cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select>`;
-  return `<div class="p-sh"><h2>Aktuelle News</h2><span class="p-newshead">${catSel}<a class="p-more" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News \u2192</a></span></div><div class="p-news">${cards}</div>`;
+  return `<div class="p-sh"><h2>Aktuelle News</h2><span class="p-newshead">${catSel}<a class="p-more" href="${sectionHref('news')}" onclick="return goAllNews(event)">Alle News \u2192</a></span></div><div class="p-news">${cards}</div>`;
 }
 /* Direkt in eine News-Kategorie springen (aus dem Artikel-Tag oder der
    Portal-Newsliste): oeffnet /news in der Kachel-Ansicht mit gesetztem Filter. */
@@ -1082,6 +1086,7 @@ function renderHome(){
 }
 function renderNews(){
   const g1=GROUPS[0], g2=GROUPS[1];
+  ensurePinnedOpen();
   // Phase 1 als Liste (Akkordeon)
   const listHtml=newsListHtml();
   // Phase 1 als Kacheln: Kategorie-Filter (Chips) + Suche + Mehr laden
@@ -1134,7 +1139,7 @@ function newsCardsHtml(){
 function drawNewsGrid(){ const nc=newsCardsHtml(); const g=$('news-grid'), m=$('news-more'); if(g)g.innerHTML=nc.grid; if(m)m.innerHTML=nc.more; }
 function newsListHtml(){
   const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
-  const items=g1.cats.map(c=>{
+  const items=orderedNewsCats().map(c=>{
     let gl=guidesIn(c.id);
     if(q) gl=gl.filter(gd=>(((gd.title||'')+' '+(gd.summary||'')).toLowerCase().includes(q)));
     if(q && !gl.length) return '';
@@ -1146,7 +1151,10 @@ function newsListHtml(){
     const rest=Math.max(0,gls.length-5);
     const subs=gls.slice(0,showAll?gls.length:5).map(mkSub).join('') + ((rest>0&&!showAll)?`<button class="sub-more" onclick="expandCat('${c.id}',event)">Weitere ${rest} Artikel anzeigen</button>`:'');
     const cnt = q ? `${gls.length} Treffer` : `${guidesIn(c.id).length} Artikel`;
-    return `<div class="acc-item ${isOpen?'open':''}" data-cat="${c.id}"><div class="acc-head" onclick="toggleCat('${c.id}')"><span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${cnt}</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${(latest&&!q)?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
+    const drag = editMode ? ` draggable="true" ondragstart="nlDragStart(event,'${c.id}')" ondragover="nlDragOver(event)" ondrop="nlDrop(event,'${c.id}')"` : '';
+    const handle = editMode ? `<span class="acc-drag" title="Ziehen zum Sortieren">⠿</span>` : '';
+    const pinBtn = editMode ? `<button type="button" class="acc-pin ${NEWS_SETTINGS.pinned===c.id?'on':''}" onclick="toggleNewsPin('${c.id}',event)" title="${NEWS_SETTINGS.pinned===c.id?'Angepinnt (oben aufgeklappt bei Alle News)':'Anpinnen'}">📌</button>` : '';
+    return `<div class="acc-item ${isOpen?'open':''} ${editMode?'nl-editing':''}" data-cat="${c.id}"${drag}><div class="acc-head" onclick="toggleCat('${c.id}')">${handle}<span class="ic">${catIcon(c.id)}</span><span class="nm">${c.name}</span><span class="cnt">${cnt}</span>${pinBtn}<span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner">${(latest&&!q)?`<div class="acc-latest">Zuletzt aktualisiert: ${latest}</div>`:''}${subs||'<div class="sd" style="padding:14px 0">Noch keine Einträge, bald mehr.</div>'}</div></div></div>`;
   }).join('');
   return items || '<div class="empty">Keine Artikel gefunden.</div>';
 }
@@ -1158,6 +1166,27 @@ function loadMoreNews(){ newsLimit+=12; drawNewsGrid(); }
 function clearNewsSearch(){ newsQuery=''; const ns=$('newssearch'); if(ns)ns.value=''; const c=document.querySelector('.nf-clear'); if(c)c.style.display='none'; newsLimit=12; if(newsView==='cards') drawNewsGrid(); else drawNewsList(); if(ns)ns.focus(); }
 function expandCat(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} expandedCats.add(id); renderNews(); }
 function setNewsView(v){ newsView=v; renderNews(); }
+/* Reihenfolge der News-Kategorien in der Liste: gespeicherte Reihenfolge zuerst,
+   danach neue/unsortierte Kategorien. Die angepinnte Kategorie steuert nur, was
+   bei "Alle News" aufgeklappt wird (Position bestimmt die Drag-Reihenfolge). */
+function orderedNewsCats(){
+  const cats=GROUPS[0].cats;
+  const order=(NEWS_SETTINGS.order||[]).filter(id=>cats.some(c=>c.id===id));
+  const rest=cats.filter(c=>!order.includes(c.id)).map(c=>c.id);
+  return [...order,...rest].map(id=>cats.find(c=>c.id===id)).filter(Boolean);
+}
+function ensurePinnedOpen(){ const pin=NEWS_SETTINGS.pinned; if(!pin)return; if(!GROUPS[0].cats.some(c=>openCats.has(c.id))) openCats.add(pin); }
+/* "Alle News": immer Listenansicht, angepinnte Kategorie oben aufgeklappt. */
+function goAllNews(e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); newsView='list'; openCats.clear(); if(NEWS_SETTINGS.pinned) openCats.add(NEWS_SETTINGS.pinned); go('news'); return false; }
+async function saveNewsSettings(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({news_cat_order:NEWS_SETTINGS.order,news_pinned_cat:NEWS_SETTINGS.pinned})}); if(!r.ok) throw new Error(); toast('News-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); }
+}
+function toggleNewsPin(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} NEWS_SETTINGS.pinned=(NEWS_SETTINGS.pinned===id?'':id); drawNewsList(); saveNewsSettings(); }
+let nlDragCat=null;
+function nlDragStart(e,id){ nlDragCat=id; try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id);}catch(_){} }
+function nlDragOver(e){ e.preventDefault(); try{e.dataTransfer.dropEffect='move';}catch(_){} }
+function nlDrop(e,targetId){ e.preventDefault(); if(!nlDragCat||nlDragCat===targetId){nlDragCat=null;return;} const ids=orderedNewsCats().map(c=>c.id); const from=ids.indexOf(nlDragCat),to=ids.indexOf(targetId); if(from<0||to<0){nlDragCat=null;return;} ids.splice(to,0,ids.splice(from,1)[0]); NEWS_SETTINGS.order=ids; nlDragCat=null; drawNewsList(); saveNewsSettings(); }
 function gotoRelease(){ current='home'; openCats.add('__rel__'); renderSidebar(); renderView(); setTimeout(()=>{const el=document.getElementById('rel-anchor'); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},70); }
 function toggleCat(id){const it=document.querySelector('.acc-item[data-cat="'+id+'"]');if(!it)return;const b=it.querySelector('.acc-body');const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(it.classList.contains('open')){openCats.delete(id);it.classList.remove('open');if(red){b.style.maxHeight='0';return;}b.style.maxHeight=b.scrollHeight+'px';b.offsetHeight;requestAnimationFrame(()=>b.style.maxHeight='0px');}
@@ -3285,6 +3314,7 @@ async function loadExternal(){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
   }
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
+  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; } } }catch(e){}
   await checkAdminSession();
   restoreEditMode();
   if(!gquery.trim())renderView();
