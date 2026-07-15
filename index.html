@@ -465,12 +465,14 @@
   .cm-body{font-size:14.5px;color:var(--text);white-space:pre-wrap;word-break:break-word}
   .cm-empty{color:var(--text-soft);font-size:14px;padding:8px 2px}
   .cm-spoiler{position:relative;border-radius:10px;overflow:hidden}
-  .cm-spoiler .cm-spoiler-body{filter:blur(7px);user-select:none;pointer-events:none;transition:filter .18s ease}
+  .cm-spoiler .cm-spoiler-wrap{filter:blur(7px);user-select:none;pointer-events:none;transition:filter .18s ease}
   .cm-spoiler-btn{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:6px;background:color-mix(in srgb,var(--card) 62%,transparent);border:1px dashed var(--line);border-radius:10px;color:var(--text-soft);font:600 12.5px var(--f-body,inherit);cursor:pointer;letter-spacing:.02em}
   .cm-spoiler-btn:hover{color:var(--text);border-color:var(--accent)}
-  .cm-spoiler.open .cm-spoiler-body{filter:none;user-select:auto;pointer-events:auto}
+  .cm-spoiler.open .cm-spoiler-wrap{filter:none;user-select:auto;pointer-events:auto}
   .cm-spoiler.open .cm-spoiler-btn{display:none}
   .cm-spoiler-lbl{color:var(--accent)}
+  .cm-reveal{display:inline-block;margin-left:4px;padding:1px 8px;font:600 11.5px var(--f-body,inherit);color:var(--text-soft);background:var(--surface-2);border:1px dashed var(--line);border-radius:999px;cursor:pointer;vertical-align:baseline}
+  .cm-reveal:hover{color:var(--text);border-color:var(--accent)}
 
   /* News-Ansicht umschalten + Kacheln */
   .news-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -2125,6 +2127,13 @@ function cmSpoilerHtml(sfx){
 function cmReadSpoiler(sfx){ const c=$('cs-'+sfx); return (c&&c.checked)?1:0; }
 /* Deckt einen als Spoiler markierten Kommentar auf (Klick auf die Overlay-Box). */
 function revealSpoiler(id){ const el=$('sp-'+id); if(el) el.classList.add('open'); }
+/* Deckt die serverseitig zensierten Schimpfwoerter eines Kommentars auf (jeder
+   Leser kann das selbst, wie einen Spoiler). Tauscht Name, Zitat und Text gegen
+   den mitgelieferten Rohwert (data-full) und blendet den Knopf aus. */
+function revealCensor(id){
+  ['cname-','cquote-','ctxt-'].forEach(p=>{ const el=$(p+id); if(el&&el.dataset.full!=null) el.textContent=el.dataset.full; });
+  const b=$('crev-'+id); if(b) b.style.display='none';
+}
 let cmIndex={};
 function indexComments(list){ for(const c of list){ cmIndex[c.id]={name:c.name,text:c.text}; if(c.replies&&c.replies.length) indexComments(c.replies); } }
 async function renderComments(i){
@@ -2156,7 +2165,8 @@ function renderCommentsUI(i,artId,list){
 }
 function cmHtml(artId,i,c,depth){
   const replies=(c.replies||[]).map(r=>cmHtml(artId,i,r,depth+1)).join('');
-  const quote=c.quote?`<div class="cm-quote">${esc(c.quote)}</div>`:'';
+  const attrFull=v=>v!=null?` data-full="${esc(String(v)).replace(/"/g,'&quot;')}"`:'';
+  const quote=c.quote?`<div class="cm-quote" id="cquote-${c.id}"${attrFull(c.quote_full)}>${esc(c.quote)}</div>`:'';
   const own=!!c.own;
   const voted=votedIds.has(c.id)||own;
   const upCls='cm-act'+(voted?' locked':'');
@@ -2165,11 +2175,13 @@ function cmHtml(artId,i,c,depth){
   const voteTitle=own?' title="Dein eigener Kommentar, den kannst du nicht bewerten"':'';
   const delBtn=editMode?`<button class="cm-act cm-del" onclick="deleteComment('${artId}',${i},${c.id})">🗑 Löschen</button>`:'';
   const spoilBtn=editMode?`<button class="cm-act" onclick="toggleSpoiler('${artId}',${i},${c.id},${c.spoiler?0:1})" title="Spoiler-Markierung umschalten">${c.spoiler?'👁 Spoiler aus':'⚠ Als Spoiler'}</button>`:'';
+  const revBtn=c.censored?`<button class="cm-reveal" id="crev-${c.id}" onclick="revealCensor(${c.id})">🙈 Schimpfwörter anzeigen</button>`:'';
+  const bodyInner=`<div class="cm-body"><span class="cm-txt" id="ctxt-${c.id}"${attrFull(c.text_full)}>${esc(c.text)}</span>${revBtn?' '+revBtn:''}</div>`;
   const body=c.spoiler
-    ? `<div class="cm-spoiler" id="sp-${c.id}"><div class="cm-body cm-spoiler-body">${esc(c.text)}</div><button class="cm-spoiler-btn" onclick="revealSpoiler(${c.id})">⚠ Spoiler anzeigen</button></div>`
-    : `<div class="cm-body">${esc(c.text)}</div>`;
+    ? `<div class="cm-spoiler" id="sp-${c.id}"><div class="cm-spoiler-wrap">${bodyInner}</div><button class="cm-spoiler-btn" onclick="revealSpoiler(${c.id})">⚠ Spoiler anzeigen</button></div>`
+    : bodyInner;
   return `<div class="cm-item ${depth?'cm-reply':''}">
-    <div class="cm-top"><span class="cm-name">${esc(c.name)}</span><span class="cm-ts">${fmtCommentDate(c.created_at)}</span></div>
+    <div class="cm-top"><span class="cm-name" id="cname-${c.id}"${attrFull(c.name_full)}>${esc(c.name)}</span><span class="cm-ts">${fmtCommentDate(c.created_at)}</span></div>
     ${quote}${body}
     <div class="cm-actions">
       <button class="${upCls}" ${dis}${voteTitle} onclick="voteC('${artId}',${i},${c.id},1)">▲ <span>${c.likes}</span></button>
@@ -2591,12 +2603,13 @@ function nlCountdownHtml(){
    gleich wirken (die m-* Dark-Overrides greifen hier bewusst nicht). */
 function nlSocialHtml(){
   const items=[];
-  if(nlDraft.discord!==false && COMMUNITY.discordInvite) items.push({url:COMMUNITY.discordInvite,bg:'#5865F2',name:'Discord',sub:'Tritt der Community bei'});
-  if(nlDraft.instagram!==false && COMMUNITY.instagram) items.push({url:COMMUNITY.instagram,bg:'#C13584',name:'Instagram',sub:'Folge @viceguide'});
+  if(nlDraft.discord!==false && COMMUNITY.discordInvite) items.push({url:COMMUNITY.discordInvite,bg:'#5865F2',name:'Discord',sub:'Tritt der Community bei',logo:'nl-discord.png'});
+  if(nlDraft.instagram!==false && COMMUNITY.instagram) items.push({url:COMMUNITY.instagram,bg:'#C13584',name:'Instagram',sub:'Folge @viceguide',logo:'nl-instagram.png'});
   if(!items.length) return '';
   const w=Math.floor(100/items.length);
   const cells=items.map(it=>'<td width="'+w+'%" align="center" style="padding:5px">'
-    +'<a href="'+it.url+'" style="display:block;background:'+it.bg+';color:#ffffff;text-decoration:none;border-radius:12px;padding:15px 12px">'
+    +'<a href="'+it.url+'" style="display:block;background:'+it.bg+';color:#ffffff;text-decoration:none;border-radius:12px;padding:16px 12px">'
+    +'<img src="'+NL_BASE+'/'+it.logo+'" width="34" height="34" alt="" style="width:34px;height:34px;display:block;margin:0 auto 8px">'
     +'<div class="m-h" style="'+NL_HEAD+';font-size:17px;font-weight:600;color:#ffffff;line-height:1.2">'+it.name+'</div>'
     +'<div style="'+NL_BODY+';font-size:12px;color:#ffffff;line-height:1.3;margin-top:3px">'+it.sub+'</div>'
     +'</a></td>').join('');

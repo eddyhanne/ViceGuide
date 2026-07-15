@@ -52,6 +52,17 @@ function vg_buildTree(array $rows, string $voter = ''): array {
         $r['likes'] = (int)$r['likes'];
         $r['dislikes'] = (int)$r['dislikes'];
         $r['spoiler'] = !empty($r['spoiler']) ? 1 : 0;
+        /* Schimpfwoerter erst beim Ausliefern zensieren. Standard-Anzeige ist
+           zensiert, der Rohwert wird als *_full mitgeliefert, damit der Leser
+           ihn per Klick aufdecken kann (wie ein Spoiler). */
+        $anyCensored = false;
+        $rawName = (string)$r['name']; $cName = vg_censor($rawName);
+        $r['name'] = $cName; if ($cName !== $rawName) { $r['name_full'] = $rawName; $anyCensored = true; }
+        $rawText = (string)$r['text']; $cText = vg_censor($rawText);
+        $r['text'] = $cText; if ($cText !== $rawText) { $r['text_full'] = $rawText; $anyCensored = true; }
+        if (!empty($r['quote'])) { $rawQ = (string)$r['quote']; $cQ = vg_censor($rawQ);
+            $r['quote'] = $cQ; if ($cQ !== $rawQ) { $r['quote_full'] = $rawQ; $anyCensored = true; } }
+        $r['censored'] = $anyCensored;
         /* Eigener Kommentar? Vergleich des mitgeschickten Wähler-Tokens mit dem
            beim Anlegen gespeicherten Autor-Token. Das Token selbst wird nie
            ausgeliefert (nur das abgeleitete Flag), damit keine fremden Tokens
@@ -217,9 +228,12 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     $b = vg_body();
     $articleId = trim($b['article'] ?? '');
-    $name = vg_censor(mb_substr(trim($b['name'] ?? '') ?: 'Gast', 0, 60));
-    $text = vg_censor(mb_substr(trim($b['text'] ?? ''), 0, 800));
-    $quote = isset($b['quote']) ? vg_censor(mb_substr(trim((string)$b['quote']), 0, 200)) : null;
+    /* Rohtext speichern. Die Schimpfwoerter-Zensur passiert erst beim Ausliefern
+       (vg_buildTree), damit jeder Leser sie wie einen Spoiler bewusst aufdecken
+       kann. Der Server bleibt die maessgebliche Grenze: Standard ist zensiert. */
+    $name = mb_substr(trim($b['name'] ?? '') ?: 'Gast', 0, 60);
+    $text = mb_substr(trim($b['text'] ?? ''), 0, 800);
+    $quote = isset($b['quote']) ? mb_substr(trim((string)$b['quote']), 0, 200) : null;
     $parentId = isset($b['parentId']) && $b['parentId'] ? (int)$b['parentId'] : null;
     $spoiler = !empty($b['spoiler']) ? 1 : 0;
 
