@@ -72,6 +72,7 @@ function vg_rowToArticle(array $r, bool $full = false): array {
         'lead'    => $r['lead'],
         'content' => json_decode($r['content_json'] ?? '[]', true) ?: [],
         'sources' => json_decode($r['sources_json'] ?? '[]', true) ?: [],
+        'tldr'    => json_decode($r['tldr_json'] ?? '[]', true) ?: [],
         'img'     => $hasImg ? ($full ? $r['img'] : ('api/article_image.php?id=' . urlencode($r['id']) . '&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'imgfit'  => $r['imgfit_json'] ? json_decode($r['imgfit_json'], true) : null,
         'credit'  => $r['credit'] ?: null,
@@ -99,6 +100,7 @@ function vg_writeArticleFields(PDO $pdo, string $id, array $d, bool $clearDraft)
     }
     if (array_key_exists('content', $d)) { $sets[] = 'content_json = ?'; $vals[] = json_encode($d['content'], JSON_UNESCAPED_UNICODE); }
     if (array_key_exists('sources', $d)) { $sets[] = 'sources_json = ?'; $vals[] = json_encode($d['sources'], JSON_UNESCAPED_UNICODE); }
+    if (array_key_exists('tldr', $d)) { $sets[] = 'tldr_json = ?'; $vals[] = $d['tldr'] ? json_encode($d['tldr'], JSON_UNESCAPED_UNICODE) : null; }
     if (array_key_exists('img', $d)) { $sets[] = 'img = ?'; $vals[] = $d['img']; }
     if (array_key_exists('imgfit', $d)) { $sets[] = 'imgfit_json = ?'; $vals[] = $d['imgfit'] ? json_encode($d['imgfit'], JSON_UNESCAPED_UNICODE) : null; }
     if (!$sets) return;
@@ -191,8 +193,8 @@ if ($method === 'POST') {
         $id = $base . '-' . $n; $n++;
     }
 
-    $stmt = $pdo->prepare('INSERT INTO articles (id, cat, title, article_date, summary, meta, lead, content_json, sources_json, img, imgfit_json, credit, author)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO articles (id, cat, title, article_date, summary, meta, lead, content_json, sources_json, img, imgfit_json, credit, author, tldr_json)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute([
         $id,
         $b['cat'] ?? 'news',
@@ -207,6 +209,7 @@ if ($method === 'POST') {
         isset($b['imgfit']) ? json_encode($b['imgfit'], JSON_UNESCAPED_UNICODE) : null,
         $b['credit'] ?? null,
         $b['author'] ?? null,
+        isset($b['tldr']) && $b['tldr'] ? json_encode($b['tldr'], JSON_UNESCAPED_UNICODE) : null,
     ]);
     vg_out2(['ok' => true, 'id' => $id], 201);
 }
@@ -231,7 +234,7 @@ if ($method === 'PUT') {
        komplett ersetzt, damit mehrere Speichervorgaenge nacheinander (erst
        Bild, spaeter Text) sich nicht gegenseitig ueberschreiben. */
     $draft = $row['draft_json'] ? (json_decode($row['draft_json'], true) ?: []) : [];
-    $allowed = ['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit'];
+    $allowed = ['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit','tldr'];
     foreach ($allowed as $key) {
         if (array_key_exists($key, $b)) { $draft[$key] = $b[$key]; }
     }

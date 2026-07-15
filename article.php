@@ -101,6 +101,7 @@ $showUpdated = $pubTs && $updTs && ($updTs - $pubTs) > 86400;
 $summary = trim($row['summary'] ?: $row['lead'] ?: '');
 $content = json_decode($row['content_json'] ?? '[]', true) ?: [];
 $sources = json_decode($row['sources_json'] ?? '[]', true) ?: [];
+$tldr = json_decode($row['tldr_json'] ?? '[]', true) ?: [];
 
 // Kommentare serverseitig rendern: macht sie zu indexierbarem, nutzergeneriertem
 // Inhalt (SEO), sonst laedt sie nur das clientseitige JavaScript per API nach und
@@ -226,8 +227,31 @@ $breadcrumbLd = json_encode([
    wuerde die JSON-LD-Skripte auch dort einsetzen und dabei mitten ins
    Haupt-<script> ein </script> schreiben, das den Skriptblock vorzeitig
    beendet, alles danach erschiene dann als roher Text auf der Seite. */
+/* FAQPage aus den faq:-Zeilen des Artikels. Das Schema erzeugte bisher nur
+   das clientseitige JavaScript in index.html, die von Google zuerst gecrawlte
+   SSR-Fassade hier hatte es nicht, damit blieb das FAQ-Rich-Snippet ungenutzt.
+   Interne [[id|text]]-Verweise werden im Antworttext zu Klartext aufgeloest. */
+$faqItems = [];
+foreach ($content as $block) {
+    if (!is_string($block) || !str_starts_with($block, 'faq:')) continue;
+    $parts = explode('|', substr($block, 4), 2);
+    $q = trim($parts[0] ?? '');
+    $a = trim(preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $parts[1] ?? ''));
+    if ($q === '' || $a === '') continue;
+    $faqItems[] = [
+        '@type' => 'Question',
+        'name' => $q,
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => $a],
+    ];
+}
+$faqLd = $faqItems ? json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => $faqItems,
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
 $ldInject = '<script type="application/ld+json">' . $articleLd . '</script>' . "\n"
-    . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n";
+    . '<script type="application/ld+json">' . $breadcrumbLd . '</script>' . "\n"
+    . ($faqLd ? '<script type="application/ld+json">' . $faqLd . '</script>' . "\n" : '');
 $stylePos = strpos($html, '<style>');
 if ($stylePos !== false) {
     $html = substr($html, 0, $stylePos) . $ldInject . substr($html, $stylePos);
@@ -244,6 +268,19 @@ $body = [
     '<p class="lead" id="a-lead"></p>' => '<p class="lead" id="a-lead">' . vg_esc($row['lead'] ?: $summary) . '</p>',
     '<div class="content" id="a-content"></div>' => '<div class="content" id="a-content">' . vg_plain_content($content) . '</div>',
 ];
+// "Auf einen Blick"-Box serverseitig fuellen (interne [[id|text]]-Verweise als
+// Klartext), sonst blieb sie ohne JavaScript unsichtbar.
+if (is_array($tldr) && $tldr) {
+    $lis = '';
+    foreach ($tldr as $t) {
+        if (!is_string($t) || trim($t) === '') continue;
+        $lis .= '<li>' . vg_esc(trim(preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $t))) . '</li>';
+    }
+    if ($lis !== '') {
+        $body['<div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>'] =
+            '<div class="art-tldr" id="a-tldr"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list">' . $lis . '</ul></div>';
+    }
+}
 if ($showUpdated) {
     $body['<span class="art-dot" id="a-upd-dot" style="display:none">·</span>'] =
         '<span class="art-dot" id="a-upd-dot">·</span>';

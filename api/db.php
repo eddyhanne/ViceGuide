@@ -35,7 +35,7 @@ function vg_db(): array {
     $schemaReady = false;
     try {
         $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token, spoiler FROM comments LIMIT 1');
-        $pdo->query('SELECT draft_json, pinned FROM articles LIMIT 1');
+        $pdo->query('SELECT draft_json, pinned, tldr_json FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
@@ -85,6 +85,7 @@ function vg_db(): array {
             imgfit_json TEXT,
             credit TEXT,
             author TEXT,
+            tldr_json TEXT,
             draft_json TEXT,
             pinned INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -142,6 +143,9 @@ function vg_db(): array {
             }
             if (!in_array('pinned', $anames, true)) {
                 $pdo->exec('ALTER TABLE articles ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
+            }
+            if (!in_array('tldr_json', $anames, true)) {
+                $pdo->exec('ALTER TABLE articles ADD COLUMN tldr_json TEXT');
             }
         } catch (Throwable $e) {
             // s.o.
@@ -209,6 +213,7 @@ function vg_db(): array {
             imgfit_json VARCHAR(100) NULL,
             credit VARCHAR(200) NULL,
             author VARCHAR(100) NULL,
+            tldr_json TEXT NULL,
             draft_json MEDIUMTEXT NULL,
             pinned TINYINT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -269,6 +274,8 @@ function vg_db(): array {
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN draft_json MEDIUMTEXT NULL'); }
             $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'pinned'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN pinned TINYINT NOT NULL DEFAULT 0'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'tldr_json'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN tldr_json TEXT NULL'); }
         } catch (Throwable $e) {
             // s.o.
         }
