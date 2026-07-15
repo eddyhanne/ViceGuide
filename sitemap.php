@@ -44,6 +44,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 echo "  <url>\n    <loc>https://viceguide.de/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n";
 echo "  <url>\n    <loc>https://viceguide.de/news</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n";
+echo "  <url>\n    <loc>https://viceguide.de/datenbank/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n";
+echo "  <url>\n    <loc>https://viceguide.de/guides/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n";
 foreach (VG_SITEMAP_SECTION_PREFIX as $prefix) {
     echo "  <url>\n    <loc>https://viceguide.de/{$prefix}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n";
 }
