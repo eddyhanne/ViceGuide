@@ -178,9 +178,16 @@
   .pcard.fdrag{cursor:grab}
   .pcard.fdrag:active{cursor:grabbing}
   .p-draghint{font-family:'Space Mono';font-size:11px;color:var(--text-soft);background:var(--surface-2);border:1px dashed var(--line);border-radius:999px;padding:3px 10px}
-  .ff-row{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px}
-  .ff-t{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.35;min-width:0;overflow-wrap:anywhere}
-  .ff-x{flex:0 0 auto;font:600 12px var(--f-body,inherit);color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .ff-row{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:9px;transition:border-color .15s}
+  .ff-row:hover{border-color:var(--accent)}
+  .ff-thumb{flex:0 0 58px;width:58px;height:44px;border-radius:9px;overflow:hidden;background:var(--surface);display:grid;place-items:center}
+  .ff-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .ff-thumb.ph{color:var(--text-soft);opacity:.5}
+  .ff-thumb.ph svg{width:22px;height:22px}
+  .ff-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .ff-cat{font-family:'Space Mono';font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent)}
+  .ff-t{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.3;overflow-wrap:anywhere}
+  .ff-x{flex:0 0 auto;font:600 12px var(--f-body,inherit);color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
   .ff-x:hover{background:var(--accent);color:var(--btn-text)}
   .p-news{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .p-nrow{display:flex;flex-direction:column;gap:6px;padding:14px 16px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,transform .15s}
@@ -1500,7 +1507,12 @@ function togglePinCurrent(){ if(curArticle!=null) togglePin(curArticle); }
 /* Panel "Fokus voll": listet alle aktuell gepinnten Artikel mit Lösen-Knopf. */
 function openFocusFull(){
   const pinned=GUIDES.filter(g=>g.pinned);
-  const rows=pinned.map(g=>{const idx=GUIDES.indexOf(g);return `<div class="ff-row"><span class="ff-t">${esc(g.title)}</span><button class="ff-x" onclick="focusUnpin(${idx})">Lösen</button></div>`;}).join('');
+  const rows=pinned.map(g=>{
+    const idx=GUIDES.indexOf(g);
+    const thumb=g.img?`<span class="ff-thumb"><img src="${g.img}" alt="" loading="lazy"></span>`:`<span class="ff-thumb ph">${secIcon('news')}</span>`;
+    const cat=GCAT[g.cat]?.name||'';
+    return `<div class="ff-row">${thumb}<span class="ff-main">${cat?`<span class="ff-cat">${cat}</span>`:''}<span class="ff-t">${esc(g.title)}</span></span><button class="ff-x" onclick="focusUnpin(${idx})" title="Aus dem Fokus lösen">Lösen</button></div>`;
+  }).join('');
   let el=$('focusfull');
   if(!el){ el=document.createElement('div'); el.id='focusfull'; el.className='ov'; el.onclick=e=>{ if(e.target.id==='focusfull') closeFocusFull(); }; document.body.appendChild(el); }
   el.innerHTML=`<div class="modal" style="max-width:440px"><div class="mbody"><button class="mclose" onclick="closeFocusFull()">×</button><h3 style="margin:0 0 4px">Fokus ist voll</h3><div style="font-size:13px;color:var(--text-soft);margin:0 0 14px">Es können maximal 3 Artikel im Fokus stehen. Löse einen, um Platz zu machen:</div>${rows}</div></div>`;
