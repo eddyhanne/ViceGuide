@@ -175,6 +175,13 @@
   .pc-cat{display:block;font-family:'Space Mono';font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px}
   .pcard h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.2;margin:0}
   .p-hl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .pcard.fdrag{cursor:grab}
+  .pcard.fdrag:active{cursor:grabbing}
+  .p-draghint{font-family:'Space Mono';font-size:11px;color:var(--text-soft);background:var(--surface-2);border:1px dashed var(--line);border-radius:999px;padding:3px 10px}
+  .ff-row{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px}
+  .ff-t{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.35;min-width:0;overflow-wrap:anywhere}
+  .ff-x{flex:0 0 auto;font:600 12px var(--f-body,inherit);color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .ff-x:hover{background:var(--accent);color:var(--btn-text)}
   .p-news{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .p-nrow{display:flex;flex-direction:column;gap:6px;padding:14px 16px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,transform .15s}
   .p-nrow:hover{border-color:var(--accent);transform:translateY(-1px)}
@@ -924,7 +931,7 @@ const PILLAR_LABEL={home:'Start-Hub',news:'News & Leaks'};
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
 const DB_LOCKED=GROUPS[1].cats.filter(c=>c.id==='trophies'||c.id==='collect');
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:''}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[],featuredEntries:[]};
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:'',focusOrder:[]}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[],featuredEntries:[]};
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
@@ -1088,17 +1095,39 @@ function fmtDShort(iso){const p=parseLocalDT(iso);if(!p)return'';const z=n=>Stri
 function latestFmt(c){const list=GUIDES.filter(g=>g.cat===c&&g.date);if(!list.length)return"";const newest=list.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0];return fmtDT(newest.date);}
 /* ---- STARTSEITE (Portal) ---- */
 let SECTION_IMG={}; // {characters:{img,imgfit,credit}, ...} aus api/sections.php
+/* Bis zu 3 angepinnte Artikel im Fokus, in der manuell gesetzten Reihenfolge
+   (NEWS_SETTINGS.focusOrder). Was in focusOrder steht, kommt zuerst und in
+   dieser Reihenfolge; alt-angepinnte ohne Eintrag werden nach Datum ergaenzt. */
 function pinnedGuides(){
-  return GUIDES.filter(g=>g.pinned).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,3);
+  const pinned=GUIDES.filter(g=>g.pinned);
+  const order=NEWS_SETTINGS.focusOrder||[];
+  const ordered=order.map(id=>pinned.find(g=>g.id===id)).filter(Boolean);
+  const rest=pinned.filter(g=>!order.includes(g.id)).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  return [...ordered,...rest].slice(0,3);
 }
-function portalCard(g){
+function portalCard(g,drag){
   const idx=GUIDES.indexOf(g);
   const vis=g.img?`<div class="pc-thumb"><img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></div>`:`<div class="pc-thumb ph"><span class="ghost">${secIcon('news')}</span></div>`;
-  return `<a class="pcard" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${vis}<div class="pc-body"><span class="pc-cat">${GCAT[g.cat]?.name||''}</span><h3>${esc(g.title)}</h3></div></a>`;
+  const da=drag?` draggable="true" ondragstart="focusDragStart(event,'${g.id}')" ondragover="focusDragOver(event)" ondrop="focusDrop(event,'${g.id}')" ondragend="focusDragEnd(event)"`:'';
+  return `<a class="pcard${drag?' fdrag':''}" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})"${da}>${vis}<div class="pc-body"><span class="pc-cat">${GCAT[g.cat]?.name||''}</span><h3>${esc(g.title)}</h3></div></a>`;
 }
 function portalHighlightsHtml(){
   const p=pinnedGuides(); if(!p.length) return '';
-  return `<div class="p-sh"><h2>News im Fokus</h2><a class="p-more" style="margin-left:auto" href="${sectionHref('news')}" onclick="return goAllNews(event)">Alle News →</a></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
+  const hint=editMode?'<span class="p-draghint">Ziehen zum Sortieren</span>':'';
+  return `<div class="p-sh"><h2>News im Fokus</h2>${hint}<a class="p-more" style="margin-left:auto" href="${sectionHref('news')}" onclick="return goAllNews(event)">Alle News →</a></div><div class="p-hl">${p.map(g=>portalCard(g,editMode)).join('')}</div>`;
+}
+/* Drag-and-drop-Reihenfolge der Fokus-Karten (nur Editiermodus). */
+let focusDrag=null;
+function focusDragStart(e,id){ focusDrag=id; try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id);}catch(_){} }
+function focusDragOver(e){ e.preventDefault(); try{e.dataTransfer.dropEffect='move';}catch(_){} }
+function focusDragEnd(e){ focusDrag=null; }
+function focusDrop(e,targetId){ e.preventDefault(); if(!focusDrag||focusDrag===targetId) return;
+  const ids=pinnedGuides().map(g=>g.id);
+  const from=ids.indexOf(focusDrag), to=ids.indexOf(targetId);
+  if(from<0||to<0) return;
+  ids.splice(to,0,ids.splice(from,1)[0]);
+  NEWS_SETTINGS.focusOrder=ids;
+  focusDrag=null; renderView(); saveNewsSettings();
 }
 function portalNewsHtml(){
   const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
@@ -1274,7 +1303,7 @@ function ensurePinnedOpen(){ const pin=NEWS_SETTINGS.pinned; if(!pin)return; if(
 function goAllNews(e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); newsView='list'; openCats.clear(); if(NEWS_SETTINGS.pinned) openCats.add(NEWS_SETTINGS.pinned); go('news'); return false; }
 async function saveNewsSettings(){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
-  try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({news_cat_order:NEWS_SETTINGS.order,news_pinned_cat:NEWS_SETTINGS.pinned})}); if(!r.ok) throw new Error(); toast('News-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); }
+  try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({news_cat_order:NEWS_SETTINGS.order,news_pinned_cat:NEWS_SETTINGS.pinned,focus_order:NEWS_SETTINGS.focusOrder})}); if(!r.ok) throw new Error(); toast('News-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); }
 }
 function toggleNewsPin(id,ev){ if(ev){ev.preventDefault();ev.stopPropagation();} NEWS_SETTINGS.pinned=(NEWS_SETTINGS.pinned===id?'':id); drawNewsList(); saveNewsSettings(); }
 let nlDragCat=null;
@@ -1448,17 +1477,37 @@ async function togglePin(idx,ev){
   const g=GUIDES[idx]; if(!g) return;
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const np=!g.pinned;
+  /* Hartes Limit: maximal 3 Artikel im Fokus. Beim Versuch, einen weiteren
+     anzupinnen, kein stilles Ignorieren, sondern ein Panel mit den aktuell
+     gepinnten Artikeln und je einem Lösen-Knopf, damit man direkt Platz macht. */
+  if(np && GUIDES.filter(x=>x.pinned).length>=3){ openFocusFull(); return; }
   try{
     const res=await fetch('api/articles.php?action=pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:g.id,pinned:np})});
     if(res.status===403){ toast('Nicht angemeldet.'); return; }
     if(!res.ok) throw new Error();
     g.pinned=np;
+    /* Reihenfolge pflegen: beim Anpinnen ans Ende, beim Lösen entfernen. */
+    let fo=(NEWS_SETTINGS.focusOrder||[]).filter(id=>id!==g.id);
+    if(np) fo.push(g.id);
+    NEWS_SETTINGS.focusOrder=fo;
     renderView();
-    const pb=$('a-pin'); if(pb && $('article').classList.contains('show') && curArticle===idx){ pb.classList.toggle('on',np); pb.textContent=np?'📌 Angepinnt':'📌 Anpinnen'; }
-    toast(np?('📌 Angepinnt.'+(GUIDES.filter(x=>x.pinned).length>3?' Im Portal: die 3 neuesten.':'')):'Losgelöst.');
+    const pb=$('a-pin'); if(pb && $('article').classList.contains('show') && curArticle===idx){ pb.classList.toggle('on',np); pb.textContent=np?'📌 Im Fokus':'📌 In den Fokus'; }
+    saveNewsSettings();
+    toast(np?'📌 In den Fokus.':'Aus dem Fokus gelöst.');
   }catch(e){ toast('Anpinnen fehlgeschlagen.'); }
 }
 function togglePinCurrent(){ if(curArticle!=null) togglePin(curArticle); }
+/* Panel "Fokus voll": listet alle aktuell gepinnten Artikel mit Lösen-Knopf. */
+function openFocusFull(){
+  const pinned=GUIDES.filter(g=>g.pinned);
+  const rows=pinned.map(g=>{const idx=GUIDES.indexOf(g);return `<div class="ff-row"><span class="ff-t">${esc(g.title)}</span><button class="ff-x" onclick="focusUnpin(${idx})">Lösen</button></div>`;}).join('');
+  let el=$('focusfull');
+  if(!el){ el=document.createElement('div'); el.id='focusfull'; el.className='ov'; el.onclick=e=>{ if(e.target.id==='focusfull') closeFocusFull(); }; document.body.appendChild(el); }
+  el.innerHTML=`<div class="modal" style="max-width:440px"><div class="mbody"><button class="mclose" onclick="closeFocusFull()">×</button><h3 style="margin:0 0 4px">Fokus ist voll</h3><div style="font-size:13px;color:var(--text-soft);margin:0 0 14px">Es können maximal 3 Artikel im Fokus stehen. Löse einen, um Platz zu machen:</div>${rows}</div></div>`;
+  el.classList.add('show');
+}
+function closeFocusFull(){ const el=$('focusfull'); if(el) el.classList.remove('show'); }
+async function focusUnpin(idx){ closeFocusFull(); await togglePin(idx); }
 async function addDbEntry(secId){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const name=(prompt('Name des neuen Eintrags:')||'').trim();
@@ -3578,7 +3627,7 @@ async function loadExternal(){
     try{const r=await fetch('database.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object'){Object.assign(DB,d);}}}catch(e){}
   }
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
-  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; DB_SETTINGS.featuredEntries=Array.isArray(d.featured_entries)?d.featured_entries:[]; } } }catch(e){}
+  try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; NEWS_SETTINGS.focusOrder=Array.isArray(d.focus_order)?d.focus_order:[]; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; DB_SETTINGS.featuredEntries=Array.isArray(d.featured_entries)?d.featured_entries:[]; } } }catch(e){}
   await checkAdminSession();
   restoreEditMode();
   if(!gquery.trim())renderView();

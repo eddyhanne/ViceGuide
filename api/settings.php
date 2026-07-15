@@ -57,6 +57,7 @@ if ($method === 'GET') {
     $go    = vg_setting_get($pdo, 'guides_cat_order');
     $feat  = vg_setting_get($pdo, 'featured_tiles');
     $fent  = vg_setting_get($pdo, 'featured_entries');
+    $foc   = vg_setting_get($pdo, 'focus_order');
     header('Cache-Control: public, max-age=120, stale-while-revalidate=600');
     vg_out_set([
         'news_cat_order'   => $order ? (json_decode($order, true) ?: []) : [],
@@ -65,6 +66,7 @@ if ($method === 'GET') {
         'guides_cat_order' => $go ? (json_decode($go, true) ?: []) : [],
         'featured_tiles'   => $feat ? (json_decode($feat, true) ?: []) : [],
         'featured_entries' => $fent ? (json_decode($fent, true) ?: []) : [],
+        'focus_order'      => $foc ? (json_decode($foc, true) ?: []) : [],
     ]);
 }
 
@@ -77,6 +79,9 @@ if ($method === 'PUT') {
     }
     if (array_key_exists('news_pinned_cat', $b)) {
         vg_setting_set($pdo, 'news_pinned_cat', (string)$b['news_pinned_cat']);
+    }
+    if (array_key_exists('focus_order', $b)) {
+        vg_setting_set($pdo, 'focus_order', json_encode(array_values((array)$b['focus_order']), JSON_UNESCAPED_UNICODE));
     }
     if (array_key_exists('db_section_order', $b)) {
         vg_setting_set($pdo, 'db_section_order', json_encode(array_values((array)$b['db_section_order']), JSON_UNESCAPED_UNICODE));
