@@ -2639,18 +2639,21 @@ function nlCountdownHtml(){
    gleich wirken (die m-* Dark-Overrides greifen hier bewusst nicht). */
 function nlSocialHtml(){
   const items=[];
-  if(nlDraft.discord!==false && COMMUNITY.discordInvite) items.push({url:COMMUNITY.discordInvite,bg:'#5865F2',name:'Discord',sub:'Tritt der Community bei',logo:'nl-discord.png'});
-  if(nlDraft.instagram!==false && COMMUNITY.instagram) items.push({url:COMMUNITY.instagram,bg:'#C13584',name:'Instagram',sub:'Folge @viceguide',logo:'nl-instagram.png'});
+  if(nlDraft.discord!==false && COMMUNITY.discordInvite) items.push({url:COMMUNITY.discordInvite,bg:'#5865F2',logo:'nl-discord.png',title:'Discord beitreten',sub:'Chatten, Fragen, News in Echtzeit'});
+  if(nlDraft.instagram!==false && COMMUNITY.instagram) items.push({url:COMMUNITY.instagram,bg:'#C13584',logo:'nl-instagram.png',title:'Auf Instagram folgen',sub:'Folge @viceguide für News und Updates'});
   if(!items.length) return '';
-  const w=Math.floor(100/items.length);
-  const cells=items.map(it=>'<td width="'+w+'%" align="center" style="padding:5px">'
-    +'<a href="'+it.url+'" style="display:block;background:'+it.bg+';color:#ffffff;text-decoration:none;border-radius:12px;padding:16px 12px">'
-    +'<img src="'+NL_BASE+'/'+it.logo+'" width="34" height="34" alt="" style="width:34px;height:34px;display:block;margin:0 auto 8px">'
-    +'<div class="m-h" style="'+NL_HEAD+';font-size:17px;font-weight:600;color:#ffffff;line-height:1.2">'+it.name+'</div>'
-    +'<div style="'+NL_BODY+';font-size:12px;color:#ffffff;line-height:1.3;margin-top:3px">'+it.sub+'</div>'
-    +'</a></td>').join('');
-  return '<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:10px 0 8px">Bleib in Kontakt</div>'
-    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr>'+cells+'</tr></table>';
+  /* Optik wie die Community-Kacheln auf der Seite: dezente Karte (m-box, passt
+     sich hell/dunkel an), farbiges Icon-Quadrat mit weissem Logo links, Titel
+     plus Unterzeile. Keine grossen Volltonbloecke mehr. */
+  const row=it=>'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="margin:0 0 10px;background:#ffffff;border:1px solid #ecdfca;border-radius:14px"><tr>'
+    +'<td style="padding:13px 15px"><a href="'+it.url+'" style="text-decoration:none;display:block"><table role="presentation" cellpadding="0" cellspacing="0"><tr>'
+    +'<td width="46" valign="middle"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="46" height="46" align="center" valign="middle" style="background:'+it.bg+';border-radius:12px">'
+    +'<img src="'+NL_BASE+'/'+it.logo+'" width="24" height="24" alt="" style="width:24px;height:24px;display:block;margin:0 auto"></td></tr></table></td>'
+    +'<td valign="middle" style="padding-left:14px">'
+    +'<div class="m-h" style="'+NL_HEAD+';font-size:17px;font-weight:600;color:#221041;line-height:1.2">'+it.title+'</div>'
+    +'<div class="m-soft" style="'+NL_BODY+';font-size:13px;color:#6b6478;line-height:1.4;margin-top:2px">'+it.sub+'</div>'
+    +'</td></tr></table></a></td></tr></table>';
+  return '<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:12px 0 10px">Bleib in Kontakt</div>'+items.map(row).join('');
 }
 function nlBuildInner(){
   nlSyncFields();
