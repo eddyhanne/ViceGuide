@@ -644,6 +644,20 @@
   .legal-content h4{font-size:15px;font-weight:700;color:var(--heading);margin:16px 0 4px}
   .legal-content p{font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.6}
   .legal-content .lg-note{font-size:12.5px;color:var(--text-soft);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-style:italic}
+  .legal-content h1{font-family:'Oswald';font-weight:600;font-size:28px;color:var(--heading);margin:0 0 10px;line-height:1.15}
+  .ab-lead{font-size:15.5px !important;color:var(--text) !important;line-height:1.65 !important;margin-bottom:18px !important}
+  .ab-values{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
+  .ab-value{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:13.5px;color:var(--text-soft);line-height:1.5}
+  .ab-vh{display:block;font-weight:700;color:var(--text);margin-bottom:2px;font-size:14px}
+  .ab-author{display:flex;gap:14px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px;margin:6px 0}
+  .ab-av{flex:0 0 46px;width:46px;height:46px;border-radius:50%;background:var(--accent);color:var(--btn-text);display:grid;place-items:center;font-family:'Oswald';font-weight:700;font-size:17px}
+  .ab-ab{flex:1;min-width:0}
+  .ab-an{display:block;font-weight:700;color:var(--text);font-size:15px}
+  .ab-ar{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px}
+  .ab-ab p{font-size:13.5px !important;color:var(--text-soft) !important;margin:0 !important}
+  .ab-links{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 4px}
+  .ab-links a{font-size:13px;font-weight:600;color:var(--accent);background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;text-decoration:none}
+  .ab-links a:hover{border-color:var(--accent)}
 
   /* KI-Vorschau */
   .ai-pv-h{font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
@@ -841,7 +855,7 @@
     <div class="fn">Vice<span class="vc">Guide</span></div>
     <p id="foot-secret" style="font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:6px;cursor:default;user-select:none">Miami, bei Tag und bei Nacht. 🌴</p>
     <p class="disc"><b>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</b> Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
-    <div class="legal-links"><a href="/impressum" onclick="return legalClick(event,'impressum')">Impressum</a><span>·</span><a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutz</a></div>
+    <div class="legal-links"><a href="/ueber-uns" onclick="return legalClick(event,'ueber')">Über uns</a><span>·</span><a href="/impressum" onclick="return legalClick(event,'impressum')">Impressum</a><span>·</span><a href="/datenschutz" onclick="return legalClick(event,'datenschutz')">Datenschutz</a></div>
   </div>
   <div class="nl-box" id="nl-box">
     <div class="nl-h">📧 Newsletter</div>
@@ -3768,7 +3782,36 @@ const LEGAL={
    <h4>8. Deine Rechte</h4>
    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie ein Beschwerderecht bei einer Aufsichtsbehörde. Eine erteilte Einwilligung (z.B. zum Newsletter) kannst du jederzeit mit Wirkung für die Zukunft widerrufen.</p>
    <h4>9. Kontakt</h4>
-   <p>Bei Fragen zum Datenschutz: info@viceguide.de.</p>`
+   <p>Bei Fragen zum Datenschutz: info@viceguide.de.</p>`,
+ ueber:`<h1>Über ViceGuide</h1>
+   <p class="ab-lead">ViceGuide ist die deutschsprachige Anlaufstelle rund um Grand Theft Auto 6. Wir bündeln News, Gerüchte und Leaks, eine wachsende Datenbank zu Charakteren, Fahrzeugen, Waffen und Orten sowie ab Release Guides für alle wichtigen Spielbereiche. Ein Ort für alles, was Fans zu GTA 6 wissen wollen, auf Deutsch.</p>
+   <h4>Was ViceGuide ist</h4>
+   <p>Vor dem Release ist ViceGuide dein Überblick: Wir verfolgen jede offizielle Ankündigung, jeden Trailer und die großen Leaks, prüfen sie und ordnen sie ein. Ab dem Launch am 19. November 2026 kommt der eigentliche Kern dazu, nämlich täglich frische Guides zu Missionen, Geld, Fahrzeugen, Secrets und mehr, während viele andere deutsche Fans sonst auf englische Quellen angewiesen wären.</p>
+   <h4>So arbeiten wir</h4>
+   <p>Unser Anspruch ist der eines echten Gaming-Redakteurs, nicht der eines Gerüchte-Aggregators. Konkret heißt das:</p>
+   <div class="ab-values">
+     <div class="ab-value"><span class="ab-vh">Fakten zuerst</span>Jede Angabe prüfen wir gegen offizielle Quellen wie Rockstar Games und Take-Two sowie seriöse Fachmedien, bevor sie hier landet.</div>
+     <div class="ab-value"><span class="ab-vh">Quellen offen</span>Wir nennen unsere Quellen im Text und verlinken sie, statt sie hinter vagen Formeln zu verstecken.</div>
+     <div class="ab-value"><span class="ab-vh">Leaks klar gekennzeichnet</span>Gerüchte und Leaks sind bei uns immer als solche markiert. Wir erfinden keine Fake-Leaks und verkaufen Spekulation nicht als Fakt.</div>
+     <div class="ab-value"><span class="ab-vh">Einordnen statt kopieren</span>Wir sagen, was eine Meldung wirklich wert ist, mit einer klaren eigenen Einschätzung.</div>
+     <div class="ab-value"><span class="ab-vh">Fehler korrigieren</span>Wenn sich etwas ändert oder wir danebenlagen, bessern wir sichtbar nach und weisen ein Aktualisierungsdatum aus.</div>
+   </div>
+   <h4>Wer hinter ViceGuide steckt</h4>
+   <div class="ab-author">
+     <div class="ab-av">EH</div>
+     <div class="ab-ab"><span class="ab-an">Eddy Hanné</span><span class="ab-ar">Gründer und redaktionell verantwortlich</span><p>ViceGuide ist ein eigenständiges Projekt, das ich als langjähriger GTA-Fan aufgebaut habe, weil eine gute, deutschsprachige Zentrale zu GTA 6 gefehlt hat. Anregungen, Korrekturen und Kritik sind ausdrücklich willkommen, am schnellsten per Mail an info@viceguide.de.</p></div>
+   </div>
+   <h4>Unabhängigkeit und Transparenz</h4>
+   <p>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
+   <p>Aktuell zeigen wir keine Werbung und setzen keine Affiliate-Links ein. Sollte sich das später ändern, kennzeichnen wir das transparent, und unsere redaktionelle Einordnung bleibt davon unberührt.</p>
+   <h4>Community und Kontakt</h4>
+   <p>Wir freuen uns über jeden, der mitliest und mitredet. Tausch dich mit uns und anderen Fans aus:</p>
+   <div class="ab-links">
+     <a href="https://discord.gg/MNmMG3xNfA" target="_blank" rel="noopener">Discord-Community</a>
+     <a href="https://www.instagram.com/viceguide/" target="_blank" rel="noopener">Instagram @viceguide</a>
+     <a href="mailto:info@viceguide.de">info@viceguide.de</a>
+   </div>
+   <p class="lg-note">ViceGuide ist ein Fan-Projekt aus Leidenschaft für die Reihe. Wir sind schnell, aber sorgfältig, und sagen offen dazu, was bestätigt ist und was noch nicht.</p>`
 };
 function openLegal(k){ $('legal-content').innerHTML=LEGAL[k]||''; $('legal').classList.add('show'); }
 function closeLegal(){ $('legal').classList.remove('show'); }
@@ -3883,10 +3926,10 @@ function restoreFromLocation(){
       if(secId){ goIfNeeded(secId); return; }
     }
     /* Impressum/Datenschutz, server-gerendert von legal.php. */
-    const legalMatch=path.match(/^\/(impressum|datenschutz)\/?$/);
+    const legalMatch=path.match(/^\/(impressum|datenschutz|ueber-uns)\/?$/);
     if(legalMatch){
       goIfNeeded('home');
-      openLegal(legalMatch[1]);
+      openLegal(legalMatch[1]==='ueber-uns'?'ueber':legalMatch[1]);
       return;
     }
     /* Datenbank-/Guides-Hub, server-gerendert von hub.php. */

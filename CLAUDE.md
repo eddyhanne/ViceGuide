@@ -97,7 +97,7 @@ Die Seite nutzt **ausschließlich echte URLs**, kein Hash-Routing mehr für irge
 | Datenbank-Eintrag | `/charaktere/<slug>`, `/fahrzeuge/<slug>`, `/waffen/<slug>`, `/wildtiere/<slug>`, `/gangs/<slug>`, `/radio/<slug>`, `/aktivitaeten/<slug>`, `/orte/<slug>` | `entry.php` |
 | Datenbank-Kategorie (Liste) | `/charaktere/`, `/fahrzeuge/`, `/waffen/`, `/wildtiere/`, `/gangs/`, `/radio/`, `/aktivitaeten/`, `/orte/` | `category.php` |
 | Videos, Community, Karte | `/videos`, `/community`, `/karte` | `section.php` |
-| Impressum, Datenschutz | `/impressum`, `/datenschutz` | `legal.php` |
+| Impressum, Datenschutz, Über uns | `/impressum`, `/datenschutz`, `/ueber-uns` | `legal.php` |
 | Startseite | `/` | `index.html` direkt |
 
 Folgendes ist gegen den echten Code bestätigt:
@@ -107,7 +107,7 @@ Folgendes ist gegen den echten Code bestätigt:
 - **`entry.php`** ist das Pendant für Datenbank-Einträge (Abfrage per `section` + `slug`), liefert Name als `<h1>`, Unterzeile, Kategorie/Quelle-Chip, Felder-Liste, Beschreibung als Absätze, dazu `Thing`-JSON-LD. `openModal()` übernimmt beim Laden sofort und rendert vollständig nach.
 - **`category.php`** rendert die Listenebene über den Einzel-Einträgen (z. B. alle Charaktere unter `/charaktere/`), die vorher fehlte: echte Links zu jedem Eintrag der Sektion plus `CollectionPage`/`ItemList`-JSON-LD. Ohne diese Ebene hatte Google keinen indexierbaren Einstieg in eine Kategorie, nur die Einzelseiten.
 - **`section.php`** deckt die drei Sektionen ohne Datenbank-Backing ab (Videos, Community, Karte). Der Inhalt kommt aus den bestehenden JS-Konstanten `VIDEOS`/`COMMUNITY` in `index.html` (per Regex ausgelesen, keine zweite Pflegestelle), Karte hat mangels eigener Datenbank nur einen Verweis auf `/orte/`. Die interne section-id `map` bekommt hier ihr deutsches URL-Präfix `karte` über eine kleine Zuordnungstabelle (`VG_SECTION_URL_PREFIX`), bei `videos`/`community` ist deutsches Wort und id zufällig identisch.
-- **`legal.php`** liefert Impressum/Datenschutz unter eigener URL aus, liest den Text aber weiterhin einzig aus dem `LEGAL`-Objekt in `index.html` (per Regex extrahiert), keine zweite Pflegestelle.
+- **`legal.php`** liefert Impressum/Datenschutz/Über uns unter eigener URL aus, liest den Text aber weiterhin einzig aus dem `LEGAL`-Objekt in `index.html` (per Regex extrahiert), keine zweite Pflegestelle. Die „Über uns"-Seite (`/ueber-uns`, LEGAL-Schlüssel `ueber`) bekommt zusätzlich `AboutPage`/`Organization`/`Person`-JSON-LD (E-E-A-T, echter Betreiber Eddy Hanné), eingefügt nur vor dem ersten `<style>`.
 - **Alle serverseitigen Fassaden liefern `http_response_code(404)`** für unbekannte Slugs/Sektionen (mit weiterhin freundlichem Inhalt für Besucher, kein Soft-404 für Suchmaschinen).
 - **`api/article_image.php?id={id}`** und **`api/entry_image.php?id={interne_id}`** liefern das jeweilige Bild (in der Datenbank nur als base64-Data-URI gespeichert) als echte, abrufbare Bild-URL aus, nötig weil `og:image` kein `data:`-URI sein kann. Beide setzen `Cache-Control: public, max-age=86400`. Die von `api/articles.php`/`api/db_entries.php` ausgelieferte Bild-URL hängt zusätzlich `&v=<updated_at>` als Cache-Buster an, damit ein neu veröffentlichtes Bild nicht bis zu 24 Stunden im Browser-Cache hängen bleibt.
 - **Logo einmalig statt doppelt:** Header- und Hero-Logo referenzieren beide `logo.png` als echte Datei, nicht mehr zwei identische eingebettete Base64-Kopien (waren zusammen über 800 KB reiner HTML-Text).
@@ -243,7 +243,7 @@ Aus der API kommt zusätzlich `_id` (interne Zeilen-ID, für Updates gebraucht) 
 ├─ category.php            Server-gerenderte Kategorie-Uebersicht pro Sektion (echte URL /praefix/, für SEO)
 ├─ hub.php                 Server-gerenderte Hub-Seiten Datenbank/Guides (echte URL /datenbank/, /guides/, für SEO)
 ├─ section.php             Server-gerenderte Videos/Community/Karte-Seiten (echte URL /videos, /community, /karte)
-├─ legal.php               Server-gerendertes Impressum/Datenschutz (echte URL /impressum, /datenschutz)
+├─ legal.php               Server-gerendertes Impressum/Datenschutz/Über uns (echte URL /impressum, /datenschutz, /ueber-uns)
 ├─ sitemap.php             Erzeugt die Sitemap dynamisch aus der Datenbank (ersetzt die alte statische sitemap.xml)
 ├─ robots.txt              Suchmaschinen-Regeln
 ├─ og-image.jpg            Social-Preview-Bild (Fallback, wenn Artikel/Eintrag kein eigenes Bild hat)

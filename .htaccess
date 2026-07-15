@@ -47,6 +47,7 @@ RewriteRule ^guides/?$ hub.php?page=guides [L,QSA]
 # LEGAL-Objekt in index.html, siehe legal.php).
 RewriteRule ^impressum/?$ legal.php?page=impressum [L,QSA]
 RewriteRule ^datenschutz/?$ legal.php?page=datenschutz [L,QSA]
+RewriteRule ^ueber-uns/?$ legal.php?page=ueber [L,QSA]
 
 # Videos/Community/Karte, analog zu den Kategorie-Uebersichten, aber ohne
 # Datenbank dahinter (Inhalt kommt aus VIDEOS/COMMUNITY in index.html,

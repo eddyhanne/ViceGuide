@@ -16,7 +16,7 @@ vg_cache_serve(1800);   // Rechtstexte aendern sich selten, Treffer ohne DB.
 require __DIR__ . '/api/db.php';
 
 $page = $_GET['page'] ?? '';
-$valid = ['impressum' => 'Impressum', 'datenschutz' => 'Datenschutzerklärung'];
+$valid = ['impressum' => 'Impressum', 'datenschutz' => 'Datenschutzerklärung', 'ueber' => 'Über uns'];
 
 if (!isset($valid[$page])) {
     http_response_code(404);
@@ -39,9 +39,14 @@ $content = $cm[1];
 function vg_esc5($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
 $label = $valid[$page];
-$canonical = 'https://viceguide.de/' . $page;
+// Die "Über uns"-Seite liegt unter der sprechenden URL /ueber-uns, intern
+// heisst der LEGAL-Schluessel aber "ueber" (Objekt-Key ohne Bindestrich).
+$urlPath = $page === 'ueber' ? 'ueber-uns' : $page;
+$canonical = 'https://viceguide.de/' . $urlPath;
 $pageTitle = $label . ' - ViceGuide';
-$description = $label . ' von ViceGuide, dem inoffiziellen, deutschsprachigen GTA-6-Fan-Portal.';
+$description = $page === 'ueber'
+    ? 'Über ViceGuide: die deutschsprachige Anlaufstelle für GTA 6. Wer wir sind, wie wir arbeiten und wie du uns erreichst.'
+    : $label . ' von ViceGuide, dem inoffiziellen, deutschsprachigen GTA-6-Fan-Portal.';
 
 $head = [
     '<title>ViceGuide: GTA 6 Hub mit Datenbank, News & Guides (Deutsch)</title>' =>
@@ -63,6 +68,33 @@ $head = [
 ];
 foreach ($head as $search => $replace) {
     $html = str_replace($search, $replace, $html);
+}
+
+// AboutPage-/Organization-/Person-JSON-LD nur fuer die "Über uns"-Seite
+// (E-E-A-T: echter Betreiber, klare Organisation). Bewusst nur vor dem ERSTEN
+// <style> eingefuegt, nie global (index.html enthaelt <style> auch als
+// JS-String, siehe CLAUDE.md-Stolperfalle).
+if ($page === 'ueber') {
+    $ld = [
+        '@context' => 'https://schema.org',
+        '@type' => 'AboutPage',
+        'url' => $canonical,
+        'name' => 'Über ViceGuide',
+        'inLanguage' => 'de',
+        'mainEntity' => [
+            '@type' => 'Organization',
+            'name' => 'ViceGuide',
+            'url' => 'https://viceguide.de/',
+            'logo' => 'https://viceguide.de/logo.png',
+            'description' => 'Inoffizielles, deutschsprachiges Fan-Portal rund um GTA 6 mit News, Datenbank und Guides.',
+            'founder' => ['@type' => 'Person', 'name' => 'Eddy Hanné'],
+        ],
+    ];
+    $ldTag = '<script type="application/ld+json">' . json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+    $pos = strpos($html, '<style>');
+    if ($pos !== false) {
+        $html = substr($html, 0, $pos) . $ldTag . substr($html, $pos);
+    }
 }
 
 // Bestehendes #legal-Overlay serverseitig sichtbar machen und mit dem Text
