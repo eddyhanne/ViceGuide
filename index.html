@@ -613,6 +613,10 @@
   .cm-cta.discord:hover{border-color:#5865F2}
   .cm-cta.reddit:hover{border-color:#FF4500}
   .cm-cta.instagram:hover{border-color:#E1306C}
+  .cm-cta.newsletter:hover{border-color:var(--accent)}
+  .cm-placeholder-sm{padding:12px 16px;margin-top:12px}
+  .cm-placeholder-sm b{font-size:14px}
+  .cm-ph-note{color:var(--text-soft);font-size:13px}
   .cm-cta.disabled{opacity:.7;cursor:default}
   .cm-cta.disabled:hover{transform:none;box-shadow:none;border-color:var(--line)}
   .cm-cta .cta-ic{font-size:26px;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:var(--surface-2);flex-shrink:0}
@@ -1943,18 +1947,21 @@ function renderVideos(){
 }
 function renderCommunity(){
   const d=COMMUNITY;
-  const discordBtn=d.discordInvite?`<a class="cm-cta discord" href="${d.discordInvite}" target="_blank" rel="noopener"><span class="cta-ic">💬</span><span><b>Discord beitreten</b><small>Chatten, Fragen, News in Echtzeit</small></span></a>`
-    :`<div class="cm-cta discord disabled"><span class="cta-ic">💬</span><span><b>Discord <span class="soon-tag">Bald verfügbar</span></b><small>Unser Discord-Server startet in Kürze. Schau bald wieder vorbei.</small></span></div>`;
+  const DISCORD_LOGO='<svg viewBox="0 0 24 24" width="26" height="26" fill="#5865F2" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>';
+  const INSTA_LOGO='<svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><defs><linearGradient id="vg-ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".5" stop-color="#d62976"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><path fill="url(#vg-ig)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>';
+  const discordBtn=d.discordInvite?`<a class="cm-cta discord" href="${d.discordInvite}" target="_blank" rel="noopener"><span class="cta-ic">${DISCORD_LOGO}</span><span><b>Discord beitreten</b><small>Chatten, Fragen, News in Echtzeit</small></span></a>`
+    :`<div class="cm-cta discord disabled"><span class="cta-ic">${DISCORD_LOGO}</span><span><b>Discord <span class="soon-tag">Bald verfügbar</span></b><small>Unser Discord-Server startet in Kürze. Schau bald wieder vorbei.</small></span></div>`;
   const redditBtn=d.redditUrl?`<a class="cm-cta reddit" href="${d.redditUrl}" target="_blank" rel="noopener"><span class="cta-ic">🗨</span><span><b>Subreddit öffnen</b><small>Diskutieren, abstimmen, Threads</small></span></a>`
     :`<div class="cm-cta reddit disabled"><span class="cta-ic">🗨</span><span><b>Reddit <span class="soon-tag">Bald verfügbar</span></b><small>Unser Subreddit ist in Vorbereitung und folgt in Kürze.</small></span></div>`;
-  const discordOpenBtn=d.discordServerId?`<a class="cm-cta discord" href="https://discord.com/channels/${d.discordServerId}" target="_blank" rel="noopener"><span class="cta-ic">➡️</span><span><b>Discord öffnen</b><small>Für Mitglieder: direkt zum Server</small></span></a>`:'';
-  const instaBtn=d.instagram?`<a class="cm-cta instagram" href="${d.instagram}" target="_blank" rel="noopener"><span class="cta-ic">📸</span><span><b>Auf Instagram folgen</b><small>@viceguide: Infos, Clips und Countdown</small></span></a>`:'';
+  const discordOpenBtn=d.discordServerId?`<a class="cm-cta discord" href="https://discord.com/channels/${d.discordServerId}" target="_blank" rel="noopener"><span class="cta-ic">${DISCORD_LOGO}</span><span><b>Discord öffnen</b><small>Für Mitglieder: direkt zum Server</small></span></a>`:'';
+  const instaBtn=d.instagram?`<a class="cm-cta instagram" href="${d.instagram}" target="_blank" rel="noopener"><span class="cta-ic">${INSTA_LOGO}</span><span><b>Auf Instagram folgen</b><small>Folge @viceguide für News und Updates</small></span></a>`:'';
+  const newsletterBtn=`<a class="cm-cta newsletter" href="#nl-box" onclick="event.preventDefault();var b=document.getElementById('nl-box');if(b){b.scrollIntoView({behavior:'smooth'});var e=document.getElementById('nl-email');if(e)setTimeout(function(){e.focus();},450);}"><span class="cta-ic">✉️</span><span><b>Newsletter abonnieren</b><small>Die wichtigsten GTA-6-News per Mail</small></span></a>`;
   const widget=(d.discordServerId&&d.discordWidget)?`<div class="cm-widget"><iframe src="https://discord.com/widget?id=${d.discordServerId}&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></div>`
-    :`<div class="cm-placeholder"><div class="cm-ph-ic">${secIcon('community')}</div><div><b>Live-Chat folgt</b><p>Hier entsteht unser Community-Chat. Bis dahin findest du oben die Wege, wie du dabei sein kannst.</p></div></div>`;
+    :`<div class="cm-placeholder cm-placeholder-sm"><div><b>Live-Chat folgt</b> <span class="cm-ph-note">Bis dahin findest du oben alle Wege, dabei zu sein.</span></div></div>`;
   $('view').innerHTML=`
    <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('community')}</span>Community</div>
      <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Unser Discord ist bereits live, der Subreddit folgt in Kürze.</div></div>
-   <div class="cm-ctas">${discordBtn}${discordOpenBtn}${instaBtn}${redditBtn}</div>
+   <div class="cm-ctas">${discordBtn}${discordOpenBtn}${instaBtn}${newsletterBtn}${redditBtn}</div>
    ${widget}
    <div class="cm-forum">
      <div class="cm-forum-h">Forum</div>
