@@ -612,6 +612,7 @@
   .cm-cta:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
   .cm-cta.discord:hover{border-color:#5865F2}
   .cm-cta.reddit:hover{border-color:#FF4500}
+  .cm-cta.instagram:hover{border-color:#E1306C}
   .cm-cta.disabled{opacity:.7;cursor:default}
   .cm-cta.disabled:hover{transform:none;box-shadow:none;border-color:var(--line)}
   .cm-cta .cta-ic{font-size:26px;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:var(--surface-2);flex-shrink:0}
@@ -837,6 +838,9 @@ const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 /* Navigations-Saeulen (schlanke Sidebar/Mobile-Nav). Die acht DB-Rubriken
    haengen unter dem Datenbank-Hub, nicht mehr flach in der Sidebar. */
 const PILLARS=['home','news','datenbank','guides','map','videos','community'];
+/* Kurzlabels nur fuer die Navigations-Saeulen (die Sektion selbst behaelt ihr
+   ausfuehrliches Label fuer Ueberschriften, Breadcrumbs und SSR). */
+const PILLAR_LABEL={home:'Start',news:'News & Leaks'};
 /* Zwei Welten fuer die gesperrten Phase-2-Kacheln: Ratgeber unter Guides,
    Listen (Trophaeen, Sammelobjekte) als kuenftige Datenbank-Rubriken. */
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
@@ -928,12 +932,12 @@ function activePillar(){ const s=SECTIONS.find(x=>x.id===current); if(s&&s.type=
 function renderMobileNav(){
   const el=$('mobilenav'); if(!el)return;
   const act=activePillar();
-  el.innerHTML=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';return `<a class="mn-chip ${id===act?'active':''}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="mn-ic">${secIcon(id)}</span>${sc.label}</a>`;}).join('');
+  el.innerHTML=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';return `<a class="mn-chip ${id===act?'active':''}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="mn-ic">${secIcon(id)}</span>${PILLAR_LABEL[id]||sc.label}</a>`;}).join('');
 }
 function renderSidebar(){
   const act=activePillar();
   const cnt=id=> id==='news'?GUIDES.length : id==='datenbank'?Object.keys(DB).reduce((a,k)=>a+(DB[k]||[]).length,0) : id==='videos'?VIDEOS.length : null;
-  const mainBtns=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';const n=cnt(id);const badge=(n!=null)?`<span class="cnt">${n}</span>`:(id==='guides'?`<span class="nav-lock">🔒</span>`:'');return `<a class="side-btn ${id===act?'active':''}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="si">${secIcon(id)}</span><span class="lbl">${sc.label}</span>${badge}</a>`;}).join('');
+  const mainBtns=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';const n=cnt(id);const badge=(n!=null)?`<span class="cnt">${n}</span>`:(id==='guides'?`<span class="nav-lock">🔒</span>`:'');return `<a class="side-btn ${id===act?'active':''}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="si">${secIcon(id)}</span><span class="lbl">${PILLAR_LABEL[id]||sc.label}</span>${badge}</a>`;}).join('');
   $('sidebar').innerHTML=mainBtns
    +`<div class="side-fan">Fan-Projekt · inoffiziell<br>keine Rockstar-Marken</div>`;
 }
@@ -1016,7 +1020,7 @@ function portalCard(g){
 }
 function portalHighlightsHtml(){
   const p=pinnedGuides(); if(!p.length) return '';
-  return `<div class="p-sh"><h2>Im Fokus</h2></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
+  return `<div class="p-sh"><h2>News im Fokus</h2><a class="p-more" style="margin-left:auto" href="${sectionHref('news')}" onclick="return goClick(event,'news')">Alle News →</a></div><div class="p-hl">${p.map(portalCard).join('')}</div>`;
 }
 function portalNewsHtml(){
   const pinnedIds=new Set(GUIDES.filter(g=>g.pinned).map(g=>g.id));
@@ -1916,7 +1920,8 @@ function modalHubClick(e,secId){ if(e.metaKey||e.ctrlKey||e.shiftKey) return tru
 /* ---- MAP ---- */
 const COMMUNITY={
   discordInvite:"https://discord.gg/MNmMG3xNfA",
-  discordServerId:"",    // Server-ID fuer das eingebettete Widget (Servereinstellungen > Widget)
+  discordServerId:"",    // Server-ID fuer Widget UND den "Discord oeffnen"-Link (Entwicklermodus > Rechtsklick Server > ID kopieren)
+  instagram:"https://www.instagram.com/viceguide/",
   redditUrl:""           // z.B. "https://www.reddit.com/r/deinsubreddit"
 };
 const VIDEOS=[
@@ -1941,12 +1946,14 @@ function renderCommunity(){
     :`<div class="cm-cta discord disabled"><span class="cta-ic">💬</span><span><b>Discord <span class="soon-tag">Bald verfügbar</span></b><small>Unser Discord-Server startet in Kürze. Schau bald wieder vorbei.</small></span></div>`;
   const redditBtn=d.redditUrl?`<a class="cm-cta reddit" href="${d.redditUrl}" target="_blank" rel="noopener"><span class="cta-ic">🗨</span><span><b>Subreddit öffnen</b><small>Diskutieren, abstimmen, Threads</small></span></a>`
     :`<div class="cm-cta reddit disabled"><span class="cta-ic">🗨</span><span><b>Reddit <span class="soon-tag">Bald verfügbar</span></b><small>Unser Subreddit ist in Vorbereitung und folgt in Kürze.</small></span></div>`;
+  const discordOpenBtn=d.discordServerId?`<a class="cm-cta discord" href="https://discord.com/channels/${d.discordServerId}" target="_blank" rel="noopener"><span class="cta-ic">➡️</span><span><b>Discord öffnen</b><small>Für Mitglieder: direkt zum Server</small></span></a>`:'';
+  const instaBtn=d.instagram?`<a class="cm-cta instagram" href="${d.instagram}" target="_blank" rel="noopener"><span class="cta-ic">📸</span><span><b>Auf Instagram folgen</b><small>@viceguide: Infos, Clips und Countdown</small></span></a>`:'';
   const widget=d.discordServerId?`<div class="cm-widget"><iframe src="https://discord.com/widget?id=${d.discordServerId}&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></div>`
     :`<div class="cm-placeholder"><div class="cm-ph-ic">${secIcon('community')}</div><div><b>Live-Chat folgt</b><p>Hier entsteht unser Community-Chat. Bis dahin findest du oben die Wege, wie du dabei sein kannst.</p></div></div>`;
   $('view').innerHTML=`
    <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('community')}</span>Community</div>
      <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Unser Discord ist bereits live, der Subreddit folgt in Kürze.</div></div>
-   <div class="cm-ctas">${discordBtn}${redditBtn}</div>
+   <div class="cm-ctas">${discordBtn}${discordOpenBtn}${instaBtn}${redditBtn}</div>
    ${widget}
    <div class="cm-forum">
      <div class="cm-forum-h">Forum</div>
