@@ -2175,7 +2175,7 @@ function cmHtml(artId,i,c,depth){
   const voteTitle=own?' title="Dein eigener Kommentar, den kannst du nicht bewerten"':'';
   const delBtn=editMode?`<button class="cm-act cm-del" onclick="deleteComment('${artId}',${i},${c.id})">🗑 Löschen</button>`:'';
   const spoilBtn=editMode?`<button class="cm-act" onclick="toggleSpoiler('${artId}',${i},${c.id},${c.spoiler?0:1})" title="Spoiler-Markierung umschalten">${c.spoiler?'👁 Spoiler aus':'⚠ Als Spoiler'}</button>`:'';
-  const revBtn=c.censored?`<button class="cm-reveal" id="crev-${c.id}" onclick="revealCensor(${c.id})">🙈 Schimpfwörter anzeigen</button>`:'';
+  const revBtn=c.censored?`<button class="cm-reveal" id="crev-${c.id}" onclick="revealCensor(${c.id})">🔞 Schimpfwörter anzeigen</button>`:'';
   const bodyInner=`<div class="cm-body"><span class="cm-txt" id="ctxt-${c.id}"${attrFull(c.text_full)}>${esc(c.text)}</span>${revBtn?' '+revBtn:''}</div>`;
   const body=c.spoiler
     ? `<div class="cm-spoiler" id="sp-${c.id}"><div class="cm-spoiler-wrap">${bodyInner}</div><button class="cm-spoiler-btn" onclick="revealSpoiler(${c.id})">⚠ Spoiler anzeigen</button></div>`
