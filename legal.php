@@ -44,21 +44,21 @@ $pageTitle = $label . ' - ViceGuide';
 $description = $label . ' von ViceGuide, dem inoffiziellen, deutschsprachigen GTA-6-Fan-Portal.';
 
 $head = [
-    '<title>ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr</title>' =>
+    '<title>ViceGuide: GTA 6 Hub mit Datenbank, News & Guides (Deutsch)</title>' =>
         '<title>' . vg_esc5($pageTitle) . '</title>',
-    '<meta name="description" content="Die deutschsprachige GTA-6-Datenbank: aktuelle News und Leaks, dazu Charaktere, Fahrzeuge, Waffen, Orte, Guides und Easter Eggs. Alles zu GTA 6 an einem Ort.">' =>
+    '<meta name="description" content="Der deutsche GTA-6-Hub: aktuelle News, Gerüchte und Leaks, dazu eine große Datenbank zu Charakteren, Fahrzeugen, Waffen und Orten. Alles zu GTA 6 an einem Ort.">' =>
         '<meta name="description" content="' . vg_esc5($description) . '">',
     '<link rel="canonical" href="https://viceguide.de/">' =>
         '<link rel="canonical" href="' . vg_esc5($canonical) . '">',
-    '<meta property="og:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
+    '<meta property="og:title" content="ViceGuide: GTA 6 Hub mit Datenbank, News & Guides (Deutsch)">' =>
         '<meta property="og:title" content="' . vg_esc5($pageTitle) . '">',
-    '<meta property="og:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
+    '<meta property="og:description" content="Alles zu GTA 6 an einem Ort. Der deutsche Hub mit Datenbank, Guides und aktuellen News.">' =>
         '<meta property="og:description" content="' . vg_esc5($description) . '">',
     '<meta property="og:url" content="https://viceguide.de/">' =>
         '<meta property="og:url" content="' . vg_esc5($canonical) . '">',
-    '<meta name="twitter:title" content="ViceGuide: GTA 6 Datenbank auf Deutsch, News, Guides & mehr">' =>
+    '<meta name="twitter:title" content="ViceGuide: GTA 6 Hub mit Datenbank, News & Guides (Deutsch)">' =>
         '<meta name="twitter:title" content="' . vg_esc5($pageTitle) . '">',
-    '<meta name="twitter:description" content="Alles zu GTA 6 an einem Ort. Deine deutschsprachige Datenbank für News, Guides und Easter Eggs.">' =>
+    '<meta name="twitter:description" content="Alles zu GTA 6 an einem Ort. Der deutsche Hub mit Datenbank, Guides und aktuellen News.">' =>
         '<meta name="twitter:description" content="' . vg_esc5($description) . '">',
 ];
 foreach ($head as $search => $replace) {
