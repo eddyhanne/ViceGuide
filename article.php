@@ -60,10 +60,26 @@ function vg_plain_content(array $content): string {
             $parts = explode('|', substr($text, 4), 2);
             $out .= '<p><strong>' . vg_esc(trim($parts[0] ?? '')) . '</strong> ' . vg_esc(trim($parts[1] ?? '')) . '</p>';
         } elseif (str_starts_with($text, 'quote:')) {
-            $parts = explode('|', substr($text, 6), 2);
+            $parts = explode('|', substr($text, 6), 3);
             $q = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($parts[0] ?? ''));
             $who = trim($parts[1] ?? '');
-            $out .= '<blockquote>' . vg_esc($q) . ($who ? '<cite>' . vg_esc($who) . '</cite>' : '') . '</blockquote>';
+            $orig = trim($parts[2] ?? '');
+            $out .= '<blockquote>' . vg_esc($q) . ($who ? '<cite>' . vg_esc($who) . '</cite>' : '')
+                . ($orig ? '<details><summary>Original anzeigen</summary><p>' . vg_esc($orig) . '</p></details>' : '') . '</blockquote>';
+        } elseif (str_starts_with($text, 'yt:')) {
+            $parts = explode('|', substr($text, 3), 2);
+            $id = trim($parts[0] ?? ''); $cap = trim($parts[1] ?? '');
+            if (preg_match('/^[\w-]{6,20}$/', $id)) {
+                $u = 'https://www.youtube.com/watch?v=' . rawurlencode($id);
+                $out .= '<p><a href="' . vg_esc($u) . '" rel="noopener nofollow" target="_blank">' . vg_esc($cap !== '' ? $cap : 'Video auf YouTube ansehen') . '</a></p>';
+            }
+        } elseif (str_starts_with($text, 'embed:')) {
+            $parts = explode('|', substr($text, 6), 3);
+            $plat = strtolower(trim($parts[0] ?? '')); $url = trim($parts[1] ?? ''); $cap = trim($parts[2] ?? '');
+            if (preg_match('#^https?://#', $url)) {
+                $lbl = $cap !== '' ? $cap : ($plat === 'instagram' ? 'Beitrag auf Instagram ansehen' : 'Beitrag auf X ansehen');
+                $out .= '<p><a href="' . vg_esc($url) . '" rel="noopener nofollow" target="_blank">' . vg_esc($lbl) . '</a></p>';
+            }
         } else {
             $plain = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $text);
             $out .= '<p>' . vg_esc($plain) . '</p>';
