@@ -2498,10 +2498,10 @@ const NL_SEC_LABEL={characters:'Charakter',vehicles:'Fahrzeug',weapons:'Waffe',w
 const NL_SEC_PLURAL={characters:'Charaktere',vehicles:'Fahrzeuge',weapons:'Waffen',wildlife:'Wildtiere',gangs:'Gangs',radio:'Radio',activities:'Aktivitäten',locations:'Orte'};
 const NL_SEC_PFX={characters:'charaktere',vehicles:'fahrzeuge',weapons:'waffen',wildlife:'wildtiere',gangs:'gangs',radio:'radio',activities:'aktivitaeten',locations:'orte'};
 let nlDraft=null;
-function nlDefault(){ return {subject:'', intro:'Hey! Dein GTA-6-Update von ViceGuide: die wichtigsten News und Einträge der letzten Tage, kompakt auf einen Blick.', mid:'', outro:'', cd:'top', arts:[], entries:[]}; }
+function nlDefault(){ return {subject:'', intro:'Hey! Dein GTA-6-Update von ViceGuide: die wichtigsten News und Einträge der letzten Tage, kompakt auf einen Blick.', mid:'', outro:'', cd:'top', discord:true, instagram:true, arts:[], entries:[]}; }
 function nlLoad(){ if(nlDraft) return; try{ nlDraft=JSON.parse(localStorage.getItem('vg-nl-draft')||'null'); }catch(e){} if(!nlDraft||typeof nlDraft!=='object'){ nlDraft=nlDefault(); } nlDraft.arts=nlDraft.arts||[]; nlDraft.entries=nlDraft.entries||[]; }
 function nlPersist(){ try{ localStorage.setItem('vg-nl-draft',JSON.stringify(nlDraft)); }catch(e){} }
-function nlSyncFields(){ nlLoad(); if($('nl-subject'))nlDraft.subject=$('nl-subject').value; if($('nl-intro'))nlDraft.intro=$('nl-intro').value; if($('nl-mid'))nlDraft.mid=$('nl-mid').value; if($('nl-outro'))nlDraft.outro=$('nl-outro').value; if($('nl-cd'))nlDraft.cd=$('nl-cd').value; }
+function nlSyncFields(){ nlLoad(); if($('nl-subject'))nlDraft.subject=$('nl-subject').value; if($('nl-intro'))nlDraft.intro=$('nl-intro').value; if($('nl-mid'))nlDraft.mid=$('nl-mid').value; if($('nl-outro'))nlDraft.outro=$('nl-outro').value; if($('nl-cd'))nlDraft.cd=$('nl-cd').value; if($('nl-discord'))nlDraft.discord=$('nl-discord').checked; if($('nl-insta'))nlDraft.instagram=$('nl-insta').checked; }
 function nlSave(){ nlSyncFields(); nlPersist(); }
 function nlArr(kind){ return kind==='art'?nlDraft.arts:nlDraft.entries; }
 function nlInit(){
@@ -2520,6 +2520,8 @@ function nlFillFields(){
   if($('nl-mid'))$('nl-mid').value=nlDraft.mid||'';
   if($('nl-outro'))$('nl-outro').value=nlDraft.outro||'';
   if($('nl-cd'))$('nl-cd').value=nlDraft.cd||'top';
+  if($('nl-discord'))$('nl-discord').checked=nlDraft.discord!==false;
+  if($('nl-insta'))$('nl-insta').checked=nlDraft.instagram!==false;
   nlRenderArts(); nlRenderEntries(); nlFillAddSelects();
 }
 function nlRenderArts(){ const b=$('nl-arts'); if(!b)return; b.innerHTML=nlDraft.arts.length?nlDraft.arts.map((a,i)=>nlRow('art',a,i)).join(''):'<div style="font-size:12px;color:var(--text-soft);padding:3px 0">Noch keine Artikel. „Wochenrückblick erzeugen" oder unten hinzufügen.</div>'; }
@@ -2584,6 +2586,23 @@ function nlCountdownHtml(){
     +'<div class="m-h" style="'+NL_HEAD+';font-size:30px;font-weight:700;color:#221041;line-height:1.05">noch <span class="m-acc" style="color:#D00059">'+days+' Tage</span></div>'
     +'<div class="m-soft" style="'+NL_BODY+';font-size:13px;color:#8a7fa5;margin:4px 0 0">19. November 2026</div></td></tr></table>';
 }
+/* Community-Kacheln (Discord/Instagram) fuer den Newsletter, je einzeln im
+   Editor an-/abschaltbar. Feste Markenfarben, damit sie in hell und dunkel
+   gleich wirken (die m-* Dark-Overrides greifen hier bewusst nicht). */
+function nlSocialHtml(){
+  const items=[];
+  if(nlDraft.discord!==false && COMMUNITY.discordInvite) items.push({url:COMMUNITY.discordInvite,bg:'#5865F2',name:'Discord',sub:'Tritt der Community bei'});
+  if(nlDraft.instagram!==false && COMMUNITY.instagram) items.push({url:COMMUNITY.instagram,bg:'#C13584',name:'Instagram',sub:'Folge @viceguide'});
+  if(!items.length) return '';
+  const w=Math.floor(100/items.length);
+  const cells=items.map(it=>'<td width="'+w+'%" align="center" style="padding:5px">'
+    +'<a href="'+it.url+'" style="display:block;background:'+it.bg+';color:#ffffff;text-decoration:none;border-radius:12px;padding:15px 12px">'
+    +'<div class="m-h" style="'+NL_HEAD+';font-size:17px;font-weight:600;color:#ffffff;line-height:1.2">'+it.name+'</div>'
+    +'<div style="'+NL_BODY+';font-size:12px;color:#ffffff;line-height:1.3;margin-top:3px">'+it.sub+'</div>'
+    +'</a></td>').join('');
+  return '<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:10px 0 8px">Bleib in Kontakt</div>'
+    +'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr>'+cells+'</tr></table>';
+}
 function nlBuildInner(){
   nlSyncFields();
   let html=nlTextBlock(nlDraft.intro);
@@ -2612,6 +2631,7 @@ function nlBuildInner(){
     html+=nlCard({url,img,label:e.secLabel||'',title:e.title,teaser:e.teaser,cta:'Zum Eintrag',accent:!!e.highlight});
   });
   html+=nlTextBlock(nlDraft.outro);
+  html+=nlSocialHtml();
   if(nlDraft.cd==='bottom') html+=nlCountdownHtml();
   return html;
 }
@@ -3459,6 +3479,10 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
 
     <div class="nl-lbl">Release-Countdown</div>
     <select id="nl-cd" class="nl-fld" onchange="nlSave()"><option value="top">oben (nach dem Intro)</option><option value="bottom">unten (vor dem Abschluss)</option><option value="off">ausblenden</option></select>
+
+    <div class="nl-lbl">Community-Kacheln</div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin:2px 0"><input type="checkbox" id="nl-discord" onchange="nlSave()"> Discord-Kachel einfügen</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin:2px 0 2px"><input type="checkbox" id="nl-insta" onchange="nlSave()"> Instagram-Kachel einfügen</label>
 
     <button onclick="nlPreview()" style="width:100%;margin-top:14px;font-weight:600;font-size:14px;padding:11px;border-radius:10px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">👁 Vorschau aktualisieren</button>
     <iframe id="nl-frame" title="Newsletter-Vorschau" style="width:100%;height:440px;border:1.5px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;display:none"></iframe>
