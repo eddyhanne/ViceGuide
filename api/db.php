@@ -1,4 +1,24 @@
 <?php
+/* Setzt beim erstmaligen Anlegen der Spalte seo_index eine kuratierte
+   Allowlist auf indexierbar (1). Alle uebrigen Eintraege bleiben auf dem
+   Default 0 (noindex), bis sie redaktionell freigegeben werden. Bewusst per
+   Name statt Wortzahl-Automatik (siehe SEO-Auftrag). Laeuft nur einmal, in der
+   Migration direkt nach dem ALTER TABLE. */
+function vg_seed_seo_allowlist(PDO $pdo): void {
+    $allow = [
+        'characters' => ['Jason Duval', 'Lucia Caminos', 'Boobie Ike', "Dre'Quan Priest", 'Raul Bautista', 'Cal Hampton'],
+        'locations'  => ['Vice City', 'Leonida Keys', 'Grassrivers', 'Port Gellhorn', 'Ambrosia'],
+    ];
+    try {
+        foreach ($allow as $section => $names) {
+            $ph = implode(',', array_fill(0, count($names), '?'));
+            $st = $pdo->prepare("UPDATE db_entries SET seo_index = 1 WHERE section = ? AND name IN ($ph)");
+            $st->execute(array_merge([$section], $names));
+        }
+    } catch (Throwable $e) {
+        // Seeding darf den Request nie hinunterreissen (analog zur uebrigen Migration).
+    }
+}
 function vg_db(): array {
     $cfgPath = __DIR__ . '/config.php';
     if (!file_exists($cfgPath)) {
@@ -36,7 +56,7 @@ function vg_db(): array {
     try {
         $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token, spoiler FROM comments LIMIT 1');
         $pdo->query('SELECT draft_json, pinned, tldr_json FROM articles LIMIT 1');
-        $pdo->query('SELECT slug, draft_json FROM db_entries LIMIT 1');
+        $pdo->query('SELECT slug, draft_json, seo_index FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
         $pdo->query('SELECT id FROM newsletter_subscribers LIMIT 1');
@@ -106,6 +126,7 @@ function vg_db(): array {
             credit TEXT,
             slug TEXT,
             draft_json TEXT,
+            seo_index INTEGER NOT NULL DEFAULT 0,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         $pdo->exec('CREATE TABLE IF NOT EXISTS section_meta (
@@ -129,6 +150,7 @@ function vg_db(): array {
             $names = array_column($cols, 'name');
             if (!in_array('slug', $names, true)) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN slug TEXT'); }
             if (!in_array('draft_json', $names, true)) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN draft_json TEXT'); }
+            if (!in_array('seo_index', $names, true)) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN seo_index INTEGER NOT NULL DEFAULT 0'); vg_seed_seo_allowlist($pdo); }
         } catch (Throwable $e) {
             // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
             // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit
@@ -234,6 +256,7 @@ function vg_db(): array {
             credit VARCHAR(200) NULL,
             slug VARCHAR(180) NULL,
             draft_json MEDIUMTEXT NULL,
+            seo_index TINYINT NOT NULL DEFAULT 0,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_section (section),
             INDEX idx_section_slug (section, slug)
@@ -263,6 +286,8 @@ function vg_db(): array {
             }
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'draft_json'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN draft_json MEDIUMTEXT NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'seo_index'")->fetchAll();
+            if (!$cols) { $pdo->exec('ALTER TABLE db_entries ADD COLUMN seo_index TINYINT NOT NULL DEFAULT 0'); vg_seed_seo_allowlist($pdo); }
         } catch (Throwable $e) {
             // Migration darf nie den ganzen Request (auch fremde Endpunkte wie
             // articles.php, die vg_db() nur fuer die Verbindung nutzen) mit

@@ -114,6 +114,15 @@ if ($imgMeta) {
     $head['<meta property="og:image:type" content="image/jpeg">'] =
         '<meta property="og:image:type" content="' . vg_esc2($imgMeta['mime']) . '">';
 }
+// Selektive Indexierung: nur redaktionell freigegebene Eintraege (seo_index=1)
+// bleiben indexierbar. Alle anderen bekommen noindex, follow (Self-Canonical
+// bleibt, fuer Nutzer weiterhin normal erreichbar, aus der Sitemap raus, siehe
+// sitemap.php). Kein zusaetzliches robots.txt-Blocken, sonst kann Google das
+// noindex gar nicht erst lesen.
+if (empty($row['seo_index'])) {
+    $head['<meta name="robots" content="index, follow">'] =
+        '<meta name="robots" content="noindex, follow">';
+}
 foreach ($head as $search => $replace) {
     $html = str_replace($search, $replace, $html);
 }

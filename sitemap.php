@@ -35,7 +35,9 @@ $articles = $pdo->query('SELECT id, article_date, updated_at FROM articles ORDER
 
 vg_ensure_entry_slugs($pdo);
 try {
-    $entries = $pdo->query("SELECT section, slug, updated_at FROM db_entries WHERE slug IS NOT NULL AND slug <> '' ORDER BY section, sort_order")->fetchAll();
+    // Nur indexierbare (redaktionell freigegebene) Eintraege in die Sitemap,
+    // noindex-Seiten gehoeren nicht hinein (siehe entry.php, seo_index).
+    $entries = $pdo->query("SELECT section, slug, updated_at FROM db_entries WHERE slug IS NOT NULL AND slug <> '' AND seo_index = 1 ORDER BY section, sort_order")->fetchAll();
 } catch (Throwable $e) {
     $entries = [];
 }

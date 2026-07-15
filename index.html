@@ -616,6 +616,8 @@
   .ie-textfields{margin-bottom:14px}
   #imged.imgonly .ie-textfields{display:none}
   .ie-tlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
+  .ie-checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer}
+  .ie-checkline input{width:16px;height:16px;accent-color:var(--accent)}
   .ie-textfields .cm-ta{resize:vertical;font-family:'Inter'}
   .ie-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .ie-apply{flex:1 1 100%;order:5;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)}
@@ -817,7 +819,7 @@
 <nav class="mobilenav" id="mobilenav" aria-label="Bereiche"></nav>
 
 <div class="app">
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar"><a class="side-btn" href="/"><span class="lbl">Start-Hub</span></a><a class="side-btn" href="/news"><span class="lbl">News &amp; Leaks</span></a><a class="side-btn" href="/datenbank/"><span class="lbl">Datenbank</span></a><a class="side-btn" href="/guides/"><span class="lbl">Guides</span></a><a class="side-btn" href="/karte"><span class="lbl">Karte</span></a><a class="side-btn" href="/videos"><span class="lbl">Videos</span></a><a class="side-btn" href="/community"><span class="lbl">Community</span></a></aside>
   <div class="sb-backdrop" id="sbBackdrop" onclick="toggleSidebar(false)"></div>
   <main class="content">
     <div id="view"></div>
@@ -1777,8 +1779,11 @@ function openImgEd(kind,secId,i){
       $('ie-t-desc').value=(d.content||[]).join('\n\n');
       $('ie-tldr-wrap').style.display='block';
       $('ie-t-tldr').value=(Array.isArray(d.tldr)?d.tldr:[]).join('\n');
+      $('ie-seo-wrap').style.display='none';
     } else {
       $('ie-tldr-wrap').style.display='none';
+      $('ie-seo-wrap').style.display='block';
+      $('ie-t-seo').checked=!!d.seo;
       $('ie-cat-wrap').style.display='none';
       $('ie-dbcat-wrap').style.display='block';
       $('ie-t-dbcat').value=d.cat||'';
@@ -1927,6 +1932,7 @@ async function ieApply(){
     d.sub=subVal;
     d.desc=descVal.trim();
     d.cat=$('ie-t-dbcat').value.trim();
+    const seoEl=$('ie-t-seo'); if(seoEl) d.seo=seoEl.checked;
   }
   /* Dialog bleibt waehrend des Speicherns offen, der Knopf zeigt "Speichert...".
      Grund: schliesst der Dialog sofort (wie frueher), sieht die Aenderung im UI
@@ -1946,7 +1952,7 @@ async function ieApply(){
       if(!imgChanged) delete payload.img;
       res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     } else {
-      const payload={id:d._id,name:d.name,sub:d.sub,cat:d.cat,desc:d.desc,imgfit:d.imgfit,credit:d.credit};
+      const payload={id:d._id,name:d.name,sub:d.sub,cat:d.cat,desc:d.desc,imgfit:d.imgfit,credit:d.credit,seo:d.seo};
       if(imgChanged) payload.img=d.img;
       res=await fetch('api/db_entries.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     }
@@ -3820,6 +3826,10 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
   <div class="ie-textfields" id="ie-tldr-wrap" style="display:none">
     <label class="ie-tlabel">Auf einen Blick (ein Stichpunkt pro Zeile, leer lassen für keine Box)</label>
     <textarea id="ie-t-tldr" class="cm-ta" rows="3" placeholder="Kernaussage 1&#10;Kernaussage 2"></textarea>
+  </div>
+  <div class="ie-textfields" id="ie-seo-wrap" style="display:none">
+    <label class="ie-checkline"><input type="checkbox" id="ie-t-seo"> Für Google freigeben (in Sitemap, indexierbar)</label>
+    <div class="ie-hint">Aus lassen bei dünnen Einträgen. Erst freigeben, wenn die Seite genug eigenständigen Inhalt und eine Quelle hat.</div>
   </div>
   <div class="ie-actions">
     <button class="ie-del" id="ie-paste" onclick="iePaste()">Aus Zwischenspeicher</button>

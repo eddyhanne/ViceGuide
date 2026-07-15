@@ -11,6 +11,11 @@ RewriteRule ^ https://viceguide.de%{REQUEST_URI} [L,R=301]
 RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
 RewriteRule ^index\.html$ / [L,R=301]
 
+# Startseite serverseitig aufbereiten (echtes H1, Portal-Text, crawlbare interne
+# Links), ohne die sichtbare Adresse zu aendern. home.php liefert dieselbe
+# index.html mit gefuelltem #view aus, die SPA uebernimmt beim Laden.
+RewriteRule ^$ home.php [L,QSA]
+
 # Artikel-URLs (/artikel/artikel-id) serverseitig fuer Meta-Tags und Crawler
 # aufbereiten, ohne die sichtbare Adresse zu aendern.
 RewriteRule ^artikel/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]

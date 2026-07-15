@@ -60,6 +60,7 @@ function vg_rowToEntry(array $r, bool $full = false): array {
         'src'  => $r['src'] ?: null,
         'desc' => $r['description'] ?: null,
         'img'  => $hasImg ? ($full ? $r['img'] : ('api/entry_image.php?id=' . (int)$r['id'] . '&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
+        'seo'  => !empty($r['seo_index']),
     ];
     if ($r['fields_json']) $out['fields'] = json_decode($r['fields_json'], true);
     if ($r['imgfit_json']) $out['imgfit'] = json_decode($r['imgfit_json'], true);
@@ -81,6 +82,7 @@ function vg_writeEntryFields(PDO $pdo, int $id, array $d, bool $clearDraft): voi
     if (array_key_exists('fields', $d)) { $sets[] = 'fields_json = ?'; $vals[] = $d['fields'] ? json_encode($d['fields'], JSON_UNESCAPED_UNICODE) : null; }
     if (array_key_exists('img', $d)) { $sets[] = 'img = ?'; $vals[] = $d['img']; }
     if (array_key_exists('imgfit', $d)) { $sets[] = 'imgfit_json = ?'; $vals[] = $d['imgfit'] ? json_encode($d['imgfit'], JSON_UNESCAPED_UNICODE) : null; }
+    if (array_key_exists('seo', $d)) { $sets[] = 'seo_index = ?'; $vals[] = !empty($d['seo']) ? 1 : 0; }
     if (!$sets) return;
     $sets[] = 'updated_at = CURRENT_TIMESTAMP';
     if ($clearDraft) { $sets[] = 'draft_json = NULL'; }
@@ -181,7 +183,7 @@ if ($method === 'PUT') {
        Begruendung. Ein bereits bestehender Entwurf wird Feld fuer Feld
        ergaenzt, nicht komplett ersetzt. */
     $draft = $row['draft_json'] ? (json_decode($row['draft_json'], true) ?: []) : [];
-    $allowed = ['name','sub','cat','src','credit','desc','fields','img','imgfit'];
+    $allowed = ['name','sub','cat','src','credit','desc','fields','img','imgfit','seo'];
     foreach ($allowed as $key) {
         if (array_key_exists($key, $b)) { $draft[$key] = $b[$key]; }
     }
