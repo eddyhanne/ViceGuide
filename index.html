@@ -3077,10 +3077,47 @@ function submitDraftJson(){
   }catch(err){ toast('Das sieht nicht nach gültigem JSON aus.'); return; }
   if(!g.title || !g.content){ toast('Es fehlen title oder content.'); return; }
   if(!GCAT[g.cat]) g.cat='news';
+  /* Bestehenden Artikel erkennen (per id oder Titel-Slug). Dann NICHT als neuen
+     Artikel posten (das erzeugt sonst ein Duplikat mit "-2"-Suffix, Stichwort
+     Keyword-Kannibalisierung), sondern den vorhandenen als Entwurf aktualisieren. */
+  const existId = (g.id && (GUIDES||[]).some(x=>x.id===g.id)) ? g.id
+    : ((GUIDES||[]).some(x=>x.id===slugify(g.title)) ? slugify(g.title) : null);
+  if(existId){
+    g.id=existId;
+    if(confirm('Es gibt bereits einen Artikel mit dieser ID ("'+existId+'"). Aktualisieren?\n\nOK = bestehenden Artikel als Entwurf überschreiben (Bild bleibt, wenn kein neues im JSON steht).\nAbbrechen = als komplett neuen Artikel anlegen.')){
+      $('draft-json').value='';
+      updateArticleFromJson(g);
+      return;
+    }
+    delete g.id; // bewusst als neuer Artikel: frische id aus dem Titel
+  }
   if(!g.date) g.date=nowStamp();
   aiDraft=g;
   $('draft-json').value='';
   showAiPreview(g);
+}
+/* Aktualisiert einen bestehenden Artikel aus eingefügtem JSON: schreibt die
+   gelieferten Felder als Entwurf (PUT), zeigt ihn sofort auf der Seite und
+   überlässt das endgültige Veröffentlichen dem "Fertigstellen"-Knopf. Ein
+   fehlendes Feld (z.B. img) bleibt unangetastet, date wird nur gesetzt, wenn
+   es im JSON steht (sonst bleibt das Veröffentlichungsdatum erhalten). */
+async function updateArticleFromJson(g){
+  const idx=(GUIDES||[]).findIndex(x=>x.id===g.id);
+  if(idx<0){ toast('Artikel nicht gefunden.'); return; }
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const fields=['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit'];
+  const payload={id:g.id};
+  fields.forEach(k=>{ if(k in g && g[k]!==undefined) payload[k]=g[k]; });
+  try{
+    const res=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.status===403){ toast('Nicht angemeldet.'); return; }
+    if(!res.ok) throw new Error();
+    Object.assign(GUIDES[idx],payload); GUIDES[idx]._draft=true;
+    editMode=true;
+    closeAdmin();
+    go('home'); openArticle(idx);
+    toast('Entwurf gespeichert. Oben prüfen, dann im Panel auf „Fertigstellen" zum Veröffentlichen.');
+  }catch(e){ toast('Aktualisierung fehlgeschlagen.'); }
 }
 let dbPendingNew=[];
 /* Batch-Import fuer Datenbank-Eintraege (Charaktere, Fahrzeuge, ...): nimmt
