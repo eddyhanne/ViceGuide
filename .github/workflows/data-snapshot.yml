@@ -1,0 +1,57 @@
+name: Daten-Snapshot
+
+# Spiegelt den oeffentlichen Live-Stand (MySQL ueber die API) regelmaessig als
+# JSON-Schnappschuss ins Repo unter snapshots/. Zweck: ein frisch geklonter
+# Repo-Stand (u.a. fuer die Arbeit mit Claude Code) ist damit hoechstens rund
+# einen Tag alt, ohne dass jemand die Dateien manuell exportieren und committen
+# muss. Nutzt die oeffentlichen GET-Endpunkte, also keine Zugangsdaten noetig.
+# Base64-Bilder sind hier bewusst nicht enthalten (die API liefert im
+# oeffentlichen GET schlanke Bild-URLs), der Snapshot bleibt dadurch klein.
+
+on:
+  schedule:
+    - cron: '30 3 * * *'   # taeglich gegen 03:30 UTC (~05:30 MESZ)
+  workflow_dispatch:        # zum sofortigen manuellen Anstossen ueber den Actions-Tab
+
+concurrency:
+  group: data-snapshot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Live-Daten holen und validieren
+        run: |
+          set -euo pipefail
+          mkdir -p snapshots
+          curl -fsS --retry 3 --retry-delay 5 "https://viceguide.de/api/articles.php"   -o articles.raw.json
+          curl -fsS --retry 3 --retry-delay 5 "https://viceguide.de/api/db_entries.php" -o database.raw.json
+          # Nur gueltiges JSON in der erwarteten Form uebernehmen, sonst abbrechen
+          # (damit z.B. eine HTML-Fehlerseite nie als Snapshot committet wird).
+          jq -e '.articles | type == "array"'  articles.raw.json > /dev/null
+          jq -e '.sections | type == "object"' database.raw.json > /dev/null
+          # Kanonisch formatieren (sortierte Keys) fuer stabile, aussagekraeftige Diffs.
+          jq -S . articles.raw.json > snapshots/articles.json
+          jq -S . database.raw.json > snapshots/database.json
+          rm -f articles.raw.json database.raw.json
+
+      - name: Committen, wenn sich etwas geaendert hat
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- snapshots/; then
+            echo "Keine Aenderungen am Datenstand."
+            exit 0
+          fi
+          git config user.name  "viceguide-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add snapshots/
+          A=$(jq '.articles | length' snapshots/articles.json)
+          E=$(jq '[.sections[] | length] | add // 0' snapshots/database.json)
+          git commit -m "Daten-Snapshot: ${A} Artikel, ${E} Datenbank-Eintraege"
+          git push

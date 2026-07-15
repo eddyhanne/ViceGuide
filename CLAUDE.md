@@ -117,7 +117,9 @@ Folgendes ist gegen den echten Code bestätigt:
 
 Die interaktive Navigation innerhalb der Seite läuft weiter über die Single-Page-Logik in `index.html`, die serverseitigen Seiten sind reine SEO-/Vorschau-Fassaden für Crawler und Link-Vorschauen ohne JavaScript.
 
-**Datenfluss (wichtig):** Die **MySQL-Datenbank ist die Quelle der Wahrheit.** `loadExternal()` fragt zuerst `api/articles.php` und `api/db_entries.php` ab und fällt nur auf die statischen JSON-Dateien zurück, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync). `articles.json`/`database.json` im Repo sind nur ein eingefrorener Migrationsstand, keine gepflegte Datenquelle mehr.
+**Datenfluss (wichtig):** Die **MySQL-Datenbank ist die Quelle der Wahrheit.** `loadExternal()` fragt zuerst `api/articles.php` und `api/db_entries.php` ab und fällt nur auf die statischen JSON-Dateien zurück, falls die API nicht erreichbar ist (Notfall-Absicherung, kein aktiver Sync). `articles.json`/`database.json` im Repo-Wurzelverzeichnis sind nur ein eingefrorener Migrationsstand (mit Base64-Bildern), keine gepflegte Datenquelle mehr.
+
+**Aktuellen Datenstand für Claude bekommen (Juli 2026):** Ein GitHub-Workflow (`.github/workflows/data-snapshot.yml`) spiegelt den Live-Stand täglich (plus manuell auslösbar) als `snapshots/articles.json` (`{articles:[…]}`) und `snapshots/database.json` (`{sections:{…}}`) ins Repo, gezogen aus den öffentlichen GET-Endpunkten (keine Zugangsdaten, Bilder als URL statt Base64, daher klein). So kennt ein frisch geklonter Repo-Stand den aktuellen Inhalt ohne manuelles Hochladen. Der Workflow committet auf `main`; wer in einem Feature-Branch arbeitet, holt den frischesten Stand per `git fetch origin main && git show origin/main:snapshots/articles.json`. Ist die Netzwerk-Policy der Umgebung offen für viceguide.de, liefert `scripts/pull-live.sh` den Live-Stand sofort (sonst blockt der Proxy mit 403, dann greift der tägliche Workflow). `snapshots/` ist ausdrücklich **kein** Fallback und keine Live-Quelle, nur ein Lese-Spiegel.
 
 **Entwurf/Veröffentlichen-Modell:** Änderungen im Editiermodus (`ieApply()`) landen zunächst in einer `draft_json`-Spalte auf `articles`/`db_entries`, nicht direkt in den öffentlichen Feldern. Nur der eingeloggte Admin sieht seinen eigenen Entwurf (GET merged `draft_json` über die Live-Werte, Antwort trägt `_draft:true`), Besucher sehen weiterhin den zuletzt veröffentlichten Stand. Ein Klick auf "Fertigstellen" ruft `POST ?action=publish` auf (schreibt alle offenen Entwürfe in die echten Spalten, löscht danach `draft_json`), "Verwerfen" ruft `POST ?action=discard` auf (löscht `draft_json` ersatzlos). Siehe Abschnitt 7 für die Endpunkt-Details.
 
@@ -255,6 +257,9 @@ Aus der API kommt zusätzlich `_id` (interne Zeilen-ID, für Updates gebraucht) 
 ├─ googlec9a955...html     Google-Search-Console-Verifizierungsdatei, nicht löschen
 ├─ .htaccess               Server-Regeln (URL-Rewriting auf article.php/entry.php/sitemap.php, Cache-Zeiten)
 ├─ .gitignore              Schließt api/config.php und lokale *.sqlite aus
+├─ .github/workflows/data-snapshot.yml   Täglicher Snapshot des Live-Stands aus der API nach snapshots/
+├─ snapshots/              Auto-Spiegel des Live-Datenstands (articles.json/database.json, Lese-Spiegel, kein Fallback)
+├─ scripts/pull-live.sh    Holt den Live-Stand sofort nach snapshots/ (nur wenn Netz viceguide.de erlaubt)
 ├─ articles.json           Eingefrorener Anfangsstand, keine laufende Datenquelle
 ├─ database.json           Eingefrorener Anfangsstand, keine laufende Datenquelle
 ├─ assets/fonts/           Selbst gehostete .woff2 (oswald-variable, inter-variable, spacemono-400/700)
@@ -407,7 +412,7 @@ php -S localhost:8000 -t .
 - **Pauschales `str_replace('<style>', …)` in den SSR-Fassaden ist gefährlich, sobald es mehr als ein `<style>` in `index.html` gibt.** `article.php`/`entry.php`/`category.php` fügen ihr JSON-LD vor `<style>` ein. `str_replace` ersetzt aber ALLE Vorkommen. Inzwischen gibt es drei `<style>` (Head-CSS, Footer-CSS im Body und eins in einem JS-String der Newsletter-Vorschau `nlWrapPreview()`). Ein globales Ersetzen schrieb darum ein `</script>` mitten ins Haupt-`<script>` und beendete es vorzeitig, alles danach erschien als roher Code auf der Seite (real passiert, Juli 2026). Behoben, indem nur noch vor dem ersten `<style>` (Head) eingefügt wird (`strpos` + `substr`). Merke: nie generische HTML-Tag-Strings (`<style>`, `<head>`, `</head>`) global in die SSR-Shell ersetzen, immer nur das erste/gezielte Vorkommen, denn `index.html`s JS enthält solche Fragmente als String-Literale.
 - **Genaue Repo-Dateinamen der Bild-Assets** sind aus dem Sandbox-Chat nicht sichtbar, bei Coding-Sessions gegen das echte Repo prüfen.
 - **Claude hat aus der Sandbox keinen Netzwerkzugriff** auf viceguide.de, Google Drive oder die Hostinger-Datenbank. Große Dateien oder Live-Checks laufen über den Betreiber.
-- **Direkt im Browser gemachte Content-Änderungen** sind einem neuen Chat nicht automatisch bekannt. Bei Bedarf nachfragen.
+- **Direkt im Browser gemachte Content-Änderungen** landen sofort in der Datenbank, aber nicht automatisch im Git-Klon. Den aktuellen Stand liefern `snapshots/articles.json`/`snapshots/database.json` (täglich per Workflow aktualisiert, für ganz frisch `scripts/pull-live.sh`, falls das Netz viceguide.de erlaubt). Also nicht mehr blind nach dem Stand fragen, zuerst dort nachsehen.
 
 ---
 
