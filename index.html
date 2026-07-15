@@ -859,7 +859,7 @@ const GCAT={}; GROUPS.forEach(g=>g.cats.forEach(c=>GCAT[c.id]={name:c.name}));
 const PILLARS=['home','news','datenbank','guides','map','videos','community'];
 /* Kurzlabels nur fuer die Navigations-Saeulen (die Sektion selbst behaelt ihr
    ausfuehrliches Label fuer Ueberschriften, Breadcrumbs und SSR). */
-const PILLAR_LABEL={home:'Start / Hub',news:'News & Leaks'};
+const PILLAR_LABEL={home:'Start-Hub',news:'News & Leaks'};
 /* Zwei Welten fuer die gesperrten Phase-2-Kacheln: Ratgeber unter Guides,
    Listen (Trophaeen, Sammelobjekte) als kuenftige Datenbank-Rubriken. */
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
@@ -2953,7 +2953,7 @@ $('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
 /* Admin / KI */
-function openAdmin(){const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
+async function openAdmin(){if(!isAdmin){const ok=await adminLogin();if(!ok)return;}const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
 /* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
