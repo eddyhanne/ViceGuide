@@ -1332,6 +1332,12 @@ function drawDB(sec){
     let list=data.filter(d=> dbCat==="Alle"||canonCat(sec.id,d.cat)===dbCat);
     dbSortList(sec.id,list);
     items=list.map(d=>({d,sid:sec.id,gi:data.indexOf(d)}));
+    /* Hervorgehobene Eintraege immer zuerst, losgeloest von der aktuellen
+       Sortierung/Gruppierung der Rubrik. Stabile Partition, damit die restliche
+       Reihenfolge (und die Reihenfolge mehrerer Hervorhebungen) erhalten bleibt. */
+    const feat=[], rest=[];
+    for(const it of items){ (isEntryFeat(it.d._id)?feat:rest).push(it); }
+    items=[...feat,...rest];
   }
   $('dbcount').textContent = cross
     ? items.length+" Treffer für „"+dbQuery.trim()+"“ in der ganzen Datenbank"
