@@ -712,6 +712,13 @@
   .sg-all{display:block;width:100%;text-align:center;padding:11px;border:0;background:var(--surface-2);color:var(--accent);font-weight:700;font-size:12.5px;cursor:pointer;font-family:'Space Mono'}
   .sg-all:hover{filter:brightness(1.05)}
   .sg-empty{padding:15px;color:var(--text-soft);font-size:13px}
+  .sg-group{display:flex;align-items:center;gap:8px;padding:9px 14px 5px;font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft)}
+  .sg-gcount{margin-left:auto;background:var(--surface-2);border-radius:999px;padding:1px 7px;font-size:10px}
+  .sg-ic{flex:0 0 auto;width:26px;height:26px;display:grid;place-items:center;color:var(--accent)}
+  .sg-ic svg{width:19px;height:19px}
+  .sg-txt{display:flex;flex-direction:column;min-width:0}
+  .sg-sub{font-size:11.5px;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media(max-width:700px){ .suggest{position:fixed;left:8px;right:8px;top:65px;max-height:76vh} .sg-item{padding:14px 14px} .sg-label{font-size:15px} .sg-sub{font-size:12px} }
 
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -1228,43 +1235,61 @@ function dbSortList(secId,list){
   });
 }
 function drawDB(sec){
-  const data=DB[sec.id]||[];
   const q=dbQuery.trim().toLowerCase();
-  const list=data.filter(d=>{
-    const inCat=dbCat==="Alle"||canonCat(sec.id,d.cat)===dbCat;
-    if(!inCat)return false; if(!q)return true;
-    return (d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase().includes(q);
-  });
-  dbSortList(sec.id,list);
-  $('dbcount').textContent=list.length+" "+(list.length===1?"Eintrag":"Einträge")+(dbCat!=="Alle"?" · "+dbCat:"");
+  /* Beim Suchen die GANZE Datenbank durchsuchen (rubrikuebergreifend), nicht
+     nur die aktuelle Rubrik und ohne den Kategorie-Tab. So findet "jason" den
+     Jason-Eintrag, egal in welcher Rubrik/Tab man gerade steht. */
+  const cross = q.length>0;
+  let items=[];
+  if(cross){
+    const terms=q.split(/\s+/);
+    SECTIONS.filter(s=>s.type==='db').forEach(s=>{
+      (DB[s.id]||[]).forEach((d,gi)=>{
+        const hay=((d.name||'')+" "+(d.sub||'')+" "+(d.cat||'')+" "+(d.desc||'')).toLowerCase();
+        const sc=sgScore(d.name,hay,q,terms);
+        if(sc>=0) items.push({d,sid:s.id,gi,score:sc});
+      });
+    });
+    items.sort((a,b)=> (b.score-a.score) || (a.d.name||'').localeCompare(b.d.name||'','de'));
+  } else {
+    const data=DB[sec.id]||[];
+    let list=data.filter(d=> dbCat==="Alle"||canonCat(sec.id,d.cat)===dbCat);
+    dbSortList(sec.id,list);
+    items=list.map(d=>({d,sid:sec.id,gi:data.indexOf(d)}));
+  }
+  $('dbcount').textContent = cross
+    ? items.length+" Treffer für „"+dbQuery.trim()+"“ in der ganzen Datenbank"
+    : items.length+" "+(items.length===1?"Eintrag":"Einträge")+(dbCat!=="Alle"?" · "+dbCat:"");
   const grid=$('dbgrid'), empty=$('dbempty');
-  if(!list.length){grid.innerHTML="";empty.style.display="block";return;}
+  if(!items.length){grid.innerHTML="";empty.style.display="block";return;}
   empty.style.display="none";
   grid.className = dbView==='list' ? 'dblist' : 'grid';
   if(dbView==='list'){
-    grid.innerHTML=list.map(d=>{
-      const gi=data.indexOf(d);
-      const thumb=d.img?`<span class="dbrow-thumb">${imgTag(d,d.name,true,48,48)}</span>`:`<span class="dbrow-thumb ph">${secIcon(sec.id)}</span>`;
+    grid.innerHTML=items.map(it=>{
+      const d=it.d, sid=it.sid, gi=it.gi, s=SECTIONS.find(x=>x.id===sid);
+      const thumb=d.img?`<span class="dbrow-thumb">${imgTag(d,d.name,true,48,48)}</span>`:`<span class="dbrow-thumb ph">${secIcon(sid)}</span>`;
       const badge=editMode?(d._draft?`<span class="dbrow-edit draft">✎</span>`:`<span class="dbrow-edit">✎</span>`):'';
-      const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</span>`:'';
+      const delBtn=editMode?`<span class="dbrow-del" onclick="deleteDbEntry('${sid}',${gi},event)" title="Löschen">×</span>`:'';
       const tag=editMode?'div':'a';
-      const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
-      const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
-      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
+      const hrefAttr=editMode?'':`href="${entryHref(sid,d.slug)}"`;
+      const clickAttr=editMode?`openImgEd('db','${sid}',${gi})`:`return entryClick(event,'${sid}',${gi})`;
+      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sid}',${gi})}"`:'';
+      const ct = cross ? (s?s.label:'') : canonCat(sid,d.cat);
       return `<${tag} class="dbrow ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
-        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${canonCat(sec.id,d.cat)}</span>${badge}${delBtn}</${tag}>`;
+        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${ct}</span>${badge}${delBtn}</${tag}>`;
     }).join('');
   } else {
-    grid.innerHTML=list.map(d=>{
-      const gi=data.indexOf(d);
+    grid.innerHTML=items.map(it=>{
+      const d=it.d, sid=it.sid, gi=it.gi, s=SECTIONS.find(x=>x.id===sid);
       const editBadge = editMode ? (d._draft?`<span class="edit-badge draft">✎ Entwurf</span>`:`<span class="edit-badge">✎ Bearbeiten</span>`) : '';
-      const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteDbEntry('${sec.id}',${gi},event)" title="Löschen">×</button>` : '';
+      const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteDbEntry('${sid}',${gi},event)" title="Löschen">×</button>` : '';
       const tag=editMode?'div':'a';
-      const hrefAttr=editMode?'':`href="${entryHref(sec.id,d.slug)}"`;
-      const clickAttr=editMode?`openImgEd('db','${sec.id}',${gi})`:`return entryClick(event,'${sec.id}',${gi})`;
-      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sec.id}',${gi})}"`:'';
+      const hrefAttr=editMode?'':`href="${entryHref(sid,d.slug)}"`;
+      const clickAttr=editMode?`openImgEd('db','${sid}',${gi})`:`return entryClick(event,'${sid}',${gi})`;
+      const kd=editMode?` onkeydown="if(event.key==='Enter'){openImgEd('db','${sid}',${gi})}"`:'';
+      const ct = cross ? (s?s.label:'') : canonCat(sid,d.cat);
       return `<${tag} class="card ${editMode?'editing':''}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
-        ${cardVisual(sec,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${canonCat(sec.id,d.cat)}</span></div></${tag}>`;
+        ${cardVisual(s,d)}${editBadge}${delBtn}<div class="cb"><span class="nm">${d.name}</span><span class="sb">${d.sub||''}</span><span class="ct">${ct}</span></div></${tag}>`;
     }).join('');
   }
 }
@@ -2835,21 +2860,41 @@ function globalSearch(q){
   closeArticle();
   $('view').innerHTML=`<div class="sec-head"><div class="sec-title">Suche</div><div class="sec-note">${results.length} Treffer für „${q}“ über alle Bereiche.</div></div>`+(results.length?`<div class="grid">${cards}</div>`:`<div class="empty">Nichts gefunden. Probier einen anderen Begriff.</div>`);
 }
+/* Relevanz-Score: exakter Namenstreffer ganz oben, dann Wortanfang, dann
+   irgendwo im Namen, zuletzt nur im Fliesstext. -1 wenn nicht alle Begriffe
+   vorkommen. So steht der Jason-Eintrag vor Artikeln, die "Jason" nur nennen. */
+function sgScore(name,hay,q,terms){ if(!terms.every(t=>hay.includes(t))) return -1; const n=(name||'').toLowerCase(); if(n===q) return 100; if(n.startsWith(q)) return 85; if(n.split(/\s+/).some(w=>w.startsWith(q))) return 75; if(n.includes(q)) return 65; return 30; }
 function searchAll(q){
   q=q.trim().toLowerCase(); if(!q)return []; const terms=q.split(/\s+/); const out=[];
-  GUIDES.forEach((g,i)=>{const hay=(g.title+' '+g.summary+' '+(g.content||[]).join(' ')+' '+(g.tag||'')).toLowerCase(); if(terms.every(t=>hay.includes(t))) out.push({type:'guide',label:g.title,tag:(g.tag||'News & Gerüchte'),i});});
-  SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=(d.name+' '+d.sub+' '+d.cat+' '+d.desc).toLowerCase(); if(terms.every(t=>hay.includes(t))) out.push({type:'db',sec:s.id,label:d.name,tag:s.label,i});});});
-  VIDEOS.forEach((v,i)=>{const hay=(v.title+' '+v.author).toLowerCase(); if(terms.every(t=>hay.includes(t))) out.push({type:'video',label:v.title,tag:'Videos',i});});
+  GUIDES.forEach((g,i)=>{const hay=(g.title+' '+g.summary+' '+(g.content||[]).join(' ')+' '+(g.tag||'')).toLowerCase(); const s=sgScore(g.title,hay,q,terms); if(s>=0) out.push({type:'guide',label:g.title,tag:(g.tag||'News & Gerüchte'),i,score:s});});
+  SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=((d.name||'')+' '+(d.sub||'')+' '+(d.cat||'')+' '+(d.desc||'')).toLowerCase(); const sc=sgScore(d.name,hay,q,terms); if(sc>=0) out.push({type:'db',sec:s.id,label:d.name,tag:s.label,i,score:sc+12});});});
+  VIDEOS.forEach((v,i)=>{const hay=(v.title+' '+v.author).toLowerCase(); const s=sgScore(v.title,hay,q,terms); if(s>=0) out.push({type:'video',label:v.title,tag:'Videos',i,score:s});});
+  out.sort((a,b)=>b.score-a.score);
   return out;
 }
+function sgRow(r,idx){
+  const sub = r.type==='db' ? r.tag : (r.type==='guide' ? 'News & Artikel' : 'Videos');
+  const ic = r.type==='db' ? secIcon(r.sec) : (r.type==='guide'?secIcon('news'):secIcon('videos'));
+  return `<button class="sg-item" onmousedown="event.preventDefault()" onclick="pickSuggest(${idx})"><span class="sg-ic">${ic}</span><span class="sg-txt"><span class="sg-label">${esc(r.label)}</span><span class="sg-sub">${esc(sub)}</span></span></button>`;
+}
+/* Gruppiertes Vorschlags-Dropdown: erst Datenbank-Treffer, dann Artikel, dann
+   Videos, je Gruppe eine Ueberschrift und die staerksten vier, darunter der
+   Sprung in die volle Trefferliste. Uebersichtlicher als die alte flache Liste. */
 function renderSuggest(q){
   const el=$('suggest'); if(!el)return;
   if(!q.trim()){ el.classList.remove('show'); el.innerHTML=''; return; }
   const res=searchAll(q); window.__sg=res;
-  if(!res.length){ el.innerHTML='<div class="sg-empty">Keine Vorschläge gefunden.</div>'; el.classList.add('show'); return; }
-  const shown=res.slice(0,8);
-  el.innerHTML=shown.map((r,idx)=>`<button class="sg-item" onmousedown="event.preventDefault()" onclick="pickSuggest(${idx})"><span class="sg-tag sg-${r.type}">${esc(r.tag)}</span><span class="sg-label">${esc(r.label)}</span></button>`).join('')+(res.length>shown.length?`<button class="sg-all" onmousedown="event.preventDefault()" onclick="$('suggest').classList.remove('show');globalSearch(gquery)">Alle ${res.length} Treffer anzeigen</button>`:'');
-  el.classList.add('show');
+  if(!res.length){ el.innerHTML='<div class="sg-empty">Keine Treffer für „'+esc(q)+'“.</div>'; el.classList.add('show'); return; }
+  const groups=[['db','Datenbank'],['guide','News & Artikel'],['video','Videos']];
+  let html='';
+  groups.forEach(([key,lbl])=>{
+    const its=res.map((r,idx)=>({r,idx})).filter(o=>o.r.type===key);
+    if(!its.length) return;
+    html+=`<div class="sg-group">${lbl}<span class="sg-gcount">${its.length}</span></div>`;
+    its.slice(0,4).forEach(o=>{ html+=sgRow(o.r,o.idx); });
+  });
+  html+=`<button class="sg-all" onmousedown="event.preventDefault()" onclick="$('suggest').classList.remove('show');globalSearch(gquery)">Alle ${res.length} Treffer anzeigen →</button>`;
+  el.innerHTML=html; el.classList.add('show');
 }
 function pickSuggest(idx){ const r=(window.__sg||[])[idx]; if(!r)return; $('suggest').classList.remove('show'); if(r.type==='guide'){closeArticle();openArticle(r.i);} else if(r.type==='db'){ current=r.sec; renderSidebar(); renderMobileNav(); renderView(); openModal(r.sec,r.i); } else if(r.type==='video'){ go('videos'); } }
 function clearGlobal(){$('gsearch').value='';gquery='';$('gclear').style.display='none';$('suggest').classList.remove('show');renderView();$('gsearch').focus();}
