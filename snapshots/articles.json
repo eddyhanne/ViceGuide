@@ -21,7 +21,7 @@
       "credit": "Rockstar",
       "date": "2026-07-15T18:34",
       "id": "gta-6-vorbestellen",
-      "img": "api/article_image.php?id=gta-6-vorbestellen&v=2026-07-15+20%3A45%3A23",
+      "img": "api/article_image.php?id=gta-6-vorbestellen&v=2026-07-15+21%3A40%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -42,7 +42,12 @@
       ],
       "summary": "Die Vorbestellung läuft seit dem 25. Juni 2026. Es gibt zwei Editionen, dazu ein Gratis-Paket für frühe Käufer.",
       "title": "GTA 6 vorbestellen: Start, Editionen und Preis",
-      "updated": "2026-07-15 20:45:23"
+      "tldr": [
+        "Ein Zwang zur Eile besteht nicht: Wer erst zum Release kauft, hat keinen Nachteil.",
+        "Die Standard Edition kostet rund 80 Euro, die Ultimate rund 100 Euro, deren Extras sind noch nicht vollständig aufgeschlüsselt.",
+        "Nur wer vor dem 20. November 2026 vorbestellt, bekommt das Vintage Vice City Pack gratis dazu."
+      ],
+      "updated": "2026-07-15 21:40:26"
     },
     {
       "author": null,
@@ -61,7 +66,7 @@
       "credit": "Amazon.de",
       "date": "2026-07-14T09:48",
       "id": "gta-6-konsolen-bundles-amazon",
-      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-15+20%3A54%3A18",
+      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-15+21%3A40%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -82,7 +87,12 @@
       ],
       "summary": "Amazon schnürt erste GTA-6-Bundles mit Xbox Series X und S. Eine PS5-Variante fehlt noch.",
       "title": "GTA 6 im Konsolen-Bundle: Amazon bietet bislang nur Xbox an",
-      "updated": "2026-07-15 20:54:18"
+      "tldr": [
+        "Ein Bundle lohnt sich nur, wenn du ohnehin neue Hardware brauchst. Wer schon eine Konsole hat, fährt mit dem Einzelkauf günstiger.",
+        "Amazon führt zwei Xbox-Pakete, die Series X darin ist generalüberholt statt neu.",
+        "Eine PS5-Variante fehlt bislang, könnte bis zum Release im November aber noch folgen."
+      ],
+      "updated": "2026-07-15 21:40:26"
     },
     {
       "author": null,
@@ -102,7 +112,7 @@
       "credit": "Rockstar",
       "date": "2026-07-14T09:48",
       "id": "gta-6-mysterioeser-turm-leonida",
-      "img": "api/article_image.php?id=gta-6-mysterioeser-turm-leonida&v=2026-07-15+09%3A14%3A05",
+      "img": "api/article_image.php?id=gta-6-mysterioeser-turm-leonida&v=2026-07-15+21%3A40%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -123,7 +133,12 @@
       ],
       "summary": "Seit dem ersten Trailer rätselt die Community über einen riesigen Turm am Horizont. Der Stand der Dinge.",
       "title": "Der mysteriöse Turm in Leonida: Was Fans nach drei Jahren wissen",
-      "updated": "2026-07-15 09:14:05"
+      "tldr": [
+        "Die Debatte hat sich verschoben: Statt ob es den Turm gibt, geht es jetzt nur noch um seine Funktion.",
+        "Die Community hält ihn mehrheitlich für einen Fernseh- oder Radioturm nach Florida-Vorbild wie dem realen WCIX-Tower.",
+        "Rockstar schweigt zur Funktion, ob begehbar oder Story-relevant bleibt bis zum Release offen."
+      ],
+      "updated": "2026-07-15 21:40:26"
     },
     {
       "author": null,
@@ -142,7 +157,7 @@
       "credit": "Rockstar",
       "date": "2026-07-14T09:48",
       "id": "gta-6-ps5-vs-ps5-pro-unterschied",
-      "img": "api/article_image.php?id=gta-6-ps5-vs-ps5-pro-unterschied&v=2026-07-15+16%3A29%3A43",
+      "img": "api/article_image.php?id=gta-6-ps5-vs-ps5-pro-unterschied&v=2026-07-15+21%3A40%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -154,7 +169,7 @@
       "sources": [
         {
           "title": "Hardwareluxx",
-          "url": "https://www.hardwareluxx.de/index.php/news/software/spiele/69572-gta-6-digital-foundry-h%C3%A4lt-60-fps-auf-ps5-pro-f%C3%BCr-unwahrscheinlich.html"
+          "url": "https://www.hardwareluxx.de/index.php/news/software/spiele/69572-gta-6-digital-foundry-haelt-60-fps-auf-ps5-pro-fuer-unwahrscheinlich.html"
         },
         {
           "title": "Softonic",
@@ -167,7 +182,12 @@
       ],
       "summary": "Sony listet GTA 6 als PS5 Pro Enhanced. Was das für Bildrate und Grafik konkret bedeutet.",
       "title": "GTA 6 auf PS5 und PS5 Pro: Das ist der wirkliche Unterschied",
-      "updated": "2026-07-15 16:29:43"
+      "tldr": [
+        "Die Pro wird optisch die beste Konsolenversion, aber nicht automatisch die 60-fps-Maschine.",
+        "Der Flaschenhals ist die CPU, beide Konsolen teilen sich fast denselben Zen-2-Prozessor.",
+        "Digital Foundry hält 30 fps für den Standard, auf der Pro ergänzt um einen möglichen 40-fps-Modus."
+      ],
+      "updated": "2026-07-15 21:40:26"
     },
     {
       "author": null,
@@ -187,7 +207,7 @@
       "credit": null,
       "date": "2026-07-14T09:48",
       "id": "gta-6-preload-termin-speicherplatz",
-      "img": "api/article_image.php?id=gta-6-preload-termin-speicherplatz&v=2026-07-15+16%3A29%3A16",
+      "img": "api/article_image.php?id=gta-6-preload-termin-speicherplatz&v=2026-07-15+21%3A42%3A36",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -212,7 +232,12 @@
       ],
       "summary": "Ab wann ihr GTA 6 vorab herunterladen könnt und wie viel Speicherplatz ihr freiräumen solltet.",
       "title": "GTA 6 Preload: Termin steht, bei der Downloadgröße wird geraten",
-      "updated": "2026-07-15 16:29:16"
+      "tldr": [
+        "Halte mindestens 250 GB frei, gerade auf der Series S mit kleiner SSD wird es eng.",
+        "Der Download startet um Mitternacht in der Zeitzone deines Store-Accounts, nicht der Konsole.",
+        "Eine offizielle Größe fehlt, seriöse Schätzungen von S4G und drohnen.de liegen bei 150 bis 300 GB."
+      ],
+      "updated": "2026-07-15 21:42:36"
     },
     {
       "author": null,
@@ -226,14 +251,14 @@
         "### Wann könnte die PC-Version kommen?",
         "Überträgt man das GTA-5-Muster auf GTA 6, landet ein realistisches Fenster frühestens Ende 2027, eher 2028. Ein Leak des X-Nutzers DetectiveSeeds nennt sogar Februar 2027 als möglichen Termin, gestützt auf Aussagen von drei angeblich ehemaligen Rockstar-Mitarbeitern. Bestätigt ist das nicht, und ein Abstand von nur rund 90 Tagen zum Konsolen-Launch wäre für Rockstars bisherige Historie ungewöhnlich schnell.",
         "Wirtschaftlich ergibt die Reihenfolge für Rockstar durchaus Sinn. Konsolenspieler, besonders auf PlayStation, generieren bei GTA Online im Schnitt höhere Umsätze als PC-Spieler. Ein späterer PC-Release erlaubt zudem einen zweiten Verkaufsschub, oft verbunden mit technischen Verbesserungen, die einen erneuten Kauf attraktiv machen.",
-        "Realistisch betrachtet ist der PC-Port also kein Wenn, sondern ein Wann. Wer nicht auf eine Konsole ausweichen will, braucht für Vice City schlicht Geduld, mindestens bis weit ins Jahr 2027 hinein.",
+        "Realistisch betrachtet ist der PC-Port also kein \"Wenn?\", sondern ein \"Wann?\". Wer nicht auf eine Konsole ausweichen will, braucht für Vice City schlicht Geduld, mindestens bis weit ins Jahr 2027 hinein.",
         "faq:Kommt GTA 6 überhaupt für den PC?|Offiziell unbestätigt, aber sehr wahrscheinlich. Jeder große GTA-Teil erschien bisher auch auf dem PC, nur mit deutlicher Verzögerung.",
         "faq:Wann erscheint GTA 6 für PC?|Kein offizielles Datum. Nach dem Muster von GTA 5 und Red Dead Redemption 2 gilt Ende 2027 bis 2028 als realistisches Fenster, ein Leak nennt spekulativ Februar 2027."
       ],
       "credit": null,
       "date": "2026-07-14T09:46",
       "id": "gta-6-pc-version-warum-spaeter",
-      "img": "api/article_image.php?id=gta-6-pc-version-warum-spaeter&v=2026-07-14+10%3A51%3A08",
+      "img": "api/article_image.php?id=gta-6-pc-version-warum-spaeter&v=2026-07-15+21%3A42%3A55",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -258,7 +283,12 @@
       ],
       "summary": "Nur PS5 und Xbox Series X/S starten im November. Warum der PC-Port erst 2027 oder später kommt.",
       "title": "GTA 6 auf dem PC: Darum lässt Rockstar sich so viel Zeit",
-      "updated": "2026-07-14 10:51:08"
+      "tldr": [
+        "Der PC-Port ist kein Wenn, sondern ein Wann, realistisch frühestens Ende 2027.",
+        "Rockstar konzentriert das Budget zuerst auf die Konsolen, das erklärte Ex-Produzent John Ricchio.",
+        "Take-Two-Chef Strauss Zelnick nennt Konsolenspieler die Kernzielgruppe, schließt den PC langfristig aber nicht aus."
+      ],
+      "updated": "2026-07-15 21:42:55"
     },
     {
       "author": null,
@@ -278,7 +308,7 @@
       "credit": null,
       "date": "2026-07-14T09:46",
       "id": "gta-6-ps5-emulatoren-sharpemu-pc",
-      "img": "api/article_image.php?id=gta-6-ps5-emulatoren-sharpemu-pc&v=2026-07-14+10%3A51%3A53",
+      "img": "api/article_image.php?id=gta-6-ps5-emulatoren-sharpemu-pc&v=2026-07-15+21%3A43%3A34",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -303,7 +333,12 @@
       ],
       "summary": "Ein PS5-Emulator rendert erstmals ein Spiel mit echten Texturen auf dem PC. Reicht das für GTA 6?",
       "title": "GTA 6 per Emulator auf dem PC: Was SharpEmu wirklich schon kann",
-      "updated": "2026-07-14 10:51:53"
+      "tldr": [
+        "Für GTA 6 zum Release führt trotzdem kein Weg an PS5 oder Xbox vorbei.",
+        "SharpEmu rendert bisher nur den 2D-Titel Dreaming Sarah vollständig, 3D-Blockbuster laufen nicht.",
+        "Auch RPCSX und Kyty arbeiten an PS5-Emulation, ein simulationslastiges Open-World-Spiel bleibt laut wccftech Jahre entfernt."
+      ],
+      "updated": "2026-07-15 21:43:34"
     },
     {
       "author": null,
@@ -325,7 +360,7 @@
       "credit": "Rockstar",
       "date": "2026-07-12T18:45",
       "id": "wetter-technik-engine",
-      "img": "api/article_image.php?id=wetter-technik-engine&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=wetter-technik-engine&v=2026-07-15+21%3A43%3A34",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -350,7 +385,12 @@
       ],
       "summary": "Dynamisches Wetter und dichte Beleuchtung sind in den Trailern klar zu sehen, Hurrikans oder eine neue Engine-Version hat Rockstar nicht bestätigt.",
       "title": "GTA 6 Technik: Was Rockstar zu Wetter und Grafik gezeigt hat",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Was sichtbar ist, stammt aus der echten Engine, Trailer 2 trägt den Vermerk Captured on PS5.",
+        "Der Engine-Name RAGE 9 und spielbare Hurrikans sind Community-Spekulation, von Rockstar unbestätigt.",
+        "Digital Foundry schätzt rund 1152p mit Upscaling und volles Raytracing-Licht, ein offizieller Wert fehlt."
+      ],
+      "updated": "2026-07-15 21:43:34"
     },
     {
       "author": null,
@@ -378,7 +418,7 @@
       "credit": "Rockstar",
       "date": "2026-07-12T18:45",
       "id": "radiosender-soundtrack-stand",
-      "img": "api/article_image.php?id=radiosender-soundtrack-stand&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=radiosender-soundtrack-stand&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -403,7 +443,12 @@
       ],
       "summary": "Sechs Songs aus den Trailern gelten als sichere Soundtrack-Kandidaten, ein Sendername ist zumindest indirekt bestätigt.",
       "title": "GTA 6 Radio: Was zum Soundtrack bisher wirklich bekannt ist",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Trailer-Musik landet bei Rockstar traditionell im fertigen Spiel, sechs Songs aus den Trailern gelten deshalb schon als gesetzt.",
+        "Das V-Rock-Logo auf Jasons T-Shirt ist ein starkes, aber inoffizielles Indiz für die Rückkehr des Senders.",
+        "T-Pain, DJ Khaled oder ein Drake-Sender bleiben reine Gerüchte, Rockstar hat dazu nichts bestätigt."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -427,7 +472,7 @@
       "credit": null,
       "date": "2026-07-12T18:45",
       "id": "leaks-sommer-2026-echt-oder-fake",
-      "img": "api/article_image.php?id=leaks-sommer-2026-echt-oder-fake&v=2026-07-14+10%3A51%3A53",
+      "img": "api/article_image.php?id=leaks-sommer-2026-echt-oder-fake&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -456,7 +501,12 @@
       ],
       "summary": "Von widerlegten Fake-Preisen bis zu KI-generierten Gameplay-Clips, so lässt sich die aktuelle Gerüchtelage rund um GTA 6 einordnen.",
       "title": "Echt oder Fake? Die GTA-6-Gerüchte vom Sommer 2026 im Check",
-      "updated": "2026-07-14 10:51:53"
+      "tldr": [
+        "Der Fnac-Preisleak, der 16-Pence-Preis und KI-Gameplay-Clips sind widerlegt.",
+        "Bestätigt sind dagegen der Vorbestell-Start, die Preise und die Box ohne Disc.",
+        "Trailer 3 hat weiterhin kein Datum, Forbes-Autor Brian Mazique hält Ende Juli bis Anfang August für plausibel."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -483,7 +533,7 @@
       "credit": null,
       "date": "2026-07-12T18:44",
       "id": "vice-city-vorbild-miami",
-      "img": "api/article_image.php?id=vice-city-vorbild-miami&v=2026-07-14+10%3A51%3A53",
+      "img": "api/article_image.php?id=vice-city-vorbild-miami&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -508,7 +558,12 @@
       ],
       "summary": "Leonida ist Floridas Zwilling, mehrere Gebäude aus den Trailern lassen sich direkt auf echte Orte in Miami zurückführen.",
       "title": "GTA 6: Das reale Vorbild hinter Vice City und Leonida",
-      "updated": "2026-07-14 10:51:53"
+      "tldr": [
+        "Sechs Regionen haben je ein reales Vorbild, von South Beach bis zu den Everglades.",
+        "Die groben Viertel bestätigt Rockstar selbst, einzelne Gebäude ordneten erst Journalisten per Street-View-Abgleich zu.",
+        "Das neue Vice City ist deutlich größer als die Version von 2002 und spielt wieder in der Gegenwart."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -530,7 +585,7 @@
       "credit": "Rockstar",
       "date": "2026-07-12T18:44",
       "id": "gangs-fraktionen-leonida",
-      "img": "api/article_image.php?id=gangs-fraktionen-leonida&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=gangs-fraktionen-leonida&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -555,7 +610,12 @@
       ],
       "summary": "Von der Bikergang Final Chapter MC bis zum kriminellen Musiklabel Only Raw Records, das ist zu den Fraktionen in GTA 6 bekannt.",
       "title": "GTA 6: Die Gangs und Fraktionen von Leonida im Überblick",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Offiziell benannt ist bislang nur die Bikergang Final Chapter MC aus Ambrosia.",
+        "Only Raw Records um Boobie Ike und Dre'Quan Priest ist eher ein Geschäftsnetzwerk als eine klassische Straßengang.",
+        "Das San4San-Emblem und eine Verbindung zu den alten Vice-City-Gangs bleiben Spekulation."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -576,7 +636,7 @@
       "credit": null,
       "date": "2026-07-11T13:52",
       "id": "gta6-trailer-3-wann-kommt-er",
-      "img": "api/article_image.php?id=gta6-trailer-3-wann-kommt-er&v=2026-07-15+16%3A30%3A14",
+      "img": "api/article_image.php?id=gta6-trailer-3-wann-kommt-er&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -601,7 +661,12 @@
       ],
       "summary": "Rockstar entfernt den Vorbestell-Banner, die Community wittert Trailer 3. Was an den Terminen dran ist.",
       "title": "Wann kommt GTA 6 Trailer 3 wirklich?",
-      "updated": "2026-07-15 16:30:14"
+      "tldr": [
+        "Ein wahrscheinliches Fenster ist Ende Juli bis Mitte August, ein festes Datum fehlt.",
+        "Das entfernte Vorbestell-Banner auf Rockstars Seite gilt laut ComicBook.com als frisches Indiz.",
+        "Die WM-Finale-Theorie überzeugt kaum, der Take-Two-Call am 7. August passt besser zur Trailer-Historie."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -622,7 +687,7 @@
       "credit": "Rockstar",
       "date": "2026-07-09T16:47",
       "id": "trailer-3-spekulation-7-august-2",
-      "img": "api/article_image.php?id=trailer-3-spekulation-7-august-2&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=trailer-3-spekulation-7-august-2&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -643,7 +708,12 @@
       ],
       "summary": "Take-Two legt seine Quartalszahlen auf den 7. August. Es ist der erste Bericht, der die GTA-6-Vorbestellungen berührt.",
       "title": "GTA 6: Verrät der 7. August die Vorbesteller-Zahlen?",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Es ist der erste Take-Two-Bericht, in dem überhaupt Vorbesteller-Zahlen stecken können.",
+        "Der Freitagstermin bricht mit der sonstigen Routine und zieht deshalb so viel Aufmerksamkeit.",
+        "Ein Trailer 3 direkt im Investorencall gilt als unwahrscheinlich, der richtet sich an Analysten."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -663,7 +733,7 @@
       "credit": "Rockstar",
       "date": "2026-07-07T18:33",
       "id": "rockstar-gewerkschaft-streik",
-      "img": "api/article_image.php?id=rockstar-gewerkschaft-streik&v=2026-07-15+20%3A45%3A23",
+      "img": "api/article_image.php?id=rockstar-gewerkschaft-streik&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -684,7 +754,12 @@
       ],
       "summary": "Rockstars britische Belegschaft fordert Anerkennung ihrer Gewerkschaft. Ein Streik in der Endphase steht im Raum.",
       "title": "Streikdrohung bei Rockstar: Wackelt der GTA-6-Termin?",
-      "updated": "2026-07-15 20:45:23"
+      "tldr": [
+        "Eine Verschiebung des 19. November erwartet niemand ernsthaft.",
+        "Ein Streik in der Crunch-Endphase träfe Rockstar aber an der empfindlichsten Stelle und könnte die Startwoche holprig machen.",
+        "Weil Take-Two die 8-Milliarden-Prognose an den Launch hängt, liegt der Einigungsdruck eher beim Konzern."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -706,7 +781,7 @@
       "credit": "Rockstar",
       "date": "2026-07-04T12:19",
       "id": "vorbesteller-boni",
-      "img": "api/article_image.php?id=vorbesteller-boni&v=2026-07-14+09%3A55%3A39",
+      "img": "api/article_image.php?id=vorbesteller-boni&v=2026-07-15+21%3A46%3A03",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -727,7 +802,12 @@
       ],
       "summary": "Wer vor dem 20. November vorbestellt, bekommt unabhängig von der Edition das Vintage Vice City Pack.",
       "title": "GTA 6 Vorbesteller-Boni: Das steckt im Vice City Pack",
-      "updated": "2026-07-14 09:55:39"
+      "tldr": [
+        "Das Vintage Vice City Pack hängt am Kaufzeitpunkt, nicht an der gewählten Edition.",
+        "Digitale Vorbesteller bekommen zusätzlich einen Monat GTA Plus, nutzbar sofort im bestehenden GTA Online.",
+        "Dieser GTA-Plus-Monat gilt fürs alte GTA Online, nicht für einen künftigen GTA-6-Modus."
+      ],
+      "updated": "2026-07-15 21:46:03"
     },
     {
       "author": null,
@@ -750,7 +830,7 @@
       "credit": "Rockstar",
       "date": "2026-07-01T14:08",
       "id": "physische-edition-ohne-disc",
-      "img": "api/article_image.php?id=physische-edition-ohne-disc&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=physische-edition-ohne-disc&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -771,7 +851,12 @@
       ],
       "summary": "Rockstar liefert die Boxversion von GTA 6 ohne Datenträger aus. Erste Händler verweigern deshalb den Verkauf.",
       "title": "GTA 6 ohne Disc: In der Box liegt nur ein Code",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Ein Gebrauchtmarkt fällt damit weg, der eingelöste Code hängt fest am Konto.",
+        "Zwei Händler haben das Code-in-Box-Format bereits öffentlich abgelehnt.",
+        "Eine spätere Disc-Fassung gilt als wahrscheinlich, bestätigt hat Rockstar sie nicht."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -797,7 +882,7 @@
       "credit": "Rockstar",
       "date": "2026-06-27T19:41",
       "id": "ultimate-edition-paywall",
-      "img": "api/article_image.php?id=ultimate-edition-paywall&v=2026-07-14+09%3A55%3A39",
+      "img": "api/article_image.php?id=ultimate-edition-paywall&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -818,7 +903,12 @@
       ],
       "summary": "Vier Geschäfte und zwei Nebenmissionen bleiben Käufern der Standardversion verschlossen. Das sorgt für Ärger.",
       "title": "GTA 6 Ultimate Edition: Läden und Missionen weggesperrt",
-      "updated": "2026-07-14 09:55:39"
+      "tldr": [
+        "Vier Läden und zwei Nebenmissionen bleiben Standard-Käufern dauerhaft verschlossen.",
+        "Neu ist die Sichtbarkeit, ein geschlossener Laden mitten in Vice City erinnert ständig an die 20 Dollar Aufpreis.",
+        "Die komplette Story und die ganze Karte stecken trotzdem in der Standard Edition, ein späteres Upgrade ist möglich."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -837,7 +927,7 @@
       "credit": "Rockstar",
       "date": "2026-06-24T10:56",
       "id": "editionen-zu-release",
-      "img": "api/article_image.php?id=editionen-zu-release&v=2026-07-14+09%3A55%3A39",
+      "img": "api/article_image.php?id=editionen-zu-release&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -858,7 +948,12 @@
       ],
       "summary": "Standard für rund 80 Euro oder Ultimate für rund 100 Euro. Eine Collector's Edition gibt es diesmal nicht.",
       "title": "GTA 6 Editionen: Standard und Ultimate im Vergleich",
-      "updated": "2026-07-14 09:55:39"
+      "tldr": [
+        "Es gibt nur Standard und Ultimate, keine Sammlerbox und keine Deluxe-Zwischenstufe.",
+        "Die Standard Edition enthält die komplette Story ohne Abstriche.",
+        "Ein Upgrade auf Ultimate lässt sich jederzeit nachkaufen, auch bei der Box."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -881,7 +976,7 @@
       "credit": "Rockstar",
       "date": "2026-06-18T15:29",
       "id": "gta-6-online-modus",
-      "img": "api/article_image.php?id=gta-6-online-modus&v=2026-07-15+20%3A45%3A23",
+      "img": "api/article_image.php?id=gta-6-online-modus&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -902,7 +997,12 @@
       ],
       "summary": "Rockstar nennt GTA 6 offiziell ein Singleplayer-Erlebnis. Ein Online-Modus ist weder bestätigt noch terminiert.",
       "title": "GTA 6 Online-Modus: Was bisher wirklich bekannt ist",
-      "updated": "2026-07-15 20:45:23"
+      "tldr": [
+        "Zum Launch ist GTA 6 ein reines Singleplayer-Spiel, ein Online-Modus fehlt am ersten Tag.",
+        "Ein Nachfolger gilt trotzdem als so gut wie sicher, nur später und ohne Termin.",
+        "Der GTA-Plus-Bonus bei Vorbestellung gilt fürs alte GTA Online, nicht für den neuen Modus."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -922,7 +1022,7 @@
       "credit": null,
       "date": "2026-06-12T21:04",
       "id": "wann-pc-version",
-      "img": "api/article_image.php?id=wann-pc-version&v=2026-07-14+10%3A52%3A28",
+      "img": "api/article_image.php?id=wann-pc-version&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -943,7 +1043,12 @@
       ],
       "summary": "Eine PC-Version ist nicht bestätigt. Rockstars eigene Geschichte deutet aber auf Ende 2027 oder Anfang 2028 hin.",
       "title": "GTA 6 für den PC: Wann kommt die Version wirklich?",
-      "updated": "2026-07-14 10:52:28"
+      "tldr": [
+        "Wer im Netz konkrete PC-Daten oder Preise liest, bekommt Vermutung als Fakt verkauft.",
+        "Nach Rockstars Muster ist ein Fenster zwischen Ende 2027 und Anfang 2028 realistisch.",
+        "Take-Two-Chef Zelnick nennt den PC bis zu 50 Prozent der Verkäufe, priorisiert zum Start aber die Konsole."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -968,7 +1073,7 @@
       "credit": null,
       "date": "2026-06-05T17:12",
       "id": "plattformen-zu-release",
-      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-15+20%3A45%3A23",
+      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -989,7 +1094,12 @@
       ],
       "summary": "Zum Start erscheint GTA 6 nur für PS5 und Xbox Series X/S. Weder ältere Konsolen noch die Switch 2 sind dabei.",
       "title": "GTA 6 Plattformen: Für welche Konsolen es erscheint",
-      "updated": "2026-07-15 20:45:23"
+      "tldr": [
+        "Bestätigt sind nur PS5 samt Pro und Xbox Series X/S.",
+        "PS4, Xbox One, Switch 2 und PC fallen zum Launch raus, die Switch 2 hat Take-Two ausdrücklich ausgeschlossen.",
+        "Eine PC-Version folgt der Reihen-Historie zufolge erst deutlich später."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1007,7 +1117,7 @@
       "credit": "Rockstar",
       "date": "2026-05-30T09:38",
       "id": "release-endlich-bekannt",
-      "img": "api/article_image.php?id=release-endlich-bekannt&v=2026-07-14+10%3A50%3A47",
+      "img": "api/article_image.php?id=release-endlich-bekannt&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1028,7 +1138,12 @@
       ],
       "summary": "Rockstar hat den GTA-6-Termin nach zwei Verschiebungen fix bestätigt, mit Rückendeckung von Take-Two.",
       "title": "GTA 6 Release steht fest: der 19. November 2026",
-      "updated": "2026-07-14 10:50:47"
+      "tldr": [
+        "Nach zwei Verschiebungen gilt der 19. November 2026 als final, von Take-Two bekräftigt.",
+        "Der Termin liegt bewusst eine Woche vor Black Friday, mitten in der umsatzstärksten Phase.",
+        "Take-Two hängt die gesamte 8-Milliarden-Jahresprognose an diesen einen Launch."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1056,7 +1171,7 @@
       "credit": "Rockstar",
       "date": "2026-05-23T13:47",
       "id": "bestaetigte-fahrzeuge-waffen-charaktere",
-      "img": "api/article_image.php?id=bestaetigte-fahrzeuge-waffen-charaktere&v=2026-07-14+09%3A55%3A39",
+      "img": "api/article_image.php?id=bestaetigte-fahrzeuge-waffen-charaktere&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1077,7 +1192,12 @@
       ],
       "summary": "Was Rockstar zu Fahrzeugen, Waffen und Figuren wirklich bestätigt hat, sauber getrennt von Community-Katalogen.",
       "title": "GTA 6: Bestätigte Fahrzeuge, Waffen und Charaktere",
-      "updated": "2026-07-14 09:55:39"
+      "tldr": [
+        "Faustregel: Was im Ultimate-Katalog oder Vorbesteller-Paket steht, ist zu hundert Prozent bestätigt.",
+        "Jason und Lucia sind gesetzt, dazu Nebenfiguren wie Cal Hampton, Boobie Ike und Raul Bautista.",
+        "Die kursierenden 100-Fahrzeuge-Listen sind Community-Arbeit, keine offizielle Rockstar-Liste."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1102,7 +1222,7 @@
       "credit": "Rockstar",
       "date": "2026-05-15T19:22",
       "id": "easter-eggs-trailer-details",
-      "img": "api/article_image.php?id=easter-eggs-trailer-details&v=2026-07-14+10%3A08%3A56",
+      "img": "api/article_image.php?id=easter-eggs-trailer-details&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1123,7 +1243,12 @@
       ],
       "summary": "Kleine Details aus beiden Trailern, von NPC-Verhalten bis zu Anspielungen auf frühere GTA-Teile.",
       "title": "GTA 6: Die versteckten Easter Eggs aus den Trailern",
-      "updated": "2026-07-14 10:08:56"
+      "tldr": [
+        "Die meisten Funde stammen aus Community-Bildanalyse einzelner Frames, nicht von Rockstar.",
+        "Aus Trailer 1: filmende NPCs, Ortsschilder wie Kelly County und ein Verweis auf Starfish Island.",
+        "Aus Trailer 2: eine Phil's-Ammu-Nation-Werbung und Kennzeichen, die eine größere Welt andeuten."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1143,7 +1268,7 @@
       "credit": "Rockstar",
       "date": "2026-05-06T11:15",
       "id": "der-grosse-leak-von-2022",
-      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-14+09%3A55%3A39",
+      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1168,7 +1293,12 @@
       ],
       "summary": "Wie ein Teenager aus einem Hotelzimmer heraus 90 Entwicklervideos leakte und damit den bis heute einzigen bestätigten GTA-6-Leak auslöste.",
       "title": "Der große GTA-6-Leak von 2022: Was damals geschah",
-      "updated": "2026-07-14 09:55:39"
+      "tldr": [
+        "Es ist bis heute der einzige große GTA-6-Leak, den Rockstar selbst als echt bestätigt hat.",
+        "Hinter dem Hack stand der Teenager Arion Kurtaj aus der Gruppe Lapsus$, verurteilt und in einer Klinik untergebracht.",
+        "Fast jedes überprüfbare Detail der Videos bestätigte sich später in Trailer 1."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1195,7 +1325,7 @@
       "credit": null,
       "date": "2026-04-28T16:58",
       "id": "die-karte-von-gta-6",
-      "img": "api/article_image.php?id=die-karte-von-gta-6&v=2026-07-14+10%3A52%3A28",
+      "img": "api/article_image.php?id=die-karte-von-gta-6&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1216,7 +1346,12 @@
       ],
       "summary": "Vice City, Grassrivers, Leonida Keys und mehr. Alle bislang bestätigten Regionen der neuen Spielwelt im Überblick.",
       "title": "Die Karte von GTA 6: Alle Regionen von Leonida",
-      "updated": "2026-07-14 10:52:28"
+      "tldr": [
+        "Vice City ist das urbane Herz, drumherum liegen klar unterscheidbare Regionen von den Keys bis zu den Grassrivers.",
+        "Bestätigt sind unter anderem Leonida Keys, Grassrivers, Port Gellhorn und Ambrosia.",
+        "Eine offizielle Kartengröße fehlt, Community-Schätzungen gehen von mehr als der doppelten GTA-5-Fläche aus."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1238,7 +1373,7 @@
       "credit": "Rockstar",
       "date": "2026-04-19T12:33",
       "id": "nebencharaktere-im-detail",
-      "img": "api/article_image.php?id=nebencharaktere-im-detail&v=2026-07-13+11%3A33%3A10",
+      "img": "api/article_image.php?id=nebencharaktere-im-detail&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1259,7 +1394,12 @@
       ],
       "summary": "Cal, Boobie Ike, Dre'Quan Priest und Raul Bautista. Wer die neuen Gesichter aus Trailer 2 wirklich sind.",
       "title": "Die Nebencharaktere in GTA 6: Wer aus Trailer 2 zählt",
-      "updated": "2026-07-13 11:33:10"
+      "tldr": [
+        "Bestätigt sind Cal Hampton, Boobie Ike, Dre'Quan Priest und der Profi-Bankräuber Raul Bautista.",
+        "Boobie Ike führt ein halblegales Imperium aus Stripclub, Immobilien und Tonstudio.",
+        "Eine namenlose Ermittlerfigur verfolgt die beiden, ihre Rolle ist noch offen."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1278,7 +1418,7 @@
       "credit": "Rockstar",
       "date": "2026-04-11T20:47",
       "id": "beziehung-jason-lucia",
-      "img": "api/article_image.php?id=beziehung-jason-lucia&v=2026-07-14+09%3A26%3A09",
+      "img": "api/article_image.php?id=beziehung-jason-lucia&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1299,7 +1439,12 @@
       ],
       "summary": "Was Trailer 2 über die Beziehung der beiden Protagonisten verrät, und warum die Bonnie-und-Clyde-Vorlage so klar durchscheint.",
       "title": "Jason und Lucia: Die Beziehung im Bonnie-und-Clyde-Stil",
-      "updated": "2026-07-14 09:26:09"
+      "tldr": [
+        "Trailer 2 zeigt die beiden erstmals als echtes Paar, nicht nur als Verbrecherduo.",
+        "Spielerisch bestätigt ist bislang nur der Wechsel zwischen beiden im Solomodus.",
+        "Beziehungsmechaniken mit Entscheidungen sind reine Spekulation aus den Trailer-Szenen."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1319,7 +1464,7 @@
       "credit": "Rockstar",
       "date": "2026-04-03T14:20",
       "id": "hauptprotagonisten",
-      "img": "api/article_image.php?id=hauptprotagonisten&v=2026-07-14+09%3A19%3A54",
+      "img": "api/article_image.php?id=hauptprotagonisten&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1340,7 +1485,12 @@
       ],
       "summary": "Jason Duval und Lucia Caminos sind das erste feste spielbare Duo der GTA-Geschichte. Ein Porträt beider Figuren.",
       "title": "Jason und Lucia: Wer die beiden Protagonisten sind",
-      "updated": "2026-07-14 09:19:54"
+      "tldr": [
+        "Lucia Caminos ist die erste durchgängig spielbare weibliche Hauptfigur der Reihe.",
+        "Jason Duval kommt aus Kleinkriminalität und Armee, mit angedeuteter Gefängnis-Vorgeschichte.",
+        "Bestätigt ist der Wechsel zwischen beiden im Solospiel, vieles andere bleibt Trailer-Interpretation."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1363,7 +1513,7 @@
       "credit": "Rockstar",
       "date": "2026-03-22T18:05",
       "id": "trailer-2-analyse",
-      "img": "api/article_image.php?id=trailer-2-analyse&v=2026-07-14+09%3A19%3A55",
+      "img": "api/article_image.php?id=trailer-2-analyse&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1384,7 +1534,12 @@
       ],
       "summary": "Der zweite Trailer vom Mai 2025 zeigte erstmals Jason, das Duo und einen Ausblick auf die Story.",
       "title": "GTA 6 Trailer 2 Analyse: Jason, Lucia und die Story",
-      "updated": "2026-07-14 09:19:55"
+      "tldr": [
+        "Trailer 2 rückte erstmals Jason und die Beziehung des Duos in den Mittelpunkt.",
+        "Ein einfacher Coup geht schief und zieht beide in eine Verschwörung über ganz Leonida.",
+        "Der Trailer holte über 90 Millionen Aufrufe in 24 Stunden, laut Hollywood Reporter zeitweise über 475 Millionen plattformübergreifend."
+      ],
+      "updated": "2026-07-15 21:53:53"
     },
     {
       "author": null,
@@ -1407,7 +1562,7 @@
       "credit": "Rockstar",
       "date": "2026-03-14T10:42",
       "id": "trailer-1-analyse",
-      "img": "api/article_image.php?id=trailer-1-analyse&v=2026-07-14+09%3A19%3A55",
+      "img": "api/article_image.php?id=trailer-1-analyse&v=2026-07-15+21%3A53%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1428,7 +1583,12 @@
       ],
       "summary": "Der erste GTA-6-Trailer von Dezember 2023 im Detail, Setting, Ton und was er wirklich bestätigt hat.",
       "title": "GTA 6 Trailer 1 Analyse: Der erste Blick auf Leonida",
-      "updated": "2026-07-14 09:19:55"
+      "tldr": [
+        "Ein Leak zwang Rockstar, den Trailer einen Abend früher als geplant zu veröffentlichen.",
+        "Bestätigt wurden die Rückkehr nach Vice City und Lucia als erste spielbare Protagonistin.",
+        "Gameplay zeigte der 91-Sekunden-Clip nicht, nur Atmosphäre und Alltagsszenen."
+      ],
+      "updated": "2026-07-15 21:53:53"
     }
   ]
 }
