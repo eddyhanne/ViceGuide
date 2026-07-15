@@ -1521,6 +1521,7 @@ function openFocusFull(){
 function closeFocusFull(){ const el=$('focusfull'); if(el) el.classList.remove('show'); }
 async function focusUnpin(idx){ closeFocusFull(); await togglePin(idx); }
 async function addDbEntry(secId){
+  if(!editMode){ toast('Bitte zuerst den Editiermodus einschalten.'); return; }
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   const name=(prompt('Name des neuen Eintrags:')||'').trim();
   if(!name) return;
@@ -1774,7 +1775,10 @@ function openImgEd(kind,secId,i){
       $('ie-t-sub').value=d.summary||'';
       $('ie-desc-label').textContent='Text (Absätze durch Leerzeile trennen)';
       $('ie-t-desc').value=(d.content||[]).join('\n\n');
+      $('ie-tldr-wrap').style.display='block';
+      $('ie-t-tldr').value=(Array.isArray(d.tldr)?d.tldr:[]).join('\n');
     } else {
+      $('ie-tldr-wrap').style.display='none';
       $('ie-cat-wrap').style.display='none';
       $('ie-dbcat-wrap').style.display='block';
       $('ie-t-dbcat').value=d.cat||'';
@@ -1917,6 +1921,7 @@ async function ieApply(){
     d.summary=subVal;
     d.content=descVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
     const catVal=$('ie-t-cat').value; if(catVal) d.cat=catVal;
+    const tldrEl=$('ie-t-tldr'); if(tldrEl) d.tldr=tldrEl.value.split('\n').map(s=>s.trim()).filter(Boolean);
   } else {
     if(nameVal) d.name=nameVal;
     d.sub=subVal;
@@ -3169,7 +3174,7 @@ function globalSearch(q){
   SECTIONS.filter(s=>s.type==='db').forEach(s=>{(DB[s.id]||[]).forEach((d,i)=>{const hay=(d.name+" "+d.sub+" "+d.cat+" "+d.desc).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'db',sec:s.id,label:d.name,sub:s.label+' · '+d.cat,slug:d.slug,i});});});
   VIDEOS.forEach((v,i)=>{const hay=(v.title+' '+v.author).toLowerCase();if(q.split(/\s+/).every(t=>hay.includes(t)))results.push({type:'video',label:v.title,sub:'Videos',i});});
   const cards=results.slice(0,60).map(r=>{
-    if(r.type==='guide')return `<a class="card" href="${articleHref(r.id)}" onclick="closeArticle();return articleClick(event,${r.i})"><div class="cv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${r.label.charAt(0)}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;
+    if(r.type==='guide'){const g=GUIDES[r.i]||{};const gv=g.img?`<div class="cv has-img"><img src="${g.img}" alt="${esc(r.label)}" width="480" height="300" loading="lazy">${g.credit?`<span class="credit">${g.credit}</span>`:''}</div>`:`<div class="cv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${r.label.charAt(0)}</span></div>`;return `<a class="card" href="${articleHref(r.id)}" onclick="closeArticle();return articleClick(event,${r.i})">${gv}<div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;}
     if(r.type==='video')return `<div class="card" onclick="go('videos')"><div class="cv ph"><span class="ghost">${secIcon('videos')}</span></div><div class="cb"><span class="nm">${r.label}</span><span class="sb">Videos</span></div></div>`;
     const sec=SECTIONS.find(s=>s.id===r.sec); const d=DB[r.sec][r.i];
     return `<a class="card" href="${entryHref(r.sec,r.slug)}" onclick="return entryClick(event,'${r.sec}',${r.i})">${cardVisual(sec,d)}<div class="cb"><span class="nm">${r.label}</span><span class="sb">${r.sub}</span></div></a>`;
@@ -3220,13 +3225,22 @@ $('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
 /* Admin / KI */
-async function openAdmin(){if(!isAdmin){const ok=await adminLogin();if(!ok)return;}const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';}$('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
+async function openAdmin(){if(!isAdmin){const ok=await adminLogin();if(!ok)return;}const b=$('adm-body');if(b&&!b.dataset.built){b.innerHTML=ADM_HTML;b.dataset.built='1';}
+  /* Knopf-Status bei JEDEM Öffnen an den echten editMode angleichen, nicht nur
+     beim ersten Bauen. Sonst konnte der Knopf einen veralteten Text zeigen (z.B.
+     "Editiermodus einschalten", obwohl er längst an war) und ein Klick schaltete
+     ihn dann fälschlich AUS. */
+  const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';
+  const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';
+  const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';
+  $('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();}});
 /* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
    Geraets (wird von fmtDT unveraendert, ohne Zeitzonen-Umrechnung angezeigt). */
 function nowStamp(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
 function submitDraftJson(){
+  if(!editMode){ toast('Bitte zuerst oben den Editiermodus einschalten, dann einfügen. Alles landet im Entwurf bis "Fertigstellen".'); return; }
   const raw=$('draft-json').value.trim();
   if(!raw){ toast('Bitte JSON einfügen.'); return; }
   let g;
@@ -3289,6 +3303,7 @@ let dbPendingNew=[];
    neu angelegt, damit Tippfehler nicht versehentlich Dubletten erzeugen.
    Bild bleibt unangetastet, wenn im JSON kein img steht. */
 async function submitDbImport(){
+  if(!editMode){ toast('Bitte zuerst oben den Editiermodus einschalten, dann einfügen. Alles landet im Entwurf bis "Fertigstellen".'); return; }
   const raw=$('dbimport-json').value.trim();
   if(!raw){ toast('Bitte JSON einfügen.'); return; }
   let parsed;
@@ -3400,6 +3415,7 @@ async function dbImportPublish(){
    ein separater Klick nach der Zuordnung, damit ein Tippfehler im Namen nicht
    ungewollt einen doppelten Eintrag erzeugt. */
 async function dbImportCreateNew(){
+  if(!editMode){ toast('Bitte zuerst oben den Editiermodus einschalten.'); return; }
   if(!dbPendingNew.length){ toast('Keine neuen Einträge offen.'); return; }
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   vgSavesInFlight++;
@@ -3800,6 +3816,10 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
   <div class="ie-textfields">
     <label class="ie-tlabel" id="ie-desc-label">Beschreibung</label>
     <textarea id="ie-t-desc" class="cm-ta" rows="5"></textarea>
+  </div>
+  <div class="ie-textfields" id="ie-tldr-wrap" style="display:none">
+    <label class="ie-tlabel">Auf einen Blick (ein Stichpunkt pro Zeile, leer lassen für keine Box)</label>
+    <textarea id="ie-t-tldr" class="cm-ta" rows="3" placeholder="Kernaussage 1&#10;Kernaussage 2"></textarea>
   </div>
   <div class="ie-actions">
     <button class="ie-del" id="ie-paste" onclick="iePaste()">Aus Zwischenspeicher</button>
