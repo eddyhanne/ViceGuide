@@ -124,4 +124,42 @@ foreach ($body as $search => $replace) {
     $html = str_replace($search, $replace, $html);
 }
 
+// News-Seite ist eine Artikelsammlung: CollectionPage + ItemList (die Beitraege)
+// und ein Breadcrumb. Nur vor dem ersten <style> einfuegen (siehe article.php).
+if ($page === 'news' && !empty($rows)) {
+    $itemList = [];
+    $pos = 1;
+    foreach ($rows as $r) {
+        $itemList[] = [
+            '@type' => 'ListItem',
+            'position' => $pos++,
+            'url' => 'https://viceguide.de/artikel/' . $r['id'],
+            'name' => $r['title'],
+        ];
+    }
+    $collLd = json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'CollectionPage',
+        'name' => $pageTitle,
+        'description' => $description,
+        'url' => $canonical,
+        'inLanguage' => 'de',
+        'mainEntity' => ['@type' => 'ItemList', 'itemListElement' => $itemList],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $bcLd = json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => 'https://viceguide.de/'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Gerüchte', 'item' => $canonical],
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $ldInject = '<script type="application/ld+json">' . $collLd . '</script>' . "\n"
+        . '<script type="application/ld+json">' . $bcLd . '</script>' . "\n";
+    $stylePos = strpos($html, '<style>');
+    if ($stylePos !== false) {
+        $html = substr($html, 0, $stylePos) . $ldInject . substr($html, $stylePos);
+    }
+}
+
 echo $html;

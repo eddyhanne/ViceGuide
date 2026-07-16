@@ -196,6 +196,22 @@ foreach ($head as $search => $replace) {
     $html = str_replace($search, $replace, $html);
 }
 
+/* Datum als gueltiges ISO 8601 mit Zeitzone ausgeben (z.B. 2026-07-15T09:10:00+02:00).
+   article_date kommt als lokale Berliner Zeit ohne Zeitzone aus dem Client,
+   updated_at liegt als UTC in der Datenbank (Verbindung fest auf UTC, siehe
+   db.php). Beide werden nach Europe/Berlin normalisiert und mit Offset formatiert. */
+function vg_iso8601(?string $s, bool $fromUtc = false): ?string {
+    if (!$s) return null;
+    try {
+        $berlin = new DateTimeZone('Europe/Berlin');
+        $dt = new DateTime($s, $fromUtc ? new DateTimeZone('UTC') : $berlin);
+        $dt->setTimezone($berlin);
+        return $dt->format('c');
+    } catch (Throwable $e) { return null; }
+}
+$datePublishedIso = vg_iso8601($row['article_date'], false) ?: $row['article_date'];
+$dateModifiedIso  = $updatedAt ? (vg_iso8601($updatedAt, true) ?: $updatedAt) : $datePublishedIso;
+
 // Artikel-JSON-LD kurz vor dem <style>-Block einfuegen.
 $articleLd = json_encode([
     '@context' => 'https://schema.org',
@@ -203,9 +219,9 @@ $articleLd = json_encode([
     'headline' => $title,
     'description' => $summary,
     'image' => $imgUrl,
-    'datePublished' => $row['article_date'],
-    'dateModified' => $updatedAt ?: $row['article_date'],
-    'author' => ['@type' => 'Person', 'name' => $row['author'] ?: 'Eddy Hanné'],
+    'datePublished' => $datePublishedIso,
+    'dateModified' => $dateModifiedIso,
+    'author' => ['@type' => 'Person', 'name' => $row['author'] ?: 'Eddy Hanné', 'url' => 'https://viceguide.de/ueber-uns'],
     'publisher' => ['@type' => 'Organization', 'name' => 'ViceGuide'],
     'mainEntityOfPage' => $canonical,
     'commentCount' => $cmCount,

@@ -32,7 +32,7 @@
 <meta name="twitter:description" content="Alles zu GTA 6 an einem Ort. Der deutsche Hub mit Datenbank, Guides und aktuellen News.">
 <meta name="twitter:image" content="https://viceguide.de/og-image.jpg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"ViceGuide","url":"https://viceguide.de/","inLanguage":"de-DE","description":"Der deutsche GTA-6-Hub mit Datenbank, Guides und News.","potentialAction":{"@type":"SearchAction","target":"https://viceguide.de/?q={search_term_string}","query-input":"required name=search_term_string"}}
+{"@context":"https://schema.org","@type":"WebSite","name":"ViceGuide","url":"https://viceguide.de/","inLanguage":"de-DE","description":"Der deutsche GTA-6-Hub mit Datenbank, Guides und News."}
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"ViceGuide","url":"https://viceguide.de/","description":"Inoffizielles, deutschsprachiges Fan-Portal rund um GTA 6.","logo":"https://viceguide.de/logo.png"}
@@ -4061,8 +4061,10 @@ restoreFromLocation();
    damit goIfNeeded() diesen einen Neuaufbau nicht als "schon fertig" ueberspringt.
    Danach greift die Idempotenz wieder fuer alle popstate-Navigationen. */
 loadExternal().then(()=>{ viewReady=false; restoreFromLocation(); }).then(()=>{
-  /* Sitelinks-Suchbox (siehe WebSite/SearchAction Schema im head): traegt
-     Google einen ?q=... Parameter an, wird direkt die passende Suche gezeigt. */
+  /* Kommt die Seite mit einem ?q=... Parameter (z.B. aus einem geteilten
+     Suchlink), wird direkt die passende Suche gezeigt. Das SearchAction-Schema
+     dafuer wurde entfernt (Sitelinks-Suchbox wird nicht mehr unterstuetzt), der
+     Parameter selbst funktioniert weiterhin. */
   const q=new URLSearchParams(location.search).get('q');
   if(q){ gquery=q; $('gsearch').value=q; globalSearch(q); }
 });

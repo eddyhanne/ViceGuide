@@ -56,11 +56,25 @@ if (!$row) {
 
 function vg_esc2($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
+/* Meta-Description sauber kuerzen: bevorzugt an einem Satzende, sonst an einer
+   Wortgrenze, nie mitten im Wort (fruehere harte 155-Zeichen-Kappung schnitt
+   Woerter ab und endete mit … im Wort). Liefert '' zurueck, wenn kein Text da
+   ist, der Aufrufer setzt dann seinen Fallback. */
+function vg_meta_desc(string $desc): string {
+    $desc = trim(preg_replace('/\s+/', ' ', $desc));
+    if ($desc === '' || mb_strlen($desc) <= 155) return $desc;
+    $cut = mb_substr($desc, 0, 155);
+    if (preg_match('/^(.*[.!?])\s/u', $cut, $m) && mb_strlen($m[1]) >= 80) return $m[1];
+    $sp = mb_strrpos($cut, ' ');
+    if ($sp !== false && $sp >= 80) return rtrim(mb_substr($cut, 0, $sp)) . '…';
+    return rtrim($cut) . '…';
+}
+
 $secInfo = VG_SECTION_MAP[$section];
 $name = $row['name'];
 $sub = trim($row['sub'] ?? '');
 $desc = trim($row['description'] ?? '');
-$summary = mb_strlen($desc) > 155 ? (mb_substr($desc, 0, 154) . '…') : $desc;
+$summary = vg_meta_desc($desc);
 if ($summary === '') $summary = $sub !== '' ? $sub : ($secInfo['label'] . ' in GTA 6, Übersicht bei ViceGuide.');
 $fields = $row['fields_json'] ? json_decode($row['fields_json'], true) : [];
 $hasImg = !empty($row['img']);
@@ -127,11 +141,14 @@ foreach ($head as $search => $replace) {
     $html = str_replace($search, $replace, $html);
 }
 
-// Thing-JSON-LD kurz vor dem <style>-Block einfuegen (generisch, deckt
-// Charaktere/Fahrzeuge/Waffen/Orte etc. gleichermassen ab).
+// JSON-LD kurz vor dem <style>-Block einfuegen. Spezifischerer Schema-Typ, wo
+// er ohne Fehlmodellierung passt: Charaktere als Person, Orte als Place, der
+// Rest bleibt beim generischen Thing (Fahrzeuge/Waffen/Wildtiere/Radio etc.
+// haben keinen sauber passenden, breit unterstuetzten Typ).
+$schemaType = $section === 'characters' ? 'Person' : ($section === 'locations' ? 'Place' : 'Thing');
 $entryLd = json_encode([
     '@context' => 'https://schema.org',
-    '@type' => 'Thing',
+    '@type' => $schemaType,
     'name' => $name,
     'description' => $summary,
     'image' => $imgUrl,
