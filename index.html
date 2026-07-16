@@ -938,7 +938,7 @@
 <nav class="mobilenav" id="mobilenav" aria-label="Bereiche"></nav>
 
 <div class="app">
-  <aside class="sidebar" id="sidebar"><a class="side-btn" href="/"><span class="lbl">Start-Hub</span></a><a class="side-btn" href="/news"><span class="lbl">News &amp; Leaks</span></a><a class="side-btn" href="/datenbank/"><span class="lbl">Datenbank</span></a><a class="side-btn" href="/guides/"><span class="lbl">Guides</span></a><a class="side-btn" href="/karte"><span class="lbl">Karte</span></a><a class="side-btn" href="/videos"><span class="lbl">Videos</span></a><a class="side-btn" href="/community"><span class="lbl">Community</span></a></aside>
+  <aside class="sidebar" id="sidebar"><a class="side-btn" href="/"><span class="lbl">Start-Hub</span></a><a class="side-btn" href="/news"><span class="lbl">News &amp; Leaks</span></a><a class="side-btn" href="/ratgeber/"><span class="lbl">Ratgeber</span></a><a class="side-btn" href="/datenbank/"><span class="lbl">Datenbank</span></a><a class="side-btn" href="/guides/"><span class="lbl">Guides</span></a><a class="side-btn" href="/karte"><span class="lbl">Karte</span></a><a class="side-btn" href="/videos"><span class="lbl">Videos</span></a><a class="side-btn" href="/community"><span class="lbl">Community</span></a></aside>
   <div class="sb-backdrop" id="sbBackdrop" onclick="toggleSidebar(false)"></div>
   <main class="content">
     <div id="view"></div>
@@ -1496,7 +1496,7 @@ function newsListHtml(){
 }
 function drawNewsList(){ const el=$('news-acc'); if(el){ el.innerHTML=newsListHtml(); applyOpenHeights(); } }
 function syncChips(){ document.querySelectorAll('.nf-chip').forEach(el=>el.classList.toggle('on', el.dataset.cat===newsCat)); }
-function setNewsCat(id){ newsCat=id; newsLimit=12; renderNews(); }
+function setNewsCat(id){ newsCat=id; newsLimit=12; renderNews(); syncHash(); }
 function setNewsSort(v){ newsSort=v; newsLimit=12; drawNewsGrid(); }
 function loadMoreNews(){ newsLimit+=12; drawNewsGrid(); }
 function clearNewsSearch(){ newsQuery=''; const ns=$('newssearch'); if(ns)ns.value=''; const c=document.querySelector('.nf-clear'); if(c)c.style.display='none'; newsLimit=12; if(newsView==='cards') drawNewsGrid(); else drawNewsList(); if(ns)ns.focus(); }
@@ -3394,6 +3394,9 @@ function articleClick(e,idx){
 }
 /* Deutsches URL-Praefix je Datenbank-Sektion, siehe .htaccess/entry.php/sitemap.php. */
 const SECTION_PREFIX={characters:'charaktere',vehicles:'fahrzeuge',weapons:'waffen',wildlife:'wildtiere',gangs:'gangs',radio:'radio',activities:'aktivitaeten',locations:'orte'};
+/* Eigene URLs pro News-Rubrik (/news/leaks ...), Long-Tail-SEO. catid -> slug. */
+const NEWS_CAT_SLUG={news:'updates',leaks:'leaks',trailer:'trailer',story:'story',map:'map',community:'community'};
+const NEWS_CAT_SLUG_REV=Object.fromEntries(Object.entries(NEWS_CAT_SLUG).map(([k,v])=>[v,k]));
 const SECTION_PREFIX_REV=Object.fromEntries(Object.entries(SECTION_PREFIX).map(([k,v])=>[v,k]));
 function entryHref(secId,slug){ const p=SECTION_PREFIX[secId]; return (p&&slug) ? ('/'+p+'/'+slug) : '#'; }
 function entryClick(e,secId,idx){
@@ -4222,7 +4225,8 @@ function syncHash(){
   else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
   else if(!curModal && SECTION_PREFIX[current]) target='/'+SECTION_PREFIX[current]+'/';
   else if(!curModal && (current==='datenbank'||current==='guides')) target='/'+current+'/';
-  else if(!curModal && (current==='videos'||current==='community'||current==='news')) target='/'+current;
+  else if(!curModal && current==='news') target=(newsCat!=='Alle'&&NEWS_CAT_SLUG[newsCat])?('/news/'+NEWS_CAT_SLUG[newsCat]):'/news';
+  else if(!curModal && (current==='videos'||current==='community')) target='/'+current;
   else if(!curModal && current==='map') target='/karte';
   else if(!curModal && current==='home') target='/';
   else target='/#'+buildHash();
@@ -4285,6 +4289,15 @@ function restoreFromLocation(){
     /* Datenbank-/Guides-Hub, server-gerendert von hub.php. */
     const hubMatch=path.match(/^\/(datenbank|guides)\/?$/);
     if(hubMatch){ goIfNeeded(hubMatch[1]); return; }
+    /* News-Rubrik mit eigener URL (/news/leaks ...), server-gerendert von
+       section.php. Setzt den Kategorie-Filter und zeigt den scoped Drilldown. */
+    const newsCatMatch=path.match(/^\/news\/([a-z]+)\/?$/);
+    if(newsCatMatch && NEWS_CAT_SLUG_REV[newsCatMatch[1]]){
+      goIfNeeded('news');
+      newsView='cards'; newsCat=NEWS_CAT_SLUG_REV[newsCatMatch[1]]; newsQuery='';
+      renderNews();
+      return;
+    }
     /* Videos/Community/Karte, server-gerendert von section.php. */
     const sectionMatch=path.match(/^\/(videos|community|karte|news)\/?$/);
     if(sectionMatch){

@@ -46,6 +46,22 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 echo "  <url>\n    <loc>https://viceguide.de/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n";
 echo "  <url>\n    <loc>https://viceguide.de/news</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n";
+// News-Rubriken mit eigener URL (nur wenn nicht-Ratgeber-Artikel der cat existieren).
+try {
+    $rgBlocks = require __DIR__ . '/ratgeber_data.php';
+    $rgIds = [];
+    foreach ($rgBlocks as $b) { foreach ($b['ids'] as $id) { $rgIds[$id] = true; } }
+    $catHas = [];
+    foreach ($pdo->query('SELECT id, cat FROM articles')->fetchAll() as $r) {
+        if (isset($rgIds[$r['id']])) continue;
+        $catHas[$r['cat']] = true;
+    }
+    $newsSlug = ['news' => 'updates', 'leaks' => 'leaks', 'trailer' => 'trailer', 'story' => 'story', 'map' => 'map', 'community' => 'community'];
+    foreach ($newsSlug as $cat => $slug) {
+        if (empty($catHas[$cat])) continue;
+        echo "  <url>\n    <loc>https://viceguide.de/news/{$slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n";
+    }
+} catch (Throwable $e) {}
 echo "  <url>\n    <loc>https://viceguide.de/datenbank/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n";
 echo "  <url>\n    <loc>https://viceguide.de/ratgeber/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
 // /guides/ ist bis Release nur ein Platzhalter (noindex, siehe hub.php), daher nicht in der Sitemap.

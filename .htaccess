@@ -62,6 +62,8 @@ RewriteRule ^videos/?$ section.php?page=videos [L,QSA]
 RewriteRule ^community/?$ section.php?page=community [L,QSA]
 RewriteRule ^karte/?$ section.php?page=map [L,QSA]
 RewriteRule ^news/?$ section.php?page=news [L,QSA]
+# Eigene URLs pro News-Rubrik (/news/leaks ...), section.php filtert per cat.
+RewriteRule ^news/([a-z]+)/?$ section.php?page=news&cat=$1 [L,QSA]
 
 # Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
 RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]

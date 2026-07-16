@@ -23,14 +23,9 @@ if ($page !== 'datenbank' && $page !== 'guides' && $page !== 'ratgeber') {
     exit;
 }
 
-// Ratgeber-Bloecke (Spiegel der RATGEBER-Konstante in index.html). Artikel-ids
-// gruppiert nach Themenblock; die Titel kommen aus der articles-Tabelle.
-$RATGEBER = [
-    ['label' => 'Kaufberatung',            'ids' => ['gta-6-vorbestellen','editionen-zu-release','ultimate-edition-paywall','physische-edition-ohne-disc','vorbesteller-boni','gta-6-konsolen-bundles-amazon']],
-    ['label' => 'Plattformen & Technik',   'ids' => ['plattformen-zu-release','wann-pc-version','gta-6-pc-version-warum-spaeter','gta-6-ps5-vs-ps5-pro-unterschied','wetter-technik-engine','gta-6-ps5-emulatoren-sharpemu-pc']],
-    ['label' => 'Rund um den Release',     'ids' => ['gta-6-uhrzeit-freischaltung','gta-6-preload-termin-speicherplatz','gta-6-altersfreigabe-usk']],
-    ['label' => 'Features & Modi',         'ids' => ['gta-6-online-modus','gta-online-zukunft-nach-gta-6','gta-6-crossplay-crossprogression','gta-6-cheats-was-bekannt','gta-6-deutsche-synchronisation']],
-];
+// Ratgeber-Bloecke (Spiegel der RATGEBER-Konstante in index.html), aus der
+// gemeinsamen Datei geladen, die auch section.php nutzt.
+$RATGEBER = require __DIR__ . '/ratgeber_data.php';
 
 // Datenbank-Rubriken (interne id -> deutsches Praefix + Label), siehe .htaccess.
 $DB_SECTIONS = [

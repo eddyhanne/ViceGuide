@@ -60,21 +60,49 @@ if ($page === 'videos') {
     $h1 = 'Community';
 } elseif ($page === 'news') {
     // News-Rubrik: die Artikel kommen aus der Datenbank (anders als
-    // Videos/Community aus JS-Konstanten). Wir listen alle Beitraege als
+    // Videos/Community aus JS-Konstanten). Wir listen die Beitraege als
     // echte, crawlbare Links auf ihre /artikel/{id}-URL. Fuer Besucher mit
     // JavaScript uebernimmt go() beim Laden und rendert die interaktive
     // News-Ansicht (Filter, Suche, Kacheln/Liste).
     require_once __DIR__ . '/api/db.php';
     [$pdo, $cfg] = vg_db();
-    $rows = $pdo->query('SELECT id, title, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
+    // Ratgeber-Artikel gehoeren in /ratgeber/, nicht in die News-Listung.
+    $rgBlocks = require __DIR__ . '/ratgeber_data.php';
+    $rgIds = [];
+    foreach ($rgBlocks as $blk) { foreach ($blk['ids'] as $id) { $rgIds[$id] = true; } }
+
+    // Optionaler Rubrik-Filter (/news/leaks ...): slug -> cat-Wert + Label.
+    $NEWS_CATS = [
+        'updates'   => ['news',      'News & Updates'],
+        'leaks'     => ['leaks',     'Gerüchte & Leaks'],
+        'trailer'   => ['trailer',   'Trailer-Analysen'],
+        'story'     => ['story',     'Charaktere & Story'],
+        'map'       => ['map',       'Map & Setting'],
+        'community' => ['community', 'Community & Infohäppchen'],
+    ];
+    $catSlug = $_GET['cat'] ?? '';
+    if ($catSlug !== '') {
+        if (!isset($NEWS_CATS[$catSlug])) { http_response_code(404); readfile(__DIR__ . '/index.html'); exit; }
+        [$catId, $catLabel] = $NEWS_CATS[$catSlug];
+        $stmt = $pdo->prepare('SELECT id, title, article_date FROM articles WHERE cat = ? ORDER BY article_date DESC');
+        $stmt->execute([$catId]);
+        $rows = $stmt->fetchAll();
+        $canonical = 'https://viceguide.de/news/' . $catSlug;
+        $pageTitle = 'GTA 6 ' . $catLabel . ' auf Deutsch - ViceGuide';
+        $description = 'Alle GTA-6-Beiträge der Rubrik ' . $catLabel . ' auf Deutsch, chronologisch und eingeordnet.';
+        $h1 = $catLabel;
+    } else {
+        $rows = $pdo->query('SELECT id, title, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
+        $pageTitle = 'GTA 6 News und Gerüchte auf Deutsch - ViceGuide';
+        $description = 'Alle GTA-6-News, Gerüchte und Leaks auf Deutsch, chronologisch und eingeordnet. Laufend aktualisiert.';
+        $h1 = 'News & Gerüchte';
+    }
     $items = '';
     foreach ($rows as $r) {
+        if (isset($rgIds[$r['id']])) continue; // Ratgeber-Artikel raus
         $d = $r['article_date'] ? substr((string)$r['article_date'], 0, 10) : '';
         $items .= '<li><a href="/artikel/' . vg_esc6($r['id']) . '">' . vg_esc6($r['title']) . '</a>' . ($d !== '' ? ' <span class="cat-ssr-sub">' . vg_esc6($d) . '</span>' : '') . '</li>';
     }
-    $pageTitle = 'GTA 6 News und Gerüchte auf Deutsch - ViceGuide';
-    $description = 'Alle GTA-6-News, Gerüchte und Leaks auf Deutsch, chronologisch und eingeordnet. ' . count($rows) . ' Beiträge, laufend aktualisiert.';
-    $h1 = 'News & Gerüchte';
 } else {
     // Karte: die interaktive Kartenansicht ist noch nicht gebaut (siehe
     // renderMap() in index.html), bis dahin verweist die SSR-Fassung auf die
@@ -130,6 +158,7 @@ if ($page === 'news' && !empty($rows)) {
     $itemList = [];
     $pos = 1;
     foreach ($rows as $r) {
+        if (!empty($rgIds) && isset($rgIds[$r['id']])) continue;
         $itemList[] = [
             '@type' => 'ListItem',
             'position' => $pos++,
