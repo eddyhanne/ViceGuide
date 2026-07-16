@@ -304,15 +304,22 @@ if ($showUpdated) {
         '<span class="art-date" id="a-updated">Aktualisiert: ' . vg_esc(vg_fmt_date($updatedAt)) . '</span>';
 }
 if ($hasImg) {
-    /* Nur der oeffnende Tag und der (separat verankerte) Credit-Span werden
-       ersetzt, nicht das gesamte Element als ein Stueck: der Hero-Div in
-       index.html traegt inzwischen weitere Kind-Elemente (Editiermodus-Badge,
-       Leer-Hinweis), ein Abgleich des kompletten Element-Strings wuerde bei
-       jeder kuenftigen Aenderung an diesen JS-only-Elementen stillschweigend
-       nicht mehr treffen (str_replace() ohne Fehlermeldung bei keinem
-       Treffer), das Titelbild bliebe dann in der SSR-Fassung unsichtbar. */
+    /* Titelbild als echtes, crawlbares <img> mit sinnvollem Alt (Bild-Indexierung
+       und Accessibility) statt als CSS-Hintergrund mit leerem Alt. Der Ausschnitt
+       (imgfit Zoom/Position) wird ueber dieselbe absolute Positionierung plus
+       translate nachgebaut wie clientseitig in fitImgStyle(), damit SSR- und
+       Client-Render deckungsgleich sind. Nur der oeffnende Div-Tag, das <img>
+       und der separat verankerte Credit-Span werden ersetzt, nicht das ganze
+       Element (die JS-only-Kindelemente Badge/Leer-Hinweis bleiben unberuehrt). */
+    $fit = $row['imgfit_json'] ? json_decode($row['imgfit_json'], true) : null;
+    $fz = isset($fit['zoom']) ? (float)$fit['zoom'] : 1.0;
+    $fx = isset($fit['x']) ? (float)$fit['x'] : 50.0;
+    $fy = isset($fit['y']) ? (float)$fit['y'] : 50.0;
+    $fitStyle = 'position:absolute;left:' . $fx . '%;top:' . $fy . '%;width:' . ($fz * 100) . '%;height:auto;max-width:none;transform:translate(-' . $fx . '%,-' . $fy . '%)';
     $body['<div class="art-hero" id="a-hero" style="display:none">'] =
-        '<div class="art-hero" id="a-hero" style="display:block;background-image:url(\'' . vg_esc($imgUrl) . '\');background-size:cover;background-position:center">';
+        '<div class="art-hero" id="a-hero" style="display:block">';
+    $body['<img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add(\'imgfail\')">'] =
+        '<img id="a-hero-img" alt="' . vg_esc($title) . '" width="1200" height="675" src="' . vg_esc($imgUrl) . '" style="display:block;' . $fitStyle . '" onerror="this.parentElement.classList.add(\'imgfail\')">';
     $body['<span class="credit" id="a-herocredit"></span>'] =
         '<span class="credit" id="a-herocredit">' . vg_esc($row['credit'] ?: '') . '</span>';
 }
