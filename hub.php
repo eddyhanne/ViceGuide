@@ -82,6 +82,17 @@ $head = [
 ];
 foreach ($head as $search => $replace) { $html = str_replace($search, $replace, $html); }
 
+// Der Guides-Hub ist bis Release nur ein Platzhalter (gesperrte Kategorien,
+// noch keine echten Guides). Bis dahin nicht indexieren, Links aber folgen,
+// analog zur Karte (siehe section.php). Die Datenbank bleibt index,follow.
+if ($page === 'guides') {
+    $html = str_replace(
+        '<meta name="robots" content="index, follow">',
+        '<meta name="robots" content="noindex, follow">',
+        $html
+    );
+}
+
 // BreadcrumbList: Startseite > [Hub].
 $breadcrumbLd = json_encode([
     '@context' => 'https://schema.org',
