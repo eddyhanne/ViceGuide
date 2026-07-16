@@ -206,6 +206,23 @@
   .p-nt{font-family:'Oswald';font-weight:500;font-size:16px;color:var(--heading);line-height:1.25}
   .p-nd{font-family:'Space Mono';font-size:11px;color:var(--text-soft)}
   .p-rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  /* Ratgeber-Themen-Kacheln auf der Startseite (jede mit neuestem Artikel) */
+  .p-rgrid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .p-rgt{display:block;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:14px 16px 15px;text-decoration:none;transition:border-color .15s,transform .15s}
+  .p-rgt:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .p-rgt-head{display:flex;align-items:center;gap:9px;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .p-rgt-ic{color:var(--accent);display:inline-flex}
+  .p-rgt-ic svg{width:20px;height:20px}
+  .p-rgt-label{font-family:'Oswald';font-weight:600;font-size:17px;color:var(--heading)}
+  .p-rgt-count{margin-left:auto;font-family:'Space Mono';font-size:11px;color:var(--text-soft);background:var(--surface-2);border-radius:999px;padding:3px 10px;white-space:nowrap}
+  .p-rgt-feat{display:flex;gap:11px;align-items:flex-start}
+  .p-rgt-th{flex:0 0 64px;height:64px;border-radius:10px;overflow:hidden;background:var(--surface-2);display:block}
+  .p-rgt-th img{width:100%;height:100%;object-fit:cover}
+  .p-rgt-th.ph{display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-size:22px;color:var(--accent)}
+  .p-rgt-fbody{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .p-rgt-fk{font-family:'Space Mono';font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  .p-rgt-ft{font-weight:700;font-size:13.5px;color:var(--text);line-height:1.3}
+  .p-rgt-tease{font-size:12px;color:var(--text-soft);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .p-rtile{position:relative;display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);min-height:78px;transition:border-color .15s,transform .15s}
   .p-rtile:hover{border-color:var(--accent);transform:translateY(-2px)}
   .p-rthumb{width:104px;flex-shrink:0;background-size:cover;background-position:center;background-color:var(--surface-2);display:grid;place-items:center}
@@ -249,6 +266,7 @@
     .p-relgrid{grid-template-columns:1fr 1fr}
     .p-relgrid .p-rthumb{width:64px}
     .p-news{grid-template-columns:1fr}
+    .p-rgrid2{grid-template-columns:1fr}
     .p-news .p-nrow:nth-child(n+3){display:none}
   }
 
@@ -1362,15 +1380,32 @@ function portalDbHtml(){
 function portalRelHtml(){
   return `<div class="p-sh p-sh-sm"><h2>Guides</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span><a class="p-more" style="margin-left:auto" href="/guides/" onclick="return goClick(event,'guides')">Alle Guides \u2192</a></div><div class="p-relgrid">${guideTilesHtml()}</div>`;
 }
-/* Ratgeber-Block auf der Startseite: die neuesten immergruenen Erklaerstuecke
-   als Zeilen, gleiche Optik wie "Aktuelle News". Statt der News-Kategorie-Pille
-   zeigt die kleine Zeile den Ratgeber-Themenblock (Kaufberatung usw.). */
-function rgBlockLabel(id){ const b=RATGEBER.find(b=>b.ids.includes(id)); return b?b.label:'Ratgeber'; }
+/* Ratgeber-Block auf der Startseite: vier Themen-Kacheln (Kaufberatung,
+   Plattformen & Technik, Rund um den Release, Features & Modi), jede mit dem
+   neuesten Ratgeber-Artikel des Themas samt Teaser. Bewusst reicher als eine
+   Datenbank-Kachel (nachschlagen) und anders als die datierten News-Zeilen
+   (aktuell), damit der Besucher die drei Bereiche auseinanderhaelt. */
 function portalRatgeberHtml(){
-  const list=GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,4);
-  if(!list.length) return '';
-  const cards=list.map(g=>{const idx=GUIDES.indexOf(g);const th=g.img?`<span class="p-nth"><img src="${g.img}" alt="" loading="lazy"></span>`:`<span class="p-nth ph">${initial(g.title)}</span>`;return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${th}<span class="p-nmain"><span class="p-ncat">${rgBlockLabel(g.id)}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></span></a>`;}).join('');
-  return `<div class="p-sh"><h2>Ratgeber</h2><a class="p-more" style="margin-left:auto" href="/ratgeber/" onclick="return goClick(event,'ratgeber')">Alle Ratgeber →</a></div><div class="p-news">${cards}</div>`;
+  const tiles=RATGEBER.map(b=>{
+    const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    if(!arts.length) return '';
+    const top=arts[0], idx=GUIDES.indexOf(top);
+    const th=top.img?`<span class="p-rgt-th"><img src="${top.img}" alt="" loading="lazy"></span>`:`<span class="p-rgt-th ph">${initial(top.title)}</span>`;
+    const tease=top.summary?`<span class="p-rgt-tease">${esc(top.summary)}</span>`:'';
+    return `<a class="p-rgt" href="/ratgeber/#rg-${b.key}" onclick="return rgTileClick(event,'${b.key}',${idx})"><span class="p-rgt-head"><span class="p-rgt-ic">${rgIcon(b.key)}</span><span class="p-rgt-label">${b.label}</span><span class="p-rgt-count">${arts.length} Artikel</span></span><span class="p-rgt-feat">${th}<span class="p-rgt-fbody"><span class="p-rgt-fk">Neuester Ratgeber</span><span class="p-rgt-ft">${esc(top.title)}</span>${tease}</span></span></a>`;
+  }).join('');
+  if(!tiles) return '';
+  return `<div class="p-sh"><h2>Ratgeber</h2><a class="p-more" style="margin-left:auto" href="/ratgeber/" onclick="return goClick(event,'ratgeber')">Alle Ratgeber →</a></div><div class="p-rgrid2">${tiles}</div>`;
+}
+/* Klick auf eine Ratgeber-Kachel: normaler Klick oeffnet den Ratgeber-Hub und
+   springt zum passenden Themenblock; Strg/Cmd/Mittelklick behaelt den echten
+   Link (neuer Tab) ueber das href. */
+function rgTileClick(e,key,idx){
+  if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true;
+  if(e)e.preventDefault();
+  go('ratgeber');
+  setTimeout(()=>{const el=document.getElementById('rg-'+key); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});},70);
+  return false;
 }
 /* Datenbank-Hub (/datenbank/): Sammelseite ueber allen Rubriken. */
 function renderDbHub(){
