@@ -639,6 +639,8 @@
   .rg-nav{display:flex;gap:8px;flex-wrap:wrap}
   .rg-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-soft);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;white-space:nowrap;text-decoration:none;transition:.15s}
   .rg-chip:hover{border-color:var(--accent-2);color:var(--text)}
+  .rg-chip.on{background:var(--accent);color:var(--btn-text);border-color:var(--accent)}
+  .rg-chip.on .rg-cic{color:var(--btn-text)}
   .rg-cic{color:var(--accent);display:inline-flex}
   .rg-cic svg{width:15px;height:15px}
   .rg-cic{font-size:15px;line-height:1}
@@ -1221,7 +1223,7 @@ function renderSidebar(){
 }
 
 /* Navigation */
-function go(id){ current=id; viewReady=true; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash(); }
+function go(id){ current=id; viewReady=true; gquery=''; $('gsearch').value=''; newsQuery=''; dbQuery=''; newsCat='Alle'; dbCat='Alle'; rgCat=null; closeArticle(); const cs=$('cat-ssr'); if(cs) cs.style.display='none'; toggleSidebar(false); renderSidebar(); renderMobileNav(); renderView(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash(); }
 /* go() nur, wenn die Ansicht noch nie aufgebaut wurde oder die Sektion wirklich
    wechselt. Verhindert den teuren renderView()-Neuaufbau beim blossen Schliessen
    eines Overlays (siehe restoreFromLocation), rendert aber den ersten Aufbau. */
@@ -1415,27 +1417,44 @@ function renderDbHub(){
 function renderGuidesHub(){
   $('view').innerHTML=`<div class="hub-head"><h1>Guides</h1><p>Die echten In-Game-Guides zu GTA 6: Money-Methods, Missionen, Troph\u00e4en, Tipps und mehr. Schalten mit dem Release am 19.11.2026 frei.</p></div><div class="p-relgrid">${guideTilesHtml()}</div>`;
 }
+let rgCat=null; // aktiver Ratgeber-Themenfilter im Hub (null = Uebersicht)
 /* Ratgeber-Hub (/ratgeber/): die immergruenen Erklaerstuecke, in Themenbloecke
    gebuendelt. Karten teilen sich den Renderer mit den News-Kacheln. */
 function renderRatgeberHub(){
   const present=RATGEBER.filter(b=>b.ids.some(id=>GUIDES.some(g=>g.id===id)));
-  const nav=present.map(b=>`<a class="rg-chip" href="#rg-${b.key}" onclick="return rgJump(event,'rg-${b.key}')"><span class="rg-cic">${rgIcon(b.key)}</span>${b.label}</a>`).join('');
-  /* "Zuletzt veroeffentlicht": neueste Ratgeber quer ueber alle Bloecke, oben,
-     analog zur News-Magazinansicht (chronologischer Schnelleinstieg). */
-  let latestHtml='';
-  const latest=GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,6);
-  if(latest.length){
-    latestHtml=`<div class="nmag-latest"><div class="nmag-flabel">🕒 Zuletzt veröffentlicht</div><div class="nmag-lrow">${latest.map(nmagMiniCard).join('')}</div></div>`;
+  /* Chips als Filter (Alle + je Thema), wie die News-Rubriken. */
+  const chip=(key,label,ic)=>`<button class="rg-chip${((key===null&&!rgCat)||key===rgCat)?' on':''}" onclick="return setRgCat(${key===null?'null':`'${key}'`},event)">${ic?`<span class="rg-cic">${ic}</span>`:''}${label}</button>`;
+  const nav=chip(null,'Alle','')+present.map(b=>chip(b.key,b.label,rgIcon(b.key))).join('');
+  const byNew=(a,b)=>new Date(b.date||0)-new Date(a.date||0);
+  let latestHtml='', blocks='';
+  if(rgCat){
+    /* Drilldown: nur das gewaehlte Thema, alle Artikel als Raster. */
+    const b=present.find(x=>x.key===rgCat)||present[0];
+    if(b){
+      const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean).sort(byNew);
+      const cards=arts.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
+      blocks=`<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3><span class="rg-count">${arts.length} Artikel</span></div><div class="news-grid">${cards}</div></div>`;
+    }
+  } else {
+    /* Uebersicht: "Zuletzt veroeffentlicht" plus je Thema eine Vorschau (4) mit
+       "Alle N ansehen" (nur wenn es mehr gibt), analog zur News-Magazinansicht. */
+    const latest=GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).slice().sort(byNew).slice(0,6);
+    if(latest.length){
+      latestHtml=`<div class="nmag-latest"><div class="nmag-flabel">🕒 Zuletzt veröffentlicht</div><div class="nmag-lrow">${latest.map(nmagMiniCard).join('')}</div></div>`;
+    }
+    blocks=present.map(b=>{
+      const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean).sort(byNew);
+      const preview=arts.slice(0,4);
+      const cards=preview.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
+      const all=arts.length>preview.length?`<a class="nmag-all" href="/ratgeber/#rg-${b.key}" onclick="return setRgCat('${b.key}',event)">Alle ${arts.length} ansehen →</a>`:'';
+      return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3>${all}</div><div class="nmag-row">${cards}</div></div>`;
+    }).join('');
   }
-  const blocks=present.map(b=>{
-    const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean)
-      .sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-    const cards=arts.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
-    return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3><span class="rg-count">${arts.length} Artikel</span></div><div class="nmag-row">${cards}</div></div>`;
-  }).join('');
-  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Alles Immergr\u00fcne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi. Geb\u00fcndelt statt in den News verstreut.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${latestHtml}${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
+  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Die wichtigsten Fragen vor dem Release, klar beantwortet: Kaufberatung und Editionen, Plattformen und Technik, Termine rund um den 19. November sowie das, was zu Online-Modus, Cheats und Altersfreigabe bekannt ist.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${latestHtml}${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
 }
 function rgJump(e,id){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); return false; }
+/* Ratgeber-Themenfilter setzen (Chip oder "Alle N ansehen"). null = Uebersicht. */
+function setRgCat(key,e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); rgCat=key; renderRatgeberHub(); window.scrollTo({top:0,behavior:'smooth'}); return false; }
 /* Klick auf eine Rubrik-Kachel im Editiermodus oeffnet den Bild-Editor fuer
    das Rubrik-Bild (kind 'section'), statt in die Rubrik zu navigieren. */
 function sectionImgClick(e,secId){ if(e.metaKey||e.ctrlKey||e.shiftKey) return true; e.preventDefault(); openImgEd('section',secId); return false; }
