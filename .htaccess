@@ -47,6 +47,7 @@ RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
 # /guides/ (geplante Guide-Kategorien, vor Release gesperrt), siehe hub.php.
 RewriteRule ^datenbank/?$ hub.php?page=datenbank [L,QSA]
 RewriteRule ^guides/?$ hub.php?page=guides [L,QSA]
+RewriteRule ^ratgeber/?$ hub.php?page=ratgeber [L,QSA]
 
 # Impressum/Datenschutz als eigene, crawlbare URLs (Inhalt kommt aus dem
 # LEGAL-Objekt in index.html, siehe legal.php).

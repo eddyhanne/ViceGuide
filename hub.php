@@ -17,11 +17,20 @@ require __DIR__ . '/api/db.php';
 function vg_esc_hub($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
 $page = $_GET['page'] ?? '';
-if ($page !== 'datenbank' && $page !== 'guides') {
+if ($page !== 'datenbank' && $page !== 'guides' && $page !== 'ratgeber') {
     http_response_code(404);
     readfile(__DIR__ . '/index.html');
     exit;
 }
+
+// Ratgeber-Bloecke (Spiegel der RATGEBER-Konstante in index.html). Artikel-ids
+// gruppiert nach Themenblock; die Titel kommen aus der articles-Tabelle.
+$RATGEBER = [
+    ['label' => 'Kaufberatung',            'ids' => ['gta-6-vorbestellen','editionen-zu-release','ultimate-edition-paywall','physische-edition-ohne-disc','vorbesteller-boni','gta-6-konsolen-bundles-amazon']],
+    ['label' => 'Plattformen & Technik',   'ids' => ['plattformen-zu-release','wann-pc-version','gta-6-pc-version-warum-spaeter','gta-6-ps5-vs-ps5-pro-unterschied','wetter-technik-engine','gta-6-ps5-emulatoren-sharpemu-pc']],
+    ['label' => 'Rund um den Release',     'ids' => ['gta-6-uhrzeit-freischaltung','gta-6-preload-termin-speicherplatz','gta-6-altersfreigabe-usk']],
+    ['label' => 'Features & Modi',         'ids' => ['gta-6-online-modus','gta-online-zukunft-nach-gta-6','gta-6-crossplay-crossprogression','gta-6-cheats-was-bekannt','gta-6-deutsche-synchronisation']],
+];
 
 // Datenbank-Rubriken (interne id -> deutsches Praefix + Label), siehe .htaccess.
 $DB_SECTIONS = [
@@ -52,6 +61,24 @@ if ($page === 'datenbank') {
     $description = 'Die deutschsprachige GTA-6-Datenbank: Charaktere, Fahrzeuge, Waffen, Wildtiere, Gangs, Radio, Aktivitäten und Orte. Alle Einträge auf einen Blick.';
     $h1          = 'GTA 6 Datenbank';
     $intro       = 'Das komplette deutschsprachige Nachschlagewerk zu GTA 6. Wähle eine Rubrik, um alle Einträge zu durchstöbern.';
+} elseif ($page === 'ratgeber') {
+    // Titel der Ratgeber-Artikel laden.
+    $rgTitles = [];
+    $allIds = [];
+    foreach ($RATGEBER as $blk) { foreach ($blk['ids'] as $id) { $allIds[] = $id; } }
+    if ($allIds) {
+        try {
+            $ph = implode(',', array_fill(0, count($allIds), '?'));
+            $st = $pdo->prepare("SELECT id, title FROM articles WHERE id IN ($ph)");
+            $st->execute($allIds);
+            foreach ($st->fetchAll() as $r) { $rgTitles[$r['id']] = $r['title']; }
+        } catch (Throwable $e) {}
+    }
+    $canonical   = 'https://viceguide.de/ratgeber/';
+    $pageTitle   = 'GTA 6 Ratgeber: Kaufberatung, Plattformen, Release-Wissen - ViceGuide';
+    $description = 'Alle immergrünen GTA-6-Ratgeber an einem Ort: Editionen und Preise, Plattformen und Technik, Release-Wissen sowie Features und Modi. Verständlich erklärt.';
+    $h1          = 'GTA 6 Ratgeber';
+    $intro       = 'Alles Immergrüne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi.';
 } else {
     $canonical   = 'https://viceguide.de/guides/';
     $pageTitle   = 'GTA 6 Guides auf Deutsch: Geld, Missionen, Trophäen - ViceGuide';
@@ -119,6 +146,23 @@ if ($page === 'datenbank') {
         'name' => $pageTitle, 'url' => $canonical,
         'mainEntity' => ['@type' => 'ItemList', 'numberOfItems' => count($itemList), 'itemListElement' => $itemList],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+} elseif ($page === 'ratgeber') {
+    $itemList = []; $pos = 0;
+    foreach ($RATGEBER as $blk) {
+        foreach ($blk['ids'] as $id) {
+            if (!isset($rgTitles[$id])) continue;
+            $itemList[] = [
+                '@type' => 'ListItem', 'position' => ++$pos,
+                'url' => 'https://viceguide.de/artikel/' . $id,
+                'name' => $rgTitles[$id],
+            ];
+        }
+    }
+    $lds[] = json_encode([
+        '@context' => 'https://schema.org', '@type' => 'CollectionPage',
+        'name' => $pageTitle, 'url' => $canonical,
+        'mainEntity' => ['@type' => 'ItemList', 'numberOfItems' => count($itemList), 'itemListElement' => $itemList],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 $ldInject = '';
 foreach ($lds as $ld) { $ldInject .= '<script type="application/ld+json">' . $ld . '</script>' . "\n"; }
@@ -126,18 +170,34 @@ $stylePos = strpos($html, '<style>');
 if ($stylePos !== false) { $html = substr($html, 0, $stylePos) . $ldInject . substr($html, $stylePos); }
 
 // Sichtbaren Basis-Inhalt in den sonst leeren #cat-ssr-Block bauen.
-$itemsHtml = '';
+$listHtml = '';
 if ($page === 'datenbank') {
+    $itemsHtml = '';
     foreach ($DB_SECTIONS as $sec => $info) {
         $href = '/' . $info['prefix'] . '/';
         $n = $counts[$sec] ?? 0;
         $itemsHtml .= '<li><a href="' . $href . '">' . vg_esc_hub($info['label']) . '</a>'
             . ' <span class="cat-ssr-sub">' . $n . ' Einträge</span></li>';
     }
+    $listHtml = '<ul class="cat-ssr-list">' . $itemsHtml . '</ul>';
+} elseif ($page === 'ratgeber') {
+    // Nach Themenblock gruppiert, echte Links auf die Artikel (crawlbar).
+    foreach ($RATGEBER as $blk) {
+        $lis = '';
+        foreach ($blk['ids'] as $id) {
+            if (!isset($rgTitles[$id])) continue;
+            $lis .= '<li><a href="/artikel/' . vg_esc_hub($id) . '">' . vg_esc_hub($rgTitles[$id]) . '</a></li>';
+        }
+        if ($lis !== '') {
+            $listHtml .= '<h2>' . vg_esc_hub($blk['label']) . '</h2><ul class="cat-ssr-list">' . $lis . '</ul>';
+        }
+    }
 } else {
+    $itemsHtml = '';
     foreach ($GUIDE_CATS as $name) {
         $itemsHtml .= '<li>' . vg_esc_hub($name) . ' <span class="cat-ssr-sub">ab Release</span></li>';
     }
+    $listHtml = '<ul class="cat-ssr-list">' . $itemsHtml . '</ul>';
 }
 $body = [
     '<div id="view"></div>' => '<div id="view" style="display:none"></div>',
@@ -145,7 +205,7 @@ $body = [
         '<div id="cat-ssr" style="display:block;max-width:900px;margin:0 auto;padding:32px 20px">' .
             '<h1>' . vg_esc_hub($h1) . '</h1>' .
             '<p>' . vg_esc_hub($intro) . '</p>' .
-            '<ul class="cat-ssr-list">' . $itemsHtml . '</ul>' .
+            $listHtml .
         '</div>',
 ];
 foreach ($body as $search => $replace) { $html = str_replace($search, $replace, $html); }
