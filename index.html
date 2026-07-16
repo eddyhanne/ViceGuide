@@ -573,6 +573,35 @@
   .ncb .ntag{align-self:flex-start;font-family:'Inter';font-size:11px;font-weight:600;color:var(--ntag-text);background:transparent;border:1px solid var(--ntag-border);padding:4px 11px;border-radius:7px}
   .ncb .nt{display:block;font-weight:700;font-size:17px;color:var(--heading);margin-top:12px;line-height:1.28}
   .ndate{display:block;margin-top:12px;font-size:12.5px;color:var(--text-soft)}
+  /* Kompaktes Status-Label auf News-Kacheln */
+  .ncb .nstatus{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;margin-top:9px;font-family:'Inter';font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .ncb .nstatus .dot{width:6px;height:6px;border-radius:50%}
+  .ncb .nstatus.ok{color:var(--ok-t);background:var(--ok-bg)} .ncb .nstatus.ok .dot{background:var(--ok-t)}
+  .ncb .nstatus.mid{color:var(--mid-t);background:var(--mid-bg)} .ncb .nstatus.mid .dot{background:var(--mid-t)}
+  .ncb .nstatus.rum{color:var(--rum-t);background:var(--rum-bg)} .ncb .nstatus.rum .dot{background:var(--rum-t)}
+  /* Magazin-Ansicht der News-Seite: Aufmacher + Rubrik-Bloecke */
+  .news-grid.is-mag{display:block}
+  .news-mag{display:flex;flex-direction:column;gap:30px;margin-top:18px}
+  .nmag-flabel{font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
+  .nmag-flabel::after{content:"";flex:1;height:1px;background:var(--line)}
+  .nmag-focus{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-top:-16px}
+  .nmag-side{display:grid;grid-template-rows:1fr 1fr;gap:18px}
+  .nmag-side .ncard{display:flex;flex-direction:row}
+  .nmag-side .ncv{aspect-ratio:auto;width:118px;flex:0 0 118px}
+  .nmag-side .ncb{padding:13px 15px;justify-content:center}
+  .nmag-side .nt{font-size:15px;margin-top:7px}
+  .nmag-side .ndate{margin-top:8px}
+  .nmag-hero .nt{font-size:22px}
+  .nmag-sec{display:flex;flex-direction:column;gap:15px}
+  .nmag-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:9px}
+  .nmag-head h3{font-family:'Oswald';font-weight:600;font-size:19px;color:var(--heading);display:flex;align-items:center;gap:10px}
+  .nmag-ic{color:var(--accent);display:inline-flex}
+  .nmag-ic svg{width:20px;height:20px}
+  .nmag-all{font-family:'Space Mono';font-size:12.5px;font-weight:700;color:var(--accent);white-space:nowrap;text-decoration:none}
+  .nmag-all:hover{text-decoration:underline}
+  .nmag-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:860px){.nmag-focus{grid-template-columns:1fr}.nmag-side{grid-template-rows:none;grid-template-columns:1fr 1fr}.nmag-row{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.nmag-side{grid-template-columns:1fr}.nmag-row{grid-template-columns:1fr}.nmag-side .ncard{flex-direction:column}.nmag-side .ncv{width:auto;flex:none;aspect-ratio:16/10}}
   /* Kommentare: Aktionen, Antworten, Zitate */
   .cm-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
   .cm-act{font-family:'Inter';font-size:12px;font-weight:600;color:var(--text-soft);background:var(--bg-2);border:1px solid var(--line);padding:5px 10px;border-radius:8px;transition:.15s}
@@ -964,7 +993,7 @@ const PILLAR_LABEL={home:'Start-Hub',news:'News & Leaks'};
 const GUIDES_CATS=GROUPS[1].cats.filter(c=>c.id!=='trophies'&&c.id!=='collect');
 const DB_LOCKED=GROUPS[1].cats.filter(c=>c.id==='trophies'||c.id==='collect');
 
-let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="list", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:'',focusOrder:[]}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[],featuredEntries:[]};
+let current="home", gquery="", openCats=new Set(), curArticle=null, curModal=null, newsView="cards", newsCat="Alle", newsQuery="", newsSort="neu", newsLimit=12, expandedCats=new Set(), editMode=false, isRestoringRoute=false, isAdmin=false, viewReady=false, NEWS_SETTINGS={order:[],pinned:'',focusOrder:[]}, DB_SETTINGS={dbOrder:[],guidesOrder:[],featured:[],featuredEntries:[]};
 
 const $=id=>document.getElementById(id);
 function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);try{localStorage.setItem('vg-theme',n);}catch(e){}$('tico').textContent=n==='dark'?'☾':'☀';const l=$('tlbl');if(l)l.textContent=n==='dark'?'Dunkel':'Hell';}
@@ -1251,8 +1280,10 @@ function renderNews(){
   const catChips=`<button class="nf-chip ${newsCat==='Alle'?'on':''}" data-cat="Alle" onclick="setNewsCat('Alle')">Alle</button>`+g1.cats.map(c=>`<button class="nf-chip ${newsCat===c.id?'on':''}" data-cat="${c.id}" onclick="setNewsCat('${c.id}')">${c.name}</button>`).join('');
   let phase1;
   if(newsView==='cards'){
-    const nc=newsCardsHtml();
-    phase1=`<div class="newsfilter"><div class="nf-chips">${catChips}</div><div class="nf-row2">${searchField}${sortSel}</div></div><div class="news-grid" id="news-grid">${nc.grid}</div><div class="news-more" id="news-more">${nc.more}</div>`;
+    let bodyHtml, moreHtml='', magCls='';
+    if(newsIsMag()){ bodyHtml=newsMagazineHtml(); magCls=' is-mag'; }
+    else { const nc=newsCardsHtml(); bodyHtml=nc.grid; moreHtml=nc.more; }
+    phase1=`<div class="newsfilter"><div class="nf-chips">${catChips}</div><div class="nf-row2">${searchField}${sortSel}</div></div><div class="news-grid${magCls}" id="news-grid">${bodyHtml}</div><div class="news-more" id="news-more">${moreHtml}</div>`;
   } else {
     phase1=`<div class="newsfilter"><div class="nf-row2">${searchField}</div></div><div class="acc" id="news-acc">${listHtml}</div>`;
   }
@@ -1271,6 +1302,24 @@ function renderNews(){
   { const ns=$('newssearch'); if(ns){ ns.addEventListener('input',e=>{ newsQuery=e.target.value; newsLimit=12; const c=document.querySelector('.nf-clear'); if(c)c.style.display=newsQuery?'grid':'none'; if(newsView==='cards'){ if(newsQuery&&newsCat!=='Alle'){newsCat='Alle';syncChips();} drawNewsGrid(); } else { drawNewsList(); } }); } }
   if(newsView==='list') applyOpenHeights();
 }
+/* Kompaktes Status-Label fuer News-Kacheln (bestaetigt/unbestaetigt), passend
+   zur Artikel-Pille, nur kleiner. */
+function newsStatusPill(x){
+  const m={confirmed:['ok','Bestätigt'],mixed:['mid','Teils bestätigt'],rumor:['rum','Unbestätigt']};
+  const s=m[x&&x.status]; return s?`<span class="nstatus ${s[0]}"><span class="dot"></span>${s[1]}</span>`:'';
+}
+/* Eine News-Kachel. Von der flachen Grid-Ansicht UND vom Magazin-Layout genutzt,
+   damit Edit-Bedienung und Optik ueberall identisch bleiben. */
+function newsCardHtml(x,idx){
+  const vis=x.img?`<div class="ncv"><img src="${x.img}" alt="${esc(x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(x.title)}</span></div>`;
+  const dt=x.date?fmtDShort(x.date):'';
+  const editBtn = editPencil(`openImgEd('guide',null,${idx})`, x._draft);
+  const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${idx},event)" title="Löschen">×</button>` : '';
+  const pinBtn = editMode ? `<button type="button" class="tile-pin ${x.pinned?'on':''}" onclick="togglePin(${idx},event)" title="${x.pinned?'Angepinnt (klicken zum Lösen)':'Anpinnen (erscheint im Portal unter Im Fokus)'}">📌</button>` : '';
+  const tag=editMode?'div':'a';
+  const hrefAttr=editMode?'':`href="${articleHref(x.id)}"`;
+  return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="return articleClick(event,${idx})">${vis}${editBtn}${delBtn}${pinBtn}<div class="ncb"><span class="ntag">${GCAT[x.cat]?.name||''}</span>${newsStatusPill(x)}<span class="nt">${x.title}</span><span class="ndate">${dt}</span></div></${tag}>`;
+}
 function newsCardsHtml(){
   const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
   const pool=GUIDES.map((x,idx)=>({x,idx}))
@@ -1278,21 +1327,45 @@ function newsCardsHtml(){
     .filter(o=>q||newsCat==='Alle'||o.x.cat===newsCat)
     .filter(o=>!q||(((o.x.title||'')+' '+(o.x.summary||'')).toLowerCase().includes(q)))
     .sort((a,b)=>{const d=new Date(a.x.date||0)-new Date(b.x.date||0);return newsSort==='alt'?d:-d;});
-  const grid=pool.slice(0,newsLimit).map(o=>{
-    const vis=o.x.img?`<div class="ncv"><img src="${o.x.img}" alt="${esc(o.x.title)}" width="480" height="300" loading="lazy"></div>`:`<div class="ncv ph"><span class="ghost">${secIcon('home')}</span><span class="mono">${initial(o.x.title)}</span></div>`;
-    const dt=o.x.date?fmtDShort(o.x.date):'';
-    const editBtn = editPencil(`openImgEd('guide',null,${o.idx})`, o.x._draft);
-    const delBtn = editMode ? `<button type="button" class="tile-del" onclick="deleteGuide(${o.idx},event)" title="Löschen">×</button>` : '';
-    const pinBtn = editMode ? `<button type="button" class="tile-pin ${o.x.pinned?'on':''}" onclick="togglePin(${o.idx},event)" title="${o.x.pinned?'Angepinnt (klicken zum Lösen)':'Anpinnen (erscheint im Portal unter Im Fokus)'}">📌</button>` : '';
-    const tag=editMode?'div':'a';
-    const hrefAttr=editMode?'':`href="${articleHref(o.x.id)}"`;
-    const clickAttr=`return articleClick(event,${o.idx})`;
-    return `<${tag} class="ncard ${editMode?'editing':''}" ${hrefAttr} onclick="${clickAttr}">${vis}${editBtn}${delBtn}${pinBtn}<div class="ncb"><span class="ntag">${GCAT[o.x.cat]?.name||''}</span><span class="nt">${o.x.title}</span><span class="ndate">${dt}</span></div></${tag}>`;
-  }).join('');
+  const grid=pool.slice(0,newsLimit).map(o=>newsCardHtml(o.x,o.idx)).join('');
   const more=pool.length>newsLimit?`<button class="load-more" onclick="loadMoreNews()">Mehr laden · noch ${pool.length-newsLimit}</button>`:'';
   return { grid: grid||'<div class="empty">Keine Artikel gefunden.</div>', more, total: pool.length };
 }
-function drawNewsGrid(){ const nc=newsCardsHtml(); const g=$('news-grid'), m=$('news-more'); if(g)g.innerHTML=nc.grid; if(m)m.innerHTML=nc.more; }
+/* Magazin-Ansicht (Standard bei "Alle" ohne Suche): ein Aufmacher (angepinnte
+   Artikel, sonst neueste) plus je Rubrik ein Block mit den 3 neuesten und
+   "Alle ansehen". Ersetzt die flache 42er-Kachelwand. Der Drilldown auf eine
+   Rubrik laeuft ueber die vorhandene Grid-Ansicht (newsCat gesetzt). */
+function newsMagazineHtml(){
+  const g1=GROUPS[0];
+  const byNew=(a,b)=>new Date(b.date||0)-new Date(a.date||0);
+  let focusHtml='';
+  let fk=pinnedGuides();
+  if(!fk.length) fk=GUIDES.filter(g=>g1.cats.some(c=>c.id===g.cat)).slice().sort(byNew).slice(0,3);
+  const fkIds=new Set(fk.map(g=>g.id));
+  if(fk.length){
+    const hero=fk[0], side=fk.slice(1,3);
+    focusHtml=`<div class="nmag-flabel">★ Im Fokus</div><div class="nmag-focus"><div class="nmag-hero">${newsCardHtml(hero,GUIDES.indexOf(hero))}</div>${side.length?`<div class="nmag-side">${side.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('')}</div>`:''}</div>`;
+  }
+  const secs=g1.cats.map(c=>{
+    const full=guidesIn(c.id).slice().sort(byNew);
+    if(!full.length) return '';
+    /* Aufmacher-Artikel nicht direkt darunter wiederholen. Die "Alle ansehen"-
+       Zahl bleibt die volle Rubrikgroesse, der Drilldown zeigt ja alles. */
+    const preview=full.filter(g=>!fkIds.has(g.id)).slice(0,3);
+    if(!preview.length) return '';
+    const top=preview.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
+    const all=full.length>preview.length?`<a class="nmag-all" href="${sectionHref('news')}" onclick="return newsCatClick(event,'${c.id}')">Alle ${full.length} ansehen →</a>`:'';
+    return `<div class="nmag-sec"><div class="nmag-head"><h3><span class="nmag-ic">${catIcon(c.id)}</span>${c.name}</h3>${all}</div><div class="nmag-row">${top}</div></div>`;
+  }).join('');
+  return `<div class="news-mag">${focusHtml}${secs}</div>`;
+}
+function newsIsMag(){ return newsCat==='Alle' && !newsQuery.trim(); }
+function newsCatClick(e,id){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); setNewsCat(id); window.scrollTo({top:0,behavior:'smooth'}); return false; }
+function drawNewsGrid(){
+  const g=$('news-grid'), m=$('news-more');
+  if(newsIsMag()){ if(g){g.innerHTML=newsMagazineHtml();g.classList.add('is-mag');} if(m)m.innerHTML=''; }
+  else { const nc=newsCardsHtml(); if(g){g.innerHTML=nc.grid;g.classList.remove('is-mag');} if(m)m.innerHTML=nc.more; }
+}
 function newsListHtml(){
   const g1=GROUPS[0], q=newsQuery.trim().toLowerCase();
   const items=orderedNewsCats().map(c=>{
@@ -1333,7 +1406,7 @@ function orderedNewsCats(){
 }
 function ensurePinnedOpen(){ const pin=NEWS_SETTINGS.pinned; if(!pin)return; if(!GROUPS[0].cats.some(c=>openCats.has(c.id))) openCats.add(pin); }
 /* "Alle News": immer Listenansicht, angepinnte Kategorie oben aufgeklappt. */
-function goAllNews(e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); newsView='list'; openCats.clear(); if(NEWS_SETTINGS.pinned) openCats.add(NEWS_SETTINGS.pinned); go('news'); return false; }
+function goAllNews(e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); newsView='cards'; go('news'); return false; }
 async function saveNewsSettings(){
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
   try{ const r=await fetch('api/settings.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({news_cat_order:NEWS_SETTINGS.order,news_pinned_cat:NEWS_SETTINGS.pinned,focus_order:NEWS_SETTINGS.focusOrder})}); if(!r.ok) throw new Error(); toast('News-Einstellungen gespeichert.'); }catch(e){ toast('Speichern fehlgeschlagen.'); }
