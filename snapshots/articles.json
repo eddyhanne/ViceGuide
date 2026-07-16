@@ -4,6 +4,236 @@
       "author": null,
       "cat": "news",
       "content": [
+        "Die Frage kommt vor jedem großen Rockstar-Titel auf, und die Antwort fällt seit Jahren gleich aus. Weder die GTA-Reihe noch Red Dead Redemption 1 und 2 oder L.A. Noire hatten je eine deutsche Sprachausgabe. Die Figuren sprechen Englisch, Deutsch kommt über Untertitel und Menütexte ins Spiel. Für GTA 6 deutet nichts auf einen Kurswechsel hin.",
+        "### Warum Rockstar auf Deutsch verzichtet",
+        "Hinter der Entscheidung steckt mehr als Sparen. Rockstars Welten leben von Radiosendern, Werbespots und einem sehr spezifischen amerikanischen Slang, der sich kaum verlustfrei synchronisieren lässt. Eine Vollvertonung müsste zudem lippensynchron zu den aufwendigen Gesichtsanimationen passen, ein enormer Aufwand für einen einzelnen Sprachmarkt.",
+        "### Was sich die Community wünscht",
+        "Der Wunsch ist trotzdem groß. In einer Umfrage von GamePro sprachen sich rund 75 Prozent der Teilnehmer für eine deutsche Sprachausgabe aus, viele empfinden das Mitlesen während der Fahrt als störend. Diese Stimmung ist nachvollziehbar, ändert an Rockstars langjähriger Linie aber bislang nichts.",
+        "### Was du erwarten kannst",
+        "Realistisch bekommt GTA 6 in Deutschland vollständige deutsche Bildschirmtexte, Menüs und Untertitel, dazu die originale englische Sprachausgabe. Wer lieber hört als liest, wird sich damit arrangieren müssen, solange Rockstar nichts anderes ankündigt.",
+        "faq:Wird GTA 6 eine deutsche Sprachausgabe haben?|Sehr unwahrscheinlich. Rockstar hat noch nie ein Spiel auf Deutsch vertont, ein Bruch mit dieser Linie ist nicht angekündigt.",
+        "faq:Gibt es deutsche Untertitel in GTA 6?|Aller Voraussicht nach ja. Deutsche Texte und Untertitel gehörten bei Rockstar bisher immer dazu.",
+        "faq:Warum synchronisiert Rockstar nicht auf Deutsch?|Setting, Slang und Radiokultur sind stark englischsprachig geprägt, dazu kommt der hohe Aufwand einer lippensynchronen Vollvertonung."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-16T00:26",
+      "id": "gta-6-deutsche-synchronisation",
+      "img": "api/article_image.php?id=gta-6-deutsche-synchronisation&v=2026-07-15+23%3A02%3A29",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Eine deutsche Sprachausgabe für GTA 6 ist höchst unwahrscheinlich, deutsche Untertitel dagegen so gut wie sicher.",
+      "meta": "News",
+      "pinned": true,
+      "sources": [
+        {
+          "title": "GamePro (Kolumne)",
+          "url": "https://www.gamepro.de/artikel/gta-6-deutsche-synchronisation-kolumne,3402924.html"
+        },
+        {
+          "title": "GamePro (Umfrage)",
+          "url": "https://www.gamepro.de/artikel/gta-6-deutsche-sprachausgabe-umfrage,3404562,kommentar6375783.html"
+        }
+      ],
+      "summary": "Warum GTA 6 wohl englische Sprachausgabe mit deutschen Untertiteln bekommt statt einer Synchro.",
+      "title": "GTA 6 auf Deutsch: Kommt eine deutsche Synchronisation?",
+      "tldr": [
+        "Rockstar vertont seit über zwei Jahrzehnten kein Spiel auf Deutsch, GTA 6 dürfte da keine Ausnahme sein.",
+        "Deutsche Menüs, Texte und Untertitel gab es dagegen bei jedem Teil und sind auch hier zu erwarten.",
+        "Offiziell hat Rockstar zu den Sprachoptionen bislang nichts gesagt."
+      ],
+      "updated": "2026-07-15 23:02:29"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Crossplay bedeutet, dass Spieler auf PlayStation und Xbox gemeinsam in einer Sitzung zocken. Für GTA 6 stellt sich die Frage zum Start gar nicht: Rockstar bezeichnet das Spiel offiziell als Einzelspieler-Erlebnis, ein Mehrspielermodus fehlt am Launchtag. Die Details dazu stehen in [[gta-6-online-modus|unserem Artikel zum Online-Modus]].",
+        "### Was Rockstars Historie sagt",
+        "Sobald es um einen künftigen Online-Modus geht, spricht die Vergangenheit klar gegen Crossplay. GTA Online lief über ein Jahrzehnt ohne plattformübergreifendes Spiel, PlayStation und Xbox blieben strikt getrennt. Selbst mit den PS5- und Xbox-Series-Versionen von 2022 änderte sich daran nichts. Portale wie startselect fassen es entsprechend zusammen: Ein Kurswechsel ausgerechnet bei GTA 6 wäre eine Überraschung.",
+        "### Und die Cross-Progression?",
+        "Auch das Mitnehmen von Fortschritt über Plattformen hinweg ist nicht bestätigt. Beim alten GTA Online endete die Möglichkeit, einen Charakter auf eine neue Plattform zu übertragen, irgendwann ganz. Für GTA 6 gibt es dazu keine Zusage, wer die Plattform wechselt, sollte vorerst nicht mit einem Transfer rechnen.",
+        "### Der PC als Sonderfall",
+        "Eine PC-Version ist zum Launch ohnehin nicht dabei und folgt der Reihen-Tradition zufolge erst später, wie wir in [[wann-pc-version|unserem Artikel zur PC-Version]] einordnen. Crossplay zwischen PC und Konsole gilt damit als noch unwahrscheinlicher als zwischen den Konsolen selbst.",
+        "faq:Hat GTA 6 Crossplay?|Nicht bestätigt. Zum Launch ist GTA 6 ein Einzelspieler-Spiel, und für einen späteren Online-Modus spricht Rockstars Historie gegen Crossplay.",
+        "faq:Kann ich mit PS5- und Xbox-Freunden zusammen spielen?|Danach sieht es nicht aus. GTA Online hielt beide Plattformen immer getrennt, eine Änderung hat Rockstar nicht angekündigt.",
+        "faq:Nehme ich meinen Fortschritt auf eine andere Plattform mit?|Cross-Progression ist für GTA 6 nicht bestätigt. Ein plattformübergreifender Transfer ist bislang nicht zu erwarten."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-16T00:26",
+      "id": "gta-6-crossplay-crossprogression",
+      "img": "api/article_image.php?id=gta-6-crossplay-crossprogression&v=2026-07-15+23%3A01%3A42",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat zu Crossplay und Cross-Progression bei GTA 6 nichts bestätigt, und die Historie der Reihe stimmt eher skeptisch.",
+      "meta": "Analyse",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Startselect",
+          "url": "https://startselect.com/gb-en/blog/gta-6-cross-platform"
+        },
+        {
+          "title": "GrandTheft.gg",
+          "url": "https://grandtheft.gg/gta-6-crossplay/"
+        }
+      ],
+      "summary": "Ob GTA 6 Crossplay und Cross-Progression bekommt und warum Rockstars Historie dagegen spricht.",
+      "title": "GTA 6 Crossplay: Was zu Crossplay und Fortschritt bekannt ist",
+      "tldr": [
+        "Zum Launch ist die Frage ohnehin zweitrangig, GTA 6 startet als reines Einzelspieler-Spiel.",
+        "GTA Online trennte PlayStation und Xbox über ein Jahrzehnt strikt, ein Bruch damit wäre neu.",
+        "Auch Cross-Progression, also Fortschritt über Plattformen mitzunehmen, ist nicht bestätigt."
+      ],
+      "updated": "2026-07-15 23:01:42"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Gewalt, Drogen, deftige Sprache und sexuelle Anspielungen gehören zum Kern von GTA. Genau diese Inhalte führen in Deutschland zuverlässig zur höchsten Alterskennzeichnung. Jeder Hauptteil seit GTA 3 wurde von der USK mit 18 eingestuft, das Portal fettspielen geht auch bei GTA 6 fest von USK 18 aus.",
+        "### Was USK 18 konkret bedeutet",
+        "USK 18 steht für Keine Jugendfreigabe. Das Spiel darf nur an Erwachsene verkauft und weitergegeben werden, im Handel wie in den digitalen Stores von PlayStation und Xbox, die den Kauf über eine Altersprüfung absichern. Für Eltern ist das der klare Hinweis, dass GTA 6 kein Titel für Kinder ist.",
+        "### Ist die Einstufung schon offiziell?",
+        "Die USK bewertet ein Spiel meist erst in den Wochen vor dem Release, eine formale Endeinstufung stand zum Zeitpunkt dieses Artikels noch aus. An der Richtung ändert das wenig. Wie GamesWirtschaft in seinem GTA-6-FAQ festhält, wäre alles unter 18 angesichts der Serieninhalte kaum vorstellbar.",
+        "### Geschnitten oder ungeschnitten?",
+        "Wichtig für den deutschen Markt: Seit GTA 5 erscheinen die Teile hierzulande ungeschnitten, also inhaltlich identisch zur internationalen Fassung. Eine entschärfte deutsche Version ist nicht zu erwarten, die USK-18-Freigabe macht einen Schnitt gerade überflüssig.",
+        "faq:Welche Altersfreigabe bekommt GTA 6?|Aller Voraussicht nach USK 18, also Keine Jugendfreigabe, wie bei jedem bisherigen Hauptteil der Reihe.",
+        "faq:Ab welchem Alter darf man GTA 6 kaufen?|Bei einer USK-18-Einstufung erst ab 18 Jahren, im Handel wie in den digitalen Stores mit Altersprüfung.",
+        "faq:Erscheint GTA 6 in Deutschland geschnitten?|Nicht zu erwarten. Seit GTA 5 kommen die Teile hierzulande ungeschnitten, die USK-18-Freigabe erlaubt die vollständige Fassung."
+      ],
+      "credit": "KI-generiert / Viceguide / Rockstar",
+      "date": "2026-07-16T00:25",
+      "id": "gta-6-altersfreigabe-usk",
+      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-15+22%3A44%3A32",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 wird in Deutschland aller Voraussicht nach USK 18 tragen, wie jeder große Teil der Reihe zuvor.",
+      "meta": "News",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "fettspielen",
+          "url": "https://www.fettspielen.de/gta-6-altersfreigabe-deutschland-usk-18-bestaetigt/"
+        },
+        {
+          "title": "GamesWirtschaft",
+          "url": "https://www.gameswirtschaft.de/marketing-pr/grand-theft-auto-6-faq-fragen-antworten-020726/"
+        }
+      ],
+      "summary": "Warum GTA 6 in Deutschland so gut wie sicher USK 18 wird und was das für Kauf und Inhalte heißt.",
+      "title": "GTA 6 Altersfreigabe: USK 18 und was das bedeutet",
+      "tldr": [
+        "Ein USK-18-Logo heißt: Verkauf und Weitergabe nur an Erwachsene, keine Abgabe an Minderjährige.",
+        "Von GTA 3 bis GTA 5 war die Reihe durchgängig USK 18, ein Bruch wäre eine echte Überraschung.",
+        "Die formale USK-Einstufung fällt erfahrungsgemäß erst kurz vor dem Release."
+      ],
+      "updated": "2026-07-15 22:44:32"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Nach GTA-6-Cheats wird massenhaft gesucht, obwohl das Spiel noch gar nicht erschienen ist. Das Portal GTA BOOM berichtet von tausenden Suchanfragen Monat für Monat. Eine offizielle Code-Liste hat Rockstar aber nicht veröffentlicht, und vor dem Release am 19. November 2026 lässt sich auch keine überprüfen.",
+        "### Warum kursierende Codes jetzt Fake sind",
+        "Rockstar gibt Cheat-Codes traditionell erst mit dem Spiel selbst heraus, nie vorher. Alles, was aktuell als angebliche GTA-6-Cheatliste die Runde macht, ist frei erfunden. Wer solche Codes eingibt, verschwendet bestenfalls Zeit.",
+        "### Was die Serie erwarten lässt",
+        "Die Wahrscheinlichkeit für Cheats ist hoch, weil es sie in jedem Hauptteil gab. Zu erwarten sind laut GTA BOOM und PCGamesN Klassiker für Waffen, Leben und Rüstung, Fahrzeuge auf Knopfdruck und das Zurücksetzen des Fahndungslevels. Zwei Eingabewege sind aus der Reihe bekannt: schnelle Controller-Kombinationen sowie das Anwählen bestimmter Nummern über das In-Game-Handy, wie schon in GTA 5. Ein Cheat für unendlich Geld gilt dagegen als praktisch ausgeschlossen.",
+        "### Nur im Einzelspieler",
+        "Cheats waren bei GTA immer eine reine Einzelspieler-Sache und schalteten meist Speicherstände oder Trophäen vorübergehend ab. Für einen künftigen Online-Modus sind sie nicht gedacht, dort gelten sie als Betrug. Was zum Mehrspieler bekannt ist, steht in [[gta-6-online-modus|unserem Artikel zum Online-Modus]].",
+        "faq:Gibt es schon GTA 6 Cheats?|Nein. Vor dem Release kursieren nur erfundene Listen, echte Codes veröffentlicht Rockstar frühestens zum Launch.",
+        "faq:Wird GTA 6 überhaupt Cheats haben?|Sehr wahrscheinlich. Jeder Hauptteil der Reihe hatte Cheats, ein kompletter Verzicht wäre untypisch.",
+        "faq:Funktionieren Cheats im Online-Modus?|Nein. Cheats sind eine Einzelspieler-Funktion, im Mehrspieler gelten sie als Betrug und werden gesperrt."
+      ],
+      "credit": "KI-generiert / ViceGuide",
+      "date": "2026-07-16T00:25",
+      "id": "gta-6-cheats-was-bekannt",
+      "img": "api/article_image.php?id=gta-6-cheats-was-bekannt&v=2026-07-15+22%3A58%3A19",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Offizielle GTA-6-Cheats gibt es vor dem Release am 19. November 2026 nicht, jede kursierende Code-Liste ist Spekulation.",
+      "meta": "News",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GTA BOOM",
+          "url": "https://www.gtaboom.com/will-gta-6-have-cheat-codes-thousands-are-searching-for-gta-6-cheats-already-42b9"
+        },
+        {
+          "title": "PCGamesN",
+          "url": "https://www.pcgamesn.com/grand-theft-auto-6/cheats"
+        }
+      ],
+      "summary": "Warum es vor dem Launch keine echten GTA-6-Cheats gibt und was die Serie erwarten lässt.",
+      "title": "GTA 6 Cheats: Was vor dem Release wirklich bekannt ist",
+      "tldr": [
+        "Jede Cheat-Liste, die jetzt schon im Netz steht, ist erfunden, echte Codes gibt es frühestens zum Launch.",
+        "Von GTA 3 bis GTA 5 hatte jeder Teil Cheats, für GTA 6 ist das die realistische Erwartung.",
+        "Cheats liefen bei GTA immer nur im Einzelspieler, nie im Online-Modus."
+      ],
+      "updated": "2026-07-15 22:58:19"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Rockstar knüpft die Freischaltung an die Region des Store-Kontos, nicht an die Systemuhr der Konsole. Für ein deutsches PlayStation- oder Xbox-Konto heißt das aller Voraussicht nach: Mitternacht, also 00:00 Uhr in der Nacht von Mittwoch auf Donnerstag, den 19. November 2026. Dasselbe Muster galt schon beim Preload, den wir in [[gta-6-preload-termin-speicherplatz|unserem Artikel zum Vorab-Download]] erklären.",
+        "### Der Neuseeland-Trick",
+        "Weil Neuseeland Deutschland rund zwölf Stunden voraus ist, schaltet das Spiel dort zuerst frei. Wer die Store-Region seines Kontos auf Neuseeland umstellt, kann laut GamePro schon am Nachmittag des 18. November nach deutscher Zeit loslegen, also grob einen halben Tag vor dem hiesigen Mitternachtstermin.",
+        "Ganz ohne Haken ist das nicht. Für einen Regionswechsel braucht es meist ein frisches Konto der Zielregion und passende Zahlungsmittel, gekaufte Inhalte hängen an der jeweiligen Region. Wer nur wegen der früheren Uhrzeit wechselt, handelt sich schnell mehr Aufwand ein, als der halbe Tag wert ist.",
+        "### Was du zum Start bereit haben solltest",
+        "Entscheidend ist, dass der Preload rechtzeitig durch ist. Wer erst am Launchtag herunterlädt, wartet bei einem Spiel dieser Größe spürbar. Eine stabile Verbindung und ausreichend freier Speicher gehören dazu, die Plattform-Details stehen in [[plattformen-zu-release|unserer Plattformen-Übersicht]].",
+        "Eine minutengenaue, weltweite Startuhrzeit hat Rockstar über das Regional-Mitternacht-Muster hinaus nicht veröffentlicht. Die 00:00 Uhr für Deutschland sind die belastbare Erwartung, kein von Rockstar wörtlich bestätigter Sonderzeitpunkt. GameStar ordnet den Ablauf ähnlich ein.",
+        "faq:Wann wird GTA 6 in Deutschland freigeschaltet?|Voraussichtlich um 00:00 Uhr in der Nacht zum 19. November 2026, gekoppelt an die Region des Store-Kontos.",
+        "faq:Kann ich GTA 6 früher spielen?|Über einen Kontowechsel auf eine frühere Zeitzone wie Neuseeland ist ein Start rund einen halben Tag vorher möglich, mit den üblichen Haken eines Regionswechsels.",
+        "faq:Brauche ich zum Start eine Internetverbindung?|Für das Freischalten und den Download ja. Wer den Preload rechtzeitig erledigt, kann zum Launch aber ohne langes Warten loslegen."
+      ],
+      "credit": "KI-generiert / ViceGuide",
+      "date": "2026-07-16T00:25",
+      "id": "gta-6-uhrzeit-freischaltung",
+      "img": "api/article_image.php?id=gta-6-uhrzeit-freischaltung&v=2026-07-15+23%3A09%3A53",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 schaltet am 19. November 2026 frei, und über die Region des Store-Kontos lässt sich der Start sogar etwas vorziehen.",
+      "meta": "News",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GamePro",
+          "url": "https://www.gamepro.de/artikel/release-uhrzeit-gta-6,3433138.html"
+        },
+        {
+          "title": "GameStar",
+          "url": "https://www.gamestar.de/artikel/gta-6-release-spielwelt-gameplay-alle-infos,3432543.html"
+        }
+      ],
+      "summary": "Wann GTA 6 am 19. November freigeschaltet wird und wie ein Zeitzonen-Trick den Start vorzieht.",
+      "title": "GTA 6 Uhrzeit: Wann ihr am 19. November spielen könnt",
+      "tldr": [
+        "Für deutsche Konten fällt der Start voraussichtlich auf Mitternacht, also 00:00 Uhr in der Nacht zum 19. November.",
+        "Der Preload läuft schon ab dem 12. November, gespielt wird aber erst zum Launch.",
+        "Wer die Konten-Region auf Neuseeland stellt, kann laut GamePro rund einen halben Tag früher loslegen."
+      ],
+      "updated": "2026-07-15 23:09:53"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
         "Die Vorbestellung für GTA 6 ist seit dem 25. Juni 2026 offen, direkt im PlayStation Store und im Microsoft Store. Bestellbar ist das Spiel für die bestätigten Plattformen PlayStation 5 und Xbox Series X/S, mehr dazu in [[plattformen-zu-release|unserem Überblick zu den Plattformen]]. Der Release bleibt der 19. November 2026.",
         "### Die beiden Editionen",
         "- Standard Edition: das komplette Spiel, rund 80 Euro (79,99 US-Dollar).",
@@ -66,7 +296,7 @@
       "credit": "Amazon.de",
       "date": "2026-07-14T09:48",
       "id": "gta-6-konsolen-bundles-amazon",
-      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-15+21%3A40%3A26",
+      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-15+23%3A02%3A22",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -74,7 +304,7 @@
       },
       "lead": "Amazon verkauft GTA 6 inzwischen im Bundle mit der Xbox Series X oder Series S, eine PlayStation-5-Variante gibt es beim Händler bislang nicht.",
       "meta": "News",
-      "pinned": true,
+      "pinned": false,
       "sources": [
         {
           "title": "NETZWELT",
@@ -92,7 +322,7 @@
         "Amazon führt zwei Xbox-Pakete, die Series X darin ist generalüberholt statt neu.",
         "Eine PS5-Variante fehlt bislang, könnte bis zum Release im November aber noch folgen."
       ],
-      "updated": "2026-07-15 21:40:26"
+      "updated": "2026-07-15 23:02:22"
     },
     {
       "author": null,
@@ -157,7 +387,7 @@
       "credit": "Rockstar",
       "date": "2026-07-14T09:48",
       "id": "gta-6-ps5-vs-ps5-pro-unterschied",
-      "img": "api/article_image.php?id=gta-6-ps5-vs-ps5-pro-unterschied&v=2026-07-15+21%3A40%3A26",
+      "img": "api/article_image.php?id=gta-6-ps5-vs-ps5-pro-unterschied&v=2026-07-15+22%3A12%3A33",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -187,7 +417,7 @@
         "Der Flaschenhals ist die CPU, beide Konsolen teilen sich fast denselben Zen-2-Prozessor.",
         "Digital Foundry hält 30 fps für den Standard, auf der Pro ergänzt um einen möglichen 40-fps-Modus."
       ],
-      "updated": "2026-07-15 21:40:26"
+      "updated": "2026-07-15 22:12:33"
     },
     {
       "author": null,
@@ -204,10 +434,10 @@
         "faq:Wann startet der Preload für GTA 6?|Am 12. November 2026, um Mitternacht in der Zeitzone des jeweiligen Store-Accounts, exakt eine Woche vor dem Release.",
         "faq:Wie groß wird der Download von GTA 6?|Offiziell unbekannt. Seriöse Schätzungen bewegen sich zwischen 150 und 300 GB, bestätigt ist bislang nur der zeitliche Ablauf."
       ],
-      "credit": null,
+      "credit": "KI-generiert / ViceGuide",
       "date": "2026-07-14T09:48",
       "id": "gta-6-preload-termin-speicherplatz",
-      "img": "api/article_image.php?id=gta-6-preload-termin-speicherplatz&v=2026-07-15+21%3A42%3A36",
+      "img": "api/article_image.php?id=gta-6-preload-termin-speicherplatz&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -237,7 +467,7 @@
         "Der Download startet um Mitternacht in der Zeitzone deines Store-Accounts, nicht der Konsole.",
         "Eine offizielle Größe fehlt, seriöse Schätzungen von S4G und drohnen.de liegen bei 150 bis 300 GB."
       ],
-      "updated": "2026-07-15 21:42:36"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -255,10 +485,10 @@
         "faq:Kommt GTA 6 überhaupt für den PC?|Offiziell unbestätigt, aber sehr wahrscheinlich. Jeder große GTA-Teil erschien bisher auch auf dem PC, nur mit deutlicher Verzögerung.",
         "faq:Wann erscheint GTA 6 für PC?|Kein offizielles Datum. Nach dem Muster von GTA 5 und Red Dead Redemption 2 gilt Ende 2027 bis 2028 als realistisches Fenster, ein Leak nennt spekulativ Februar 2027."
       ],
-      "credit": null,
+      "credit": "KI-generiert / Viceguide",
       "date": "2026-07-14T09:46",
       "id": "gta-6-pc-version-warum-spaeter",
-      "img": "api/article_image.php?id=gta-6-pc-version-warum-spaeter&v=2026-07-15+21%3A42%3A55",
+      "img": "api/article_image.php?id=gta-6-pc-version-warum-spaeter&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -288,7 +518,7 @@
         "Rockstar konzentriert das Budget zuerst auf die Konsolen, das erklärte Ex-Produzent John Ricchio.",
         "Take-Two-Chef Strauss Zelnick nennt Konsolenspieler die Kernzielgruppe, schließt den PC langfristig aber nicht aus."
       ],
-      "updated": "2026-07-15 21:42:55"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -305,10 +535,10 @@
         "faq:Kann ich GTA 6 zum Release über einen PS5-Emulator spielen?|Nein. Kein Projekt kommt aktuell auch nur in die Nähe spielbarer 3D-Blockbuster, GTA 6 gilt als besonders anspruchsvoller Fall.",
         "faq:Welcher PS5-Emulator ist aktuell am weitesten?|SharpEmu zeigt derzeit die sichtbarsten Fortschritte, unter anderem durch die texturierte Darstellung von Dreaming Sarah."
       ],
-      "credit": null,
+      "credit": "KI-generiert / Viceguide",
       "date": "2026-07-14T09:46",
       "id": "gta-6-ps5-emulatoren-sharpemu-pc",
-      "img": "api/article_image.php?id=gta-6-ps5-emulatoren-sharpemu-pc&v=2026-07-15+21%3A43%3A34",
+      "img": "api/article_image.php?id=gta-6-ps5-emulatoren-sharpemu-pc&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -338,7 +568,7 @@
         "SharpEmu rendert bisher nur den 2D-Titel Dreaming Sarah vollständig, 3D-Blockbuster laufen nicht.",
         "Auch RPCSX und Kyty arbeiten an PS5-Emulation, ein simulationslastiges Open-World-Spiel bleibt laut wccftech Jahre entfernt."
       ],
-      "updated": "2026-07-15 21:43:34"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -633,10 +863,10 @@
         "faq:Stimmt es, dass der Trailer beim WM-Finale gezeigt wird?|Nein, das ist reine Community-Spekulation aus dem GTA-6-Subreddit, offiziell bestätigt ist daran nichts.",
         "faq:Welche Rolle spielt der Take-Two-Investorencall am 7. August?|Der Termin fällt ungewöhnlich auf einen Freitag statt wie sonst üblich auf einen Wochentag zwischen Dienstag und Donnerstag. Das wird von Beobachtern als möglicher Hinweis auf eine größere Ankündigung gewertet, eine Trailer-Premiere direkt im Call selbst gilt aber als unwahrscheinlich."
       ],
-      "credit": null,
+      "credit": "KI-generiert / Viceguide",
       "date": "2026-07-11T13:52",
       "id": "gta6-trailer-3-wann-kommt-er",
-      "img": "api/article_image.php?id=gta6-trailer-3-wann-kommt-er&v=2026-07-15+21%3A46%3A03",
+      "img": "api/article_image.php?id=gta6-trailer-3-wann-kommt-er&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -666,7 +896,7 @@
         "Das entfernte Vorbestell-Banner auf Rockstars Seite gilt laut ComicBook.com als frisches Indiz.",
         "Die WM-Finale-Theorie überzeugt kaum, der Take-Two-Call am 7. August passt besser zur Trailer-Historie."
       ],
-      "updated": "2026-07-15 21:46:03"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -1019,10 +1249,10 @@
         "faq:Wann könnte GTA 6 für den PC erscheinen?|Nach Rockstars bisherigem Muster ist ein Fenster zwischen Ende 2027 und Anfang 2028 realistisch, ein fixer Termin fehlt.",
         "faq:Wird die PC-Version Mods unterstützen?|Nicht bestätigt, angesichts der langen Modding-Geschichte von GTA 5 auf dem PC ist es aber zu erwarten."
       ],
-      "credit": null,
+      "credit": "KI-generiert / Viceguide",
       "date": "2026-06-12T21:04",
       "id": "wann-pc-version",
-      "img": "api/article_image.php?id=wann-pc-version&v=2026-07-15+21%3A53%3A53",
+      "img": "api/article_image.php?id=wann-pc-version&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1048,7 +1278,7 @@
         "Nach Rockstars Muster ist ein Fenster zwischen Ende 2027 und Anfang 2028 realistisch.",
         "Take-Two-Chef Zelnick nennt den PC bis zu 50 Prozent der Verkäufe, priorisiert zum Start aber die Konsole."
       ],
-      "updated": "2026-07-15 21:53:53"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -1070,10 +1300,10 @@
         "faq:Gibt es eine Nintendo Switch 2 Version?|Nein, Take-Two hat eine Switch-2-Version ausdrücklich ausgeschlossen.",
         "faq:Kommt GTA 6 für den PC?|Zum Launch nicht. Eine PC-Version ist offiziell nicht angekündigt und dürfte wie bei früheren GTA-Teilen erst später folgen."
       ],
-      "credit": null,
+      "credit": "KI-generiert / Viceguide",
       "date": "2026-06-05T17:12",
       "id": "plattformen-zu-release",
-      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-15+21%3A53%3A53",
+      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-15+22%3A43%3A59",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1099,7 +1329,7 @@
         "PS4, Xbox One, Switch 2 und PC fallen zum Launch raus, die Switch 2 hat Take-Two ausdrücklich ausgeschlossen.",
         "Eine PC-Version folgt der Reihen-Historie zufolge erst deutlich später."
       ],
-      "updated": "2026-07-15 21:53:53"
+      "updated": "2026-07-15 22:43:59"
     },
     {
       "author": null,
@@ -1268,7 +1498,7 @@
       "credit": "Rockstar",
       "date": "2026-05-06T11:15",
       "id": "der-grosse-leak-von-2022",
-      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-15+21%3A53%3A53",
+      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-15+22%3A01%3A14",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1298,7 +1528,7 @@
         "Hinter dem Hack stand der Teenager Arion Kurtaj aus der Gruppe Lapsus$, verurteilt und in einer Klinik untergebracht.",
         "Fast jedes überprüfbare Detail der Videos bestätigte sich später in Trailer 1."
       ],
-      "updated": "2026-07-15 21:53:53"
+      "updated": "2026-07-15 22:01:14"
     },
     {
       "author": null,

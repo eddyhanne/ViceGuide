@@ -17,6 +17,7 @@
           "zoom": 1
         },
         "name": "Heists & Raubüberfälle",
+        "seo": false,
         "slug": "heists-raubueberfaelle",
         "src": "Trailer 2",
         "sub": "Kriminell"
@@ -37,6 +38,7 @@
           "zoom": 1.35
         },
         "name": "Nachtleben & Clubs",
+        "seo": false,
         "slug": "nachtleben-clubs",
         "src": "Trailer",
         "sub": "Freizeit"
@@ -57,6 +59,7 @@
           "zoom": 1.12
         },
         "name": "Bootfahren",
+        "seo": false,
         "slug": "bootfahren",
         "src": "Trailer",
         "sub": "Fortbewegung"
@@ -78,6 +81,7 @@
           "zoom": 1.12
         },
         "name": "Angeln",
+        "seo": false,
         "slug": "angeln",
         "src": "Hinweis",
         "sub": "erwartet"
@@ -99,6 +103,7 @@
           "zoom": 1.11
         },
         "name": "Jagen",
+        "seo": false,
         "slug": "jagen",
         "src": "Hinweis",
         "sub": "erwartet"
@@ -120,6 +125,7 @@
           "zoom": 1.11
         },
         "name": "Fitness & Gym",
+        "seo": false,
         "slug": "fitness-gym",
         "src": "Hinweis",
         "sub": "erwartet"
@@ -140,6 +146,7 @@
           "zoom": 1.11
         },
         "name": "Schwimmen & Unterwasser",
+        "seo": false,
         "slug": "schwimmen-unterwasser",
         "src": "Trailer / Leak",
         "sub": "Wassersport"
@@ -160,6 +167,7 @@
           "zoom": 1.12
         },
         "name": "Fahrzeug-Tuning",
+        "seo": false,
         "slug": "fahrzeug-tuning",
         "src": "erwartet",
         "sub": "Werkstatt"
@@ -180,6 +188,7 @@
           "zoom": 1
         },
         "name": "Straßenrennen",
+        "seo": false,
         "slug": "strassenrennen",
         "src": "erwartet",
         "sub": "Racing"
@@ -200,6 +209,7 @@
           "zoom": 1.11
         },
         "name": "Golf & Minigolf",
+        "seo": false,
         "slug": "golf-minigolf",
         "src": "Screenshot",
         "sub": "Freizeit"
@@ -220,6 +230,7 @@
           "zoom": 0.84
         },
         "name": "Handy & Social-Media-App",
+        "seo": false,
         "slug": "handy-social-media-app",
         "src": "erwartet",
         "sub": "In-Game-Smartphone"
@@ -240,6 +251,7 @@
           "zoom": 1.11
         },
         "name": "Immobilien & Geschäfte",
+        "seo": false,
         "slug": "immobilien-geschaefte",
         "src": "erwartet",
         "sub": "Besitz"
@@ -259,13 +271,14 @@
           "Wagen": "Vapid Ganado",
           "Wohnort": "Key Lento, Leonida Keys"
         },
-        "img": "api/entry_image.php?id=203&v=2026-07-13+11%3A03%3A04",
+        "img": "api/entry_image.php?id=203&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 0,
           "y": 20,
           "zoom": 1.06
         },
         "name": "Jason Duval",
+        "seo": true,
         "slug": "jason-duval",
         "src": "Trailer 1-2 / offizielle Rockstar-Bio",
         "sub": "Protagonist"
@@ -283,13 +296,14 @@
           "Partner": "Jason Duval",
           "Rolle": "Protagonistin"
         },
-        "img": "api/entry_image.php?id=2&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=2&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 50,
           "zoom": 1.02
         },
         "name": "Lucia Caminos",
+        "seo": true,
         "slug": "lucia-caminos",
         "src": "Trailer 1-2 / offizielle Rockstar-Bio",
         "sub": "Protagonistin"
@@ -304,13 +318,14 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Nebenfigur"
         },
-        "img": "api/entry_image.php?id=3&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=3&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 28,
           "y": 6,
           "zoom": 1.08
         },
         "name": "Cal Hampton",
+        "seo": true,
         "slug": "cal-hampton",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Jasons Kumpel"
@@ -333,6 +348,7 @@
           "zoom": 1.35
         },
         "name": "Brian Heder",
+        "seo": false,
         "slug": "brian-heder",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Drogenschmuggler"
@@ -354,6 +370,7 @@
           "zoom": 0.61
         },
         "name": "Lori Heder",
+        "seo": false,
         "slug": "lori-heder",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Bootswerft-Personal"
@@ -368,13 +385,14 @@
           "Rolle": "Unternehmer",
           "Umfeld": "Only Raw Records, Jack of Hearts"
         },
-        "img": "api/entry_image.php?id=6&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=6&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 48,
           "y": 44,
           "zoom": 1
         },
         "name": "Boobie Ike",
+        "seo": true,
         "slug": "boobie-ike",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Geschäftsmann"
@@ -390,13 +408,14 @@
           "Managt": "Real Dimez",
           "Rolle": "Label-Manager"
         },
-        "img": "api/entry_image.php?id=7&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=7&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 100,
           "y": 0,
           "zoom": 1.54
         },
         "name": "Dre'Quan Priest",
+        "seo": true,
         "slug": "dre-quan-priest",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Manager, Real Dimez"
@@ -419,6 +438,7 @@
           "zoom": 1.07
         },
         "name": "Bae-Luxe",
+        "seo": false,
         "slug": "bae-luxe",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Rapperin, Real Dimez"
@@ -441,6 +461,7 @@
           "zoom": 2.57
         },
         "name": "Roxy",
+        "seo": false,
         "slug": "roxy",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Rapperin, Real Dimez"
@@ -455,13 +476,14 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Bankräuber"
         },
-        "img": "api/entry_image.php?id=10&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=10&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 60,
           "y": 0,
           "zoom": 2.18
         },
         "name": "Raul Bautista",
+        "seo": true,
         "slug": "raul-bautista",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Bankräuber"
@@ -483,6 +505,7 @@
           "zoom": 1.85
         },
         "name": "Phil",
+        "seo": false,
         "slug": "phil",
         "src": "Trailer 2 / offizielle Rockstar-Bio",
         "sub": "Ammu-Nation-Besitzer"
@@ -504,6 +527,7 @@
           "zoom": 1
         },
         "name": "Police Detective",
+        "seo": false,
         "slug": "police-detective",
         "src": "Trailer 2",
         "sub": "Ermittler"
@@ -525,6 +549,7 @@
           "zoom": 1
         },
         "name": "Gold Chain Guy",
+        "seo": false,
         "slug": "gold-chain-guy",
         "src": "Trailer 1",
         "sub": "Hintergrund-NPC"
@@ -545,6 +570,7 @@
           "zoom": 0.63
         },
         "name": "Hammer Lady",
+        "seo": false,
         "slug": "hammer-lady",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -566,6 +592,7 @@
           "zoom": 1.38
         },
         "name": "Selfie Guy",
+        "seo": false,
         "slug": "selfie-guy",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -586,6 +613,7 @@
           "zoom": 1
         },
         "name": "Crotch Grab Guy",
+        "seo": false,
         "slug": "crotch-grab-guy",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -607,6 +635,7 @@
           "zoom": 1.12
         },
         "name": "Dad Bod Guy",
+        "seo": false,
         "slug": "dad-bod-guy",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -628,6 +657,7 @@
           "zoom": 1.1
         },
         "name": "High Rollerz Mag Guy",
+        "seo": false,
         "slug": "high-rollerz-mag-guy",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -649,6 +679,7 @@
           "zoom": 1
         },
         "name": "Nightclub DJ",
+        "seo": false,
         "slug": "nightclub-dj",
         "src": "Trailer 2",
         "sub": "Nachtleben"
@@ -669,6 +700,7 @@
           "zoom": 1.01
         },
         "name": "Leonida Joker",
+        "seo": false,
         "slug": "leonida-joker",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -689,6 +721,7 @@
           "zoom": 1.12
         },
         "name": "Rudi",
+        "seo": false,
         "slug": "rudi",
         "src": "Trailer 2",
         "sub": "Neben-NPC"
@@ -711,6 +744,7 @@
           "zoom": 1
         },
         "name": "Stefanie",
+        "seo": false,
         "slug": "stefanie",
         "src": "Trailer 1 / offizielle Rockstar-Bio",
         "sub": "Bewährungshelferin"
@@ -731,6 +765,7 @@
           "zoom": 1.28
         },
         "name": "Thrillbilly Mud Girl",
+        "seo": false,
         "slug": "thrillbilly-mud-girl",
         "src": "Trailer 2",
         "sub": "Hintergrund-NPC"
@@ -755,6 +790,7 @@
           "zoom": 1.09
         },
         "name": "Final Chapter MC",
+        "seo": false,
         "slug": "final-chapter-mc",
         "src": "Trailer 1",
         "sub": "Outlaw-Motorradclub"
@@ -776,6 +812,7 @@
           "zoom": 1
         },
         "name": "San4San",
+        "seo": false,
         "slug": "san4san",
         "src": "Trailer 1-2",
         "sub": "Haitianische Straßengang"
@@ -797,6 +834,7 @@
           "zoom": 1.14
         },
         "name": "PTT Youngin$",
+        "seo": false,
         "slug": "ptt-youngin",
         "src": "Ultimate Edition",
         "sub": "Straßengang"
@@ -818,6 +856,7 @@
           "zoom": 1
         },
         "name": "POACH",
+        "seo": false,
         "slug": "poach",
         "src": "Trailer / offiziell",
         "sub": "Wildhüter-Einheit"
@@ -839,6 +878,7 @@
           "zoom": 1
         },
         "name": "Vice City Police (VCPD)",
+        "seo": false,
         "slug": "vice-city-police-vcpd",
         "src": "Trailer",
         "sub": "Polizei"
@@ -860,6 +900,7 @@
           "zoom": 1.12
         },
         "name": "Guardia Brothers",
+        "seo": false,
         "slug": "guardia-brothers",
         "src": "Leaks",
         "sub": "Kriminelle Fraktion"
@@ -881,6 +922,7 @@
           "zoom": 1.14
         },
         "name": "Brian's Boat Works (Schmuggel)",
+        "seo": false,
         "slug": "brian-s-boat-works-schmuggel",
         "src": "Trailer 2",
         "sub": "Schmuggel-Umfeld"
@@ -902,6 +944,7 @@
           "zoom": 1.1
         },
         "name": "Gefängnis-Fraktionen",
+        "seo": false,
         "slug": "gefaengnis-fraktionen",
         "src": "Trailer 1",
         "sub": "Prison Gangs"
@@ -918,13 +961,14 @@
           "Typ": "Metropole",
           "Vorbild": "Miami"
         },
-        "img": "api/entry_image.php?id=76&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=76&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 50,
           "zoom": 1
         },
         "name": "Vice City",
+        "seo": true,
         "slug": "vice-city",
         "src": "Trailer 1-2",
         "sub": "Metropole"
@@ -946,6 +990,7 @@
           "zoom": 1.11
         },
         "name": "Ocean Beach",
+        "seo": false,
         "slug": "ocean-beach",
         "src": "Trailer",
         "sub": "Stadtviertel"
@@ -966,6 +1011,7 @@
           "zoom": 1.12
         },
         "name": "Vice Beach",
+        "seo": false,
         "slug": "vice-beach",
         "src": "Trailer",
         "sub": "Küstenstreifen"
@@ -987,6 +1033,7 @@
           "zoom": 1
         },
         "name": "Star Island",
+        "seo": false,
         "slug": "star-island",
         "src": "Karte",
         "sub": "Insel"
@@ -1008,6 +1055,7 @@
           "zoom": 1.59
         },
         "name": "Little Cuba",
+        "seo": false,
         "slug": "little-cuba",
         "src": "Trailer",
         "sub": "Stadtviertel"
@@ -1023,6 +1071,7 @@
         },
         "img": null,
         "name": "Venetian Islands",
+        "seo": false,
         "slug": "venetian-islands",
         "src": "Karte",
         "sub": "Inselgruppe"
@@ -1037,13 +1086,14 @@
           "Typ": "Inselkette",
           "Vorbild": "Florida Keys"
         },
-        "img": "api/entry_image.php?id=82&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=82&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 50,
           "zoom": 1
         },
         "name": "Leonida Keys",
+        "seo": true,
         "slug": "leonida-keys",
         "src": "Trailer",
         "sub": "Inselkette"
@@ -1065,6 +1115,7 @@
           "zoom": 1.11
         },
         "name": "Key Lento",
+        "seo": false,
         "slug": "key-lento",
         "src": "Trailer",
         "sub": "Insel"
@@ -1079,13 +1130,14 @@
           "Typ": "Sumpfgebiet",
           "Vorbild": "Everglades"
         },
-        "img": "api/entry_image.php?id=84&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=84&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 50,
           "zoom": 1.14
         },
         "name": "Grassrivers",
+        "seo": true,
         "slug": "grassrivers",
         "src": "Trailer",
         "sub": "Sumpfgebiet"
@@ -1099,13 +1151,14 @@
           "Erstmals": "Karte",
           "Typ": "Hafenstadt"
         },
-        "img": "api/entry_image.php?id=85&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=85&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 50,
           "zoom": 1.12
         },
         "name": "Port Gellhorn",
+        "seo": true,
         "slug": "port-gellhorn",
         "src": "Karte",
         "sub": "Hafenstadt"
@@ -1120,6 +1173,7 @@
         },
         "img": null,
         "name": "Gellhorn International",
+        "seo": false,
         "slug": "gellhorn-international",
         "src": "Karte",
         "sub": "Flughafen"
@@ -1133,13 +1187,14 @@
           "Erstmals": "Trailer",
           "Typ": "Region (ländlich)"
         },
-        "img": "api/entry_image.php?id=87&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=87&v=2026-07-15+23%3A05%3A49",
         "imgfit": {
           "x": 50,
           "y": 55,
           "zoom": 1.12
         },
         "name": "Ambrosia",
+        "seo": true,
         "slug": "ambrosia",
         "src": "Trailer",
         "sub": "Region"
@@ -1160,6 +1215,7 @@
           "zoom": 1.1
         },
         "name": "Lake Leonida",
+        "seo": false,
         "slug": "lake-leonida",
         "src": "Karte",
         "sub": "See"
@@ -1180,6 +1236,7 @@
           "zoom": 1.14
         },
         "name": "Waning Sands",
+        "seo": false,
         "slug": "waning-sands",
         "src": "Karte",
         "sub": "Region"
@@ -1194,6 +1251,7 @@
         },
         "img": null,
         "name": "Rockridge",
+        "seo": false,
         "slug": "rockridge",
         "src": "Karte",
         "sub": "Ortschaft"
@@ -1208,6 +1266,7 @@
         },
         "img": null,
         "name": "Hamlet",
+        "seo": false,
         "slug": "hamlet",
         "src": "Karte",
         "sub": "Siedlung"
@@ -1228,6 +1287,7 @@
           "zoom": 2.01
         },
         "name": "VC International Airport",
+        "seo": false,
         "slug": "vc-international-airport",
         "src": "Karte",
         "sub": "Flughafen"
@@ -1242,6 +1302,7 @@
         },
         "img": null,
         "name": "VC Port",
+        "seo": false,
         "slug": "vc-port",
         "src": "Karte",
         "sub": "Hafen"
@@ -1257,6 +1318,7 @@
         },
         "img": null,
         "name": "Stock Golf Club",
+        "seo": false,
         "slug": "stock-golf-club",
         "src": "Karte",
         "sub": "Freizeit"
@@ -1277,6 +1339,7 @@
           "zoom": 1.1
         },
         "name": "Downtown Vice City",
+        "seo": false,
         "slug": "downtown-vice-city",
         "src": "Trailer",
         "sub": "Innenstadt"
@@ -1298,6 +1361,7 @@
           "zoom": 1.02
         },
         "name": "Mount Kalaga National Park",
+        "seo": false,
         "slug": "mount-kalaga-national-park",
         "src": "Screenshot",
         "sub": "Naturpark"
@@ -1313,6 +1377,7 @@
         },
         "img": null,
         "name": "La Perle",
+        "seo": false,
         "slug": "la-perle",
         "src": "Karte",
         "sub": "Stadtviertel"
@@ -1327,6 +1392,7 @@
         },
         "img": null,
         "name": "Crosstown",
+        "seo": false,
         "slug": "crosstown",
         "src": "Trailer",
         "sub": "Stadtviertel"
@@ -1342,6 +1408,7 @@
         },
         "img": null,
         "name": "Tisha-Wocka",
+        "seo": false,
         "slug": "tisha-wocka",
         "src": "Karte",
         "sub": "Stadtviertel"
@@ -1359,6 +1426,7 @@
         },
         "img": null,
         "name": "Soundtrack-Hinweis",
+        "seo": false,
         "slug": "soundtrack-hinweis",
         "src": "Trailer 2",
         "sub": "Musik"
@@ -1381,6 +1449,7 @@
           "zoom": 1
         },
         "name": "Love Is a Long Road",
+        "seo": false,
         "slug": "love-is-a-long-road",
         "src": "Trailer 1",
         "sub": "Tom Petty (1989)"
@@ -1397,6 +1466,7 @@
         },
         "img": null,
         "name": "Hot Together",
+        "seo": false,
         "slug": "hot-together",
         "src": "Trailer 2",
         "sub": "The Pointer Sisters (1986)"
@@ -1421,6 +1491,7 @@
           "zoom": 1.12
         },
         "name": "Declasse Tulip",
+        "seo": false,
         "slug": "declasse-tulip-m-100",
         "src": "Trailer 1-2",
         "sub": "Jason & Lucias Wagen"
@@ -1443,6 +1514,7 @@
           "zoom": 1.02
         },
         "name": "'95 Grotti Cheetah",
+        "seo": false,
         "slug": "95-grotti-cheetah",
         "src": "Ultimate Edition",
         "sub": "Supersportwagen"
@@ -1465,6 +1537,7 @@
           "zoom": 1
         },
         "name": "Bravado Banshee",
+        "seo": false,
         "slug": "bravado-banshee",
         "src": "Trailer 2",
         "sub": "Sportwagen"
@@ -1486,6 +1559,7 @@
           "zoom": 1
         },
         "name": "Invetero Coquette",
+        "seo": false,
         "slug": "invetero-coquette",
         "src": "Trailer 2",
         "sub": "Sportwagen"
@@ -1508,6 +1582,7 @@
           "zoom": 1
         },
         "name": "Pegassi Tempesta",
+        "seo": false,
         "slug": "pegassi-tempesta",
         "src": "Trailer 2",
         "sub": "Supersportwagen"
@@ -1529,6 +1604,7 @@
           "zoom": 1
         },
         "name": "Gallivanter Baller",
+        "seo": false,
         "slug": "gallivanter-baller",
         "src": "Trailer 2",
         "sub": "Luxus-SUV"
@@ -1550,6 +1626,7 @@
           "zoom": 1
         },
         "name": "Bravado Bison",
+        "seo": false,
         "slug": "bravado-bison",
         "src": "Trailer 2",
         "sub": "Pickup"
@@ -1571,6 +1648,7 @@
           "zoom": 1
         },
         "name": "Declasse Granger 3600LX",
+        "seo": false,
         "slug": "declasse-granger-3600lx",
         "src": "Trailer 2",
         "sub": "SUV"
@@ -1592,6 +1670,7 @@
           "zoom": 1
         },
         "name": "Maibatsu Penumbra",
+        "seo": false,
         "slug": "maibatsu-penumbra",
         "src": "Trailer 2",
         "sub": "Sportwagen"
@@ -1612,6 +1691,7 @@
           "zoom": 1.12
         },
         "name": "Enduro",
+        "seo": false,
         "slug": "enduro",
         "src": "Screenshots",
         "sub": "Dirtbike"
@@ -1632,6 +1712,7 @@
           "zoom": 0.51
         },
         "name": "Principe Alvino V1",
+        "seo": false,
         "slug": "principe-alvino-v1",
         "src": "Trailer",
         "sub": "Sportbike"
@@ -1653,6 +1734,7 @@
           "zoom": 1
         },
         "name": "Shitzu Squalo",
+        "seo": false,
         "slug": "shitzu-squalo",
         "src": "Ultimate Edition",
         "sub": "Schnellboot"
@@ -1674,6 +1756,7 @@
           "zoom": 1
         },
         "name": "Crest Kayak",
+        "seo": false,
         "slug": "crest-kayak",
         "src": "Ultimate Edition",
         "sub": "Kajak"
@@ -1696,6 +1779,7 @@
           "zoom": 1.12
         },
         "name": "'67 Vapid Dominator Buggy",
+        "seo": false,
         "slug": "67-vapid-dominator-buggy",
         "src": "Ultimate Edition",
         "sub": "Gelände-Buggy"
@@ -1717,6 +1801,7 @@
           "zoom": 1.11
         },
         "name": "Karakara 4x4",
+        "seo": false,
         "slug": "karakara-4x4",
         "src": "Trailer 2",
         "sub": "Geländewagen"
@@ -1739,6 +1824,7 @@
           "zoom": 1.11
         },
         "name": "VCPD Police Interceptor",
+        "seo": false,
         "slug": "vcpd-police-interceptor",
         "src": "Trailer 2",
         "sub": "Streifenwagen"
@@ -1760,6 +1846,7 @@
           "zoom": 1
         },
         "name": "Brute Police Riot",
+        "seo": false,
         "slug": "brute-police-riot",
         "src": "Trailer 2",
         "sub": "Gepanzert"
@@ -1781,6 +1868,7 @@
           "zoom": 1.02
         },
         "name": "Tram (Nahverkehr)",
+        "seo": false,
         "slug": "tram-nahverkehr",
         "src": "offiziell",
         "sub": "ÖPNV"
@@ -1801,6 +1889,7 @@
           "zoom": 1.46
         },
         "name": "Verkehrsflugzeug",
+        "seo": false,
         "slug": "verkehrsflugzeug",
         "src": "Trailer 2",
         "sub": "Flugzeug"
@@ -1822,6 +1911,7 @@
           "zoom": 1.02
         },
         "name": "Airboat (Sumpfboot)",
+        "seo": false,
         "slug": "airboat-sumpfboot",
         "src": "Screenshot",
         "sub": "Propellerboot"
@@ -1844,6 +1934,7 @@
           "zoom": 1.11
         },
         "name": "Vapid Creado",
+        "seo": false,
         "slug": "vapid-creado",
         "src": "offiziell",
         "sub": "Jasons Held-Fahrzeug"
@@ -1865,6 +1956,7 @@
           "zoom": 1
         },
         "name": "Declasse Vigero ZX Cabrio",
+        "seo": false,
         "slug": "declasse-vigero-zx-cabrio",
         "src": "Promo",
         "sub": "Muscle-Cabrio"
@@ -1886,6 +1978,7 @@
           "zoom": 0.46
         },
         "name": "Albany Emperor",
+        "seo": false,
         "slug": "albany-emperor",
         "src": "Trailer 2",
         "sub": "Luxuslimousine"
@@ -1907,6 +2000,7 @@
           "zoom": 1.33
         },
         "name": "Albany Primo",
+        "seo": false,
         "slug": "albany-primo",
         "src": "Trailer",
         "sub": "Lowrider-Limousine"
@@ -1929,6 +2023,7 @@
           "zoom": 1
         },
         "name": "Vapid Stanier",
+        "seo": false,
         "slug": "vapid-stanier",
         "src": "Trailer",
         "sub": "Alltagslimousine"
@@ -1950,6 +2045,7 @@
           "zoom": 1.68
         },
         "name": "Karin Asterope GZ",
+        "seo": false,
         "slug": "karin-asterope-gz",
         "src": "Ultimate Edition",
         "sub": "Sportlimousine"
@@ -1971,6 +2067,7 @@
           "zoom": 1
         },
         "name": "Pfister Astron",
+        "seo": false,
         "slug": "pfister-astron",
         "src": "Promo",
         "sub": "Kompakt-SUV"
@@ -1992,6 +2089,7 @@
           "zoom": 1.15
         },
         "name": "Dundreary Landstalker XL",
+        "seo": false,
         "slug": "dundreary-landstalker-xl",
         "src": "Trailer 2",
         "sub": "Großer SUV"
@@ -2013,6 +2111,7 @@
           "zoom": 1
         },
         "name": "Benefactor Dubsta",
+        "seo": false,
         "slug": "benefactor-dubsta",
         "src": "Trailer",
         "sub": "Gelände-SUV"
@@ -2033,6 +2132,7 @@
           "zoom": 1
         },
         "name": "Maibatsu Sanchez",
+        "seo": false,
         "slug": "maibatsu-sanchez",
         "src": "Trailer",
         "sub": "Motocross"
@@ -2054,6 +2154,7 @@
           "zoom": 1.02
         },
         "name": "Western Zombie Chopper",
+        "seo": false,
         "slug": "western-zombie-chopper",
         "src": "Trailer 2",
         "sub": "Custom-Chopper"
@@ -2075,6 +2176,7 @@
           "zoom": 1.12
         },
         "name": "Speedophile Seashark",
+        "seo": false,
         "slug": "speedophile-seashark",
         "src": "Trailer 1-2",
         "sub": "Jetski"
@@ -2096,6 +2198,7 @@
           "zoom": 1.14
         },
         "name": "Shitzu Tropic",
+        "seo": false,
         "slug": "shitzu-tropic",
         "src": "Trailer 2",
         "sub": "Freizeitboot"
@@ -2117,6 +2220,7 @@
           "zoom": 1
         },
         "name": "Mammoth Dodo",
+        "seo": false,
         "slug": "mammoth-dodo",
         "src": "Trailer / Promo",
         "sub": "Wasserflugzeug"
@@ -2139,6 +2243,7 @@
           "zoom": 0.69
         },
         "name": "Xero Blimp",
+        "seo": false,
         "slug": "xero-blimp",
         "src": "Trailer 1",
         "sub": "Luftschiff"
@@ -2160,6 +2265,7 @@
           "zoom": 1.07
         },
         "name": "Buckingham Shamal",
+        "seo": false,
         "slug": "buckingham-shamal",
         "src": "Promo",
         "sub": "Privatjet"
@@ -2181,6 +2287,7 @@
           "zoom": 1
         },
         "name": "Metromule / Metrorail",
+        "seo": false,
         "slug": "metromule-metrorail",
         "src": "offiziell",
         "sub": "Bahnnetz"
@@ -2205,6 +2312,7 @@
           "zoom": 1.2
         },
         "name": "Girardi ES9",
+        "seo": false,
         "slug": "girardi-es9",
         "src": "offiziell",
         "sub": "Jasons Pistole"
@@ -2227,6 +2335,7 @@
           "zoom": 1.13
         },
         "name": "Klose K17",
+        "seo": false,
         "slug": "klose-k17",
         "src": "offiziell",
         "sub": "Lucias Pistole"
@@ -2248,6 +2357,7 @@
           "zoom": 1.09
         },
         "name": "Capo",
+        "seo": false,
         "slug": "capo",
         "src": "Trailer 1",
         "sub": "Pistole"
@@ -2269,6 +2379,7 @@
           "zoom": 1.11
         },
         "name": "Morgan Revolver",
+        "seo": false,
         "slug": "morgan-revolver",
         "src": "Ultimate Edition",
         "sub": "Revolver"
@@ -2291,6 +2402,7 @@
           "zoom": 1.11
         },
         "name": "MP5 (SMG)",
+        "seo": false,
         "slug": "mp5-smg",
         "src": "Trailer 2",
         "sub": "Maschinenpistole"
@@ -2305,6 +2417,7 @@
         },
         "img": null,
         "name": "Micro SMG",
+        "seo": false,
         "slug": "micro-smg",
         "src": "Vintage-Pack",
         "sub": "Kompakt-MP"
@@ -2326,6 +2439,7 @@
           "zoom": 1.09
         },
         "name": "Duke Arms Carbine",
+        "seo": false,
         "slug": "duke-arms-carbine",
         "src": "Trailer / Screenshots",
         "sub": "Sturmgewehr"
@@ -2347,6 +2461,7 @@
           "zoom": 1.11
         },
         "name": "AK-Variante",
+        "seo": false,
         "slug": "ak-variante",
         "src": "Trailer",
         "sub": "Sturmgewehr"
@@ -2367,6 +2482,7 @@
           "zoom": 1.09
         },
         "name": "Bolt-Action Sniper",
+        "seo": false,
         "slug": "bolt-action-sniper",
         "src": "Screenshots",
         "sub": "Scharfschützengewehr"
@@ -2387,6 +2503,7 @@
           "zoom": 1.11
         },
         "name": "Assault Sniper",
+        "seo": false,
         "slug": "assault-sniper",
         "src": "Screenshots",
         "sub": "Scharfschützengewehr"
@@ -2408,6 +2525,7 @@
           "zoom": 1.25
         },
         "name": "Pump-Action Shotgun",
+        "seo": false,
         "slug": "pump-action-shotgun",
         "src": "Trailer",
         "sub": "Schrotflinte"
@@ -2428,6 +2546,7 @@
           "zoom": 1.08
         },
         "name": "Double-Barreled Shotgun",
+        "seo": false,
         "slug": "double-barreled-shotgun",
         "src": "Screenshots",
         "sub": "Doppelflinte"
@@ -2448,6 +2567,7 @@
           "zoom": 1
         },
         "name": "Combat MG (LMG)",
+        "seo": false,
         "slug": "combat-mg-lmg",
         "src": "Trailer 2",
         "sub": "Leichtes MG"
@@ -2463,6 +2583,7 @@
         },
         "img": null,
         "name": "ERIS SMG",
+        "seo": false,
         "slug": "eris-smg",
         "src": "Screenshots",
         "sub": "Gang-Waffe"
@@ -2477,6 +2598,7 @@
         },
         "img": null,
         "name": "Ausrüstung & Gadgets",
+        "seo": false,
         "slug": "ausruestung-gadgets",
         "src": "games.gg / Screenshots",
         "sub": "Ausrüstungsrad"
@@ -2498,6 +2620,7 @@
           "zoom": 1.1
         },
         "name": "Mustang Revolver",
+        "seo": false,
         "slug": "mustang-revolver",
         "src": "Screenshot",
         "sub": "Schwerer Revolver"
@@ -2513,6 +2636,7 @@
         },
         "img": null,
         "name": "Tactical SMG",
+        "seo": false,
         "slug": "tactical-smg",
         "src": "Promo",
         "sub": "Taktische MP"
@@ -2534,6 +2658,7 @@
           "zoom": 1
         },
         "name": "Jagdgewehr (M1A-Stil)",
+        "seo": false,
         "slug": "jagdgewehr-m1a-stil",
         "src": "Screenshot",
         "sub": "Halbautomatik-Büchse"
@@ -2556,6 +2681,7 @@
           "zoom": 1.19
         },
         "name": "Granatwerfer (MGL)",
+        "seo": false,
         "slug": "granatwerfer-mgl",
         "src": "Trailer 2",
         "sub": "Mehrschuss-Werfer"
@@ -2570,6 +2696,7 @@
         },
         "img": null,
         "name": "Kabelbinder",
+        "seo": false,
         "slug": "kabelbinder",
         "src": "Trailer / Leak",
         "sub": "Ausrüstung"
@@ -2584,6 +2711,7 @@
         },
         "img": null,
         "name": "Tracker-Störsender",
+        "seo": false,
         "slug": "tracker-stoersender",
         "src": "Leak",
         "sub": "Ausrüstung"
@@ -2598,6 +2726,7 @@
         },
         "img": null,
         "name": "Dietrich-Set",
+        "seo": false,
         "slug": "dietrich-set",
         "src": "Leak",
         "sub": "Ausrüstung"
@@ -2620,6 +2749,7 @@
           "zoom": 0.79
         },
         "name": "Service-Pistole (M1911)",
+        "seo": false,
         "slug": "service-pistole-m1911",
         "src": "Trailer / Screenshot",
         "sub": "Behörden-Pistole"
@@ -2641,6 +2771,7 @@
           "zoom": 1.11
         },
         "name": "Vintage-Pistole (PT92)",
+        "seo": false,
         "slug": "vintage-pistole-pt92",
         "src": "Promo-Art",
         "sub": "Klassische Pistole"
@@ -2656,6 +2787,7 @@
         },
         "img": null,
         "name": "SWAT-Karabiner (SIG-Stil)",
+        "seo": false,
         "slug": "swat-karabiner-sig-stil",
         "src": "Trailer",
         "sub": "Behörden-Gewehr"
@@ -2677,6 +2809,7 @@
           "zoom": 1
         },
         "name": "Sturmgewehr (M16-Stil)",
+        "seo": false,
         "slug": "sturmgewehr-m16-stil",
         "src": "Trailer",
         "sub": "Militärgewehr"
@@ -2698,6 +2831,7 @@
           "zoom": 1
         },
         "name": "Raketenwerfer (RPG-7-Stil)",
+        "seo": false,
         "slug": "raketenwerfer-rpg-7-stil",
         "src": "Leak",
         "sub": "Panzerabwehr"
@@ -2718,6 +2852,7 @@
           "zoom": 1.08
         },
         "name": "Handgranate",
+        "seo": false,
         "slug": "handgranate",
         "src": "erwartet",
         "sub": "Splittergranate"
@@ -2738,6 +2873,7 @@
           "zoom": 1
         },
         "name": "Molotow-Cocktail",
+        "seo": false,
         "slug": "molotow-cocktail",
         "src": "erwartet",
         "sub": "Brandsatz"
@@ -2758,6 +2894,7 @@
           "zoom": 1.15
         },
         "name": "Baseballschläger",
+        "seo": false,
         "slug": "baseballschlaeger",
         "src": "Trailer",
         "sub": "Nahkampf"
@@ -2778,6 +2915,7 @@
           "zoom": 1
         },
         "name": "Machete",
+        "seo": false,
         "slug": "machete",
         "src": "erwartet",
         "sub": "Nahkampf"
@@ -2798,6 +2936,7 @@
           "zoom": 1
         },
         "name": "Kampfmesser",
+        "seo": false,
         "slug": "kampfmesser",
         "src": "erwartet",
         "sub": "Nahkampf"
@@ -2818,6 +2957,7 @@
           "zoom": 1.87
         },
         "name": "Hammer",
+        "seo": false,
         "slug": "hammer",
         "src": "Trailer",
         "sub": "Werkzeug / Nahkampf"
@@ -2838,6 +2978,7 @@
           "zoom": 1.16
         },
         "name": "Golfschläger",
+        "seo": false,
         "slug": "golfschlaeger",
         "src": "Screenshot",
         "sub": "Nahkampf"
@@ -2858,6 +2999,7 @@
           "zoom": 1.08
         },
         "name": "Poolqueue",
+        "seo": false,
         "slug": "poolqueue",
         "src": "Screenshot",
         "sub": "Nahkampf"
@@ -2878,6 +3020,7 @@
           "zoom": 0.51
         },
         "name": "Erste-Hilfe-Kit",
+        "seo": false,
         "slug": "erste-hilfe-kit",
         "src": "Leak",
         "sub": "Ausrüstung"
@@ -2892,6 +3035,7 @@
         },
         "img": null,
         "name": "Wegfahrsperren-Bypass",
+        "seo": false,
         "slug": "wegfahrsperren-bypass",
         "src": "Leak",
         "sub": "Ausrüstung"
@@ -2912,6 +3056,7 @@
           "zoom": 1
         },
         "name": "Fallschirm",
+        "seo": false,
         "slug": "fallschirm",
         "src": "erwartet",
         "sub": "Ausrüstung"
@@ -2932,6 +3077,7 @@
           "zoom": 0.46
         },
         "name": "Fernglas",
+        "seo": false,
         "slug": "fernglas",
         "src": "erwartet",
         "sub": "Ausrüstung"
@@ -2955,6 +3101,7 @@
           "zoom": 1.15
         },
         "name": "Alligator",
+        "seo": false,
         "slug": "alligator",
         "src": "Trailer",
         "sub": "American Alligator"
@@ -2977,6 +3124,7 @@
           "zoom": 1
         },
         "name": "Tigerpython",
+        "seo": false,
         "slug": "tigerpython",
         "src": "Trailer",
         "sub": "Burmese Python"
@@ -2992,6 +3140,7 @@
         },
         "img": null,
         "name": "Kornnatter",
+        "seo": false,
         "slug": "kornnatter",
         "src": "Trailer",
         "sub": "Corn Snake"
@@ -3014,6 +3163,7 @@
           "zoom": 1.12
         },
         "name": "Grüner Leguan",
+        "seo": false,
         "slug": "gruener-leguan",
         "src": "Trailer",
         "sub": "Green Iguana"
@@ -3035,6 +3185,7 @@
           "zoom": 1.14
         },
         "name": "Amerikanischer Aal",
+        "seo": false,
         "slug": "amerikanischer-aal",
         "src": "Trailer",
         "sub": "American Eel"
@@ -3050,6 +3201,7 @@
         },
         "img": null,
         "name": "Blauflossen-Thun",
+        "seo": false,
         "slug": "blauflossen-thun",
         "src": "Trailer",
         "sub": "Blackfin Tuna"
@@ -3071,6 +3223,7 @@
           "zoom": 1.12
         },
         "name": "Großer Tümmler",
+        "seo": false,
         "slug": "grosser-tuemmler",
         "src": "Trailer",
         "sub": "Bottlenose Dolphin"
@@ -3086,6 +3239,7 @@
         },
         "img": null,
         "name": "Flusskrebs",
+        "seo": false,
         "slug": "flusskrebs",
         "src": "Trailer",
         "sub": "Crayfish"
@@ -3107,6 +3261,7 @@
           "zoom": 1.14
         },
         "name": "Flamingo",
+        "seo": false,
         "slug": "flamingo",
         "src": "Trailer",
         "sub": "American Flamingo"
@@ -3128,6 +3283,7 @@
           "zoom": 1.19
         },
         "name": "Silbermöwe",
+        "seo": false,
         "slug": "silbermoewe",
         "src": "Trailer",
         "sub": "American Herring Gull"
@@ -3143,6 +3299,7 @@
         },
         "img": null,
         "name": "Brauner Pelikan",
+        "seo": false,
         "slug": "brauner-pelikan",
         "src": "Trailer",
         "sub": "Brown Pelican"
@@ -3164,6 +3321,7 @@
           "zoom": 1.04
         },
         "name": "Biber",
+        "seo": false,
         "slug": "biber",
         "src": "Trailer",
         "sub": "Beaver"
@@ -3185,6 +3343,7 @@
           "zoom": 1.11
         },
         "name": "Rotluchs",
+        "seo": false,
         "slug": "rotluchs",
         "src": "Trailer",
         "sub": "Bobcat"
@@ -3206,6 +3365,7 @@
           "zoom": 1.15
         },
         "name": "Puma",
+        "seo": false,
         "slug": "puma",
         "src": "Trailer",
         "sub": "Cougar"
@@ -3227,6 +3387,7 @@
           "zoom": 1
         },
         "name": "Grauhörnchen",
+        "seo": false,
         "slug": "grauhoernchen",
         "src": "Trailer",
         "sub": "Eastern Gray Squirrel"
@@ -3248,6 +3409,7 @@
           "zoom": 1.13
         },
         "name": "Deutscher Schäferhund",
+        "seo": false,
         "slug": "deutscher-schaeferhund",
         "src": "Trailer",
         "sub": "German Shepherd"
@@ -3269,6 +3431,7 @@
           "zoom": 1
         },
         "name": "Dobermann",
+        "seo": false,
         "slug": "dobermann",
         "src": "Trailer",
         "sub": "Doberman"
@@ -3290,6 +3453,7 @@
           "zoom": 1
         },
         "name": "Chihuahua",
+        "seo": false,
         "slug": "chihuahua",
         "src": "Trailer",
         "sub": "Chihuahua"
@@ -3311,6 +3475,7 @@
           "zoom": 1
         },
         "name": "Katze",
+        "seo": false,
         "slug": "katze",
         "src": "Trailer",
         "sub": "Cat"
@@ -3326,6 +3491,7 @@
         },
         "img": null,
         "name": "Kuh",
+        "seo": false,
         "slug": "kuh",
         "src": "Trailer",
         "sub": "Cow"
@@ -3341,6 +3507,7 @@
         },
         "img": null,
         "name": "Frosch",
+        "seo": false,
         "slug": "frosch",
         "src": "Trailer",
         "sub": "Frog"
@@ -3362,6 +3529,7 @@
           "zoom": 1.11
         },
         "name": "Unechte Karettschildkröte",
+        "seo": false,
         "slug": "unechte-karettschildkroete",
         "src": "Trailer",
         "sub": "Loggerhead Sea Turtle"
@@ -3378,6 +3546,7 @@
         },
         "img": null,
         "name": "Tigerhai",
+        "seo": false,
         "slug": "tigerhai",
         "src": "Trailer",
         "sub": "Tiger Shark"
@@ -3394,6 +3563,7 @@
         },
         "img": null,
         "name": "Weißer Hai",
+        "seo": false,
         "slug": "weisser-hai",
         "src": "Screenshot",
         "sub": "Great White Shark"
@@ -3410,6 +3580,7 @@
         },
         "img": null,
         "name": "Florida-Panther",
+        "seo": false,
         "slug": "florida-panther",
         "src": "Screenshot",
         "sub": "Florida Panther"
@@ -3432,6 +3603,7 @@
           "zoom": 1.11
         },
         "name": "Weißwedelhirsch",
+        "seo": false,
         "slug": "weisswedelhirsch",
         "src": "Screenshot / Trailer",
         "sub": "White-tailed Deer"
@@ -3453,6 +3625,7 @@
           "zoom": 1.12
         },
         "name": "Waschbär",
+        "seo": false,
         "slug": "waschbaer",
         "src": "Trailer",
         "sub": "Raccoon"
@@ -3468,6 +3641,7 @@
         },
         "img": null,
         "name": "Reiher",
+        "seo": false,
         "slug": "reiher",
         "src": "Screenshot",
         "sub": "Heron"
@@ -3483,6 +3657,7 @@
         },
         "img": null,
         "name": "Rosalöffler",
+        "seo": false,
         "slug": "rosaloeffler",
         "src": "Screenshot",
         "sub": "Roseate Spoonbill"
@@ -3499,6 +3674,7 @@
         },
         "img": null,
         "name": "Nutria",
+        "seo": false,
         "slug": "nutria",
         "src": "Screenshot",
         "sub": "Coypu"
@@ -3514,6 +3690,7 @@
         },
         "img": null,
         "name": "Stockente",
+        "seo": false,
         "slug": "stockente",
         "src": "Trailer",
         "sub": "Duck"
@@ -3535,6 +3712,7 @@
           "zoom": 0.84
         },
         "name": "Rottweiler",
+        "seo": false,
         "slug": "rottweiler",
         "src": "Poster",
         "sub": "Hund"
@@ -3550,6 +3728,7 @@
         },
         "img": null,
         "name": "Zwergpinscher",
+        "seo": false,
         "slug": "zwergpinscher",
         "src": "Trailer",
         "sub": "Miniature Pinscher"
@@ -3565,6 +3744,7 @@
         },
         "img": null,
         "name": "Taube",
+        "seo": false,
         "slug": "taube",
         "src": "Leak",
         "sub": "Pigeon"
@@ -3580,6 +3760,7 @@
         },
         "img": null,
         "name": "Ratte",
+        "seo": false,
         "slug": "ratte",
         "src": "Leak",
         "sub": "Rat"
@@ -3596,6 +3777,7 @@
         },
         "img": null,
         "name": "Stinktier",
+        "seo": false,
         "slug": "stinktier",
         "src": "Leak",
         "sub": "Skunk"
@@ -3612,6 +3794,7 @@
         },
         "img": null,
         "name": "Florida-Schwarzbär",
+        "seo": false,
         "slug": "florida-schwarzbaer",
         "src": "Erwartet",
         "sub": "Florida Black Bear"
@@ -3628,6 +3811,7 @@
         },
         "img": null,
         "name": "Forellenbarsch",
+        "seo": false,
         "slug": "forellenbarsch",
         "src": "erwartet",
         "sub": "Largemouth Bass"
@@ -3644,6 +3828,7 @@
         },
         "img": null,
         "name": "Snook",
+        "seo": false,
         "slug": "snook",
         "src": "erwartet",
         "sub": "Common Snook"
@@ -3660,6 +3845,7 @@
         },
         "img": null,
         "name": "Tarpon",
+        "seo": false,
         "slug": "tarpon",
         "src": "erwartet",
         "sub": "Atlantic Tarpon"
@@ -3676,6 +3862,7 @@
         },
         "img": null,
         "name": "Zackenbarsch",
+        "seo": false,
         "slug": "zackenbarsch",
         "src": "erwartet",
         "sub": "Grouper"
@@ -3692,6 +3879,7 @@
         },
         "img": null,
         "name": "Seekuh",
+        "seo": false,
         "slug": "seekuh",
         "src": "Leak / erwartet",
         "sub": "Manatee"
@@ -3708,6 +3896,7 @@
         },
         "img": null,
         "name": "Mantarochen",
+        "seo": false,
         "slug": "mantarochen",
         "src": "Leak / erwartet",
         "sub": "Manta Ray"
@@ -3724,6 +3913,7 @@
         },
         "img": null,
         "name": "Wal",
+        "seo": false,
         "slug": "wal",
         "src": "Leak",
         "sub": "Whale"
@@ -3739,6 +3929,7 @@
         },
         "img": null,
         "name": "Weißkopfseeadler",
+        "seo": false,
         "slug": "weisskopfseeadler",
         "src": "erwartet",
         "sub": "Bald Eagle"
@@ -3754,6 +3945,7 @@
         },
         "img": null,
         "name": "Fischadler",
+        "seo": false,
         "slug": "fischadler",
         "src": "erwartet",
         "sub": "Osprey"
@@ -3769,6 +3961,7 @@
         },
         "img": null,
         "name": "Weißer Ibis",
+        "seo": false,
         "slug": "weisser-ibis",
         "src": "erwartet",
         "sub": "American White Ibis"
@@ -3784,6 +3977,7 @@
         },
         "img": null,
         "name": "Kormoran",
+        "seo": false,
         "slug": "kormoran",
         "src": "erwartet",
         "sub": "Cormorant"
@@ -3799,6 +3993,7 @@
         },
         "img": null,
         "name": "Truthahngeier",
+        "seo": false,
         "slug": "truthahngeier",
         "src": "erwartet",
         "sub": "Vulture"
@@ -3814,6 +4009,7 @@
         },
         "img": null,
         "name": "Kojote",
+        "seo": false,
         "slug": "kojote",
         "src": "erwartet",
         "sub": "Coyote"
@@ -3829,6 +4025,7 @@
         },
         "img": null,
         "name": "Wildschwein",
+        "seo": false,
         "slug": "wildschwein",
         "src": "erwartet",
         "sub": "Wild Boar"
@@ -3844,6 +4041,7 @@
         },
         "img": null,
         "name": "Opossum",
+        "seo": false,
         "slug": "opossum",
         "src": "erwartet",
         "sub": "Virginia Opossum"
@@ -3859,6 +4057,7 @@
         },
         "img": null,
         "name": "Kaninchen",
+        "seo": false,
         "slug": "kaninchen",
         "src": "erwartet",
         "sub": "Rabbit"
@@ -3880,6 +4079,7 @@
           "zoom": 0.66
         },
         "name": "Huhn",
+        "seo": false,
         "slug": "huhn",
         "src": "erwartet",
         "sub": "Chicken"
