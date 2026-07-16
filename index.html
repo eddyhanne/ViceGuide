@@ -378,7 +378,7 @@
   .art-date{font-family:'Space Mono';font-size:12px;color:var(--text-soft);margin-bottom:16px}
   .article .lead{font-size:18px;color:var(--text-soft);font-weight:500;margin-bottom:24px;padding-bottom:22px;border-bottom:2px solid var(--line)}
   .article .content{padding-bottom:0}
-  .article .content p{margin-bottom:16px;font-size:16px} .article .content h3{font-family:'Oswald';font-weight:600;font-size:22px;margin:26px 0 10px;color:var(--heading)}
+  .article .content p{margin-bottom:16px;font-size:16px} .article .content h2,.article .content h3{font-family:'Oswald';font-weight:600;font-size:22px;margin:26px 0 10px;color:var(--heading)}
   .art-list{margin:0 0 18px;padding-left:22px}
   .art-list li{margin-bottom:9px;font-size:16px;line-height:1.5}
   .art-list li::marker{color:var(--accent)}
@@ -658,6 +658,11 @@
   .legal-links span{color:var(--text-soft)}
   .legal-content h3{font-family:'Oswald';font-weight:600;font-size:24px;color:var(--heading);margin-bottom:8px}
   .legal-content h4{font-size:15px;font-weight:700;color:var(--heading);margin:16px 0 4px}
+  .legal-content h2{font-family:'Oswald';font-weight:600;font-size:19px;color:var(--heading);margin:22px 0 6px}
+  .db-crumb{font-size:12.5px;color:var(--text-soft);margin:0 0 10px}
+  .db-crumb a{color:var(--accent);text-decoration:none}
+  .db-rel{margin:4px 0 10px;padding-left:18px}
+  .db-rel a{color:var(--accent);text-decoration:none}
   .legal-content p{font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.6}
   .legal-content .lg-note{font-size:12.5px;color:var(--text-soft);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-style:italic}
   .legal-content h1{font-family:'Oswald';font-weight:600;font-size:28px;color:var(--heading);margin:0 0 10px;line-height:1.15}
@@ -2968,7 +2973,7 @@ function renderContent(arr,outHeads,outFaqs,editable,seen){
       let id=slugify(text)||'abschnitt';
       if(used[id]){ used[id]++; id=id+'-'+used[id]; } else used[id]=1;
       if(outHeads&&text) outHeads.push({text,id});
-      html+=`<h3 id="${id}">${renderText(text,seen)}</h3>`; i++; continue;
+      html+=`<h2 id="${id}">${renderText(text,seen)}</h2>`; i++; continue;
     }
     html+=renderContentBlock(p,editable,seen); i++;
   }
@@ -3877,9 +3882,9 @@ const LEGAL={
    <p>Bei Fragen zum Datenschutz: info@viceguide.de.</p>`,
  ueber:`<h1>Über ViceGuide</h1>
    <p class="ab-lead">ViceGuide ist die deutschsprachige Anlaufstelle rund um Grand Theft Auto 6. Wir bündeln News, Gerüchte und Leaks, eine wachsende Datenbank zu Charakteren, Fahrzeugen, Waffen und Orten sowie ab Release Guides für alle wichtigen Spielbereiche. Ein Ort für alles, was Fans zu GTA 6 wissen wollen, auf Deutsch.</p>
-   <h4>Was ViceGuide ist</h4>
+   <h2>Was ViceGuide ist</h2>
    <p>Vor dem Release ist ViceGuide dein Überblick: Wir verfolgen jede offizielle Ankündigung, jeden Trailer und die großen Leaks, prüfen sie und ordnen sie ein. Ab dem Launch am 19. November 2026 kommt der eigentliche Kern dazu, nämlich täglich frische Guides zu Missionen, Geld, Fahrzeugen, Secrets und mehr, während viele andere deutsche Fans sonst auf englische Quellen angewiesen wären.</p>
-   <h4>So arbeiten wir</h4>
+   <h2>So arbeiten wir</h2>
    <p>Hinter ViceGuide steht kein großer Verlag, sondern Leidenschaft für die Serie. Genau deshalb halte ich mich an ein paar feste Grundsätze:</p>
    <div class="ab-values">
      <div class="ab-value"><span class="ab-vh">Fakten zuerst</span>Jede Angabe prüfen wir gegen offizielle Quellen wie Rockstar Games und Take-Two sowie seriöse Fachmedien, bevor sie hier landet.</div>
@@ -3888,15 +3893,15 @@ const LEGAL={
      <div class="ab-value"><span class="ab-vh">Einordnen statt kopieren</span>Wir sagen, was eine Meldung wirklich wert ist, mit einer klaren eigenen Einschätzung.</div>
      <div class="ab-value"><span class="ab-vh">Fehler korrigieren</span>Wenn sich etwas ändert oder wir danebenlagen, bessern wir sichtbar nach und weisen ein Aktualisierungsdatum aus.</div>
    </div>
-   <h4>Wer hinter ViceGuide steckt</h4>
+   <h2>Wer hinter ViceGuide steckt</h2>
    <div class="ab-author">
      <div class="ab-av">EH</div>
      <div class="ab-ab"><span class="ab-an">Eddy Hanné</span><span class="ab-ar">Gründer und redaktionell verantwortlich</span><p>Ich bin Eddy, Jahrgang 1987, Familienvater aus Bonn und zocke, seit ich denken kann. Losgegangen ist es noch vor der Schule auf C64 und Amiga 500, danach ging es durch alle PlayStation-Generationen von der PS1 bis zur PS5 Pro. Zwischendurch war viel PC dabei, auf dem ich inzwischen wieder am liebsten spiele.</p><p>GTA begleitet mich fast mein ganzes Gamer-Leben: von Teil 1 über das heiß geliebte GTA 2, GTA 3, Vice City und San Andreas bis GTA 5 habe ich jeden Teil gespielt. Entsprechend groß ist die Vorfreude auf den sechsten Teil.</p><p>Beruflich arbeite ich als Key Account Manager bei einem großen digitalen Verlag. Das Gespür für digitale Medien, das ich dort täglich brauche, fließt direkt in ViceGuide ein.</p><p>Mein Ziel ist einfach: das größte deutschsprachige GTA-6-Hub aufbauen, von Zockern, mit Zockern, für Zocker, und dabei gemeinsam Spaß haben. Über private Nachrichten freue ich mich jederzeit, per Discord oder Mail an info@viceguide.de.</p></div>
    </div>
-   <h4>Unabhängigkeit und Transparenz</h4>
+   <h2>Unabhängigkeit und Transparenz</h2>
    <p>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.</p>
    <p>Aktuell zeigen wir keine Werbung und setzen keine Affiliate-Links ein. Sollte sich das später ändern, kennzeichnen wir das transparent, und unsere redaktionelle Einordnung bleibt davon unberührt.</p>
-   <h4>Community und Kontakt</h4>
+   <h2>Community und Kontakt</h2>
    <p>Wir freuen uns über jeden, der mitliest und mitredet. Tausch dich mit uns und anderen Fans aus:</p>
    <div class="ab-links">
      <a href="https://discord.gg/MNmMG3xNfA" target="_blank" rel="noopener">Discord-Community</a>

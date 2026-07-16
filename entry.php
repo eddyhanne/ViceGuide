@@ -190,11 +190,33 @@ foreach (preg_split('/\r?\n+/', $desc) as $para) {
 }
 $chips = '<p>' . vg_esc2($secInfo['label']) . ($row['cat'] ? ' · ' . vg_esc2($row['cat']) : '') . ($row['src'] ? ' · Quelle: ' . vg_esc2($row['src']) : '') . '</p>';
 
+// Sichtbare Breadcrumb mit echten Links, deckungsgleich zum BreadcrumbList-Markup.
+$crumb = '<nav class="db-crumb"><a href="/">Startseite</a> › <a href="/' . $secInfo['prefix'] . '/">' . vg_esc2($secInfo['label'])
+    . '</a> › <span>' . vg_esc2($name) . '</span></nav>';
+
+// Interne Verlinkung: weitere Eintraege derselben Rubrik plus der Rubrik-Hub.
+// Gibt jeder (indexierbaren) Detailseite crawlbare Wege zu verwandten Inhalten,
+// statt sie nur ueber die Sitemap erreichbar zu lassen (SEO-Audit, Punkt E).
+$sibHtml = '';
+try {
+    $sib = $pdo->prepare("SELECT name, slug FROM db_entries WHERE section = ? AND slug IS NOT NULL AND slug <> '' AND id <> ? ORDER BY sort_order LIMIT 6");
+    $sib->execute([$section, (int)$row['id']]);
+    $sibs = $sib->fetchAll();
+    if ($sibs) {
+        $lis = '';
+        foreach ($sibs as $s) {
+            $lis .= '<li><a href="/' . $secInfo['prefix'] . '/' . vg_esc2($s['slug']) . '">' . vg_esc2($s['name']) . '</a></li>';
+        }
+        $sibHtml = '<div class="mabout">Mehr aus ' . vg_esc2($secInfo['label']) . '</div><ul class="db-rel">' . $lis
+            . '</ul><p><a href="/' . $secInfo['prefix'] . '/">Alle ' . vg_esc2($secInfo['label']) . ' ansehen</a></p>';
+    }
+} catch (Throwable $e) { $sibHtml = ''; }
+
 $modalInner =
     ($hasImg ? '<img src="' . vg_esc2($imgUrl) . '" alt="' . vg_esc2($name) . '" style="width:100%;border-radius:16px 16px 0 0">' : '') .
-    '<div class="mbody"><h1>' . vg_esc2($name) . '</h1><div class="msub">' . vg_esc2($sub) . '</div>' .
+    '<div class="mbody">' . $crumb . '<h1>' . vg_esc2($name) . '</h1><div class="msub">' . vg_esc2($sub) . '</div>' .
     $chips . $fieldsHtml .
-    '<div class="mabout">Beschreibung</div>' . $descHtml .
+    '<div class="mabout">Beschreibung</div>' . $descHtml . $sibHtml .
     '</div>';
 
 $body = [

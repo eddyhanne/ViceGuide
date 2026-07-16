@@ -53,7 +53,7 @@ function vg_plain_content(array $content): string {
         $text = $block;
         if (str_starts_with($text, 'img:')) continue;
         if (str_starts_with($text, '###')) {
-            $out .= '<h3>' . vg_esc(trim(preg_replace('/^###\s*/', '', $text))) . '</h3>';
+            $out .= '<h2>' . vg_esc(trim(preg_replace('/^###\s*/', '', $text))) . '</h2>';
         } elseif (str_starts_with($text, '- ')) {
             $out .= '<p>' . vg_esc(trim(substr($text, 2))) . '</p>';
         } elseif (str_starts_with($text, 'faq:')) {
