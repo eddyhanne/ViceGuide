@@ -601,8 +601,14 @@
   .nmag-all:hover{text-decoration:underline}
   .nmag-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
   @media(max-width:1000px){.nmag-row{grid-template-columns:repeat(3,1fr)}}
-  @media(max-width:860px){.nmag-focus{grid-template-columns:1fr}.nmag-side{flex-direction:row}.nmag-side .ncard{flex:1}.nmag-row{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.nmag-side{flex-direction:column}.nmag-row{grid-template-columns:1fr 1fr}}
+  @media(max-width:860px){.nmag-focusrow{grid-template-columns:repeat(2,1fr)}}
+  /* Mobil: Rubrik- und Fokus-Reihe als horizontal wischbare Zeile (wie das
+     Start-Hub "News im Fokus"), haelt die Seite schlank statt lange Stapel. */
+  @media(max-width:760px){
+    .nmag-row,.nmag-focusrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:4px;scrollbar-width:none;grid-template-columns:none}
+    .nmag-row::-webkit-scrollbar,.nmag-focusrow::-webkit-scrollbar{display:none}
+    .nmag-row .ncard,.nmag-focusrow .ncard{flex:0 0 78%;scroll-snap-align:start}
+  }
   /* Kommentare: Aktionen, Antworten, Zitate */
   .cm-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
   .cm-act{font-family:'Inter';font-size:12px;font-weight:600;color:var(--text-soft);background:var(--bg-2);border:1px solid var(--line);padding:5px 10px;border-radius:8px;transition:.15s}
@@ -4202,8 +4208,10 @@ function restoreFromLocation(){
 window.addEventListener('popstate', restoreFromLocation);
 
 /* init */
-newsView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
-dbView = newsView;
+/* News immer als Kacheln (Magazin), auch mobil; die Liste bleibt optional ueber
+   den Umschalter. Die Datenbank behaelt ihre breitenabhaengige Standardansicht. */
+newsView = 'cards';
+dbView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 { const _dark=document.documentElement.getAttribute('data-theme')==='dark'; $('tico').textContent=_dark?'☾':'☀'; const _l=$('tlbl'); if(_l)_l.textContent=_dark?'Dunkel':'Hell'; }
 restoreFromLocation();
 /* Nach dem Laden der echten Daten einmal erzwungen neu aufbauen: der erste
