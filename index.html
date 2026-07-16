@@ -750,6 +750,9 @@
   .ie-zoomlabel input[type=range]{width:100%;margin-top:6px;accent-color:var(--accent)}
   .ie-hint{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin:8px 0}
   .ie-creditlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-top:6px}
+  .ie-cpre-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .ie-cpre{font-size:12px;font-weight:600;color:var(--text-soft);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;transition:.15s}
+  .ie-cpre:hover{border-color:var(--accent);color:var(--accent)}
   .ie-textfields{margin-bottom:14px}
   #imged.imgonly .ie-textfields{display:none}
   .ie-tlabel{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
@@ -1359,6 +1362,16 @@ function portalDbHtml(){
 function portalRelHtml(){
   return `<div class="p-sh p-sh-sm"><h2>Guides</h2><span class="p-reltag">\u{1F512} ab 19.11.2026</span><a class="p-more" style="margin-left:auto" href="/guides/" onclick="return goClick(event,'guides')">Alle Guides \u2192</a></div><div class="p-relgrid">${guideTilesHtml()}</div>`;
 }
+/* Ratgeber-Block auf der Startseite: die neuesten immergruenen Erklaerstuecke
+   als Zeilen, gleiche Optik wie "Aktuelle News". Statt der News-Kategorie-Pille
+   zeigt die kleine Zeile den Ratgeber-Themenblock (Kaufberatung usw.). */
+function rgBlockLabel(id){ const b=RATGEBER.find(b=>b.ids.includes(id)); return b?b.label:'Ratgeber'; }
+function portalRatgeberHtml(){
+  const list=GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,4);
+  if(!list.length) return '';
+  const cards=list.map(g=>{const idx=GUIDES.indexOf(g);const th=g.img?`<span class="p-nth"><img src="${g.img}" alt="" loading="lazy"></span>`:`<span class="p-nth ph">${initial(g.title)}</span>`;return `<a class="p-nrow" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${th}<span class="p-nmain"><span class="p-ncat">${rgBlockLabel(g.id)}</span><span class="p-nt">${esc(g.title)}</span><span class="p-nd">${g.date?fmtDShort(g.date):''}</span></span></a>`;}).join('');
+  return `<div class="p-sh"><h2>Ratgeber</h2><a class="p-more" style="margin-left:auto" href="/ratgeber/" onclick="return goClick(event,'ratgeber')">Alle Ratgeber →</a></div><div class="p-news">${cards}</div>`;
+}
 /* Datenbank-Hub (/datenbank/): Sammelseite ueber allen Rubriken. */
 function renderDbHub(){
   $('view').innerHTML=`<div class="hub-head"><h1>Datenbank</h1><p>Das komplette GTA-6-Nachschlagewerk. W\u00e4hle eine Rubrik, um alle Eintr\u00e4ge zu durchst\u00f6bern.</p></div><div class="p-rgrid">${dbTilesHtml()}</div>`;
@@ -1372,13 +1385,20 @@ function renderGuidesHub(){
 function renderRatgeberHub(){
   const present=RATGEBER.filter(b=>b.ids.some(id=>GUIDES.some(g=>g.id===id)));
   const nav=present.map(b=>`<a class="rg-chip" href="#rg-${b.key}" onclick="return rgJump(event,'rg-${b.key}')"><span class="rg-cic">${rgIcon(b.key)}</span>${b.label}</a>`).join('');
+  /* "Zuletzt veroeffentlicht": neueste Ratgeber quer ueber alle Bloecke, oben,
+     analog zur News-Magazinansicht (chronologischer Schnelleinstieg). */
+  let latestHtml='';
+  const latest=GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,6);
+  if(latest.length){
+    latestHtml=`<div class="nmag-latest"><div class="nmag-flabel">🕒 Zuletzt veröffentlicht</div><div class="nmag-lrow">${latest.map(nmagMiniCard).join('')}</div></div>`;
+  }
   const blocks=present.map(b=>{
     const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean)
       .sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     const cards=arts.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
     return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3><span class="rg-count">${arts.length} Artikel</span></div><div class="nmag-row">${cards}</div></div>`;
   }).join('');
-  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Alles Immergr\u00fcne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi. Geb\u00fcndelt statt in den News verstreut.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
+  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Alles Immergr\u00fcne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi. Geb\u00fcndelt statt in den News verstreut.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${latestHtml}${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
 }
 function rgJump(e,id){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); return false; }
 /* Klick auf eine Rubrik-Kachel im Editiermodus oeffnet den Bild-Editor fuer
@@ -1393,6 +1413,7 @@ function renderHome(){
    ${portalHighlightsHtml()}
    ${portalDbHtml()}
    ${portalNewsHtml()}
+   ${portalRatgeberHtml()}
    ${portalRelHtml()}`;
 }
 function renderNews(){
@@ -2142,6 +2163,9 @@ async function iePaste(){
 document.addEventListener('paste',e=>{ if(!ieState)return; const items=e.clipboardData&&e.clipboardData.items; if(!items)return; for(const it of items){ if(it.type&&it.type.startsWith('image/')){ const blob=it.getAsFile(); if(blob){ ieLoadFile(blob); e.preventDefault(); } return; } } });
 function ieZoom(v){ if(!ieState)return; ieState.zoom=parseFloat(v); ieRender(); }
 function ieRemove(){ if(!ieState)return; ieState.img=null; ieState.imgChanged=true; ieRender(); }
+/* Schnellauswahl fuer die Bildquelle: setzt den Wert ins Freitextfeld, das
+   danach normal weiterbearbeitet werden kann. */
+function ieCredit(v){ const el=$('ie-credit'); if(el){ el.value=v; el.focus(); } }
 async function ieApply(){
   if(!ieState)return;
   const isDraft=ieState.kind==='draftpreview';
@@ -4122,6 +4146,10 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
     <div class="ie-hint">Bild im Rahmen ziehen, um den Ausschnitt zu verschieben.</div>
     <label class="ie-creditlabel">Quelle (optional)
       <input type="text" id="ie-credit" class="cm-in" placeholder="z.B. Rockstar" style="margin-top:6px">
+      <div class="ie-cpre-row">
+        <button type="button" class="ie-cpre" onclick="ieCredit('KI-generiert / ViceGuide')">KI-generiert / ViceGuide</button>
+        <button type="button" class="ie-cpre" onclick="ieCredit('Rockstar')">Rockstar</button>
+      </div>
     </label>
   </div>
   <div class="ie-textfields">
