@@ -1628,6 +1628,32 @@ async function adminLogout(){
    angezeigten Werte sind ja schon der zuletzt gespeicherte Entwurfsstand).
    Gibt false zurueck, wenn etwas schiefging, toggleEdit() bricht dann ab und
    der Editiermodus bleibt an, damit kein Entwurf unbemerkt haengen bleibt. */
+/* Einmal-Werkzeug (Juli 2026): setzt die redaktionell abgestimmten Status-Label
+   auf den Bestand und veroeffentlicht direkt. Nach Gebrauch wieder entfernen
+   (Knopf und Funktion), analog zum frueheren bulkCredit. Einzelne Artikel
+   lassen sich danach jederzeit im Editor umstellen. */
+const BULK_STATUS_MAP={
+  'leaks-sommer-2026-echt-oder-fake':'rumor','trailer-3-spekulation-7-august-2':'rumor','gta-6-mysterioeser-turm-leonida':'rumor',
+  'gta-6-deutsche-synchronisation':'mixed','gta-6-crossplay-crossprogression':'mixed','gta-6-cheats-was-bekannt':'mixed','gta-6-online-modus':'mixed','wann-pc-version':'mixed','gta-6-pc-version-warum-spaeter':'mixed','gta6-trailer-3-wann-kommt-er':'mixed','rockstar-gewerkschaft-streik':'mixed','radiosender-soundtrack-stand':'mixed','gta-6-ps5-emulatoren-sharpemu-pc':'mixed','die-karte-von-gta-6':'mixed','gangs-fraktionen-leonida':'mixed','gta-6-preload-termin-speicherplatz':'mixed','gta-6-uhrzeit-freischaltung':'mixed','gta-6-ps5-vs-ps5-pro-unterschied':'mixed','wetter-technik-engine':'mixed','easter-eggs-trailer-details':'mixed','gta-6-altersfreigabe-usk':'mixed','der-grosse-leak-von-2022':'mixed','nebencharaktere-im-detail':'mixed',
+  'gta-6-vorbestellen':'confirmed','vorbesteller-boni':'confirmed','physische-edition-ohne-disc':'confirmed','ultimate-edition-paywall':'confirmed','editionen-zu-release':'confirmed','plattformen-zu-release':'confirmed','release-endlich-bekannt':'confirmed','bestaetigte-fahrzeuge-waffen-charaktere':'confirmed','gta-6-konsolen-bundles-amazon':'confirmed','vice-city-vorbild-miami':'confirmed','hauptprotagonisten':'confirmed','beziehung-jason-lucia':'confirmed','trailer-1-analyse':'confirmed','trailer-2-analyse':'confirmed'
+};
+async function bulkStatus(){
+  if(!isAdmin){const ok=await adminLogin();if(!ok)return;}
+  const ids=Object.keys(BULK_STATUS_MAP).filter(id=>(GUIDES||[]).some(g=>g.id===id));
+  if(!confirm('Status-Label auf '+ids.length+' bestehende Artikel anwenden und veröffentlichen? Einmalige Aktion, einzelne lassen sich danach im Editor ändern.'))return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    try{
+      const r=await fetch('api/articles.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status:BULK_STATUS_MAP[id]})});
+      if(r.status===403){ toast('Nicht angemeldet, bitte Editiermodus neu starten.'); return; }
+      if(r.ok)ok++; else fail++;
+    }catch(e){ fail++; }
+  }
+  const pr=await fetch('api/articles.php?action=publish',{method:'POST'});
+  if(!pr.ok){ toast('Setzen ok ('+ok+'), aber Veröffentlichen fehlgeschlagen. Nochmal versuchen.'); return; }
+  (GUIDES||[]).forEach(g=>{ if(BULK_STATUS_MAP[g.id]){ g.status=BULK_STATUS_MAP[g.id]; delete g._draft; } });
+  toast('Status gesetzt und veröffentlicht: '+ok+' Artikel'+(fail?(', '+fail+' Fehler'):'')+'.');
+}
 async function publishDrafts(){
   const btn=$('edit-btn'), fab=$('edit-fab');
   const btnLabel=btn?btn.textContent:'', fabLabel=fab?fab.textContent:'';
@@ -3825,6 +3851,8 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <button onclick="downloadArticles()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">articles.json herunterladen</button>
     <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Kommentar-Glocke:</div>
     <button onclick="notifToggleVisible()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">🔔 Kommentar-Glocke ein-/ausblenden</button>
+    <div style="font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:14px;line-height:1.6">Einmal-Aktion (danach wieder entfernen):</div>
+    <button onclick="bulkStatus()" style="width:100%;margin-top:8px;font-weight:600;font-size:14px;padding:11px;border-radius:11px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line)">🚦 Status-Label auf Bestand anwenden</button>
   </details>
   <details style="margin-top:18px;opacity:.6">
     <summary style="font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-soft);cursor:pointer">KI-Recherche direkt hier (aktuell inaktiv)</summary>
