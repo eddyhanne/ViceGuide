@@ -550,7 +550,7 @@
       "credit": "Amazon.de",
       "date": "2026-07-14T09:48",
       "id": "gta-6-konsolen-bundles-amazon",
-      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=gta-6-konsolen-bundles-amazon&v=2026-07-16+11%3A47%3A30",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -558,7 +558,7 @@
       },
       "lead": "Amazon verkauft GTA 6 inzwischen im Bundle mit der Xbox Series X oder Series S, eine PlayStation-5-Variante gibt es beim Händler bislang nicht.",
       "meta": "News",
-      "pinned": false,
+      "pinned": true,
       "sources": [
         {
           "title": "NETZWELT",
@@ -578,7 +578,7 @@
         "Amazon führt zwei Xbox-Pakete, die Series X darin ist generalüberholt statt neu.",
         "Eine PS5-Variante fehlt bislang, könnte bis zum Release im November aber noch folgen."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-16 11:47:30"
     },
     {
       "author": null,
@@ -1597,7 +1597,7 @@
       "credit": "KI-generiert / Viceguide",
       "date": "2026-06-05T17:12",
       "id": "plattformen-zu-release",
-      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-16+11%3A47%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1605,7 +1605,7 @@
       },
       "lead": "Wer wissen will, auf welcher Konsole GTA 6 am 19. November 2026 läuft, bekommt von Rockstar eine kurze, klare Antwort.",
       "meta": "Plattformen",
-      "pinned": true,
+      "pinned": false,
       "sources": [
         {
           "title": "Rockstar Games Newswire",
@@ -1625,7 +1625,7 @@
         "PS4, Xbox One, Switch 2 und PC fallen zum Launch raus, die Switch 2 hat Take-Two ausdrücklich ausgeschlossen.",
         "Eine PC-Version folgt der Reihen-Historie zufolge erst deutlich später."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-16 11:47:26"
     },
     {
       "author": null,
