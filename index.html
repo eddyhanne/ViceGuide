@@ -1450,7 +1450,7 @@ function renderRatgeberHub(){
       return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3>${all}</div><div class="nmag-row">${cards}</div></div>`;
     }).join('');
   }
-  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Die wichtigsten Fragen vor dem Release, klar beantwortet: Kaufberatung und Editionen, Plattformen und Technik, Termine rund um den 19. November sowie das, was zu Online-Modus, Cheats und Altersfreigabe bekannt ist.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${latestHtml}${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
+  $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Kaufberatung, Technik und Erklärungen rund um GTA 6, verständlich und auf den Punkt. Von Editionen und Plattformen über Termine bis zu Features und Spielmodi.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${latestHtml}${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
 }
 function rgJump(e,id){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); return false; }
 /* Ratgeber-Themenfilter setzen (Chip oder "Alle N ansehen"). null = Uebersicht. */
@@ -1496,7 +1496,7 @@ function renderNews(){
 
   $('view').innerHTML=`
    <div class="sec-head news-sechead"><div class="sec-title"><span class="sec-ic">${secIcon('news')}</span>News &amp; Ger\u00fcchte</div><div class="sec-note">Alle News, Ger\u00fcchte und Leaks rund um GTA 6, chronologisch und durchsuchbar.</div></div>
-   <div class="group" id="news-anchor"><div class="group-head"><div class="news-head"><div class="group-title"><span class="badge ${g1.badgeClass}">${g1.badge}</span></div>
+   <div class="group" id="news-anchor"><div class="group-head"><div class="news-head"><div class="group-title"></div>
      <div class="viewtoggle"><button class="vt ${newsView==='list'?'on':''}" onclick="setNewsView('list')">☰ Liste</button><button class="vt ${newsView==='cards'?'on':''}" onclick="setNewsView('cards')">▦ Kacheln</button></div></div>
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
    `;
