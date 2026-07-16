@@ -3109,6 +3109,24 @@ function extractContentBlocks(container){
         const a=answerEl?extractTextPreservingRefs(answerEl).trim():'';
         if(q||a) out.push('faq:'+q+'|'+a);
       });
+    }else if(node.classList&&node.classList.contains('art-quote')){
+      /* Zitat-Block zurueck in "quote:Deutsch|Quelle|Original" ueberfuehren,
+         sonst flacht der else-Zweig ihn beim Freigeben zu Rohtext ab (inkl.
+         Knopf-Beschriftung und Original). */
+      const de=node.querySelector('.q-de'); const cite=node.querySelector('cite'); const orig=node.querySelector('.q-orig');
+      const q=de?extractTextPreservingRefs(de).trim():'';
+      const who=cite?cite.textContent.trim():'';
+      const or=orig?orig.textContent.trim():'';
+      if(q){ let line='quote:'+q; if(or) line+='|'+who+'|'+or; else if(who) line+='|'+who; out.push(line); }
+    }else if(node.tagName==='FIGURE'&&node.querySelector('.vg-yt')){
+      const yt=node.querySelector('.vg-yt'); const cap=node.querySelector('figcaption');
+      const id=yt.getAttribute('data-id')||''; const capTxt=(cap&&cap.textContent.trim())?cap.textContent.trim():'';
+      if(id) out.push('yt:'+id+(capTxt?'|'+capTxt:''));
+    }else if(node.tagName==='FIGURE'&&node.querySelector('.vg-emb')){
+      const emb=node.querySelector('.vg-emb'); const cap=node.querySelector('figcaption');
+      const plat=emb.getAttribute('data-plat')||''; const url=emb.getAttribute('data-url')||'';
+      const capTxt=(cap&&cap.textContent.trim())?cap.textContent.trim():'';
+      if(plat&&url) out.push('embed:'+plat+'|'+url+(capTxt?'|'+capTxt:''));
     }else if(node.tagName==='FIGURE'){
       const img=node.querySelector('img'); const cap=node.querySelector('figcaption');
       const src=img?img.getAttribute('src'):'';

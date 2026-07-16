@@ -64,8 +64,13 @@ function vg_plain_content(array $content): string {
             $q = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($parts[0] ?? ''));
             $who = trim($parts[1] ?? '');
             $orig = trim($parts[2] ?? '');
-            $out .= '<blockquote>' . vg_esc($q) . ($who ? '<cite>' . vg_esc($who) . '</cite>' : '')
-                . ($orig ? '<details><summary>Original anzeigen</summary><p>' . vg_esc($orig) . '</p></details>' : '') . '</blockquote>';
+            // Deckungsgleich zum Client (renderContentBlock): dieselbe .art-quote-
+            // Struktur, damit SSR und Client identisch aussehen und die vorhandene
+            // CSS greift (Akzentbalken, kursiv, Original per Klick aufklappbar).
+            $out .= '<blockquote class="art-quote"><div class="q-de">' . vg_esc($q) . '</div>'
+                . ($who ? '<cite>' . vg_esc($who) . '</cite>' : '')
+                . ($orig ? '<button type="button" class="q-toggle" onclick="toggleQuoteOrig(this)">Original anzeigen</button><div class="q-orig">' . vg_esc($orig) . '</div>' : '')
+                . '</blockquote>';
         } elseif (str_starts_with($text, 'yt:')) {
             $parts = explode('|', substr($text, 3), 2);
             $id = trim($parts[0] ?? ''); $cap = trim($parts[1] ?? '');
