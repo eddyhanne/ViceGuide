@@ -260,9 +260,9 @@
   /* filter bar */
   .filterbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 18px}
   .dbtabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
-  .dbtabs button{padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--heading);font-weight:600;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s}
-  .dbtabs button:hover{border-color:var(--accent)}
-  .dbtabs button.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+  .dbtabs button{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text-soft);font-family:'Inter';font-weight:600;font-size:13px;cursor:pointer;transition:.15s}
+  .dbtabs button:hover{border-color:var(--accent);color:var(--accent)}
+  .dbtabs button.active{background:var(--accent);color:var(--btn-text);border-color:var(--accent)}
   .nav-crumb{font-size:13px;color:var(--text-soft);font-weight:600;margin:0 0 12px}
   .nav-crumb a{color:var(--accent);text-decoration:none}
   .hub-head{margin:4px 0 2px}
@@ -616,12 +616,13 @@
   .nmag-ic svg{width:19px;height:19px}
   .nmag-all{font-family:'Space Mono';font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap;text-decoration:none}
   .nmag-all:hover{text-decoration:underline}
-  .rg-ic{font-size:17px;line-height:1}
   .rg-count{font-family:'Space Mono';font-size:12px;color:var(--text-soft);white-space:nowrap}
-  /* Ratgeber-Schnelluebersicht: Sprung-Chips zu den Themenbloecken */
+  /* Ratgeber-Schnelluebersicht: Sprung-Chips zu den Themenbloecken. Optik deckungsgleich mit .nf-chip (News), damit die Rubriken einheitlich wirken. */
   .rg-nav{display:flex;gap:8px;flex-wrap:wrap}
-  .rg-chip{display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .15s,color .15s}
-  .rg-chip:hover{border-color:var(--accent);color:var(--accent)}
+  .rg-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-soft);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;white-space:nowrap;text-decoration:none;transition:.15s}
+  .rg-chip:hover{border-color:var(--accent-2);color:var(--text)}
+  .rg-cic{color:var(--accent);display:inline-flex}
+  .rg-cic svg{width:15px;height:15px}
   .rg-cic{font-size:15px;line-height:1}
   .nmag-sec{scroll-margin-top:128px}
   /* Schnellauswahl klebt beim Scrollen unter dem Header (schnellere Navigation).
@@ -1130,6 +1131,14 @@ ICONS.videos='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 ICONS.release='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 ICONS.community='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H8l-4 4z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="13" y2="12"/></svg>';
 function secIcon(id){return ICONS[id]||ICONS.home;}
+// Ratgeber-Themenbloecke bekommen dieselbe Akzent-SVG-Optik wie die News-Rubriken (.nmag-ic), statt Emoji.
+const RG_ICON={
+ kauf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.2 11.2a1 1 0 0 0 1 .8h8.3a1 1 0 0 0 1-.8L20 8H6"/></svg>',
+ plattform:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>',
+ release:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9.5" x2="20" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/></svg>',
+ features:ICONS.activities
+};
+function rgIcon(k){return RG_ICON[k]||ICONS.home;}
 const SEC_ICON={}; SECTIONS.forEach(s=>SEC_ICON[s.id]=s.icon);
 function fitStyle(d){const f=(d&&d.imgfit)||{};const z=f.zoom||1;const x=(f.x!=null?f.x:50);const y=(f.y!=null?f.y:50);return `background-color:#000;background-image:url('${d.img}');background-repeat:no-repeat;background-position:${x}% ${y}%;background-size:${(z*100)}% auto;`;}
 /* Positioniert ein echtes <img> so, dass es optisch identisch zu
@@ -1362,12 +1371,12 @@ function renderGuidesHub(){
    gebuendelt. Karten teilen sich den Renderer mit den News-Kacheln. */
 function renderRatgeberHub(){
   const present=RATGEBER.filter(b=>b.ids.some(id=>GUIDES.some(g=>g.id===id)));
-  const nav=present.map(b=>`<a class="rg-chip" href="#rg-${b.key}" onclick="return rgJump(event,'rg-${b.key}')"><span class="rg-cic">${b.icon}</span>${b.label}</a>`).join('');
+  const nav=present.map(b=>`<a class="rg-chip" href="#rg-${b.key}" onclick="return rgJump(event,'rg-${b.key}')"><span class="rg-cic">${rgIcon(b.key)}</span>${b.label}</a>`).join('');
   const blocks=present.map(b=>{
     const arts=b.ids.map(id=>GUIDES.find(g=>g.id===id)).filter(Boolean)
       .sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     const cards=arts.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('');
-    return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="rg-ic">${b.icon}</span>${b.label}</h3><span class="rg-count">${arts.length} Artikel</span></div><div class="nmag-row">${cards}</div></div>`;
+    return `<div class="nmag-sec" id="rg-${b.key}"><div class="nmag-head"><h3><span class="nmag-ic">${rgIcon(b.key)}</span>${b.label}</h3><span class="rg-count">${arts.length} Artikel</span></div><div class="nmag-row">${cards}</div></div>`;
   }).join('');
   $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Ratgeber</h1><p>Alles Immergr\u00fcne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi. Geb\u00fcndelt statt in den News verstreut.</p></div>${nav?`<div class="rg-nav">${nav}</div>`:''}<div class="news-mag rg-mag">${blocks||'<div class="empty">Noch keine Ratgeber-Artikel.</div>'}</div>`;
 }
