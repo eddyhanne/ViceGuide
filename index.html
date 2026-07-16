@@ -3311,7 +3311,7 @@ function extractTextPreservingRefs(node){
 function extractContentBlocks(container){
   const out=[];
   Array.from(container.children).forEach(node=>{
-    if(node.tagName==='H3'){
+    if(node.tagName==='H3'||node.tagName==='H2'){
       const t=extractTextPreservingRefs(node).trim(); if(t) out.push('### '+t);
     }else if(node.tagName==='UL'){
       Array.from(node.children).forEach(li=>{ const t=extractTextPreservingRefs(li).trim(); if(t) out.push('- '+t); });
