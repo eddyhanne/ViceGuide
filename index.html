@@ -595,6 +595,18 @@
      Leerraum). Etwas groesser als die Rubrik-Reihe (3 statt 4 Spalten). */
   .nmag-focusrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .nmag-focusrow .ncard{border-color:var(--accent)}
+  /* "Zuletzt veroeffentlicht": schmale wischbare Zeile */
+  .nmag-latest{display:flex;flex-direction:column;gap:12px}
+  .nmag-lrow{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px}
+  .nmag-lrow::-webkit-scrollbar{display:none}
+  .lmini{flex:0 0 188px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+  .lmini:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .lmini-th{aspect-ratio:16/10;background:var(--bg-2);display:grid;place-items:center;font-family:'Oswald';font-size:26px;color:var(--text-soft)}
+  .lmini-th img{width:100%;height:100%;object-fit:cover}
+  .lmini-cat{font-family:'Space Mono';font-size:9px;font-weight:700;color:var(--ntag-text);text-transform:uppercase;letter-spacing:.5px;padding:9px 11px 0}
+  .lmini-t{font-family:'Oswald';font-weight:600;font-size:13.5px;color:var(--heading);line-height:1.22;padding:4px 11px 0}
+  .lmini-d{font-family:'Space Mono';font-size:10px;color:var(--text-soft);padding:6px 11px 11px;margin-top:auto}
+  @media(max-width:760px){.lmini{flex:0 0 150px}}
   .nmag-sec{display:flex;flex-direction:column;gap:14px}
   .nmag-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:9px}
   .nmag-head h3{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);display:flex;align-items:center;gap:9px}
@@ -617,6 +629,15 @@
     .nmag-focusrow .nt{font-size:12px;margin-top:6px;line-height:1.2}
     .nmag-focusrow .ndate,.nmag-focusrow .nstatus{display:none}
     #news-anchor .group-note{display:none}
+    /* Kopfbereich der News-Seite mobil entschlacken: Beschreibung weglassen,
+       Titel kleiner, weniger Luft, damit man schneller beim Inhalt ist. */
+    .news-sechead .sec-note{display:none}
+    .news-sechead{padding:14px 2px 2px}
+    .news-sechead .sec-title{font-size:26px}
+    .news-sechead .sec-ic svg{width:22px;height:22px}
+    #news-anchor .group-head{margin-bottom:10px}
+    #news-anchor .newsfilter{margin-top:10px;gap:8px}
+    .news-mag{gap:22px;margin-top:12px}
   }
   /* Kommentare: Aktionen, Antworten, Zitate */
   .cm-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
@@ -1310,7 +1331,7 @@ function renderNews(){
     <div class="acc"><div class="acc-item locked ${relOpen?'open':''}" data-cat="__rel__"><div class="acc-head" onclick="toggleCat('__rel__')"><span class="ic">🔒</span><span class="nm">${g2.cats.length} Guide-Bereiche schalten zum Release frei</span><span class="lockbadge">Ab Release</span><span class="chev">▸</span></div><div class="acc-body"><div class="acc-inner"><div class="rel-note">Sobald das Spiel spielbar ist, füllen sich diese Bereiche:</div><div class="rel-list">${relChips}</div></div></div></div></div></div>`;
 
   $('view').innerHTML=`
-   <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('news')}</span>News &amp; Ger\u00fcchte</div><div class="sec-note">Alle News, Ger\u00fcchte und Leaks rund um GTA 6, chronologisch und durchsuchbar.</div></div>
+   <div class="sec-head news-sechead"><div class="sec-title"><span class="sec-ic">${secIcon('news')}</span>News &amp; Ger\u00fcchte</div><div class="sec-note">Alle News, Ger\u00fcchte und Leaks rund um GTA 6, chronologisch und durchsuchbar.</div></div>
    <div class="group" id="news-anchor"><div class="group-head"><div class="news-head"><div class="group-title"><span class="badge ${g1.badgeClass}">${g1.badge}</span></div>
      <div class="viewtoggle"><button class="vt ${newsView==='list'?'on':''}" onclick="setNewsView('list')">☰ Liste</button><button class="vt ${newsView==='cards'?'on':''}" onclick="setNewsView('cards')">▦ Kacheln</button></div></div>
      <div class="group-note">${g1.note}</div></div>${phase1}</div>
@@ -1361,6 +1382,14 @@ function newsMagazineHtml(){
   if(fk.length){
     focusHtml=`<div class="nmag-flabel">★ Im Fokus</div><div class="nmag-focusrow">${fk.map(g=>newsCardHtml(g,GUIDES.indexOf(g))).join('')}</div>`;
   }
+  /* "Zuletzt veroeffentlicht": schmale, wischbare Zeile der neuesten Beitraege
+     quer ueber alle Rubriken. Bewusst UNTER "Im Fokus" (kuratiert vor
+     chronologisch). */
+  let latestHtml='';
+  const latest=GUIDES.filter(g=>g1.cats.some(c=>c.id===g.cat)&&!fkIds.has(g.id)).slice().sort(byNew).slice(0,8);
+  if(latest.length){
+    latestHtml=`<div class="nmag-latest"><div class="nmag-flabel">🕒 Zuletzt veröffentlicht</div><div class="nmag-lrow">${latest.map(nmagMiniCard).join('')}</div></div>`;
+  }
   const secs=g1.cats.map(c=>{
     const full=guidesIn(c.id).slice().sort(byNew);
     if(!full.length) return '';
@@ -1372,7 +1401,13 @@ function newsMagazineHtml(){
     const all=full.length>preview.length?`<a class="nmag-all" href="${sectionHref('news')}" onclick="return newsCatClick(event,'${c.id}')">Alle ${full.length} ansehen →</a>`:'';
     return `<div class="nmag-sec"><div class="nmag-head"><h3><span class="nmag-ic">${catIcon(c.id)}</span>${c.name}</h3>${all}</div><div class="nmag-row">${top}</div></div>`;
   }).join('');
-  return `<div class="news-mag">${focusHtml}${secs}</div>`;
+  return `<div class="news-mag">${focusHtml}${latestHtml}${secs}</div>`;
+}
+/* Mini-Kachel fuer die "Zuletzt veroeffentlicht"-Zeile (schmal, Bild oben). */
+function nmagMiniCard(g){
+  const idx=GUIDES.indexOf(g);
+  const vis=g.img?`<span class="lmini-th"><img src="${g.img}" alt="" loading="lazy"></span>`:`<span class="lmini-th ph">${initial(g.title)}</span>`;
+  return `<a class="lmini" href="${articleHref(g.id)}" onclick="return articleClick(event,${idx})">${vis}<span class="lmini-cat">${GCAT[g.cat]?.name||''}</span><span class="lmini-t">${esc(g.title)}</span><span class="lmini-d">${g.date?fmtDShort(g.date):''}</span></a>`;
 }
 function newsIsMag(){ return newsCat==='Alle' && !newsQuery.trim(); }
 function newsCatClick(e,id){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); setNewsCat(id); window.scrollTo({top:0,behavior:'smooth'}); return false; }
