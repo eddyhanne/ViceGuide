@@ -102,6 +102,13 @@ $summary = trim($row['summary'] ?: $row['lead'] ?: '');
 $content = json_decode($row['content_json'] ?? '[]', true) ?: [];
 $sources = json_decode($row['sources_json'] ?? '[]', true) ?: [];
 $tldr = json_decode($row['tldr_json'] ?? '[]', true) ?: [];
+$status = $row['status'] ?? '';
+$statusNote = trim((string)($row['status_note'] ?? ''));
+$stMap = [
+    'confirmed' => ['ok',  'Bestätigt',       'Offiziell bestätigt.'],
+    'mixed'     => ['mid', 'Teils bestätigt', 'Teils bestätigt.'],
+    'rumor'     => ['rum', 'Unbestätigt',     'Unbestätigt.'],
+];
 
 // Kommentare serverseitig rendern: macht sie zu indexierbarem, nutzergeneriertem
 // Inhalt (SEO), sonst laedt sie nur das clientseitige JavaScript per API nach und
@@ -295,6 +302,18 @@ if (is_array($tldr) && $tldr) {
     if ($lis !== '') {
         $body['<div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>'] =
             '<div class="art-tldr" id="a-tldr"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list">' . $lis . '</ul></div>';
+    }
+}
+// Status-Label serverseitig (Pille immer bei gesetztem Status, Erklaer-Banner
+// zusaetzlich nur, wenn eine Status-Notiz da ist), damit es auch ohne
+// JavaScript sichtbar ist. Deckungsgleich zum Client (renderArticleFields).
+if (isset($stMap[$status])) {
+    $st = $stMap[$status];
+    $body['<span class="vg-status" id="a-status" style="display:none"></span>'] =
+        '<span class="vg-status ' . $st[0] . '" id="a-status"><span class="dot"></span>' . vg_esc($st[1]) . '</span>';
+    if ($statusNote !== '') {
+        $body['<div class="vg-statusbar" id="a-statusbar" style="display:none"></div>'] =
+            '<div class="vg-statusbar ' . $st[0] . '" id="a-statusbar"><div><strong>' . vg_esc($st[2]) . '</strong> <span class="dsc">' . vg_esc($statusNote) . '</span></div></div>';
     }
 }
 if ($showUpdated) {

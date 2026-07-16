@@ -19,6 +19,20 @@ function vg_seed_seo_allowlist(PDO $pdo): void {
         // Seeding darf den Request nie hinunterreissen (analog zur uebrigen Migration).
     }
 }
+/* Setzt beim erstmaligen Anlegen der status-Spalte einen konservativen
+   Startwert: jeder Artikel der Kategorie "leaks" (Geruechte & Leaks) gilt als
+   unbestaetigt (rumor). Alle uebrigen bleiben ohne Status (kein Badge), bis sie
+   redaktionell gesetzt werden, weil sich "bestaetigt" nicht zuverlaessig aus der
+   Kategorie ableiten laesst (auch eine News kann spekulativ sein). Laeuft nur
+   einmal, direkt nach dem ALTER TABLE. */
+function vg_seed_status_from_cat(PDO $pdo): void {
+    try {
+        $st = $pdo->prepare("UPDATE articles SET status = 'rumor' WHERE cat = 'leaks' AND (status IS NULL OR status = '')");
+        $st->execute();
+    } catch (Throwable $e) {
+        // Seeding darf den Request nie hinunterreissen (analog zur uebrigen Migration).
+    }
+}
 function vg_db(): array {
     $cfgPath = __DIR__ . '/config.php';
     if (!file_exists($cfgPath)) {
@@ -55,7 +69,7 @@ function vg_db(): array {
     $schemaReady = false;
     try {
         $pdo->query('SELECT id, author_token, author_email, notify_replies, reply_token, spoiler FROM comments LIMIT 1');
-        $pdo->query('SELECT draft_json, pinned, tldr_json FROM articles LIMIT 1');
+        $pdo->query('SELECT draft_json, pinned, tldr_json, status, status_note FROM articles LIMIT 1');
         $pdo->query('SELECT slug, draft_json, seo_index FROM db_entries LIMIT 1');
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
@@ -106,6 +120,8 @@ function vg_db(): array {
             credit TEXT,
             author TEXT,
             tldr_json TEXT,
+            status TEXT,
+            status_note TEXT,
             draft_json TEXT,
             pinned INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -168,6 +184,11 @@ function vg_db(): array {
             }
             if (!in_array('tldr_json', $anames, true)) {
                 $pdo->exec('ALTER TABLE articles ADD COLUMN tldr_json TEXT');
+            }
+            if (!in_array('status', $anames, true)) {
+                $pdo->exec('ALTER TABLE articles ADD COLUMN status TEXT');
+                $pdo->exec('ALTER TABLE articles ADD COLUMN status_note TEXT');
+                vg_seed_status_from_cat($pdo);
             }
         } catch (Throwable $e) {
             // s.o.
@@ -236,6 +257,8 @@ function vg_db(): array {
             credit VARCHAR(200) NULL,
             author VARCHAR(100) NULL,
             tldr_json TEXT NULL,
+            status VARCHAR(20) NULL,
+            status_note TEXT NULL,
             draft_json MEDIUMTEXT NULL,
             pinned TINYINT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -301,6 +324,11 @@ function vg_db(): array {
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN pinned TINYINT NOT NULL DEFAULT 0'); }
             $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'tldr_json'")->fetchAll();
             if (!$cols) { $pdo->exec('ALTER TABLE articles ADD COLUMN tldr_json TEXT NULL'); }
+            $cols = $pdo->query("SHOW COLUMNS FROM articles LIKE 'status'")->fetchAll();
+            if (!$cols) {
+                $pdo->exec('ALTER TABLE articles ADD COLUMN status VARCHAR(20) NULL, ADD COLUMN status_note TEXT NULL');
+                vg_seed_status_from_cat($pdo);
+            }
         } catch (Throwable $e) {
             // s.o.
         }

@@ -77,6 +77,9 @@
     --ntag-border:rgba(136,184,197,.55); --ntag-text:#9FCEDA;
     --hero-overlay:linear-gradient(180deg,rgba(13,10,26,.35) 0%,rgba(13,10,26,.74) 66%,var(--bg) 100%);
     --logo-shadow:drop-shadow(0 14px 30px rgba(0,0,0,.55));
+    --ok-t:#5EE49B; --ok-bg:rgba(94,228,155,.14); --ok-bd:rgba(94,228,155,.40);
+    --mid-t:#FBBF3E; --mid-bg:rgba(251,191,62,.14); --mid-bd:rgba(251,191,62,.40);
+    --rum-t:#FF6F94; --rum-bg:rgba(255,111,148,.14); --rum-bd:rgba(255,111,148,.40);
   }
   :root[data-theme="light"]{
     --bg:#FBF3E7; --bg-2:#F4E8D6; --surface:#FFFDFB; --surface-2:#FFF6EA;
@@ -89,6 +92,9 @@
     --ntag-border:rgba(255,45,149,.35); --ntag-text:#993556;
     --hero-overlay:linear-gradient(180deg,rgba(251,243,231,.04) 0%,rgba(251,243,231,.55) 68%,var(--bg) 100%);
     --logo-shadow:drop-shadow(0 2px 1px rgba(28,10,48,.95)) drop-shadow(0 12px 22px rgba(28,10,48,.45));
+    --ok-t:#0F7A3D; --ok-bg:rgba(15,122,61,.12); --ok-bd:rgba(15,122,61,.42);
+    --mid-t:#B4530C; --mid-bg:rgba(180,83,12,.13); --mid-bd:rgba(180,83,12,.42);
+    --rum-t:#C0264B; --rum-bg:rgba(192,38,75,.12); --rum-bd:rgba(192,38,75,.42);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -372,6 +378,18 @@
   .back{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--text-soft);margin-bottom:20px;cursor:pointer}
   .back:hover{color:var(--accent);gap:11px}
   .article .tg{display:inline-block;font-family:'Space Mono';font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);background:var(--tag-bg);padding:6px 11px;border-radius:7px;margin-bottom:14px}
+  /* Status-Label (bestaetigt/unbestaetigt), Ampelfarben, bewusst nicht die Akzentfarbe */
+  .vg-status{display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:12.5px;font-weight:700;padding:5px 12px 5px 10px;border-radius:999px;border:1px solid;margin:0 0 14px 8px;vertical-align:top;line-height:1.3}
+  .vg-status .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .vg-status.ok{color:var(--ok-t);background:var(--ok-bg);border-color:var(--ok-bd)} .vg-status.ok .dot{background:var(--ok-t)}
+  .vg-status.mid{color:var(--mid-t);background:var(--mid-bg);border-color:var(--mid-bd)} .vg-status.mid .dot{background:var(--mid-t)}
+  .vg-status.rum{color:var(--rum-t);background:var(--rum-bg);border-color:var(--rum-bd)} .vg-status.rum .dot{background:var(--rum-t)}
+  .vg-statusbar{display:flex;align-items:flex-start;gap:11px;border-radius:11px;padding:11px 14px;border:1px solid;border-left-width:4px;font-size:13.5px;line-height:1.5;margin-bottom:18px}
+  .vg-statusbar strong{font-weight:700}
+  .vg-statusbar .dsc{color:var(--text-soft)}
+  .vg-statusbar.ok{background:var(--ok-bg);border-color:var(--ok-bd)} .vg-statusbar.ok strong{color:var(--ok-t)}
+  .vg-statusbar.mid{background:var(--mid-bg);border-color:var(--mid-bd)} .vg-statusbar.mid strong{color:var(--mid-t)}
+  .vg-statusbar.rum{background:var(--rum-bg);border-color:var(--rum-bd)} .vg-statusbar.rum strong{color:var(--rum-t)}
   .article .tg.tg-clk{cursor:pointer;transition:background .15s}
   .article .tg.tg-clk:hover{background:var(--accent);color:var(--bg)}
   .article h1{font-family:'Oswald';font-weight:600;font-size:clamp(28px,6vw,46px);line-height:1.04;color:var(--heading);margin-bottom:10px}
@@ -831,9 +849,10 @@
     <div id="cat-ssr" style="display:none"></div>
     <article class="article" id="article">
       <span class="back" onclick="closeArticle()">← Zurück</span><button class="art-pin" id="a-pin" style="display:none" onclick="togglePinCurrent()">📌 Anpinnen</button>
-      <span class="tg" id="a-tag"></span><h1 id="a-title"></h1>
+      <span class="tg" id="a-tag"></span><span class="vg-status" id="a-status" style="display:none"></span><h1 id="a-title"></h1>
       <div class="art-meta"><span class="art-author" id="a-author"></span><span class="art-dot" id="a-dot">·</span><span class="art-date" id="a-date"></span><span class="art-dot" id="a-rt-dot">·</span><span class="art-readtime" id="a-readtime"></span><span class="art-dot" id="a-upd-dot" style="display:none">·</span><span class="art-date" id="a-updated" style="display:none"></span></div>
       <div class="art-hero" id="a-hero" style="display:none"><img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add('imgfail')"><span class="credit" id="a-herocredit"></span><span class="edit-badge" id="a-hero-badge" style="display:none">✎ Bearbeiten</span><span class="ie-empty" id="a-hero-empty" style="display:none">Klicken, um ein Titelbild hinzuzufügen</span></div>
+      <div class="vg-statusbar" id="a-statusbar" style="display:none"></div>
       <p class="lead" id="a-lead"></p>
       <div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>
       <div class="art-toc" id="a-toc" style="display:none"><div class="artbox-h">Direkt zu</div><ul id="a-toc-list"></ul></div>
@@ -1784,9 +1803,13 @@ function openImgEd(kind,secId,i){
       $('ie-t-desc').value=(d.content||[]).join('\n\n');
       $('ie-tldr-wrap').style.display='block';
       $('ie-t-tldr').value=(Array.isArray(d.tldr)?d.tldr:[]).join('\n');
+      $('ie-status-wrap').style.display='block';
+      $('ie-t-status').value=d.status||'';
+      $('ie-t-statusnote').value=d.statusnote||'';
       $('ie-seo-wrap').style.display='none';
     } else {
       $('ie-tldr-wrap').style.display='none';
+      $('ie-status-wrap').style.display='none';
       $('ie-seo-wrap').style.display='block';
       $('ie-t-seo').checked=!!d.seo;
       $('ie-cat-wrap').style.display='none';
@@ -1932,6 +1955,8 @@ async function ieApply(){
     d.content=descVal.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
     const catVal=$('ie-t-cat').value; if(catVal) d.cat=catVal;
     const tldrEl=$('ie-t-tldr'); if(tldrEl) d.tldr=tldrEl.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const stEl=$('ie-t-status'); if(stEl) d.status=stEl.value;
+    const stnEl=$('ie-t-statusnote'); if(stnEl) d.statusnote=stnEl.value.trim();
   } else {
     if(nameVal) d.name=nameVal;
     d.sub=subVal;
@@ -3074,6 +3099,21 @@ function renderArticleFields(g,p){
   const tag=$(p+'tag');
   if(tag){ tag.textContent=GCAT[g.cat]?.name||''; if(p==='a-'&&g.cat){ tag.classList.add('tg-clk'); tag.title='Alle: '+(GCAT[g.cat]?.name||''); tag.onclick=()=>goNewsCat(g.cat); } }
   const title=$(p+'title'); if(title) title.textContent=g.title||'';
+  /* Status-Label (bestaetigt/unbestaetigt): Pille im Kopf immer, wenn gesetzt;
+     erklaerendes Banner nur, wenn zusaetzlich eine Status-Notiz da ist. */
+  const stMap={confirmed:['ok','Bestätigt','Offiziell bestätigt.'],mixed:['mid','Teils bestätigt','Teils bestätigt.'],rumor:['rum','Unbestätigt','Unbestätigt.']};
+  const st=stMap[g.status];
+  const stPill=$(p+'status');
+  if(stPill){
+    if(st){ stPill.className='vg-status '+st[0]; stPill.innerHTML='<span class="dot"></span>'+st[1]; stPill.style.display='inline-flex'; }
+    else stPill.style.display='none';
+  }
+  const stBar=$(p+'statusbar');
+  if(stBar){
+    const note=(g.statusnote||'').trim();
+    if(st&&note){ stBar.className='vg-statusbar '+st[0]; stBar.innerHTML='<div><strong>'+st[2]+'</strong> <span class="dsc">'+esc(note)+'</span></div>'; stBar.style.display='flex'; }
+    else stBar.style.display='none';
+  }
   const author=$(p+'author'); if(author) author.textContent=g.author?('Von '+g.author):'Eddy Hanné';
   const date=$(p+'date'); if(date) date.textContent=g.date?fmtDT(g.date):'';
   const upd=$(p+'updated'), updDot=$(p+'upd-dot');
@@ -3291,7 +3331,7 @@ async function updateArticleFromJson(g){
   const idx=(GUIDES||[]).findIndex(x=>x.id===g.id);
   if(idx<0){ toast('Artikel nicht gefunden.'); return; }
   if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
-  const fields=['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit','tldr'];
+  const fields=['cat','title','date','summary','meta','lead','credit','author','content','sources','img','imgfit','tldr','status','statusnote'];
   const payload={id:g.id};
   fields.forEach(k=>{ if(k in g && g[k]!==undefined) payload[k]=g[k]; });
   try{
@@ -3831,6 +3871,17 @@ const IMGED_HTML=`  <button class="mclose" style="position:static;float:right;ma
   <div class="ie-textfields" id="ie-tldr-wrap" style="display:none">
     <label class="ie-tlabel">Auf einen Blick (ein Stichpunkt pro Zeile, leer lassen für keine Box)</label>
     <textarea id="ie-t-tldr" class="cm-ta" rows="3" placeholder="Kernaussage 1&#10;Kernaussage 2"></textarea>
+  </div>
+  <div class="ie-textfields" id="ie-status-wrap" style="display:none">
+    <label class="ie-tlabel">Status-Label</label>
+    <select id="ie-t-status" class="cm-in">
+      <option value="">Kein Label</option>
+      <option value="confirmed">Bestätigt (grün)</option>
+      <option value="mixed">Teils bestätigt (gelb)</option>
+      <option value="rumor">Unbestätigt (rot)</option>
+    </select>
+    <label class="ie-tlabel" style="margin-top:8px">Status-Notiz (optional, zeigt zusätzlich das Erklär-Banner oben im Artikel)</label>
+    <textarea id="ie-t-statusnote" class="cm-ta" rows="2" placeholder="z.B. Beruht auf Leaks, von Rockstar nicht offiziell bestätigt."></textarea>
   </div>
   <div class="ie-textfields" id="ie-seo-wrap" style="display:none">
     <label class="ie-checkline"><input type="checkbox" id="ie-t-seo"> Für Google freigeben (in Sitemap, indexierbar)</label>
