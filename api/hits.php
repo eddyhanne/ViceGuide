@@ -60,6 +60,12 @@ if ($method === 'POST') {
     vg_out_h(['ok' => true]);
 }
 
+if ($method === 'DELETE') {
+    vg_require_admin($cfg);
+    $pdo->exec('DELETE FROM hits');
+    vg_out_h(['ok' => true]);
+}
+
 if ($method === 'GET') {
     vg_require_admin($cfg);
 
@@ -68,6 +74,11 @@ if ($method === 'GET') {
     $since = $isSqlite
         ? "datetime('now','-$days days')"
         : "DATE_SUB(NOW(), INTERVAL $days DAY)";
+    // Vorperiode gleicher Laenge direkt davor, fuer den Prozent-Vergleich
+    // ("gegenueber Vorperiode"), wie bei Google Analytics/Search Console.
+    $prevSince = $isSqlite
+        ? "datetime('now','-" . (2 * $days) . " days')"
+        : "DATE_SUB(NOW(), INTERVAL " . (2 * $days) . " DAY)";
 
     $total = (int)$pdo->query("SELECT COUNT(*) c FROM hits WHERE created_at >= $since")->fetch()['c'];
 
@@ -122,10 +133,18 @@ if ($method === 'GET') {
         WHERE created_at >= $since AND LOWER(utm_source) IN ('instagram','ig')
     ")->fetch()['c'];
 
+    // Vorperiode zum Vergleich (gleiche Laenge, direkt davor).
+    $prevTotal = (int)$pdo->query("SELECT COUNT(*) c FROM hits WHERE created_at >= $prevSince AND created_at < $since")->fetch()['c'];
+    $prevInstaUtm = (int)$pdo->query("
+        SELECT COUNT(*) c FROM hits
+        WHERE created_at >= $prevSince AND created_at < $since AND LOWER(utm_source) IN ('instagram','ig')
+    ")->fetch()['c'];
+
     $data = [
         'days' => $days,
         'total' => $total,
-        'instagram' => ['by_referrer' => $instaByRef, 'by_utm' => $instaByUtm],
+        'prev_total' => $prevTotal,
+        'instagram' => ['by_referrer' => $instaByRef, 'by_utm' => $instaByUtm, 'prev_by_utm' => $prevInstaUtm],
         'top_referrers' => $byRef,
         'top_utm_sources' => $byUtmSource,
         'top_utm_campaigns' => $byUtmCampaign,
@@ -176,7 +195,7 @@ function vg_line_chart(array $perDay, int $days): string {
     }
     $n = count($values);
     $max = max(max($values), 1);
-    $w = 760; $h = 200; $padL = 6; $padR = 6; $padT = 14; $padB = 26;
+    $w = 760; $h = 220; $padL = 34; $padR = 6; $padT = 14; $padB = 26;
     $plotW = $w - $padL - $padR; $plotH = $h - $padT - $padB;
 
     $pts = [];
@@ -188,6 +207,16 @@ function vg_line_chart(array $perDay, int $days): string {
     $lineStr = implode(' ', array_map(fn($p) => $p[0] . ',' . $p[1], $pts));
     $baseline = $padT + $plotH;
     $areaStr = $lineStr . ' ' . $pts[$n - 1][0] . ',' . $baseline . ' ' . $pts[0][0] . ',' . $baseline;
+
+    // Gitterlinien mit Skala (0, Mitte, Maximum), macht die Groessenordnung
+    // auf einen Blick lesbar statt nur die Kurvenform zu zeigen.
+    $grid = '';
+    foreach ([0, 0.5, 1] as $frac) {
+        $y = $padT + $plotH * (1 - $frac);
+        $val = (int)round($max * $frac);
+        $grid .= '<line x1="' . $padL . '" y1="' . round($y, 1) . '" x2="' . ($w - $padR) . '" y2="' . round($y, 1) . '" class="gridline"></line>'
+               . '<text x="' . ($padL - 8) . '" y="' . round($y + 3, 1) . '" class="axislbl" text-anchor="end">' . $val . '</text>';
+    }
 
     $dots = '';
     foreach ($pts as $p) {
@@ -203,18 +232,28 @@ function vg_line_chart(array $perDay, int $days): string {
         $axis .= '<text x="' . $pts[$i][0] . '" y="' . ($h - 6) . '" class="axislbl" text-anchor="middle">'
                . vg_e(date('d.m.', strtotime($pts[$i][3]))) . '</text>';
     }
-    // letzten Tag garantiert mit beschriften, auch wenn er nicht exakt auf den Schrittraster faellt.
     $lastIdx = $n - 1;
     if ($lastIdx % $step !== 0) {
         $axis .= '<text x="' . $pts[$lastIdx][0] . '" y="' . ($h - 6) . '" class="axislbl" text-anchor="middle">'
                . vg_e(date('d.m.', strtotime($pts[$lastIdx][3]))) . '</text>';
     }
 
-    return '<svg viewBox="0 0 ' . $w . ' ' . $h . '" class="linechart">'
+    return '<svg viewBox="0 0 ' . $w . ' ' . $h . '" class="linechart" preserveAspectRatio="none">'
+         . $grid
          . '<polygon points="' . $areaStr . '" class="area"></polygon>'
          . '<polyline points="' . $lineStr . '" class="line"></polyline>'
          . $dots . $axis
          . '</svg>';
+}
+
+function vg_delta_html(int $cur, int $prev): string {
+    if ($prev <= 0) {
+        return $cur > 0 ? '<span class="delta up">▲ neu</span>' : '<span class="delta flat">ohne Vergleichswert</span>';
+    }
+    $pct = (int)round((($cur - $prev) / $prev) * 100);
+    if ($pct > 0) return '<span class="delta up">▲ ' . $pct . '% ggue. Vorperiode</span>';
+    if ($pct < 0) return '<span class="delta down">▼ ' . abs($pct) . '% ggue. Vorperiode</span>';
+    return '<span class="delta flat">0% ggue. Vorperiode</span>';
 }
 
 function vg_render_html(array $d): never {
@@ -235,6 +274,49 @@ function vg_render_html(array $d): never {
     $campaignRows = vg_bar_rows($d['top_utm_campaigns'], ['utm_source', 'utm_campaign'], $maxCmp);
     $chart = vg_line_chart($d['per_day'], $days);
 
+    $topSourceLabel = $d['top_utm_sources'][0]['utm_source'] ?? 'noch keine';
+    $topSourceCount = $d['top_utm_sources'][0]['c'] ?? 0;
+    $topPathLabel = $d['top_paths'][0]['path'] ?? 'noch keine';
+    $topPathCount = $d['top_paths'][0]['c'] ?? 0;
+
+    // Kacheln als Datensatz statt Copy-Paste-HTML, damit Reihenfolge und
+    // Drag&Drop-IDs an einer Stelle definiert sind.
+    $cards = [
+        'top_pages' => [
+            'tag' => 'Verhalten',
+            'title' => 'Top-Seiten',
+            'help' => 'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, unabhaengig davon woher der Besuch kam.',
+            'body' => '<table>' . vg_bar_rows($d['top_paths'], 'path', $maxPath) . '</table>',
+        ],
+        'top_sources' => [
+            'tag' => 'Akquise',
+            'title' => 'Top-Quellen (UTM-Source)',
+            'help' => 'Gruppiert nach dem Tag im geklickten Link, unabhaengig vom technischen Referrer.',
+            'body' => '<table>' . vg_bar_rows($d['top_utm_sources'], 'utm_source', $maxSrc) . '</table>',
+        ],
+        'top_campaigns' => [
+            'tag' => 'Akquise',
+            'title' => 'Top-Kampagnen',
+            'help' => 'Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.',
+            'body' => '<table>' . $campaignRows . '</table>',
+        ],
+        'top_referrers' => [
+            'tag' => 'Akquise',
+            'title' => 'Top-Referrer',
+            'help' => 'Technische Herkunfts-Domain laut Browser, unabhaengig von jedem Tag. Zeigt auch Besuche ohne UTM-Link.',
+            'body' => '<table>' . vg_bar_rows($d['top_referrers'], 'ref_host', $maxRef) . '</table>',
+        ],
+    ];
+    $cardHtml = '';
+    foreach ($cards as $id => $c) {
+        $cardHtml .= '<div class="card" draggable="true" data-id="' . vg_e($id) . '">'
+                   . '<div class="draghandle" title="Ziehen zum Verschieben">⠿</div>'
+                   . '<h2>' . vg_e($c['title']) . ' <span class="cardtag">' . vg_e($c['tag']) . '</span></h2>'
+                   . '<p class="help">' . vg_e($c['help']) . '</p>'
+                   . $c['body']
+                   . '</div>';
+    }
+
     echo '<!doctype html><html lang="de"><head><meta charset="utf-8">'
       . '<meta name="robots" content="noindex,nofollow">'
       . '<meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -242,21 +324,38 @@ function vg_render_html(array $d): never {
       // Echte Hellmodus-Variablen der Website (index.html, :root[data-theme="light"]),
       // damit diese interne Seite optisch zu ViceGuide passt statt einem
       // generischen Dashboard-Look zu folgen.
-      . ':root{--bg:#FBF3E7;--bg-2:#F4E8D6;--surface:#FFFDFB;--text:#221041;--soft:#6B5E85;--accent:#D00059;--line:rgba(34,16,65,.12);}'
+      . ':root{--bg:#FBF3E7;--bg-2:#F4E8D6;--surface:#FFFDFB;--text:#221041;--soft:#6B5E85;--accent:#D00059;--line:rgba(34,16,65,.12);--ok:#0F7A3D;--ok-bg:rgba(15,122,61,.1);--bad:#C0264B;--bad-bg:rgba(192,38,75,.1);}'
       . '*{box-sizing:border-box}'
       . 'body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px 16px 60px}'
-      . 'h1{font-family:"Oswald",Impact,sans-serif;font-size:1.4rem;margin:0 0 4px;letter-spacing:.02em}'
-      . '.sub{color:var(--soft);font-size:.85rem;margin:0 0 20px}'
+      . '.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}'
+      . 'h1{font-size:1.4rem;margin:0 0 4px;font-weight:700}'
+      . '.sub{color:var(--soft);font-size:.85rem;margin:0;max-width:640px}'
+      . '.resetbtn{background:var(--surface);color:var(--bad);border:1px solid var(--line);border-radius:20px;padding:7px 16px;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}'
+      . '.resetbtn:hover{background:var(--bad-bg)}'
       . '.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}'
       . '.tab{color:var(--soft);text-decoration:none;padding:6px 14px;border-radius:20px;border:1px solid var(--line);font-size:.85rem;background:var(--surface)}'
       . '.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}'
-      . '.tiles{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}'
-      . '.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;min-width:150px;flex:1;box-shadow:0 8px 20px -14px rgba(34,16,65,.3)}'
-      . '.tile .n{font-size:1.8rem;font-weight:700;color:var(--accent)}'
-      . '.tile .l{font-size:.78rem;color:var(--text);font-weight:600;margin-top:2px}'
+      . '.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}'
+      . '.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 8px 20px -14px rgba(34,16,65,.3)}'
+      . '.tile .n{font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1.2}'
+      . '.tile .n.small{font-size:1.05rem;line-height:1.3;word-break:break-word}'
+      . '.tile .l{font-size:.78rem;color:var(--text);font-weight:600;margin-top:4px}'
       . '.tile .l2{font-size:.7rem;color:var(--soft);margin-top:6px;line-height:1.4}'
-      . '.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:20px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25)}'
-      . '.card h2{font-family:"Oswald",Impact,sans-serif;font-size:1rem;margin:0 0 2px;font-weight:600;letter-spacing:.01em}'
+      . '.delta{display:inline-block;font-size:.68rem;font-weight:700;margin-top:6px;padding:2px 7px;border-radius:10px}'
+      . '.delta.up{color:var(--ok);background:var(--ok-bg)}'
+      . '.delta.down{color:var(--bad);background:var(--bad-bg)}'
+      . '.delta.flat{color:var(--soft);background:var(--bg-2)}'
+      . '.sectionlbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);font-weight:700;margin:22px 2px 10px}'
+      . '.chartcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:8px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25)}'
+      . '.chartcard h2{font-size:1rem;margin:0 0 2px;font-weight:700}'
+      . '.chartcard .help{font-size:.75rem;color:var(--soft);margin:0 0 8px;line-height:1.5}'
+      . '#vg-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}'
+      . '.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px 18px 34px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);position:relative;cursor:grab}'
+      . '.card.dragging{opacity:.4}'
+      . '.card.over{outline:2px dashed var(--accent);outline-offset:2px}'
+      . '.draghandle{position:absolute;left:10px;top:18px;color:var(--soft);font-size:1rem;line-height:1}'
+      . '.card h2{font-size:1rem;margin:0 0 2px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}'
+      . '.cardtag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);background:rgba(208,0,89,.1);padding:2px 8px;border-radius:8px}'
       . '.card .help{font-size:.75rem;color:var(--soft);margin:0 0 14px;line-height:1.5}'
       . 'table{width:100%;border-collapse:collapse}'
       . 'td{padding:7px 4px;font-size:.85rem;vertical-align:middle;border-bottom:1px solid var(--line)}'
@@ -266,28 +365,66 @@ function vg_render_html(array $d): never {
       . 'td.barcell{width:100%}'
       . '.bar{height:8px;background:var(--accent);border-radius:4px;min-width:2px;opacity:.85}'
       . 'td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none}'
-      . '.note{color:var(--soft);font-size:.75rem;margin-top:-6px;margin-bottom:20px;line-height:1.5}'
-      . '.linechart{width:100%;height:auto;display:block}'
+      . '.note{color:var(--soft);font-size:.75rem;margin-top:16px;line-height:1.5}'
+      . '.linechart{width:100%;height:220px;display:block}'
       . '.linechart .area{fill:var(--accent);opacity:.14}'
       . '.linechart .line{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}'
       . '.linechart .pt{fill:var(--surface);stroke:var(--accent);stroke-width:2}'
+      . '.linechart .gridline{stroke:var(--line);stroke-width:1}'
       . '.linechart .axislbl{fill:var(--soft);font-size:9px}'
       . '</style></head><body>'
-      . '<h1>ViceGuide Statistik</h1>'
-      . '<p class="sub">Eigenes, cookiefreies Tracking. Zaehlt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zaehlt nicht mit.</p>'
+      . '<div class="topbar"><div><h1>ViceGuide Statistik</h1>'
+      . '<p class="sub">Eigenes, cookiefreies Tracking. Zaehlt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zaehlt nicht mit.</p></div>'
+      . '<button class="resetbtn" onclick="vgResetStats()">🗑 Alle Daten zuruecksetzen</button></div>'
       . '<div class="tabs">' . $tabs . '</div>'
+      . '<div class="sectionlbl">Uebersicht</div>'
       . '<div class="tiles">'
-      . '<div class="tile"><div class="n">' . $d['total'] . '</div><div class="l">Seitenaufrufe gesamt</div></div>'
-      . '<div class="tile"><div class="n">' . $d['instagram']['by_utm'] . '</div><div class="l">Instagram (per UTM-Tag)</div><div class="l2">Ueber Bio-Link/Story mit utm_source=instagram, das ist der verlaessliche Wert.</div></div>'
-      . '<div class="tile"><div class="n">' . $d['instagram']['by_referrer'] . '</div><div class="l">Instagram (per Referrer)</div><div class="l2">Nur zur Kontrolle, Instagram unterdrueckt diese Info meistens.</div></div>'
+      . '<div class="tile"><div class="n">' . $d['total'] . '</div><div class="l">Seitenaufrufe gesamt</div>' . vg_delta_html($d['total'], $d['prev_total']) . '</div>'
+      . '<div class="tile"><div class="n">' . $d['instagram']['by_utm'] . '</div><div class="l">Instagram (per UTM-Tag)</div>' . vg_delta_html($d['instagram']['by_utm'], $d['instagram']['prev_by_utm']) . '</div>'
+      . '<div class="tile"><div class="n small">' . vg_e($topSourceLabel) . '</div><div class="l">Top-Quelle (' . $topSourceCount . ')</div><div class="l2">Woher die meisten Besucher mit UTM-Tag kamen.</div></div>'
+      . '<div class="tile"><div class="n small">' . vg_e($topPathLabel) . '</div><div class="l">Top-Seite (' . $topPathCount . ')</div><div class="l2">Am haeufigsten aufgerufene Seite/Artikel.</div></div>'
       . '</div>'
-      . '<div class="card"><h2>Verlauf pro Tag</h2><p class="help">Seitenaufrufe je Kalendertag im gewaehlten Zeitraum.</p>' . $chart . '</div>'
-      . '<div class="card"><h2>Top-Seiten</h2><p class="help">Welche Seiten/Artikel tatsaechlich aufgerufen wurden, unabhaengig davon woher der Besuch kam.</p><table>' . vg_bar_rows($d['top_paths'], 'path', $maxPath) . '</table></div>'
-      . '<div class="card"><h2>Top-Quellen (UTM-Source)</h2><p class="help">Gruppiert nach dem Tag im geklickten Link, unabhaengig vom technischen Referrer.</p><table>' . vg_bar_rows($d['top_utm_sources'], 'utm_source', $maxSrc) . '</table></div>'
-      . '<div class="card"><h2>Top-Kampagnen</h2><p class="help">Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.</p><table>' . $campaignRows . '</table></div>'
-      . '<div class="card"><h2>Top-Referrer</h2><p class="help">Technische Herkunfts-Domain laut Browser, komplett unabhaengig von jedem Tag. Zeigt auch Besuche ohne UTM-Link (z.B. geteilte Links ohne Tag).</p><table>' . vg_bar_rows($d['top_referrers'], 'ref_host', $maxRef) . '</table></div>'
-      . '<p class="note">' . vg_e($d['note']) . '</p>'
-      . '</body></html>';
+      . '<div class="chartcard"><h2>Verlauf pro Tag</h2><p class="help">Seitenaufrufe je Kalendertag, mit Gitterlinien-Skala. Punkt anfahren zeigt Datum und genaue Zahl.</p>' . $chart . '</div>'
+      . '<div class="sectionlbl">Akquise &amp; Verhalten, Reihenfolge per Ziehen anpassbar</div>'
+      . '<div id="vg-cards">' . $cardHtml . '</div>'
+      . '<p class="note">' . vg_e($d['note']) . ' Die Kachel-Reihenfolge wird nur in diesem Browser gemerkt.</p>'
+      . '</body>'
+      . '<script>'
+      . 'function vgResetStats(){'
+      . 'if(!confirm("Wirklich ALLE bisher gesammelten Statistik-Daten unwiderruflich loeschen? Das kann nicht rueckgaengig gemacht werden."))return;'
+      . 'fetch(location.pathname,{method:"DELETE"}).then(function(r){if(r.ok){location.reload();}else{alert("Loeschen fehlgeschlagen.");}}).catch(function(){alert("Loeschen fehlgeschlagen.");});'
+      . '}'
+      . '(function(){'
+      . 'var box=document.getElementById("vg-cards");if(!box)return;'
+      . 'var KEY="vg_stats_card_order";'
+      . 'try{'
+      . 'var saved=JSON.parse(localStorage.getItem(KEY)||"[]");'
+      . 'saved.slice().reverse().forEach(function(id){'
+      . 'var el=box.querySelector(\'[data-id="\'+id+\'"]\');'
+      . 'if(el)box.insertBefore(el,box.firstChild);'
+      . '});'
+      . '}catch(e){}'
+      . 'function saveOrder(){'
+      . 'var ids=Array.prototype.map.call(box.children,function(c){return c.getAttribute("data-id");});'
+      . 'try{localStorage.setItem(KEY,JSON.stringify(ids));}catch(e){}'
+      . '}'
+      . 'var dragEl=null;'
+      . 'box.querySelectorAll(".card").forEach(function(card){'
+      . 'card.addEventListener("dragstart",function(){dragEl=card;card.classList.add("dragging");});'
+      . 'card.addEventListener("dragend",function(){card.classList.remove("dragging");box.querySelectorAll(".card").forEach(function(c){c.classList.remove("over");});saveOrder();});'
+      . 'card.addEventListener("dragover",function(e){'
+      . 'e.preventDefault();'
+      . 'if(card===dragEl)return;'
+      . 'var rect=card.getBoundingClientRect();'
+      . 'var before=(e.clientY-rect.top)<rect.height/2;'
+      . 'box.querySelectorAll(".card").forEach(function(c){c.classList.remove("over");});'
+      . 'card.classList.add("over");'
+      . 'if(before){box.insertBefore(dragEl,card);}else{box.insertBefore(dragEl,card.nextSibling);}'
+      . '});'
+      . '});'
+      . '})();'
+      . '</script>'
+      . '</html>';
     exit;
 }
 
