@@ -11,6 +11,10 @@ RewriteRule ^ https://viceguide.de%{REQUEST_URI} [L,R=301]
 RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
 RewriteRule ^index\.html$ / [L,R=301]
 
+# Zusammengefuehrte Artikel: alte URL per 301 auf den ueberlebenden Artikel.
+# gta-6-pc-version-warum-spaeter wurde in wann-pc-version eingefaltet.
+RewriteRule ^artikel/gta-6-pc-version-warum-spaeter/?$ https://viceguide.de/artikel/wann-pc-version [L,R=301]
+
 # Trailing-Slash-Normalisierung (Duplicate Content vermeiden). Greift nur echte
 # Browser-Requests ueber THE_REQUEST ab, die internen Rewrites auf die PHP-Fassaden
 # bleiben unberuehrt, daher keine Endlosschleife.
