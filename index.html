@@ -2857,8 +2857,12 @@ function notifRender(){
     </div>`;
 }
 function closeNotif(){ $('notif').classList.remove('show'); }
-function notifDismiss(id){ notifDismissed.add(id); saveNotifDismissed(); notifList=notifList.filter(c=>c.id!==id); notifRender(); }
-function notifClearAll(){ notifList.forEach(c=>notifDismissed.add(c.id)); saveNotifDismissed(); notifList=[]; notifRender(); const badge=$('notif-badge'); if(badge) badge.style.display='none'; }
+async function notifDismiss(id){ notifDismissed.add(id); saveNotifDismissed(); notifList=notifList.filter(c=>c.id!==id); notifRender(); try{ await fetch('api/comments.php?action=notif_dismiss',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[id]})}); }catch(e){} }
+async function notifClearAll(){ const ids=notifList.map(c=>c.id); ids.forEach(id=>notifDismissed.add(id)); saveNotifDismissed(); notifList=[]; notifRender(); const badge=$('notif-badge'); if(badge) badge.style.display='none'; if(ids.length){ try{ await fetch('api/comments.php?action=notif_dismiss',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})}); }catch(e){} } }
+/* Kommentar direkt aus dem Popup dauerhaft loeschen (Admin). */
+async function notifDelete(id){ if(!confirm('Diesen Kommentar dauerhaft loeschen?')) return; if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; } try{ const r=await fetch('api/comments.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); if(!r.ok) throw new Error(); notifList=notifList.filter(c=>c.id!==id); notifRender(); toast('Kommentar gelöscht.'); }catch(e){ toast('Löschen fehlgeschlagen.'); } }
+/* Kommentar direkt aus dem Popup als Spoiler markieren/entmarkieren (Admin). */
+async function notifSpoiler(id,sp){ if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; } try{ const r=await fetch('api/comments.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,spoiler:sp})}); if(!r.ok) throw new Error(); const c=notifList.find(x=>x.id===id); if(c) c.spoiler=sp; notifRender(); toast(sp?'Als Spoiler markiert.':'Spoiler entfernt.'); }catch(e){ toast('Fehlgeschlagen.'); } }
 function notifHide(){ notifHidden=true; try{ localStorage.setItem('vg-notif-hidden','1'); }catch(e){} const fab=$('notif-fab'); if(fab) fab.style.display='none'; closeNotif(); toast('Glocke ausgeblendet. Im Redaktions-Panel wieder einblendbar.'); }
 function notifToggleVisible(){ notifHidden=!notifHidden; try{ notifHidden?localStorage.setItem('vg-notif-hidden','1'):localStorage.removeItem('vg-notif-hidden'); }catch(e){} if(notifHidden){ const fab=$('notif-fab'); if(fab) fab.style.display='none'; toast('Glocke ausgeblendet.'); } else { pollNotif(); toast('Glocke eingeblendet.'); } }
 function notifItemHtml(c){
@@ -2871,7 +2875,9 @@ function notifItemHtml(c){
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
       <button class="cm-act" onclick="notifOpen('${esc(c.article_id)}')">↗ Öffnen</button>
       <button class="cm-act" onclick="notifToggleReply(${c.id})">↩ Direkt antworten</button>
-      <button class="cm-act" onclick="notifDismiss(${c.id})" title="Nur aus deiner Übersicht entfernen, der Kommentar bleibt">✕ Ausblenden</button>
+      <button class="cm-act" onclick="notifSpoiler(${c.id},${c.spoiler?0:1})" title="Kommentar als Spoiler markieren oder wieder freigeben">${c.spoiler?'🙈 Spoiler aus':'⚠ Als Spoiler'}</button>
+      <button class="cm-act" onclick="notifDelete(${c.id})" title="Kommentar dauerhaft löschen">🗑 Löschen</button>
+      <button class="cm-act" onclick="notifDismiss(${c.id})" title="Dauerhaft aus deiner Übersicht entfernen, der Kommentar bleibt">✕ Ausblenden</button>
     </div>
     <div id="nrb-${c.id}" style="display:none">
       <textarea id="nr-${c.id}" class="cm-ta" rows="2" placeholder="Antwort schreiben…" maxlength="800"></textarea>
@@ -4363,7 +4369,7 @@ function syncHash(){
   if(g && g.id) target='/artikel/'+g.id;
   else if(m && m.slug) target=entryHref(curModal.sec,m.slug);
   else if(!curModal && SECTION_PREFIX[current]) target='/'+SECTION_PREFIX[current]+'/';
-  else if(!curModal && (current==='datenbank'||current==='guides')) target='/'+current+'/';
+  else if(!curModal && (current==='datenbank'||current==='guides'||current==='ratgeber')) target='/'+current+'/';
   else if(!curModal && current==='news') target=(newsCat!=='Alle'&&NEWS_CAT_SLUG[newsCat])?('/news/'+NEWS_CAT_SLUG[newsCat]):'/news';
   else if(!curModal && (current==='videos'||current==='community')) target='/'+current;
   else if(!curModal && current==='map') target='/karte';
@@ -4426,7 +4432,7 @@ function restoreFromLocation(){
       return;
     }
     /* Datenbank-/Guides-Hub, server-gerendert von hub.php. */
-    const hubMatch=path.match(/^\/(datenbank|guides)\/?$/);
+    const hubMatch=path.match(/^\/(datenbank|guides|ratgeber)\/?$/);
     if(hubMatch){ goIfNeeded(hubMatch[1]); return; }
     /* News-Rubrik mit eigener URL (/news/leaks ...), server-gerendert von
        section.php. Setzt den Kategorie-Filter und zeigt den scoped Drilldown. */

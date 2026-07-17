@@ -16,6 +16,33 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 [$pdo, $cfg] = vg_db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+/* Dauerhaft aus dem Admin-Benachrichtigungs-Popup ausgeblendete Kommentar-IDs.
+   Liegt im gemeinsamen site_settings-Key-Value-Store (wie api/settings.php),
+   damit "Ausblenden"/"Liste leeren" ueber Sessions und Geraete hinweg haelt und
+   nicht nur im localStorage eines Browsers. */
+function vg_notif_settings_table($pdo) {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS site_settings (skey VARCHAR(64) PRIMARY KEY, sval TEXT)");
+}
+function vg_notif_dismissed_get($pdo): array {
+    vg_notif_settings_table($pdo);
+    $st = $pdo->prepare("SELECT sval FROM site_settings WHERE skey = 'notif_dismissed'");
+    $st->execute();
+    $r = $st->fetch();
+    $a = $r ? json_decode($r['sval'], true) : [];
+    return is_array($a) ? array_map('intval', $a) : [];
+}
+function vg_notif_dismissed_add($pdo, array $ids): int {
+    $cur = vg_notif_dismissed_get($pdo);
+    $merged = array_values(array_unique(array_merge($cur, array_map('intval', $ids))));
+    if (count($merged) > 3000) $merged = array_slice($merged, -3000);
+    $v = json_encode($merged, JSON_UNESCAPED_UNICODE);
+    $st = $pdo->prepare("SELECT skey FROM site_settings WHERE skey = 'notif_dismissed'");
+    $st->execute();
+    if ($st->fetch()) $pdo->prepare("UPDATE site_settings SET sval = ? WHERE skey = 'notif_dismissed'")->execute([$v]);
+    else $pdo->prepare("INSERT INTO site_settings (skey, sval) VALUES ('notif_dismissed', ?)")->execute([$v]);
+    return count($merged);
+}
+
 function vg_out($data, int $code = 200): never {
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -195,11 +222,14 @@ if ($method === 'GET' && isset($_GET['recent'])) {
        Client weg). Nur fuer eingeloggte Admins. */
     vg_require_admin($cfg);
     $voter = substr(trim((string)($_GET['voter'] ?? '')), 0, 100);
-    $stmt = $pdo->query('SELECT c.id, c.article_id, c.parent_id, c.name, c.text, c.quote, c.author_token, c.created_at, a.title AS article_title
+    $dismissed = array_flip(vg_notif_dismissed_get($pdo)); // dauerhaft ausgeblendete, serverseitig
+    // Etwas mehr als 40 laden, weil ausgeblendete danach herausfallen.
+    $stmt = $pdo->query('SELECT c.id, c.article_id, c.parent_id, c.name, c.text, c.quote, c.spoiler, c.author_token, c.created_at, a.title AS article_title
                          FROM comments c LEFT JOIN articles a ON a.id = c.article_id
-                         ORDER BY c.created_at DESC, c.id DESC LIMIT 40');
+                         ORDER BY c.created_at DESC, c.id DESC LIMIT 120');
     $out = [];
     foreach ($stmt->fetchAll() as $r) {
+        if (isset($dismissed[(int)$r['id']])) continue; // dauerhaft ausgeblendet
         $own = ($voter !== '' && !empty($r['author_token']) && hash_equals((string)$r['author_token'], $voter));
         $out[] = [
             'id'            => (int)$r['id'],
@@ -209,11 +239,24 @@ if ($method === 'GET' && isset($_GET['recent'])) {
             'name'          => $r['name'],
             'text'          => $r['text'],
             'quote'         => $r['quote'],
+            'spoiler'       => (int)($r['spoiler'] ?? 0),
             'created_at'    => $r['created_at'],
             'own'           => $own,
         ];
+        if (count($out) >= 40) break;
     }
     vg_out(['comments' => $out]);
+}
+
+if ($method === 'POST' && ($_GET['action'] ?? '') === 'notif_dismiss') {
+    /* Admin blendet einen oder mehrere Kommentare dauerhaft aus dem Popup aus
+       (der Kommentar selbst bleibt bestehen). */
+    vg_require_admin($cfg);
+    $b = vg_body();
+    $ids = array_map('intval', (array)($b['ids'] ?? []));
+    if (!$ids) vg_out(['error' => 'ids erforderlich'], 400);
+    $n = vg_notif_dismissed_add($pdo, $ids);
+    vg_out(['ok' => true, 'count' => $n]);
 }
 
 if ($method === 'GET') {
