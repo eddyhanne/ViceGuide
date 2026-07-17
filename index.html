@@ -881,6 +881,9 @@
   .cmb-tx small{font-size:12.5px;color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.6)}
   .cmb-go{margin-left:auto;font-size:20px;opacity:.8;flex:0 0 auto}
   @media(max-width:700px){.cm-banners{grid-template-columns:1fr}}
+  /* Einheitliche "Bald verfügbar"-Kacheln (Reddit/Live-Chat/Forum) */
+  .cm-soon{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 20px}
+  @media(max-width:820px){.cm-soon{grid-template-columns:1fr}}
   .cm-cta{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);text-decoration:none;color:var(--text);transition:.15s}
   .cm-cta:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
   .cm-cta.discord:hover{border-color:#5865F2}
@@ -2602,18 +2605,18 @@ function renderCommunity(){
   const igBanner=d.instagram?`<a class="cm-banner ig" href="${d.instagram}" target="_blank" rel="noopener"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:#C13584"><img src="nl-instagram.png" alt=""></span><span class="cmb-tx"><b>Auf Instagram folgen</b><small>@viceguide · News, Bilder und Infohäppchen</small></span><span class="cmb-go">→</span></span></a>`:'';
   const dcBanner=d.discordInvite?`<a class="cm-banner dc" href="${d.discordInvite}" target="_blank" rel="noopener"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:#5865F2"><img src="nl-discord.png" alt=""></span><span class="cmb-tx"><b>Discord beitreten</b><small>Chatten, Fragen und News in Echtzeit</small></span><span class="cmb-go">→</span></span></a>`:'';
   const nlBanner=`<a class="cm-banner full nl" href="#nl-box" onclick="event.preventDefault();var b=document.getElementById('nl-box');if(b){b.scrollIntoView({behavior:'smooth'});var e=document.getElementById('nl-email');if(e)setTimeout(function(){e.focus();},450);}"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:var(--accent)">${MAIL_ICON}</span><span class="cmb-tx"><b>Newsletter abonnieren</b><small>Die wichtigsten GTA-6-News direkt per Mail</small></span><span class="cmb-go">→</span></span></a>`;
-  const widget=(d.discordServerId&&d.discordWidget)?`<div class="cm-widget"><iframe src="https://discord.com/widget?id=${d.discordServerId}&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></div>`
-    :`<div class="cm-placeholder cm-placeholder-sm"><div><b>Live-Chat folgt</b> <span class="cm-ph-note">Bis dahin findest du oben alle Wege, dabei zu sein.</span></div></div>`;
+  /* Reddit, Live-Chat und Forum als einheitliche "Bald verfügbar"-Kacheln
+     (gleicher Stil wie die Reddit-Kachel), statt drei verschiedener Optiken. */
+  const widgetActive=d.discordServerId&&d.discordWidget;
+  const widget=widgetActive?`<div class="cm-widget"><iframe src="https://discord.com/widget?id=${d.discordServerId}&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></div>`:'';
+  const livechatTile=widgetActive?'':`<div class="cm-cta disabled"><span class="cta-ic">💬</span><span><b>Live-Chat <span class="soon-tag">Bald verfügbar</span></b><small>Chat direkt auf der Seite folgt. Bis dahin findest du oben alle Wege.</small></span></div>`;
+  const forumTile=`<div class="cm-cta disabled"><span class="cta-ic">📋</span><span><b>Forum <span class="soon-tag">In Planung</span></b><small>Ein eigenes Forum mit Themen und Diskussionen ist in Planung.</small></span></div>`;
   $('view').innerHTML=`
    <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('community')}</span>Community</div>
      <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Unser Discord ist bereits live, der Subreddit folgt in Kürze.</div></div>
    <div class="cm-banners">${igBanner}${dcBanner}${nlBanner}</div>
-   <div class="cm-ctas">${redditBtn}</div>
-   ${widget}
-   <div class="cm-forum">
-     <div class="cm-forum-h">Forum</div>
-     <p>Ein eigenes Forum mit Themen und Diskussionen ist in Planung. Bis dahin läuft der Austausch über die oben genannten Kanäle.</p>
-   </div>`;
+   <div class="cm-soon">${redditBtn}${livechatTile}${forumTile}</div>
+   ${widget}`;
 }
 function renderMap(){
   $('view').innerHTML=`
