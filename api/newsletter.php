@@ -247,20 +247,8 @@ if ($method === 'POST') {
            . '<div class="m-tx" style="' . $BODY . ';font-size:15px;color:#4a4458;line-height:1.65;margin:0 0 22px">Danke für dein Interesse am ' . $vgLink . '-Newsletter. Bestätige deine Anmeldung mit einem Klick, dann bekommst du ab sofort die wichtigsten GTA-6-News direkt per Mail.</div>'
            . '<div style="margin:0 0 24px"><a class="m-btn" href="' . htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;background:#D00059;color:#ffffff;text-decoration:none;' . $BODY . ';font-size:15px;font-weight:700;padding:13px 26px;border-radius:10px">Anmeldung bestätigen</a></div>'
            . '<div class="m-tx" style="' . $BODY . ';font-size:14px;color:#4a4458;line-height:1.6;margin:0 0 10px">Folge uns und komm in die Community:</div>'
-           . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="background:#ffffff;border:1px solid #ecdfca;border-radius:12px;margin:0 0 12px"><tr><td style="padding:13px 15px">'
-           . '<a href="https://www.instagram.com/viceguide/" style="text-decoration:none;display:block"><table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>'
-           . '<td width="52" style="vertical-align:middle"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="40" height="40" align="center" valign="middle" style="background:#C13584;border-radius:9px"><img src="' . $base . '/nl-instagram.png" width="22" height="22" alt="Instagram" style="width:22px;height:22px;display:block;margin:0 auto"></td></tr></table></td>'
-           . '<td style="vertical-align:middle;padding-left:12px">'
-           . '<div class="m-h" style="' . $HEAD . ';font-size:17px;font-weight:700;color:#221041;line-height:1.2">Auf Instagram folgen</div>'
-           . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#6b6478;line-height:1.4">@viceguide: News, Bilder und Infohäppchen zu GTA 6</div>'
-           . '</td></tr></table></a></td></tr></table>'
-           . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="m-box" style="background:#ffffff;border:1px solid #ecdfca;border-radius:12px;margin:0 0 22px"><tr><td style="padding:13px 15px">'
-           . '<a href="' . $discordUrl . '" style="text-decoration:none;display:block"><table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>'
-           . '<td width="52" style="vertical-align:middle"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="40" height="40" align="center" valign="middle" style="background:#5865F2;border-radius:9px"><img src="' . $base . '/nl-discord.png" width="22" height="22" alt="Discord" style="width:22px;height:22px;display:block;margin:0 auto"></td></tr></table></td>'
-           . '<td style="vertical-align:middle;padding-left:12px">'
-           . '<div class="m-h" style="' . $HEAD . ';font-size:17px;font-weight:700;color:#221041;line-height:1.2">Discord beitreten</div>'
-           . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#6b6478;line-height:1.4">Chatten, Fragen und News in Echtzeit mit anderen GTA-6-Fans</div>'
-           . '</td></tr></table></a></td></tr></table>'
+           . '<a href="https://www.instagram.com/viceguide/" style="display:block;margin:0 0 12px;text-decoration:none"><img src="' . $base . '/nl-banner-instagram.jpg" width="600" alt="Auf Instagram folgen – @viceguide" style="width:100%;max-width:100%;height:auto;display:block;border-radius:12px"></a>'
+           . '<a href="' . $discordUrl . '" style="display:block;margin:0 0 22px;text-decoration:none"><img src="' . $base . '/nl-banner-discord.jpg" width="600" alt="Discord beitreten" style="width:100%;max-width:100%;height:auto;display:block;border-radius:12px"></a>'
            . '<div class="m-soft" style="' . $BODY . ';font-size:13px;color:#8a7fa5;line-height:1.6">Wenn du dich nicht angemeldet hast, ignorier diese Mail einfach, dann passiert nichts.</div>';
     $footer = '<div class="m-foot" style="' . $BODY . ';font-size:12px;color:#9a90ac;line-height:1.6">ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</div>';
     vg_send_mail($cfg, $email, 'Bitte bestätige deine Newsletter-Anmeldung', vg_mail_shell($inner, $footer, $cfg), [], vg_newsletter_opts($cfg));
