@@ -2,6 +2,245 @@
   "articles": [
     {
       "author": null,
+      "cat": "story",
+      "content": [
+        "Ein unscheinbarer Satz in der Beschreibung der Ultimate Edition sorgt für Aufsehen: GTA 6 scheint seine Story in Kapitel zu gliedern. Das wäre ein Novum, denn kein GTA-Hauptteil hat das bisher gemacht. Dexerto und Beebom haben den Hinweis zuerst eingeordnet, und er stammt nicht aus einem Leak, sondern aus dem offiziellen Store-Text zu Jason und Lucias Geschichte.",
+        "quote:Über die gesamte Geschichte von Jason und Lucia verteilt, mit neuen Inhalten, die sich hinter jedem Kapitel verbergen.|aus der Beschreibung der GTA-6-Ultimate-Edition|threaded across all aspects of Jason and Lucia's story, with new items uncovered behind each chapter",
+        "### Was Kapitel bei Rockstar bedeuten",
+        "Der Vergleich mit Red Dead Redemption 2 liegt nahe. Dort war die Geschichte in sechs nummerierte Kapitel geteilt, jedes mit eigenem Ton, eigenem Schauplatz und eigenem Spannungsbogen. Diese Struktur erlaubte Zeitsprünge und spürbare Veränderungen an der Welt, je nachdem, wo man in der Handlung stand. Für die GTA-Reihe wäre das neu, GTA 4 und GTA 5 erzählten durchgehend ohne feste Kapitelgrenzen.",
+        "### Was das für die Story heißt",
+        "Meiner Einschätzung nach deutet die Kapitelstruktur auf eine bewusst gebaute, filmische Erzählung hin, in der sich die Beziehung von Jason und Lucia über klar getrennte Abschnitte entwickelt. Wer die beiden Protagonisten noch nicht kennt, findet die Grundlagen in unserem Charakter-Überblick, ihre Beziehung im Bonnie-und-Clyde-Stil haben wir gesondert beschrieben. Wie viele Kapitel es am Ende werden, hat Rockstar nicht gesagt.",
+        "faq:Hat GTA 6 Kapitel wie RDR2?|Die Beschreibung der Ultimate Edition spricht von Inhalten hinter jedem Kapitel, was auf eine kapitelbasierte Story hindeutet. Eine formale Feature-Ankündigung von Rockstar gibt es aber nicht.",
+        "faq:Wie viele Kapitel hat GTA 6?|Das ist nicht bekannt. Red Dead Redemption 2 hatte sechs Kapitel, für GTA 6 hat Rockstar keine Zahl genannt.",
+        "faq:Was bedeutet die Kapitelstruktur für die Story?|Kapitel erlauben Zeitsprünge, wechselnde Schauplätze und eine klarer gebaute Erzählung, wie schon bei Red Dead Redemption 2. Für die GTA-Reihe wäre das eine Premiere."
+      ],
+      "credit": null,
+      "date": "2026-07-17T08:43",
+      "id": "gta-6-story-kapitel",
+      "img": "api/article_image.php?id=gta-6-story-kapitel&v=2026-07-17+06%3A47%3A51",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 erzählt seine Geschichte offenbar erstmals in Kapiteln, ähnlich wie Red Dead Redemption 2.",
+      "meta": "Analyse",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Dexerto: GTA 6 story structure like Red Dead Redemption 2",
+          "url": "https://www.dexerto.com/gta/gta-6s-story-will-use-same-structure-as-red-dead-redemption-2-3379368/"
+        },
+        {
+          "title": "Beebom: GTA 6 chapter-based story progression like RDR2",
+          "url": "https://beebom.com/gta-6-chapters-based-story-progression-like-rdr-2/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Die Kapitelstruktur leitet sich aus der offiziellen Beschreibung der Ultimate Edition ab. Eine ausdrückliche Feature-Ankündigung von Rockstar gibt es bisher nicht.",
+      "summary": "Ein Detail aus der Edition-Beschreibung deutet auf eine neue Erzählform hin.",
+      "title": "GTA 6 Story in Kapiteln: Was der RDR2-Vergleich verrät",
+      "tldr": [
+        "Die Beschreibung der Ultimate Edition deutet auf eine kapitelbasierte GTA-6-Story hin.",
+        "Das wäre ein Novum, denn kein GTA-Hauptteil hatte bisher feste Kapitel wie Red Dead Redemption 2.",
+        "Die Zahl der Kapitel hat Rockstar nicht genannt, eine formale Ankündigung fehlt."
+      ],
+      "updated": "2026-07-17 06:47:51"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Die Hoffnung stirbt zuletzt, hier aber ziemlich sicher: GTA 6 kommt nicht für PS4 und Xbox One. Jede offizielle Plattform-Angabe von Rockstar nennt allein PS5 und Xbox Series X/S. Es gibt keinen geleakten Last-Gen-Build, kein Versprechen für später und keine Aussage, die eine Tür offen lässt. Wie NME festhält, ist die Sache damit eindeutig.",
+        "### Warum die alten Konsolen außen vor bleiben",
+        "Rockstar hat GTA 6 gezielt für aktuelle Hardware gebaut. Die neuen Konsolen nutzen schnelle SSDs, die eine große, dichte Spielwelt ohne lange Ladezeiten und Nachladeruckler streamen. Dazu kommen mehr Arbeitsspeicher und stärkere Prozessoren, wichtig für Verkehr, Menschenmengen und Physik. GamesRadar nennt genau diese Punkte als Grund, warum die alte Generation nicht mithalten kann.",
+        "### Kein zweiter GTA-5-Weg",
+        "Bei GTA 5 war das anders, das erschien über mehrere Konsolengenerationen hinweg. GTA 6 macht diesen Spagat nicht. Wer heute noch eine PS4 oder Xbox One besitzt, kommt für den Release also um ein Upgrade auf PS5 oder Xbox Series nicht herum. Welche Konsolen genau unterstützt werden, steht in unserem Plattform-Überblick.",
+        "faq:Kommt GTA 6 für PS4?|Nein. Rockstar hat GTA 6 nur für PS5 und Xbox Series X/S bestätigt, eine PS4-Version ist nicht geplant.",
+        "faq:Kommt GTA 6 für Xbox One?|Nein. Auch für die Xbox One gibt es keine Fassung. GTA 6 setzt komplett auf die aktuelle Konsolengeneration.",
+        "faq:Warum erscheint GTA 6 nicht für alte Konsolen?|Das Spiel ist auf die schnelle SSD, den größeren Speicher und die stärkeren Prozessoren der neuen Konsolen ausgelegt. Die alte Generation kann die dichte Spielwelt technisch nicht stemmen."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-17T08:42",
+      "id": "gta-6-ps4-xbox-one",
+      "img": "api/article_image.php?id=gta-6-ps4-xbox-one&v=2026-07-17+07%3A07%3A47",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat GTA 6 ausschließlich für PS5 und Xbox Series X/S bestätigt, eine Last-Gen-Fassung ist nicht geplant.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "NME: Why GTA 6 isn't coming to PS4 and Xbox One",
+          "url": "https://www.nme.com/guides/gaming-guides/gta-6-ps4-xbox-one-release-3863063"
+        },
+        {
+          "title": "GamesRadar: GTA 6 everything we know",
+          "url": "https://www.gamesradar.com/gta-6-guide/"
+        }
+      ],
+      "status": "confirmed",
+      "statusnote": "Rockstar hat GTA 6 mehrfach ausschließlich für PS5 und Xbox Series X/S bestätigt. Eine Version für PS4 oder Xbox One ist offiziell nicht geplant.",
+      "summary": "Wer noch auf PS4 oder Xbox One spielt, hat bei GTA 6 schlechte Karten.",
+      "title": "GTA 6 für PS4 und Xbox One: Kommt es für alte Konsolen?",
+      "tldr": [
+        "GTA 6 erscheint nur für PS5 und Xbox Series X/S, eine Last-Gen-Fassung ist nicht geplant.",
+        "Grund ist die auf SSD, Speicher und CPU der neuen Konsolen ausgelegte Technik.",
+        "Anders als GTA 5 überspringt GTA 6 die alte Generation, ein Upgrade ist Pflicht."
+      ],
+      "updated": "2026-07-17 07:07:47"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Kaum steht der Release, fragen viele schon nach dem Danach: Gibt es Story-DLC, einen Season Pass, kostenpflichtige Erweiterungen? Der ehrliche Stand: Rockstar hat dazu nichts bestätigt. Es gibt keine offizielle Roadmap, keinen angekündigten Season Pass und keine bestätigten Inhalte für die Zeit nach dem Launch.",
+        "### Was die Berichte sagen",
+        "Aus der Gerüchteküche kommt trotzdem ein recht klares Bild. Dexerto berichtet unter Berufung auf Insider, dass Rockstar auf episodische Erweiterungen für die Singleplayer-Kampagne setzen könnte, also mehrere kleinere Story-Häppchen im Jahres- oder Zweijahresrhythmus statt eines einzigen großen DLC. Das würde laut dem Bericht auch den Druck auf die Entwickler senken. Bestätigt ist davon nichts.",
+        "### Warum das plausibel ist",
+        "Rockstars Vergangenheit macht die Berichte plausibel. Sowohl GTA 5 als auch Red Dead Redemption 2 bekamen nach dem Start Inhalte nachgeschoben, meist über den Online-Teil. GamesRadar rechnet auch bei GTA 6 mit Nachschub, betont aber, dass konkrete Details bis zu einer Ansage von Rockstar reine Spekulation bleiben. Ein Battle Pass oder eine Season-Struktur gehört ohnehin eher zu einem möglichen Online-Modus, und der ist selbst noch nicht bestätigt.",
+        "### Unsere Einschätzung",
+        "Mit Erweiterungen für GTA 6 ist zu rechnen, das passt zu allem, was Rockstar bisher gemacht hat. Auf konkrete Season-Pass-Preise oder DLC-Termine solltet ihr euch aber nicht vor einer offiziellen Ankündigung festlegen. Was zum Online-Modus bekannt ist, haben wir separat zusammengetragen.",
+        "faq:Gibt es einen Season Pass für GTA 6?|Offiziell nicht. Rockstar hat keinen Season Pass angekündigt. Eine solche Struktur wäre am ehesten Teil eines künftigen Online-Modus, der selbst nicht bestätigt ist.",
+        "faq:Kommt Story-DLC für GTA 6?|Berichte sprechen von episodischen Singleplayer-Erweiterungen, bestätigt ist das aber nicht. Angekündigt hat Rockstar bislang keinen Story-DLC.",
+        "faq:Ist DLC in der Ultimate Edition enthalten?|Die Ultimate Edition bündelt Bonusinhalte, ist aber kein Season Pass für spätere Erweiterungen. Zu echtem Nach-Release-DLC gibt es keine offizielle Zusage."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-17T08:42",
+      "id": "gta-6-dlc-season-pass",
+      "img": "api/article_image.php?id=gta-6-dlc-season-pass&v=2026-07-17+07%3A10%3A58",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat für GTA 6 weder DLC noch einen Season Pass angekündigt, mehrere Berichte sprechen aber von episodischen Erweiterungen.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Dexerto: GTA 6 episodic single-player DLC expansions",
+          "url": "https://www.dexerto.com/gta/gta-6-will-reportedly-release-episodic-single-player-dlc-expansions-2382045/"
+        },
+        {
+          "title": "GamesRadar: GTA 6 everything we know",
+          "url": "https://www.gamesradar.com/gta-6-guide/"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": "Zu DLC und Season Pass gibt es keine offizielle Ankündigung. Die Angaben beruhen auf Insider-Berichten und Einordnung, nicht auf Rockstar-Aussagen.",
+      "summary": "Offiziell ist zu Erweiterungen nichts bestätigt, die Berichte deuten aber in eine Richtung.",
+      "title": "GTA 6 DLC und Season Pass: Was bisher bekannt ist",
+      "tldr": [
+        "Rockstar hat für GTA 6 weder DLC noch einen Season Pass offiziell angekündigt.",
+        "Berichte sprechen von episodischen Singleplayer-Erweiterungen im Jahresrhythmus, bestätigt ist das nicht.",
+        "Ein Battle Pass gehört eher zu einem möglichen Online-Modus, der selbst noch unbestätigt ist."
+      ],
+      "updated": "2026-07-17 07:10:58"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Wer beide Konsolen im Haus hat oder vor dem Kauf steht, fragt sich zu Recht: PS5 oder Xbox? Vorweg die Entwarnung, es gibt kein schlechteres Spiel. GTA 6 erscheint auf PS5 und Xbox Series X/S als identisches Spiel, wie GamesRadar bestätigt. Die Entscheidung fällt also nicht am Inhalt, sondern an drei anderen Punkten.",
+        "### Ökosystem und Freunde zuerst",
+        "Der wichtigste Faktor ist, wo ihr ohnehin zu Hause seid. Auf welcher Plattform liegt euer Guthaben, wo sind eure Freunde, welchen Controller mögt ihr lieber? Ein späterer Online-Modus lebt von den Leuten, mit denen ihr spielt. Was plattformübergreifend an Crossplay und Fortschritt möglich ist, ordnen wir separat ein.",
+        "### Technik: PS5 Pro als Spitze",
+        "Die beste Bild- und Grafikqualität bietet die PS5 Pro. Wer maximale Technik will und die Wahl hat, fährt damit am besten, den konkreten Unterschied zur normalen PS5 haben wir eigens aufgeschlüsselt. Auf Xbox-Seite ist die Series X das Leistungsmodell, die Series S die günstigere, schwächere Variante.",
+        "### Kein Game-Pass-Trick",
+        "Ein häufiger Irrtum: GTA 6 lande zum Start im Xbox Game Pass. Das ist nicht vorgesehen. GTA 6 ist ein Vollpreistitel, ihr zahlt auf beiden Plattformen den vollen Preis. Die Ultimate Edition gibt es zudem nur direkt im PlayStation- und Microsoft-Store, nicht bei Drittanbietern, worauf auch GameStar hinweist. Welche Edition was bietet, steht in unserem Editionen-Vergleich.",
+        "### Unsere Empfehlung",
+        "Kauft GTA 6 dort, wo euer Konto und eure Freunde sind, alles andere ist Nebensache. Legt ihr größten Wert auf Technik und steht die Anschaffung frei, ist die PS5 Pro die stärkste Wahl. Einen inhaltlichen Nachteil hat keine der beiden Plattformen.",
+        "faq:Ist GTA 6 auf PS5 und Xbox gleich?|Ja. Der Spielinhalt ist auf PS5 und Xbox Series X/S identisch. Unterschiede gibt es nur bei Hardware, Ökosystem und Editionen.",
+        "faq:Kommt GTA 6 in den Game Pass?|Ein Start im Xbox Game Pass ist nicht vorgesehen. GTA 6 ist ein Vollpreistitel und kostet auf beiden Plattformen den vollen Preis.",
+        "faq:Lohnt sich die PS5 Pro für GTA 6?|Für die beste Bild- und Grafikqualität ja. Wer maximale Technik will, bekommt sie auf der PS5 Pro. Pflicht ist sie nicht, GTA 6 läuft auch auf der normalen PS5."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-17T08:42",
+      "id": "gta-6-ps5-oder-xbox-kaufen",
+      "img": "api/article_image.php?id=gta-6-ps5-oder-xbox-kaufen&v=2026-07-17+07%3A05%3A55",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 erscheint auf PS5 und Xbox Series X/S mit demselben Spielinhalt, der Unterschied steckt im Drumherum.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GamesRadar: GTA 6 everything we know",
+          "url": "https://www.gamesradar.com/gta-6-guide/"
+        },
+        {
+          "title": "GameStar: GTA 6 vorbestellen, Editionen und Plattformen",
+          "url": "https://www.gamestar.de/artikel/gta-6-preorder-kaufen-ps5-xbox-welche-edition-vorbestellen,3448926.html"
+        }
+      ],
+      "status": null,
+      "statusnote": null,
+      "summary": "Das Spiel ist auf beiden Konsolen gleich, die Entscheidung liegt woanders.",
+      "title": "GTA 6 auf PS5 oder Xbox? Welche Version die richtige ist",
+      "tldr": [
+        "GTA 6 ist auf PS5 und Xbox Series X/S inhaltlich identisch, das Spiel ist kein Entscheidungsgrund.",
+        "Ausschlaggebend sind Ökosystem, Freundeskreis und Hardware, die PS5 Pro bietet die beste Technik.",
+        "Ein Start im Game Pass ist nicht vorgesehen, GTA 6 kostet auf beiden Plattformen den vollen Preis."
+      ],
+      "updated": "2026-07-17 07:05:55"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Das Steam Deck ist der Traum vieler für GTA 6 unterwegs, doch zum Launch wird daraus nichts Natives. Der Grund ist derselbe wie bei jedem PC: Es gibt keine PC-Version. Das Deck läuft mit SteamOS und braucht eine installierbare PC-Fassung, und die hat Rockstar für den 19. November 2026 nicht im Programm. Ohne PC-Build gibt es nichts zu installieren.",
+        "### Auch eine spätere PC-Version ist keine Garantie",
+        "Selbst wenn irgendwann eine PC-Version kommt, ist der Deck-Betrieb nicht gesichert. GameRant weist darauf hin, dass ein technisch so anspruchsvolles Spiel die schwache Handheld-Hardware an ihre Grenzen bringt. Destructoid ordnet den Wunsch nach GTA 6 auf dem Deck ähnlich nüchtern ein. Ein Verified-Status oder brauchbare Bildraten wären also selbst nach einem PC-Release offen.",
+        "### Der einzige Weg zum Launch: Cloud",
+        "Wer GTA 6 am 19. November trotzdem auf dem Deck spielen will, kommt nur über die Cloud dahin. Das Deck kann Xbox Cloud Gaming über den Browser streamen, vorausgesetzt GTA 6 landet dort, was bisher nicht bestätigt ist. Steam Link hilft nicht weiter, denn das streamt von eurem eigenen PC, auf dem GTA 6 mangels PC-Version ebenfalls nicht läuft. Mehr dazu steht in unserem Überblick zum Cloud-Gaming.",
+        "### Was das für euch heißt",
+        "Nativ auf dem Steam Deck läuft GTA 6 zum Release nicht, und eine spätere PC-Version wäre kein Selbstläufer für den Handheld. Realistisch bleibt nur ein Cloud-Stream, sobald ein Dienst das Spiel anbietet. Warum Rockstar sich mit dem PC so viel Zeit lässt, haben wir separat beleuchtet.",
+        "faq:Läuft GTA 6 nativ auf dem Steam Deck?|Zum Release nicht. Das Deck braucht eine PC-Version, und die gibt es am 19. November 2026 nicht. Auch eine spätere PC-Fassung wäre auf der Deck-Hardware fraglich.",
+        "faq:Kann ich GTA 6 auf dem Deck streamen?|Möglich wäre Xbox Cloud Gaming über den Browser, falls GTA 6 dort erscheint. Bestätigt ist das nicht. Steam Link hilft nicht, weil dafür eine PC-Version nötig wäre.",
+        "faq:Kommt GTA 6 überhaupt auf den PC?|Rockstar hat keine PC-Version angekündigt. Historisch kamen GTA-Titel erst deutlich später auf den PC, ein Termin ist reine Spekulation."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-17T08:41",
+      "id": "gta-6-steam-deck",
+      "img": "api/article_image.php?id=gta-6-steam-deck&v=2026-07-17+07%3A05%3A55",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 erscheint nur für PS5 und Xbox Series X/S, und das Steam Deck ist im Kern ein PC-Handheld.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GameRant: GTA 6 PC release and Steam Deck support",
+          "url": "https://gamerant.com/gta-6-pc-release-steam-deck-support-verified-handheld-good-why/"
+        },
+        {
+          "title": "Destructoid: GTA 6 on Steam Deck wish",
+          "url": "https://www.destructoid.com/im-not-alone-in-my-impossible-gta-6-wish-and-theres-only-one-way-it-happens/"
+        }
+      ],
+      "status": null,
+      "statusnote": null,
+      "summary": "Auf dem Steam Deck hängt GTA 6 an derselben Frage wie beim PC.",
+      "title": "GTA 6 auf dem Steam Deck: Läuft es zum Release?",
+      "tldr": [
+        "Nativ läuft GTA 6 zum Release nicht auf dem Steam Deck, weil es keine PC-Version gibt.",
+        "Auch eine spätere PC-Fassung wäre auf der schwachen Deck-Hardware nicht gesichert.",
+        "Der einzig realistische Weg zum Launch ist ein Cloud-Stream, sobald ein Dienst GTA 6 anbietet."
+      ],
+      "updated": "2026-07-17 07:05:55"
+    },
+    {
+      "author": null,
       "cat": "leaks",
       "content": [
         "Wer Jason und Lucia seine Stimme leiht, ist offiziell offen. Das ist kein Versäumnis, sondern Methode. Rockstar hielt die Besetzung auch bei GTA 5 und Red Dead Redemption 2 bis zum Abspann geheim. Trotzdem gibt es Namen, die kursieren, und einer davon steht auf festerem Boden als der Rest.",
@@ -144,6 +383,262 @@
         "Rockstars Verschiebe-Historie lässt ein Restrisiko, der nächste Prüfstein sind die Zahlen am 7. August."
       ],
       "updated": "2026-07-16 09:25:51"
+    },
+    {
+      "author": null,
+      "cat": "trailer",
+      "content": [
+        "Es ist die eine Sache, die jeder sehen will und die noch immer fehlt: echtes GTA-6-Gameplay. Trailer 1 erschien im Dezember 2023, Trailer 2 am 6. Mai 2025. Beide sind cineastisch geschnitten und zeigen Figuren, Stimmung und Schauplätze, aber keine Sekunde tatsächliches Spielgeschehen mit Menü, Steuerung oder Missionsablauf. Rockstar hält das Spiel selbst bewusst zurück.",
+        "### Trailer 3 wird wohl wieder filmisch",
+        "Der nächste Schritt dürfte Trailer 3 sein, und auch der wird nach aktueller Erwartung eine story-lastige, cineastische Vorschau. Forbes-Autor Brian Mazique geht davon aus, dass ein eigener Gameplay-Reveal separat und später kommt, nicht zusammen mit dem Story-Trailer. Wann genau Trailer 3 fällt, haben wir an anderer Stelle eingeordnet. Für echtes Gameplay ist er aber vermutlich nicht die richtige Adresse.",
+        "### Der 7. August als Hoffnungsträger",
+        "Viele richten den Blick auf den 7. August, den Termin von Take-Twos Quartalsbericht. GTA BOOM verweist darauf, dass dieser Bericht erstmals die Vorbestellzahlen berührt und deshalb Aufmerksamkeit zieht. Manche hoffen auf einen Gameplay-Trailer zum selben Anlass. Zugesagt ist das nicht. Ein Investorentermin ist zunächst ein Finanzereignis, kein garantierter Trailer-Slot.",
+        "### Warum Rockstar wartet",
+        "Kotaku beschreibt, dass Rockstar gerade in die heiße Marketingphase vor dem Launch eintritt. In dieses Muster passt, echtes Gameplay möglichst spät und möglichst nah am Release zu zeigen, wenn die Aufmerksamkeit am größten ist. Meiner Einschätzung nach seht ihr zuerst den filmischen Trailer 3 und erst danach, näher am 19. November, das eigentliche Spielmaterial. Wer auf Gameplay am 7. August wettet, hofft mehr, als er weiß.",
+        "faq:Hat Rockstar schon GTA-6-Gameplay gezeigt?|Nein. Bislang gibt es nur zwei filmische Trailer aus Dezember 2023 und Mai 2025. Echtes Spielgeschehen mit Steuerung oder Menüs wurde noch nicht gezeigt.",
+        "faq:Kommt Gameplay mit Trailer 3?|Vermutlich nicht. Trailer 3 wird nach aktueller Erwartung erneut eine cineastische Story-Vorschau, ein eigener Gameplay-Reveal dürfte separat und später folgen.",
+        "faq:Zeigt Rockstar am 7. August Gameplay?|Das ist reine Hoffnung. Der 7. August ist Take-Twos Quartalstermin, ein Gameplay-Trailer ist dafür nicht angekündigt."
+      ],
+      "credit": "Rockstar",
+      "date": "2026-07-16T10:40",
+      "id": "gta-6-gameplay-wann-kommt",
+      "img": "api/article_image.php?id=gta-6-gameplay-wann-kommt&v=2026-07-16+14%3A52%3A06",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Bis heute hat Rockstar zu GTA 6 kein echtes Gameplay gezeigt, nur zwei filmische Trailer.",
+      "meta": "Analyse",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Forbes: GTA 6 Trailer 3 expected release and what comes next",
+          "url": "https://www.forbes.com/sites/brianmazique/2026/06/29/grand-theft-auto-6-trailer-3-the-latest-on-its-expected-release-and-what-comes-next/"
+        },
+        {
+          "title": "GTA BOOM: Take-Two August 7 earnings call",
+          "url": "https://www.gtaboom.com/the-take-two-august-7-earnings-call-is-when-we-finally-get-gta-6-pre-order-numbers-35ce"
+        },
+        {
+          "title": "Kotaku: Rockstar's end game for launching GTA 6",
+          "url": "https://kotaku.com/heres-how-i-know-we-are-entering-rockstars-end-game-for-launching-gta-6-2000708079"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": "Ein Termin für den GTA-6-Gameplay-Reveal ist nicht bestätigt. Die Einordnung beruht auf Rockstars bisherigem Trailer-Muster und Brancheneinschätzungen.",
+      "summary": "Zwei Trailer, null Gameplay: Rockstar hält das eigentliche Spiel weiter zurück.",
+      "title": "GTA 6 Gameplay: Wann zeigt Rockstar echtes Spielmaterial?",
+      "tldr": [
+        "Rockstar hat zu GTA 6 bislang nur filmische Trailer gezeigt, echtes Gameplay fehlt komplett.",
+        "Trailer 3 wird voraussichtlich wieder cineastisch, ein Gameplay-Reveal dürfte separat und später kommen.",
+        "Hoffnungen auf Gameplay am 7. August sind Spekulation, der Termin ist Take-Twos Finanzbericht."
+      ],
+      "updated": "2026-07-16 14:52:06"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Der Vollpreis für GTA 6 liegt bei rund 80 Euro für die Standard Edition, die Ultimate Edition kostet etwa 100 Euro. Das ist der Ausgangspunkt, nicht das letzte Wort. Schon jetzt zeigen mehrere Preisvergleiche, dass zwischen dem teuersten und dem günstigsten Angebot ein zweistelliger Betrag liegt. Wer klug bestellt, spart also spürbar.",
+        "### Wo es aktuell am günstigsten ist",
+        "Stand Juli 2026 unterbieten sich vor allem ausländische Onlineshops. GameStar und PC Games verfolgen die Preorder-Preise laufend und melden Angebote deutlich unter Vollpreis. MyDealz berichtet von Wegen, GTA 6 über den französischen Händler Cdiscount für rund 65 Euro statt 80 Euro zu bekommen, mit Neukunden-Gutschein zeitweise sogar für etwa 55 Euro. Solche Aktionscodes sind kurzlebig, den grundsätzlichen Preisunterschied zu deutschen Ketten gibt es aber unabhängig davon.",
+        "### Achtung bei ausländischen Codes",
+        "Bei günstigen Auslandsangeboten stellt sich die Frage nach der Regionalsperre. Für GTA 6 gibt teilweise Entwarnung: Laut Rockstar-Support fallen die EMEA-Länder in dieselbe Region, ein dort gekaufter Code ist also länderübergreifend gültig. Für Xbox gibt es ohnehin keine solche Ländersperre. Vorsicht ist trotzdem angebracht bei sehr billigem Guthaben aus fremden Regionen außerhalb der EMEA-Zone, denn solche PSN-Codes lassen sich oft nicht in einem deutschen Konto einlösen.",
+        "### Digital, Box oder Guthaben",
+        "Wer digital kauft, fährt häufig über rabattiertes PSN- oder Xbox-Guthaben günstiger, das seriöse Händler mit einigen Prozent Nachlass anbieten. Bei der Box lohnt der Blick ins Kleingedruckte: In der Retail-Packung liegt kein Datenträger, sondern nur ein Downloadcode. Die Ultimate Edition wiederum gibt es nur direkt im PlayStation- und Microsoft-Store, nicht bei Drittanbietern. Was die beiden Editionen unterscheidet, haben wir im Detail verglichen.",
+        "### Warum sich frühes Bestellen lohnt",
+        "Ein Argument fürs Vorbestellen ist der Bonus: Wer bis zum 20. November 2026 vorbestellt, bekommt das Vintage Vice City Pack gratis dazu. Ein späterer Kauf spart vielleicht ein paar Euro, lässt diesen Bonus aber liegen. Wer ohnehin sicher zugreift, sollte den günstigsten seriösen Preorder mit Bonus mitnehmen, statt auf einen Rabatt nach Release zu warten.",
+        "faq:Wo kann ich GTA 6 am günstigsten vorbestellen?|Stand Juli 2026 sind ausländische Onlineshops am billigsten, etwa über Cdiscount für rund 65 Euro. Deutsche Ketten wie Amazon und MediaMarkt ziehen bei Aktionen nach, liegen aber meist etwas höher.",
+        "faq:Sind ausländische PSN-Codes für GTA 6 sicher?|Innerhalb der EMEA-Region ja, denn Rockstar zählt diese Länder als eine Region. Guthaben aus fernen Regionen außerhalb der EMEA-Zone lässt sich dagegen oft nicht einlösen.",
+        "faq:Lohnt sich die Ultimate Edition?|Die Ultimate Edition kostet rund 20 Euro mehr und ist nur direkt im PlayStation- und Microsoft-Store zu haben. Ob sich der Aufpreis lohnt, hängt an den Zusatzinhalten."
+      ],
+      "credit": "Rockstar",
+      "date": "2026-07-16T10:30",
+      "id": "gta-6-guenstig-kaufen",
+      "img": "api/article_image.php?id=gta-6-guenstig-kaufen&v=2026-07-16+14%3A38%3A36",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 lässt sich seit dem 25. Juni vorbestellen, und die Händler unterbieten sich bereits deutlich.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GameStar: GTA 6 vorbestellen, wo am günstigsten",
+          "url": "https://www.gamestar.de/artikel/gta-6-preorder-kaufen-ps5-xbox-welche-edition-vorbestellen,3448926.html"
+        },
+        {
+          "title": "PC Games: GTA 6 billiger vorbestellen",
+          "url": "https://www.pcgames.de/GTA-6-Spiel-55239/News/GTA-6-billiger-vorbestellen-Wir-zeigen-die-besten-Preorder-Angebote-fuer-Grand-Theft-Auto-VI-1547204/"
+        },
+        {
+          "title": "MyDealz: GTA 6 schon ab 55 Euro",
+          "url": "https://www.mydealz.de/magazin/gta-6-schon-ab-55-euro-so-umgeht-ihr-vollpreis-bei-der-vorbestellung-67438"
+        }
+      ],
+      "status": null,
+      "statusnote": null,
+      "summary": "Zwischen Vollpreis und Schnäppchen liegen bei GTA 6 schon jetzt rund 25 Euro.",
+      "title": "GTA 6 günstig kaufen: Wo Vorbestellen am meisten spart",
+      "tldr": [
+        "Zwischen Vollpreis und günstigstem Angebot liegen bei GTA 6 schon jetzt rund 25 Euro.",
+        "Ausländische Shops unterbieten deutsche Ketten, innerhalb der EMEA-Region sind die Codes gültig.",
+        "Wer bis zum 20. November vorbestellt, sichert sich zusätzlich das gratis Vintage Vice City Pack."
+      ],
+      "updated": "2026-07-16 14:38:36"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Zu zweit auf einer Couch durch Vice City fahren, das wäre ein Traum, und genau danach suchen viele. Die ehrliche Antwort zum Release: dafür gibt es keine Grundlage. GTA 6 startet am 19. November 2026 als reines Singleplayer-Erlebnis. Einen Splitscreen oder lokalen Zwei-Spieler-Modus hat Rockstar an keiner Stelle bestätigt, und die GTA-Reihe hatte einen geteilten Bildschirm noch nie.",
+        "### Woher der Koop-Wunsch kommt",
+        "Immer wieder kursieren Gerüchte, GTA 6 lasse zwei Spieler die komplette Story gemeinsam durchspielen. ScreenRant hat die Debatte in der Community aufgegriffen und zeigt, wie gespalten die Reaktionen sind. Belegt ist davon nichts. Es handelt sich um Fan-Spekulation und um Wunschdenken, nicht um eine angekündigte Funktion. Wer sich darauf verlässt, baut auf Sand.",
+        "### Der einzige realistische Mehrspieler-Weg",
+        "Gemeinsam spielen dürfte am ehesten online möglich werden, über einen Nachfolger von GTA Online. Der ist allerdings weder bestätigt noch terminiert und läuft nach aktuellem Stand getrennt vom Hauptspiel, wie RockstarINTEL zusammenfasst. Ein Koop-Erlebnis auf einer Konsole im selben Raum ersetzt das nicht. Was zum Online-Modus wirklich bekannt ist, haben wir separat zusammengetragen.",
+        "### Unsere Einschätzung",
+        "Wir halten einen Splitscreen für sehr unwahrscheinlich, weil er technisch aufwendig ist und keiner der bisherigen GTA-Teile ihn hatte. Ein Story-Koop zu zweit bleibt bis zu einer offiziellen Ansage ein Gerücht. Rechnet zum Launch mit einem klassischen Solo-Abenteuer, alles andere wäre eine Überraschung.",
+        "faq:Hat GTA 6 einen Splitscreen-Modus?|Nein, dafür gibt es keine Ankündigung. Kein GTA-Teil bot bisher einen geteilten Bildschirm, und für GTA 6 ist er nicht bestätigt.",
+        "faq:Kann man die Story zu zweit spielen?|Ein Story-Koop ist reine Spekulation. Rockstar hat GTA 6 als Singleplayer bestätigt, ein gemeinsames Durchspielen ist nicht angekündigt.",
+        "faq:Gibt es einen lokalen Koop-Modus?|Nein. Gemeinsames Spielen dürfte höchstens online über einen späteren GTA-Online-Nachfolger kommen, nicht lokal auf einer Konsole."
+      ],
+      "credit": "KI-generiert / ViceGuide",
+      "date": "2026-07-16T10:20",
+      "id": "gta-6-splitscreen-koop",
+      "img": "api/article_image.php?id=gta-6-splitscreen-koop&v=2026-07-16+14%3A42%3A52",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat für GTA 6 weder einen Splitscreen noch einen lokalen Koop-Modus angekündigt.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "ScreenRant: GTA 6 local multiplayer reactions",
+          "url": "https://screenrant.com/gta-6-local-multiplayer-gamer-reactions/"
+        },
+        {
+          "title": "RockstarINTEL: GTA 6 is single-player only",
+          "url": "https://rockstarintel.com/gta-6-is-single-player-only-gta-online-may-not-be-included/"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": "Ein Splitscreen oder Koop-Modus ist von Rockstar nicht bestätigt. Aussagen dazu beruhen auf Gerüchten und Fan-Wünschen.",
+      "summary": "Der Wunsch nach Koop ist groß, die Faktenlage bei GTA 6 dagegen dünn.",
+      "title": "GTA 6 Splitscreen und Koop: Kann man zu zweit spielen?",
+      "tldr": [
+        "Rockstar hat für GTA 6 keinen Splitscreen und keinen lokalen Koop-Modus angekündigt.",
+        "Gerüchte über einen Story-Koop zu zweit sind Fan-Spekulation ohne Beleg.",
+        "Gemeinsames Spielen dürfte höchstens online über einen späteren GTA-Online-Nachfolger kommen."
+      ],
+      "updated": "2026-07-16 14:42:52"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Die Sorge vor einem Online-Zwang begleitet jedes große Spiel, und bei GTA 6 taucht sie besonders oft auf. Entwarnung vorweg: die Kampagne ist offline spielbar. Rockstar hat GTA 6 im Sommer 2026 klar als reines Singleplayer-Erlebnis zum Start beschrieben, ganz ohne verpflichtenden Online-Modus. Ein Always-Online-Zwang für die Story ist damit vom Tisch.",
+        "### Der Haken liegt in der Verpackung",
+        "Trotzdem kommt ihr um eine Internetverbindung nicht komplett herum, und das liegt an der Boxversion. In der Retail-Packung steckt kein Datenträger, sondern nur ein Downloadcode. Das Spiel müsst ihr also in jedem Fall einmal herunterladen, egal ob digital gekauft oder als Box im Regal. Ohne diesen ersten Download startet nichts. Wie sich das auf die reine Sammel-Box auswirkt, haben wir gesondert beschrieben.",
+        "### Nach der Installation seid ihr frei",
+        "Ist GTA 6 einmal installiert, läuft die Kampagne ohne Netz. Passend dazu taucht das Spiel im PlayStation Store mit dem Hinweis auf Offline-Wiedergabe auf, worauf TweakTown hingewiesen hat. Der Portal-Zusatz und die Konsolenseite nennen GTA 6 als offline spielbar. Für Laptop-Zocker ohne stabiles WLAN heißt das: einmal laden, dann ist die Leitung egal.",
+        "### Der Online-Teil kommt separat",
+        "Was viele mit dem Online-Zwang verwechseln, ist der Mehrspieler. Einen Nachfolger für GTA Online erwarten fast alle, bestätigt oder terminiert hat Rockstar ihn aber nicht. Wie RockstarINTEL und games.gg berichten, deuten die Store-Angaben darauf hin, dass ein solcher Online-Modus getrennt vom Hauptspiel läuft und später kommt. Die Story betrifft das nicht.",
+        "faq:Kann ich GTA 6 komplett offline spielen?|Die Kampagne ja. Nach der Installation braucht das Singleplayer-Erlebnis keine Dauerverbindung. Für den ersten Download ist Internet aber Pflicht.",
+        "faq:Brauche ich für die Box-Version Internet?|Ja. In der Packung liegt nur ein Downloadcode, kein Datenträger. Das Spiel muss also einmal heruntergeladen werden.",
+        "faq:Ist GTA 6 immer online (Always Online)?|Nein. Rockstar hat GTA 6 als Singleplayer-Erlebnis bestätigt. Ein verpflichtender Online-Modus für die Story ist nicht vorgesehen."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-16T10:10",
+      "id": "gta-6-offline-spielen",
+      "img": "api/article_image.php?id=gta-6-offline-spielen&v=2026-07-16+14%3A48%3A47",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat GTA 6 als Singleplayer-Erlebnis bestätigt, und ein Singleplayer braucht keine Dauerverbindung.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "TweakTown: GTA 6 listed as offline play only",
+          "url": "https://www.tweaktown.com/news/112375/gta-6-listed-as-offline-play-only-on-console-playstation-store-offline-play-enabled-on-other-sony-portals/index.html"
+        },
+        {
+          "title": "games.gg: GTA 6 single-player only launch",
+          "url": "https://games.gg/news/gta-6-single-player-only-launch/"
+        },
+        {
+          "title": "RockstarINTEL: GTA 6 is single-player only",
+          "url": "https://rockstarintel.com/gta-6-is-single-player-only-gta-online-may-not-be-included/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Der Singleplayer ist offiziell bestätigt. Dass die Kampagne offline läuft, stützt sich zusätzlich auf die Store-Angaben, ein Online-Modus ist getrennt und nicht terminiert.",
+      "summary": "Die Kampagne läuft offline, trotzdem kommt niemand ganz ohne Internet aus.",
+      "title": "GTA 6 offline spielen: Braucht ihr eine Internetverbindung?",
+      "tldr": [
+        "Die GTA-6-Kampagne läuft nach der Installation ohne Internet, ein Always-Online-Zwang besteht nicht.",
+        "Weil die Box nur einen Code enthält, ist ein erster Download über das Netz trotzdem Pflicht.",
+        "Der Mehrspieler kommt getrennt und später und hat mit dem Offline-Singleplayer nichts zu tun."
+      ],
+      "updated": "2026-07-16 14:48:47"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Wer keine aktuelle Konsole hat, stellt sich früh die Frage, ob GTA 6 einfach über einen Cloud-Dienst läuft. Die kurze Antwort zum Start: nur eingeschränkt, und bei einem Dienst gar nicht. Der Grund ist keine Laune von Rockstar, sondern eine technische Weiche. GTA 6 kommt am 19. November 2026 ausschließlich für PS5 und Xbox Series X/S. Eine PC-Fassung ist nicht angekündigt.",
+        "### GeForce Now fällt zum Launch aus",
+        "NVIDIAs GeForce Now streamt keine eigenen Spielversionen, sondern die PC-Fassungen, die ihr ohnehin bei Steam oder Epic besitzt. Ohne einen PC-Build von GTA 6 hat der Dienst schlicht nichts zum Streamen. Wie 9to5Google erklärt, kann GeForce Now einen konsolenexklusiven Titel nicht magisch verfügbar machen. Solange Rockstar keine PC-Version herausbringt, steht GTA 6 dort nicht in der Bibliothek.",
+        "### Xbox Cloud Gaming ist der einzige realistische Weg",
+        "Anders sieht es bei Xbox Cloud Gaming aus, dem Streaming-Teil von Game Pass Ultimate. Der Dienst streamt Xbox-Versionen, und eine solche Xbox-Fassung von GTA 6 existiert. Technisch wäre ein Stream also möglich. Bestätigt ist er trotzdem nicht: Weder Microsoft noch Rockstar haben GTA 6 bislang für die xCloud-Bibliothek angekündigt. Möglich, aber offen.",
+        "### Ein Cloud-PC wie Shadow hilft nicht",
+        "Verlockend klingt der Umweg über einen virtuellen Cloud-PC wie Shadow. Der Haken ist derselbe wie bei GeForce Now. Shadow gibt euch einen Windows-Rechner in der Cloud, und auf einem Windows-Rechner läuft GTA 6 ohne PC-Version eben nicht. Der Umweg spart die Konsole, nicht die fehlende PC-Fassung. Wer im Netz auf angebliche Cloud-Tricks stößt, sollte hier skeptisch bleiben.",
+        "### Was das für euch heißt",
+        "Alles hängt an der PC-Version. Kommt sie irgendwann, öffnet sich damit auch die Tür für GeForce Now und Co. Bis dahin ist die einzige mögliche Cloud-Option das Streaming der Xbox-Fassung über Game Pass Ultimate, und selbst das ist nicht zugesagt. Warum Rockstar sich mit dem PC so viel Zeit lässt, haben wir separat eingeordnet.",
+        "faq:Kommt GTA 6 auf GeForce Now?|Zum Launch nicht. GeForce Now braucht eine PC-Version des Spiels, und die hat Rockstar bisher nicht angekündigt. Ohne PC-Build kann der Dienst GTA 6 nicht streamen.",
+        "faq:Kann ich GTA 6 über Xbox Cloud Gaming streamen?|Technisch wäre es möglich, weil eine Xbox-Version existiert. Angekündigt ist ein xCloud-Start von GTA 6 aber weder von Microsoft noch von Rockstar.",
+        "faq:Hilft ein Cloud-PC wie Shadow?|Nein. Ein virtueller Windows-PC braucht ebenfalls eine PC-Fassung von GTA 6, und die gibt es zum Release nicht."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-16T10:00",
+      "id": "gta-6-cloud-gaming",
+      "img": "api/article_image.php?id=gta-6-cloud-gaming&v=2026-07-16+14%3A39%3A10",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "GTA 6 erscheint nur für PS5 und Xbox Series X/S, und genau daran entscheidet sich, ob ein Cloud-Stream überhaupt funktioniert.",
+      "meta": "Ratgeber",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "9to5Google: GTA 6 on PC and cloud",
+          "url": "https://9to5google.com/2023/12/06/gta-6-on-pc-and-cloud/"
+        },
+        {
+          "title": "NVIDIA GeForce Now",
+          "url": "https://www.nvidia.com/en-us/geforce-now/"
+        }
+      ],
+      "status": null,
+      "statusnote": null,
+      "summary": "Ob GTA 6 per Cloud auf PC, Handy oder TV läuft, hängt an einer einzigen Frage.",
+      "title": "GTA 6 Cloud-Gaming: Läuft es ohne eigene Konsole?",
+      "tldr": [
+        "Ein Cloud-Stream von GTA 6 scheitert oder gelingt an einer Frage: gibt es eine PC-Version?",
+        "GeForce Now und Cloud-PCs wie Shadow fallen zum Launch aus, weil beide einen PC-Build brauchen.",
+        "Xbox Cloud Gaming wäre der einzig mögliche Weg über die Xbox-Fassung, ist aber nicht bestätigt."
+      ],
+      "updated": "2026-07-16 14:39:10"
     },
     {
       "author": null,
