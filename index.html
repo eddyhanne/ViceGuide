@@ -4120,6 +4120,7 @@ async function loadExternal(){
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
   try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; NEWS_SETTINGS.focusOrder=Array.isArray(d.focus_order)?d.focus_order:[]; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; DB_SETTINGS.featuredEntries=Array.isArray(d.featured_entries)?d.featured_entries:[]; } } }catch(e){}
   await checkAdminSession();
+  vgTrack(location.pathname);
   restoreEditMode();
   if(!gquery.trim())renderView();
 }
@@ -4444,6 +4445,11 @@ function legalClick(e,k){
 })();
 function vgTrack(path){
   try{
+    /* Eigene Aufrufe im eingeloggten Redaktionsmodus nicht mitzaehlen. Greift
+       nur, solange isAdmin wirklich gesetzt ist (nach checkAdminSession()),
+       filtert also nicht rueckwirkend den allerersten Landing-Hit vor dem
+       Login-Check, siehe die Verschiebung dieses Aufrufs weiter unten. */
+    if(isAdmin) return;
     const raw=sessionStorage.getItem('vg_src');
     const src=raw?JSON.parse(raw):{};
     const payload=JSON.stringify({
@@ -4582,7 +4588,6 @@ newsView = 'cards';
 dbView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 { const _dark=document.documentElement.getAttribute('data-theme')==='dark'; $('tico').textContent=_dark?'☾':'☀'; const _l=$('tlbl'); if(_l)_l.textContent=_dark?'Dunkel':'Hell'; }
 restoreFromLocation();
-vgTrack(location.pathname);
 /* Nach dem Laden der echten Daten einmal erzwungen neu aufbauen: der erste
    restoreFromLocation-Lauf rendert noch mit leeren Listen. viewReady zuruecksetzen,
    damit goIfNeeded() diesen einen Neuaufbau nicht als "schon fertig" ueberspringt.
