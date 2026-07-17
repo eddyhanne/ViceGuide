@@ -1,0 +1,119 @@
+RewriteEngine On
+
+# Kanonische URL erzwingen: https://viceguide.de/ (kein www, kein http, kein
+# /index.html). Verhindert Duplicate Content, da vorher www.viceguide.de,
+# viceguide.de und viceguide.de/index.html alle separat mit Status 200
+# erreichbar waren.
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.viceguide\.de$ [NC]
+RewriteRule ^ https://viceguide.de%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^index\.html$ / [L,R=301]
+
+# Zusammengefuehrte Artikel: alte URL per 301 auf den ueberlebenden Artikel.
+# gta-6-pc-version-warum-spaeter wurde in wann-pc-version eingefaltet.
+RewriteRule ^artikel/gta-6-pc-version-warum-spaeter/?$ https://viceguide.de/artikel/wann-pc-version [L,R=301]
+# beziehung-jason-lucia wurde in hauptprotagonisten eingefaltet.
+RewriteRule ^artikel/beziehung-jason-lucia/?$ https://viceguide.de/artikel/hauptprotagonisten [L,R=301]
+# gta6-trailer-3-wann-kommt-er wurde in gta-6-gameplay-wann-kommt eingefaltet.
+RewriteRule ^artikel/gta6-trailer-3-wann-kommt-er/?$ https://viceguide.de/artikel/gta-6-gameplay-wann-kommt [L,R=301]
+
+# Kurze, saubere Kampagnen-Links fuers Instagram-Bio-Feld und Story-Sticker
+# statt der langen, haesslichen UTM-URL direkt im sichtbaren Link. /ig ist der
+# feste Bio-Link (immer utm_campaign=profil). /ig/<name> ist pro einzelnem
+# Post/Story mit eigenem Kampagnennamen, z.B. /ig/post3. 302 statt 301, weil
+# das reine Marketing-/Tracking-Links sind, keine dauerhaft feststehenden
+# Adressen, und ein 301 sich im Browser-Cache festsetzen wuerde.
+RewriteRule ^ig/?$ https://viceguide.de/?utm_source=instagram&utm_medium=bio&utm_campaign=profil [L,R=302]
+RewriteRule ^ig/([a-z0-9-]+)/?$ https://viceguide.de/?utm_source=instagram&utm_medium=story&utm_campaign=$1 [L,R=302]
+
+# Trailing-Slash-Normalisierung (Duplicate Content vermeiden). Greift nur echte
+# Browser-Requests ueber THE_REQUEST ab, die internen Rewrites auf die PHP-Fassaden
+# bleiben unberuehrt, daher keine Endlosschleife.
+# a) Kanonisch OHNE Slash: Artikel, Datenbank-Eintraege, News/News-Rubriken,
+#    Videos/Community/Karte, Rechtsseiten. Vorhandenen Slash per 301 entfernen.
+RewriteCond %{THE_REQUEST} \s/+((?:artikel|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)/[a-z0-9-]+|news(?:/[a-z]+)?|videos|community|karte|impressum|datenschutz|ueber-uns)/+[\s?] [NC]
+RewriteRule ^ https://viceguide.de/%1 [L,R=301]
+# b) Kanonisch MIT Slash: Hub-Seiten und Kategorie-Uebersichten. Fehlenden Slash
+#    per 301 ergaenzen (die Slug-Eintraege darunter bleiben ohne Slash, siehe a).
+RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)[\s?] [NC]
+RewriteRule ^ https://viceguide.de/%1/ [L,R=301]
+
+# Startseite serverseitig aufbereiten (echtes H1, Portal-Text, crawlbare interne
+# Links), ohne die sichtbare Adresse zu aendern. home.php liefert dieselbe
+# index.html mit gefuelltem #view aus, die SPA uebernimmt beim Laden.
+RewriteRule ^$ home.php [L,QSA]
+
+# Artikel-URLs (/artikel/artikel-id) serverseitig fuer Meta-Tags und Crawler
+# aufbereiten, ohne die sichtbare Adresse zu aendern.
+RewriteRule ^artikel/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]
+
+# Datenbank-Eintrag-URLs (Charaktere, Fahrzeuge, ...), analog zu /artikel.
+RewriteRule ^charaktere/([a-z0-9-]+)/?$ entry.php?section=characters&slug=$1 [L,QSA]
+RewriteRule ^fahrzeuge/([a-z0-9-]+)/?$ entry.php?section=vehicles&slug=$1 [L,QSA]
+RewriteRule ^waffen/([a-z0-9-]+)/?$ entry.php?section=weapons&slug=$1 [L,QSA]
+RewriteRule ^wildtiere/([a-z0-9-]+)/?$ entry.php?section=wildlife&slug=$1 [L,QSA]
+RewriteRule ^gangs/([a-z0-9-]+)/?$ entry.php?section=gangs&slug=$1 [L,QSA]
+RewriteRule ^radio/([a-z0-9-]+)/?$ entry.php?section=radio&slug=$1 [L,QSA]
+RewriteRule ^aktivitaeten/([a-z0-9-]+)/?$ entry.php?section=activities&slug=$1 [L,QSA]
+RewriteRule ^orte/([a-z0-9-]+)/?$ entry.php?section=locations&slug=$1 [L,QSA]
+
+# Kategorie-Uebersichten ohne Slug (z.B. /charaktere/), listen alle Eintraege
+# der Sektion als echte, crawlbare Links auf. Muss vor den generischen
+# Eintrag-Regeln keine Rolle spielen (unterschiedliches Muster: hier ohne
+# Segment nach dem Praefix), Reihenfolge ist trotzdem unkritisch.
+RewriteRule ^charaktere/?$ category.php?section=characters [L,QSA]
+RewriteRule ^fahrzeuge/?$ category.php?section=vehicles [L,QSA]
+RewriteRule ^waffen/?$ category.php?section=weapons [L,QSA]
+RewriteRule ^wildtiere/?$ category.php?section=wildlife [L,QSA]
+RewriteRule ^gangs/?$ category.php?section=gangs [L,QSA]
+RewriteRule ^radio/?$ category.php?section=radio [L,QSA]
+RewriteRule ^aktivitaeten/?$ category.php?section=activities [L,QSA]
+RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
+
+# Sammelseiten ueber den Rubriken: /datenbank/ (alle DB-Rubriken) und
+# /guides/ (geplante Guide-Kategorien, vor Release gesperrt), siehe hub.php.
+RewriteRule ^datenbank/?$ hub.php?page=datenbank [L,QSA]
+RewriteRule ^guides/?$ hub.php?page=guides [L,QSA]
+RewriteRule ^ratgeber/?$ hub.php?page=ratgeber [L,QSA]
+
+# Impressum/Datenschutz als eigene, crawlbare URLs (Inhalt kommt aus dem
+# LEGAL-Objekt in index.html, siehe legal.php).
+RewriteRule ^impressum/?$ legal.php?page=impressum [L,QSA]
+RewriteRule ^datenschutz/?$ legal.php?page=datenschutz [L,QSA]
+RewriteRule ^ueber-uns/?$ legal.php?page=ueber [L,QSA]
+
+# Videos/Community/Karte, analog zu den Kategorie-Uebersichten, aber ohne
+# Datenbank dahinter (Inhalt kommt aus VIDEOS/COMMUNITY in index.html,
+# siehe section.php).
+RewriteRule ^videos/?$ section.php?page=videos [L,QSA]
+RewriteRule ^community/?$ section.php?page=community [L,QSA]
+RewriteRule ^karte/?$ section.php?page=map [L,QSA]
+RewriteRule ^news/?$ section.php?page=news [L,QSA]
+# Eigene URLs pro News-Rubrik (/news/leaks ...), section.php filtert per cat.
+RewriteRule ^news/([a-z]+)/?$ section.php?page=news&cat=$1 [L,QSA]
+
+# Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
+RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+
+# Lange Cache-Zeit fuer selbst gehostete, praktisch unveraenderliche Assets
+# (Schriftdateien, Fallback-Vorschaubild, Logo), siehe PageSpeed-Hinweis
+# "Use efficient cache lifetimes". Bilder aus der Datenbank
+# (api/article_image.php, api/entry_image.php) setzen ihre eigene
+# Cache-Control per PHP, hier bewusst nicht mit hineingenommen, index.html
+# selbst bleibt unberuehrt (text/html ist hier nicht gelistet).
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(jpg|jpeg|png)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
