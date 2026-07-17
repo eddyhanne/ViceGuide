@@ -3181,7 +3181,7 @@ function nlSocialHtml(){
   /* Dieselben Palmen-Banner wie im Community-Bereich der Seite, als klickbare
      Bilder (E-Mail-sicher, weil CSS-Hintergrundbilder in Outlook/Gmail nicht
      zuverlaessig greifen). */
-  const row=it=>'<a href="'+it.url+'" style="display:block;margin:0 0 10px;text-decoration:none"><img src="'+NL_BASE+'/'+it.banner+'" width="600" alt="'+it.alt+'" style="width:100%;max-width:100%;height:auto;display:block;border-radius:12px"></a>';
+  const row=it=>'<a href="'+it.url+'" style="display:block;margin:0 0 10px;text-decoration:none"><img src="'+NL_BASE+'/'+it.banner+'?v=2" width="600" alt="'+it.alt+'" style="width:100%;max-width:100%;height:auto;display:block;border-radius:12px"></a>';
   return '<div class="m-soft" style="'+NL_BODY+';font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8a7fa5;margin:12px 0 10px">Bleib in Kontakt</div>'+items.map(row).join('');
 }
 function nlBuildInner(){
