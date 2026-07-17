@@ -19,6 +19,15 @@ RewriteRule ^artikel/beziehung-jason-lucia/?$ https://viceguide.de/artikel/haupt
 # gta6-trailer-3-wann-kommt-er wurde in gta-6-gameplay-wann-kommt eingefaltet.
 RewriteRule ^artikel/gta6-trailer-3-wann-kommt-er/?$ https://viceguide.de/artikel/gta-6-gameplay-wann-kommt [L,R=301]
 
+# Kurze, saubere Kampagnen-Links fuers Instagram-Bio-Feld und Story-Sticker
+# statt der langen, haesslichen UTM-URL direkt im sichtbaren Link. /ig ist der
+# feste Bio-Link (immer utm_campaign=profil). /ig/<name> ist pro einzelnem
+# Post/Story mit eigenem Kampagnennamen, z.B. /ig/post3. 302 statt 301, weil
+# das reine Marketing-/Tracking-Links sind, keine dauerhaft feststehenden
+# Adressen, und ein 301 sich im Browser-Cache festsetzen wuerde.
+RewriteRule ^ig/?$ https://viceguide.de/?utm_source=instagram&utm_medium=bio&utm_campaign=profil [L,R=302]
+RewriteRule ^ig/([a-z0-9-]+)/?$ https://viceguide.de/?utm_source=instagram&utm_medium=story&utm_campaign=$1 [L,R=302]
+
 # Trailing-Slash-Normalisierung (Duplicate Content vermeiden). Greift nur echte
 # Browser-Requests ueber THE_REQUEST ab, die internen Rewrites auf die PHP-Fassaden
 # bleiben unberuehrt, daher keine Endlosschleife.
