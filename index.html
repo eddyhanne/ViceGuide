@@ -4429,6 +4429,7 @@ function legalClick(e,k){
    schlanken, nicht blockierenden Hit. Kein Consent noetig: keine IP, keine
    Client-ID, kein Wiedererkennen einzelner Besucher, nur aggregierte Pfade/
    Quellen. */
+let vgLastPath=null;
 (function vgInitTrack(){
   try{
     if(!sessionStorage.getItem('vg_src')){
@@ -4450,6 +4451,13 @@ function vgTrack(path){
        filtert also nicht rueckwirkend den allerersten Landing-Hit vor dem
        Login-Check, siehe die Verschiebung dieses Aufrufs weiter unten. */
     if(isAdmin) return;
+    /* Dedupe: syncHash() kann fuer ein und dieselbe Navigation mehrfach
+       hintereinander aufgerufen werden (z.B. go() ruft intern closeArticle()
+       auf, das selbst schon syncHash() ausloest, dann ruft go() es am Ende
+       nochmal auf). Ohne diese Bremse wuerde ein einzelner Klick doppelt
+       gezaehlt. Nur ein wirklicher Pfadwechsel seit dem letzten Log zaehlt. */
+    if(path===vgLastPath) return;
+    vgLastPath=path;
     const raw=sessionStorage.getItem('vg_src');
     const src=raw?JSON.parse(raw):{};
     const payload=JSON.stringify({
