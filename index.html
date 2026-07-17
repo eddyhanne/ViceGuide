@@ -138,6 +138,16 @@
   .side-fan{margin:14px 6px 0;font-family:'Space Mono';font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft);border-top:1px dashed var(--line);padding-top:12px;line-height:1.6}
   .side-btn .cnt{margin-left:auto;font-family:'Space Mono';font-size:11px;color:var(--text-soft);background:var(--bg-2);padding:2px 8px;border-radius:999px;min-width:20px;text-align:center}
   .side-btn.active .cnt{background:rgba(255,255,255,.25);color:var(--btn-text)}
+  /* Desktop-Hover-Flyout der Sidebar (Datenbank/Ratgeber/News). Mobil aus. */
+  .navfly{position:fixed;z-index:200;min-width:236px;max-height:80vh;overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,.18);padding:8px;opacity:0;transform:translateX(-6px);pointer-events:none;transition:opacity .12s,transform .12s}
+  .navfly.show{opacity:1;transform:none;pointer-events:auto}
+  .navfly-h{font-family:'Space Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:6px 8px 8px}
+  .navfly-it{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;text-decoration:none;color:var(--text);font-size:13.5px;font-weight:600;cursor:pointer}
+  .navfly-it:hover{background:var(--surface-2)}
+  .navfly-ic{color:var(--accent);display:inline-flex}
+  .navfly-ic svg{width:17px;height:17px}
+  .navfly-ct{margin-left:auto;font-family:'Space Mono';font-size:10.5px;color:var(--text-soft)}
+  @media(max-width:700px){ .navfly{display:none!important} }
   .side-sep{font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft);margin:16px 6px 8px;padding-top:12px;border-top:1px dashed var(--line)}
   .content{flex:1;min-width:0;padding:0 22px 70px}
   @media(max-width:900px){
@@ -1217,9 +1227,51 @@ function renderMobileNav(){
 function renderSidebar(){
   const act=activePillar();
   const cnt=id=> id==='news'?GUIDES.filter(g=>!RATGEBER_IDS.has(g.id)).length : id==='ratgeber'?GUIDES.filter(g=>RATGEBER_IDS.has(g.id)).length : id==='datenbank'?Object.keys(DB).reduce((a,k)=>a+(DB[k]||[]).length,0) : id==='videos'?VIDEOS.length : null;
-  const mainBtns=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';const n=cnt(id);const badge=(n!=null)?`<span class="cnt">${n}</span>`:(id==='guides'?`<span class="nav-lock">🔒</span>`:'');return `<a class="side-btn ${id===act?'active':''}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="si">${secIcon(id)}</span><span class="lbl">${PILLAR_LABEL[id]||sc.label}</span>${badge}</a>`;}).join('');
+  const mainBtns=PILLARS.map(id=>{const sc=SECTIONS.find(s=>s.id===id);if(!sc)return '';const n=cnt(id);const badge=(n!=null)?`<span class="cnt">${n}</span>`:(id==='guides'?`<span class="nav-lock">🔒</span>`:'');return `<a class="side-btn ${id===act?'active':''}" data-nav="${id}" href="${sectionHref(id)}" onclick="return goClick(event,'${id}')"><span class="si">${secIcon(id)}</span><span class="lbl">${PILLAR_LABEL[id]||sc.label}</span>${badge}</a>`;}).join('');
   $('sidebar').innerHTML=mainBtns
    +`<div class="side-fan">Fan-Projekt · inoffiziell<br>keine Rockstar-Marken</div>`;
+  navFlyInit();
+}
+
+/* Desktop-Hover-Flyout: Untermenues fuer Datenbank (Rubriken), Ratgeber (Themen)
+   und News (Kategorien). Nur mit echtem Hover ab Tablet-Breite, mobil (Touch)
+   passiert nichts, dort oeffnet ein Tippen wie bisher den Hub. Der Flyout haengt
+   an <body> (position:fixed), damit ihn die scrollbare Sidebar nicht abschneidet. */
+let navFlyEl=null, navFlyTimer=null, navFlyFor=null;
+function navFlyEnabled(){ try{ return window.matchMedia('(hover:hover) and (min-width:701px)').matches; }catch(e){ return false; } }
+function navFlyGoRg(e,key){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); navFlyHide(); go('ratgeber'); setRgCat(key); return false; }
+function navFlyGoNews(e,cat){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); navFlyHide(); goNewsCat(cat); return false; }
+function navFlyItems(id){
+  if(id==='datenbank') return '<div class="navfly-h">Rubriken</div>'+SECTIONS.filter(s=>s.type==='db').map(s=>`<a class="navfly-it" href="${sectionHref(s.id)}" onclick="navFlyHide();return goClick(event,'${s.id}')"><span class="navfly-ic">${secIcon(s.id)}</span>${esc(s.label)}<span class="navfly-ct">${(DB[s.id]||[]).length}</span></a>`).join('');
+  if(id==='ratgeber') return '<div class="navfly-h">Themen</div>'+RATGEBER.filter(b=>b.ids.some(x=>GUIDES.some(g=>g.id===x))).map(b=>`<a class="navfly-it" href="/ratgeber/#rg-${b.key}" onclick="return navFlyGoRg(event,'${b.key}')"><span class="navfly-ic">${rgIcon(b.key)}</span>${esc(b.label)}<span class="navfly-ct">${b.ids.filter(x=>GUIDES.some(g=>g.id===x)).length}</span></a>`).join('');
+  if(id==='news'){ const cats=(GROUPS[0]&&GROUPS[0].cats)||[]; return '<div class="navfly-h">Kategorien</div>'+cats.map(c=>{const n=GUIDES.filter(g=>g.cat===c.id&&!RATGEBER_IDS.has(g.id)).length; const slug=NEWS_CAT_SLUG[c.id]; const href=slug?('/news/'+slug):'/news'; return `<a class="navfly-it" href="${href}" onclick="return navFlyGoNews(event,'${c.id}')"><span class="navfly-ic">${catIcon(c.id)}</span>${esc(c.name)}<span class="navfly-ct">${n}</span></a>`;}).join(''); }
+  return '';
+}
+function navFlyShow(btn,id){
+  if(!navFlyEnabled()) return;
+  const html=navFlyItems(id); if(!html) return;
+  if(!navFlyEl){ navFlyEl=document.createElement('div'); navFlyEl.className='navfly'; navFlyEl.id='navfly';
+    navFlyEl.addEventListener('mouseenter',()=>clearTimeout(navFlyTimer));
+    navFlyEl.addEventListener('mouseleave',navFlyScheduleClose);
+    document.body.appendChild(navFlyEl); }
+  clearTimeout(navFlyTimer);
+  if(navFlyFor!==id){ navFlyEl.innerHTML=html; navFlyFor=id; }
+  const r=btn.getBoundingClientRect();
+  navFlyEl.style.left=(r.right+6)+'px';
+  navFlyEl.style.visibility='hidden'; navFlyEl.classList.add('show');
+  const h=navFlyEl.offsetHeight; let top=r.top-6; if(top+h>window.innerHeight-8) top=Math.max(8,window.innerHeight-8-h);
+  navFlyEl.style.top=top+'px'; navFlyEl.style.visibility='';
+}
+function navFlyScheduleClose(){ clearTimeout(navFlyTimer); navFlyTimer=setTimeout(navFlyHide,180); }
+function navFlyHide(){ clearTimeout(navFlyTimer); if(navFlyEl){ navFlyEl.classList.remove('show'); navFlyFor=null; } }
+const NAVFLY_IDS=new Set(['datenbank','ratgeber','news']);
+function navFlyInit(){
+  const sb=$('sidebar'); if(!sb||sb.dataset.fly) return; sb.dataset.fly='1';
+  sb.addEventListener('mouseover',e=>{ const b=e.target.closest&&e.target.closest('.side-btn'); if(!b){ return; } const id=b.dataset.nav; if(id&&NAVFLY_IDS.has(id)) navFlyShow(b,id); else navFlyHide(); });
+  sb.addEventListener('mouseleave',navFlyScheduleClose);
+  sb.addEventListener('focusin',e=>{ const b=e.target.closest&&e.target.closest('.side-btn'); if(b&&NAVFLY_IDS.has(b.dataset.nav)) navFlyShow(b,b.dataset.nav); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') navFlyHide(); });
+  window.addEventListener('scroll',navFlyHide,{passive:true});
 }
 
 /* Navigation */
