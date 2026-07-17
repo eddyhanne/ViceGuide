@@ -10,7 +10,11 @@ name: Daten-Snapshot
 
 on:
   schedule:
-    - cron: '30 3 * * *'   # taeglich gegen 03:30 UTC (~05:30 MESZ)
+    # Alle 6 Stunden. GitHub fuehrt geplante Workflows nur "best effort" aus
+    # (oft Stunden verspaetet, gelegentlich gar nicht), deshalb mehrere
+    # Versuche pro Tag statt nur einem, damit der Snapshot selten laenger als
+    # einen halben Tag hinterherhinkt. Committet ohnehin nur bei Aenderungen.
+    - cron: '30 3,9,15,21 * * *'
   workflow_dispatch:        # zum sofortigen manuellen Anstossen ueber den Actions-Tab
 
 concurrency:
