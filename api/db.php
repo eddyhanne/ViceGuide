@@ -74,6 +74,7 @@ function vg_db(): array {
         $pdo->query('SELECT section FROM section_meta LIMIT 1');
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
         $pdo->query('SELECT id FROM newsletter_subscribers LIMIT 1');
+        $pdo->query('SELECT id FROM hits LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -159,6 +160,16 @@ function vg_db(): array {
             token TEXT NOT NULL,
             consent_ip TEXT NULL,
             confirmed_at TEXT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS hits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            path TEXT NOT NULL,
+            referrer TEXT NULL,
+            ref_host TEXT NULL,
+            utm_source TEXT NULL,
+            utm_medium TEXT NULL,
+            utm_campaign TEXT NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
@@ -301,6 +312,19 @@ function vg_db(): array {
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_token (token),
             INDEX idx_status (status)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS hits (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            path VARCHAR(300) NOT NULL,
+            referrer VARCHAR(500) NULL,
+            ref_host VARCHAR(190) NULL,
+            utm_source VARCHAR(100) NULL,
+            utm_medium VARCHAR(100) NULL,
+            utm_campaign VARCHAR(100) NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_created (created_at),
+            INDEX idx_ref_host (ref_host),
+            INDEX idx_utm_source (utm_source)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
