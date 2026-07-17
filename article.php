@@ -245,7 +245,7 @@ $breadcrumbLd = json_encode([
     '@type' => 'BreadcrumbList',
     'itemListElement' => [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => 'https://viceguide.de/'],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Gerüchte', 'item' => 'https://viceguide.de/news'],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Leaks', 'item' => 'https://viceguide.de/news'],
         ['@type' => 'ListItem', 'position' => 3, 'name' => $row['title'], 'item' => $canonical],
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

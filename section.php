@@ -18,7 +18,7 @@ vg_cache_serve(600);
 const VG_SECTION_URL_PREFIX = ['videos' => 'videos', 'community' => 'community', 'map' => 'karte', 'news' => 'news'];
 
 $page = $_GET['page'] ?? '';
-$valid = ['videos' => 'Videos', 'community' => 'Community', 'map' => 'Karte', 'news' => 'News & Gerüchte'];
+$valid = ['videos' => 'Videos', 'community' => 'Community', 'map' => 'Karte', 'news' => 'News & Leaks'];
 
 if (!isset($valid[$page])) {
     http_response_code(404);
@@ -93,9 +93,9 @@ if ($page === 'videos') {
         $h1 = $catLabel;
     } else {
         $rows = $pdo->query('SELECT id, title, article_date FROM articles ORDER BY article_date DESC')->fetchAll();
-        $pageTitle = 'GTA 6 News und Gerüchte auf Deutsch - ViceGuide';
+        $pageTitle = 'GTA 6 News & Leaks auf Deutsch - ViceGuide';
         $description = 'Alle GTA-6-News, Gerüchte und Leaks auf Deutsch, chronologisch und eingeordnet. Laufend aktualisiert.';
-        $h1 = 'News & Gerüchte';
+        $h1 = 'News & Leaks';
     }
     $items = '';
     foreach ($rows as $r) {
@@ -180,7 +180,7 @@ if ($page === 'news' && !empty($rows)) {
         '@type' => 'BreadcrumbList',
         'itemListElement' => [
             ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => 'https://viceguide.de/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Gerüchte', 'item' => $canonical],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'News & Leaks', 'item' => $canonical],
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     $ldInject = '<script type="application/ld+json">' . $collLd . '</script>' . "\n"
