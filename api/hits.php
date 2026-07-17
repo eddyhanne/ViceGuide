@@ -108,7 +108,7 @@ if ($method === 'GET') {
         WHERE created_at >= $since AND LOWER(utm_source) = 'instagram'
     ")->fetch()['c'];
 
-    vg_out_h([
+    $data = [
         'days' => $days,
         'total' => $total,
         'instagram' => ['by_referrer' => $instaByRef, 'by_utm' => $instaByUtm],
@@ -117,7 +117,102 @@ if ($method === 'GET') {
         'top_utm_campaigns' => $byUtmCampaign,
         'per_day' => $perDay,
         'note' => 'Instagram haengt den echten Referrer meist ab. by_utm (aus dem Bio-Link/Story-Sticker mit ?utm_source=instagram) ist der verlaessliche Wert, by_referrer nur zur Kontrolle.',
-    ]);
+    ];
+
+    // Rohes JSON weiterhin erreichbar (z.B. fuer spaetere Automatisierung),
+    // Standard beim normalen Browser-Aufruf ist aber die lesbare HTML-Ansicht.
+    if (($_GET['format'] ?? '') === 'json') {
+        vg_out_h($data);
+    }
+    vg_render_html($data);
+    exit;
+}
+
+/* ---- Lesbare HTML-Ansicht ---- */
+function vg_e($s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+
+function vg_bar_rows(array $rows, string|array $labelKey, int $max): string {
+    if (!$rows) return '<tr><td colspan="3" class="empty">Noch keine Daten in diesem Zeitraum.</td></tr>';
+    $out = '';
+    foreach ($rows as $r) {
+        $label = is_array($labelKey) ? implode(' / ', array_map(fn($k) => $r[$k], $labelKey)) : $r[$labelKey];
+        $c = (int)$r['c'];
+        $pct = $max > 0 ? round($c / $max * 100) : 0;
+        $out .= '<tr><td class="lbl">' . vg_e($label) . '</td>'
+              . '<td class="barcell"><div class="bar" style="width:' . $pct . '%"></div></td>'
+              . '<td class="num">' . $c . '</td></tr>';
+    }
+    return $out;
+}
+
+function vg_render_html(array $d): never {
+    header('Content-Type: text/html; charset=utf-8');
+    $days = $d['days'];
+    $ranges = [1 => 'Heute', 7 => '7 Tage', 30 => '30 Tage', 90 => '90 Tage'];
+    $tabs = '';
+    foreach ($ranges as $n => $label) {
+        $active = $n === $days ? ' class="tab active"' : ' class="tab"';
+        $tabs .= '<a href="?days=' . $n . '"' . $active . '>' . vg_e($label) . '</a>';
+    }
+
+    $maxRef = max(array_column($d['top_referrers'], 'c') ?: [0]);
+    $maxSrc = max(array_column($d['top_utm_sources'], 'c') ?: [0]);
+    $maxCmp = max(array_column($d['top_utm_campaigns'], 'c') ?: [0]);
+    $maxDay = max(array_column($d['per_day'], 'c') ?: [0]);
+
+    $dayRows = '';
+    foreach (array_reverse($d['per_day']) as $r) {
+        $pct = $maxDay > 0 ? round($r['c'] / $maxDay * 100) : 0;
+        $dayRows .= '<tr><td class="lbl">' . vg_e($r['d']) . '</td>'
+                  . '<td class="barcell"><div class="bar" style="width:' . $pct . '%"></div></td>'
+                  . '<td class="num">' . (int)$r['c'] . '</td></tr>';
+    }
+    if (!$dayRows) $dayRows = '<tr><td colspan="3" class="empty">Noch keine Daten in diesem Zeitraum.</td></tr>';
+
+    $campaignRows = vg_bar_rows($d['top_utm_campaigns'], ['utm_source', 'utm_campaign'], $maxCmp);
+
+    echo '<!doctype html><html lang="de"><head><meta charset="utf-8">'
+      . '<meta name="robots" content="noindex,nofollow">'
+      . '<title>ViceGuide Statistik</title><style>'
+      . ':root{--bg:#1A0B2E;--card:#241242;--text:#FDF3E6;--soft:#c9bcd9;--accent:#FF2D95;}'
+      . '*{box-sizing:border-box}'
+      . 'body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px 16px 60px}'
+      . 'h1{font-size:1.3rem;margin:0 0 4px}'
+      . '.sub{color:var(--soft);font-size:.85rem;margin:0 0 20px}'
+      . '.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}'
+      . '.tab{color:var(--soft);text-decoration:none;padding:6px 14px;border-radius:20px;border:1px solid #3a2a55;font-size:.85rem}'
+      . '.tab.active{background:var(--accent);color:#1A0B2E;border-color:var(--accent);font-weight:700}'
+      . '.tiles{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}'
+      . '.tile{background:var(--card);border-radius:12px;padding:16px 20px;min-width:150px;flex:1}'
+      . '.tile .n{font-size:1.8rem;font-weight:700;color:var(--accent)}'
+      . '.tile .l{font-size:.78rem;color:var(--soft);margin-top:2px}'
+      . '.tile .l2{font-size:.7rem;color:#8a7a9e;margin-top:6px;line-height:1.4}'
+      . '.card{background:var(--card);border-radius:12px;padding:18px 20px;margin-bottom:20px}'
+      . '.card h2{font-size:.95rem;margin:0 0 14px;color:var(--text)}'
+      . 'table{width:100%;border-collapse:collapse}'
+      . 'td{padding:6px 4px;font-size:.85rem;vertical-align:middle}'
+      . 'td.lbl{color:var(--text);white-space:nowrap;padding-right:12px;max-width:220px;overflow:hidden;text-overflow:ellipsis}'
+      . 'td.num{text-align:right;color:var(--soft);font-variant-numeric:tabular-nums;padding-left:10px;white-space:nowrap}'
+      . 'td.barcell{width:100%}'
+      . '.bar{height:8px;background:var(--accent);border-radius:4px;min-width:2px}'
+      . 'td.empty{color:#8a7a9e;font-style:italic;padding:10px 4px}'
+      . '.note{color:var(--soft);font-size:.75rem;margin-top:-6px;margin-bottom:20px;line-height:1.5}'
+      . '</style></head><body>'
+      . '<h1>ViceGuide Statistik</h1>'
+      . '<p class="sub">Eigenes, cookiefreies Tracking. Nur echte Besucher, dein eigener Login zaehlt nicht mit.</p>'
+      . '<div class="tabs">' . $tabs . '</div>'
+      . '<div class="tiles">'
+      . '<div class="tile"><div class="n">' . $d['total'] . '</div><div class="l">Seitenaufrufe gesamt</div></div>'
+      . '<div class="tile"><div class="n">' . $d['instagram']['by_utm'] . '</div><div class="l">Instagram (per UTM-Tag)</div><div class="l2">Zaehlt Klicks ueber Bio-Link/Story mit ?utm_source=instagram, das ist der verlaessliche Wert.</div></div>'
+      . '<div class="tile"><div class="n">' . $d['instagram']['by_referrer'] . '</div><div class="l">Instagram (per Referrer)</div><div class="l2">Nur zur Kontrolle, Instagram haengt den echten Referrer meist ab.</div></div>'
+      . '</div>'
+      . '<div class="card"><h2>Verlauf pro Tag</h2><table>' . $dayRows . '</table></div>'
+      . '<div class="card"><h2>Top-Quellen (UTM-Source)</h2><table>' . vg_bar_rows($d['top_utm_sources'], 'utm_source', $maxSrc) . '</table></div>'
+      . '<div class="card"><h2>Top-Kampagnen (Quelle / Kampagne)</h2><table>' . $campaignRows . '</table></div>'
+      . '<div class="card"><h2>Top-Referrer (echte Herkunfts-Domain)</h2><table>' . vg_bar_rows($d['top_referrers'], 'ref_host', $maxRef) . '</table></div>'
+      . '<p class="note">' . vg_e($d['note']) . '</p>'
+      . '</body></html>';
+    exit;
 }
 
 vg_out_h(['error' => 'Methode nicht unterstuetzt'], 405);
