@@ -342,8 +342,8 @@ if ($hasImg) {
     $fitStyle = 'position:absolute;left:' . $fx . '%;top:' . $fy . '%;width:' . ($fz * 100) . '%;height:auto;max-width:none;transform:translate(-' . $fx . '%,-' . $fy . '%)';
     $body['<div class="art-hero" id="a-hero" style="display:none">'] =
         '<div class="art-hero" id="a-hero" style="display:block">';
-    $body['<img id="a-hero-img" alt="" width="1200" height="675" style="display:none" onerror="this.parentElement.classList.add(\'imgfail\')">'] =
-        '<img id="a-hero-img" alt="' . vg_esc($title) . '" width="1200" height="675" src="' . vg_esc($imgUrl) . '" style="display:block;' . $fitStyle . '" onerror="this.parentElement.classList.add(\'imgfail\')">';
+    $body['<img id="a-hero-img" alt="" width="1200" height="675" fetchpriority="high" style="display:none" onerror="this.parentElement.classList.add(\'imgfail\')">'] =
+        '<img id="a-hero-img" alt="' . vg_esc($title) . '" width="1200" height="675" fetchpriority="high" src="' . vg_esc($imgUrl) . '" style="display:block;' . $fitStyle . '" onerror="this.parentElement.classList.add(\'imgfail\')">';
     $body['<span class="credit" id="a-herocredit"></span>'] =
         '<span class="credit" id="a-herocredit">' . vg_esc($row['credit'] ?: '') . '</span>';
 }

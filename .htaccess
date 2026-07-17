@@ -11,6 +11,18 @@ RewriteRule ^ https://viceguide.de%{REQUEST_URI} [L,R=301]
 RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
 RewriteRule ^index\.html$ / [L,R=301]
 
+# Trailing-Slash-Normalisierung (Duplicate Content vermeiden). Greift nur echte
+# Browser-Requests ueber THE_REQUEST ab, die internen Rewrites auf die PHP-Fassaden
+# bleiben unberuehrt, daher keine Endlosschleife.
+# a) Kanonisch OHNE Slash: Artikel, Datenbank-Eintraege, News/News-Rubriken,
+#    Videos/Community/Karte, Rechtsseiten. Vorhandenen Slash per 301 entfernen.
+RewriteCond %{THE_REQUEST} \s/+((?:artikel|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)/[a-z0-9-]+|news(?:/[a-z]+)?|videos|community|karte|impressum|datenschutz|ueber-uns)/+[\s?] [NC]
+RewriteRule ^ https://viceguide.de/%1 [L,R=301]
+# b) Kanonisch MIT Slash: Hub-Seiten und Kategorie-Uebersichten. Fehlenden Slash
+#    per 301 ergaenzen (die Slug-Eintraege darunter bleiben ohne Slash, siehe a).
+RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)[\s?] [NC]
+RewriteRule ^ https://viceguide.de/%1/ [L,R=301]
+
 # Startseite serverseitig aufbereiten (echtes H1, Portal-Text, crawlbare interne
 # Links), ohne die sichtbare Adresse zu aendern. home.php liefert dieselbe
 # index.html mit gefuelltem #view aus, die SPA uebernimmt beim Laden.
