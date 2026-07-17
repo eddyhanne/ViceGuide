@@ -4421,6 +4421,46 @@ function legalClick(e,k){
   tick(); setInterval(tick,1000);
 })();
 
+/* ---- Eigenes, cookiefreies Analytics (siehe api/hits.php) ----
+   Erfasst UTM-Parameter und Referrer einmalig beim Landing in sessionStorage
+   (ueberlebt SPA-Navigation innerhalb desselben Tabs, ohne Cookie/Personenbezug).
+   vgTrack() feuert bei jeder echten Ansichts-Aenderung (aus syncHash()) einen
+   schlanken, nicht blockierenden Hit. Kein Consent noetig: keine IP, keine
+   Client-ID, kein Wiedererkennen einzelner Besucher, nur aggregierte Pfade/
+   Quellen. */
+(function vgInitTrack(){
+  try{
+    if(!sessionStorage.getItem('vg_src')){
+      const p=new URLSearchParams(location.search);
+      const src={
+        utm_source:p.get('utm_source')||'',
+        utm_medium:p.get('utm_medium')||'',
+        utm_campaign:p.get('utm_campaign')||'',
+        referrer:document.referrer||''
+      };
+      sessionStorage.setItem('vg_src',JSON.stringify(src));
+    }
+  }catch(e){}
+})();
+function vgTrack(path){
+  try{
+    const raw=sessionStorage.getItem('vg_src');
+    const src=raw?JSON.parse(raw):{};
+    const payload=JSON.stringify({
+      path:path,
+      referrer:src.referrer||'',
+      utm_source:src.utm_source||'',
+      utm_medium:src.utm_medium||'',
+      utm_campaign:src.utm_campaign||''
+    });
+    if(navigator.sendBeacon){
+      navigator.sendBeacon('api/hits.php', new Blob([payload],{type:'application/json'}));
+    } else {
+      fetch('api/hits.php',{method:'POST',headers:{'Content-Type':'application/json'},body:payload,keepalive:true}).catch(()=>{});
+    }
+  }catch(e){}
+}
+
 /* ---- Routing: URL-Hash spiegelt Ansicht + offenen Artikel/Eintrag, Reload und Zurueck-Button bleiben auf der Seite ---- */
 function buildHash(){
   let h='/'+current;
@@ -4445,6 +4485,7 @@ function syncHash(){
   else target='/#'+buildHash();
   const currentFull=location.pathname+location.hash;
   if(currentFull!==target) history.pushState(null,'',target);
+  vgTrack(target);
 }
 /* Idempotent: baut den Zustand nur soweit um, wie er wirklich von der Ziel-URL
    abweicht. Wichtig fuer die mobile Zurueck-Wischgeste: nur wenn sich die
@@ -4541,6 +4582,7 @@ newsView = 'cards';
 dbView = matchMedia('(min-width:701px)').matches ? 'cards' : 'list';
 { const _dark=document.documentElement.getAttribute('data-theme')==='dark'; $('tico').textContent=_dark?'☾':'☀'; const _l=$('tlbl'); if(_l)_l.textContent=_dark?'Dunkel':'Hell'; }
 restoreFromLocation();
+vgTrack(location.pathname);
 /* Nach dem Laden der echten Daten einmal erzwungen neu aufbauen: der erste
    restoreFromLocation-Lauf rendert noch mit leeren Listen. viewReady zuruecksetzen,
    damit goIfNeeded() diesen einen Neuaufbau nicht als "schon fertig" ueberspringt.
