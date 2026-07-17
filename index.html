@@ -866,6 +866,21 @@
 
   /* Community-Bereich */
   .cm-ctas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 20px}
+  /* Banner-Kacheln (Palmen-Optik) fuer Instagram/Discord/Newsletter */
+  .cm-banners{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:6px 0 16px}
+  .cm-banner{position:relative;overflow:hidden;border-radius:16px;min-height:154px;display:flex;text-decoration:none;color:#fff;background:#2a1a5e url('/palms-hero.png') center/cover;transition:transform .15s,box-shadow .15s}
+  .cm-banner:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.22)}
+  .cm-banner .cmb-veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,5,32,.78) 0%,rgba(12,5,32,.5) 52%,rgba(12,5,32,.28) 100%)}
+  .cm-banner.full{grid-column:1/-1;min-height:132px}
+  .cmb-body{position:relative;z-index:2;display:flex;align-items:center;gap:16px;padding:22px 24px;width:100%}
+  .cmb-ic{flex:0 0 auto;width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  .cmb-ic img{width:30px;height:30px;display:block}
+  .cmb-ic svg{width:30px;height:30px;display:block}
+  .cmb-tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .cmb-tx b{font-family:'Oswald';font-weight:600;font-size:21px;line-height:1.1;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+  .cmb-tx small{font-size:13px;color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  .cmb-go{margin-left:auto;font-size:24px;opacity:.85;flex:0 0 auto}
+  @media(max-width:700px){.cm-banners{grid-template-columns:1fr}}
   .cm-cta{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);text-decoration:none;color:var(--text);transition:.15s}
   .cm-cta:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
   .cm-cta.discord:hover{border-color:#5865F2}
@@ -2580,15 +2595,20 @@ function renderCommunity(){
     :`<div class="cm-cta discord disabled"><span class="cta-ic">${DISCORD_LOGO}</span><span><b>Discord <span class="soon-tag">Bald verfügbar</span></b><small>Unser Discord-Server startet in Kürze. Schau bald wieder vorbei.</small></span></div>`;
   const redditBtn=d.redditUrl?`<a class="cm-cta reddit" href="${d.redditUrl}" target="_blank" rel="noopener"><span class="cta-ic">🗨</span><span><b>Subreddit öffnen</b><small>Diskutieren, abstimmen, Threads</small></span></a>`
     :`<div class="cm-cta reddit disabled"><span class="cta-ic">🗨</span><span><b>Reddit <span class="soon-tag">Bald verfügbar</span></b><small>Unser Subreddit ist in Vorbereitung und folgt in Kürze.</small></span></div>`;
-  const discordOpenBtn=d.discordServerId?`<a class="cm-cta discord" href="https://discord.com/channels/${d.discordServerId}" target="_blank" rel="noopener"><span class="cta-ic">${DISCORD_LOGO}</span><span><b>Discord öffnen</b><small>Für Mitglieder: direkt zum Server</small></span></a>`:'';
-  const instaBtn=d.instagram?`<a class="cm-cta instagram" href="${d.instagram}" target="_blank" rel="noopener"><span class="cta-ic">${INSTA_LOGO}</span><span><b>Auf Instagram folgen</b><small>Folge @viceguide für News und Updates</small></span></a>`:'';
-  const newsletterBtn=`<a class="cm-cta newsletter" href="#nl-box" onclick="event.preventDefault();var b=document.getElementById('nl-box');if(b){b.scrollIntoView({behavior:'smooth'});var e=document.getElementById('nl-email');if(e)setTimeout(function(){e.focus();},450);}"><span class="cta-ic">✉️</span><span><b>Newsletter abonnieren</b><small>Die wichtigsten GTA-6-News per Mail</small></span></a>`;
+  /* Banner-Kacheln im Palmen-Stil: Instagram und Discord in der oberen Reihe,
+     Newsletter darunter als breiter Banner. "Discord oeffnen" bewusst entfernt
+     (wer im Discord ist, geht nicht ueber die Community-Seite rein). */
+  const MAIL_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>';
+  const igBanner=d.instagram?`<a class="cm-banner ig" href="${d.instagram}" target="_blank" rel="noopener"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:#C13584"><img src="nl-instagram.png" alt=""></span><span class="cmb-tx"><b>Auf Instagram folgen</b><small>@viceguide · News, Bilder und Infohäppchen</small></span><span class="cmb-go">→</span></span></a>`:'';
+  const dcBanner=d.discordInvite?`<a class="cm-banner dc" href="${d.discordInvite}" target="_blank" rel="noopener"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:#5865F2"><img src="nl-discord.png" alt=""></span><span class="cmb-tx"><b>Discord beitreten</b><small>Chatten, Fragen und News in Echtzeit</small></span><span class="cmb-go">→</span></span></a>`:'';
+  const nlBanner=`<a class="cm-banner full nl" href="#nl-box" onclick="event.preventDefault();var b=document.getElementById('nl-box');if(b){b.scrollIntoView({behavior:'smooth'});var e=document.getElementById('nl-email');if(e)setTimeout(function(){e.focus();},450);}"><span class="cmb-veil"></span><span class="cmb-body"><span class="cmb-ic" style="background:var(--accent)">${MAIL_ICON}</span><span class="cmb-tx"><b>Newsletter abonnieren</b><small>Die wichtigsten GTA-6-News direkt per Mail</small></span><span class="cmb-go">→</span></span></a>`;
   const widget=(d.discordServerId&&d.discordWidget)?`<div class="cm-widget"><iframe src="https://discord.com/widget?id=${d.discordServerId}&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></div>`
     :`<div class="cm-placeholder cm-placeholder-sm"><div><b>Live-Chat folgt</b> <span class="cm-ph-note">Bis dahin findest du oben alle Wege, dabei zu sein.</span></div></div>`;
   $('view').innerHTML=`
    <div class="sec-head"><div class="sec-title"><span class="sec-ic">${secIcon('community')}</span>Community</div>
      <div class="sec-note">Tausch dich mit anderen GTA-6-Fans aus: Diskussionen, Leaks, Theorien und Hilfe. Unser Discord ist bereits live, der Subreddit folgt in Kürze.</div></div>
-   <div class="cm-ctas">${discordBtn}${discordOpenBtn}${instaBtn}${newsletterBtn}${redditBtn}</div>
+   <div class="cm-banners">${igBanner}${dcBanner}${nlBanner}</div>
+   <div class="cm-ctas">${redditBtn}</div>
    ${widget}
    <div class="cm-forum">
      <div class="cm-forum-h">Forum</div>
