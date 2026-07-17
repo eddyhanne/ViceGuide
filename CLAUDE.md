@@ -72,7 +72,14 @@ ViceGuide ist die **deutschsprachige GTA-6-Zentrale**, ein komplettes Guide-Port
 - **Strategischer Ankerpunkt:** Release am **19. November 2026** (Details im Faktenblatt, Abschnitt 8). Davor Traffic über News und Leaks aufbauen, danach mit immergrünen Guides nachhaltig monetarisieren. News bringen Traffic, monetarisieren schlecht. Guides nach Release bringen dauerhaften Long-Tail-Umsatz.
 
 ### Rechtlicher Rahmen (fest)
-Klarer Fan-Disclaimer auf jeder Seite. Keine offiziellen Rockstar-Bilder oder -Logos. Nur eigene, KI-generierte oder lizenzierte Grafiken. Die Vice-City-Farbwelt und Stimmung dürfen nachgebaut werden (Farben und Verläufe sind nicht schützbar), konkrete Rockstar-Artworks (Key-Art, VI-Logo, Charakter-Illustrationen) nicht. Standard-Disclaimer-Text (wörtlich auf der Seite):
+Klarer Fan-Disclaimer auf jeder Seite. Bei Rockstar-Material wird unterschieden, nicht pauschal verboten oder pauschal erlaubt:
+
+- **Eigene Gameplay-Screenshots (ab Release, 19. November 2026):** ausdruecklich erlaubt, fuer Artikel, Guides und Datenbank-Eintraege (Charaktere, Fahrzeuge, Waffen, Orte). Rockstars eigene Richtlinie begruesst das ausdruecklich fuer gelegentliche, nicht-kommerzielle Fan-Nutzung ("We're happy for fans to upload footage of their gameplay"). Genau das macht praktisch jedes GTA-Wiki und -Fanportal seit Jahren, unproblematisch. Ausnahmen aus Rockstars Richtlinie weiterhin beachten: keine isolierten Spoiler-Cutscenes, keine Pre-Release-Leaks.
+- **Offizielles Marketing-Material (Trailer, Pressebilder, Key-Art, Charakter-Renders), das nicht selbst erzeugt wurde:** weiterhin vorsichtig. Als Beleg fuer eine echte Analyse/Einordnung mit sichtbarer Quellenangabe okay (Zitatrecht, §51 UrhG, etwa "5 Details aus Trailer 2, die du uebersehen hast" mit echtem Trailer-Frame zur jeweiligen Stelle). Als reine Deko/Thumbnail-Fuellmaterial ohne inhaltlichen Bezug weiterhin nicht, das bleibt eigene/KI-generierte/lizenzierte Grafik (siehe TOOLS.md, Artikelbild-System).
+- **Grund fuer die Unterscheidung:** die geplante Monetarisierung (Abschnitt 1, Geschaeftsidee) macht "nicht-kommerziell", worauf sich Rockstars Kulanz stuetzt, mit der Zeit unschaerfer. Eigene Gameplay-Screenshots sind davon praktisch nie betroffen, waehl- und platzierte Marketing-Assets eher.
+- Die Vice-City-Farbwelt und Stimmung duerfen nachgebaut werden (Farben und Verlaeufe sind nicht schuetzbar), eigenstaendige Key-Art/Logos/Charakter-Illustrationen nachzubauen bleibt tabu.
+
+Standard-Disclaimer-Text (woertlich auf der Seite):
 
 > ViceGuide ist ein inoffizielles, von Fans erstelltes Guide-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive. Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Inhalte vor Release basieren teils auf Leaks und Gerüchten und sind nicht offiziell bestätigt.
 

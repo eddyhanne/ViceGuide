@@ -44,7 +44,7 @@ Regelwerk für die eigentlichen Artikelbilder. Diese Bilder erzeugt Claude nicht
 - Illustrierter Keyart-Look: hell, satt, gesättigt.
 - Symbolische Objekte oder Orte, **keine menschlichen Figuren**.
 - **Kein Text und keine Logos ins Bild eingebrannt.**
-- **Kein Rockstar-Material** (keine Key-Art, kein VI-Logo, keine Charakter-Illustrationen).
+- **Kein Rockstar-Material in diesen KI-generierten Bildern** (keine Key-Art, kein VI-Logo, keine Charakter-Illustrationen). Gilt nur fuer dieses Artikelbild-System. Eigene Gameplay-Screenshots (ab Release) und Trailer-Frames als Analyse-Beleg mit Quellenangabe laufen separat, siehe CLAUDE.md Abschnitt 1, Rechtlicher Rahmen.
 
 ### Temperatur-Farbsystem (Farbton nach Kategorie)
 - **Warm** (Orange, Rosé, Amber): News und Release.
