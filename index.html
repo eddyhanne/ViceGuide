@@ -181,17 +181,11 @@
   .p-newshead{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .p-newscat{font-family:'Inter';font-size:13px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer}
   .p-reltag{font-family:'Space Mono';font-size:11px;letter-spacing:1px;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:999px;padding:3px 10px}
-  .p-pillar{position:relative;display:flex;align-items:stretch;margin:22px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);min-height:76px;transition:border-color .15s,transform .15s}
-  .p-pillar:hover{border-color:var(--accent);transform:translateY(-2px)}
-  .pp-thumb{width:104px;flex-shrink:0;background-size:cover;background-position:center;background-color:var(--surface-2);display:grid;place-items:center;font-size:26px}
-  .pp-thumb-ph{opacity:.55}
-  .pp-tx{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:10px 16px;min-width:0}
-  .pp-k{font-family:'Space Mono';font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)}
-  .pp-t{font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading);line-height:1.15}
-  .pp-r{margin-left:auto;display:flex;align-items:center;gap:12px;padding:0 18px;border-left:1px solid var(--line);flex-shrink:0}
-  .pp-d{font-size:13px;color:var(--text-soft)}
-  .pp-a{color:var(--accent);font-weight:700}
-  @media(max-width:560px){.p-pillar .pp-r{border-left:0;padding:0 14px}.p-pillar .pp-d{display:none}}
+  .p-pillar{display:flex;align-items:center;gap:13px;margin:22px 0 0;padding:0 16px;min-height:54px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text);transition:border-color .15s}
+  .p-pillar:hover{border-color:var(--accent)}
+  .pp-pill{font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ntag-text);border:1px solid var(--ntag-border);padding:4px 10px;border-radius:6px;flex-shrink:0}
+  .pp-t{font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading);line-height:1.15;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pp-more{margin-left:auto;color:var(--accent);font-weight:600;font-size:14px;white-space:nowrap;flex-shrink:0}
   .pcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:border-color .15s,transform .15s}
   .pcard:hover{border-color:var(--accent);transform:translateY(-2px)}
   .pc-thumb{aspect-ratio:16/9;background:var(--surface-2);position:relative}
@@ -1464,8 +1458,7 @@ function portalPillarHtml(){
   const g=GUIDES.find(x=>x.id===id);
   if(!g) return '';
   const idx=GUIDES.indexOf(g);
-  const thumb=g.img?`<span class="pp-thumb" style="background-image:url('${g.img}')"></span>`:`<span class="pp-thumb pp-thumb-ph">\u{1F334}</span>`;
-  return `<a class="p-pillar" href="${articleHref(id)}" onclick="return articleClick(event,${idx})">${thumb}<span class="pp-tx"><span class="pp-k">Neu hier?</span><span class="pp-t">GTA 6: Alles was wir wissen</span></span><span class="pp-r"><span class="pp-d">Release, Map, Story \u0026 Preis</span><span class="pp-a">\u2192</span></span></a>`;
+  return `<a class="p-pillar" href="${articleHref(id)}" onclick="return articleClick(event,${idx})"><span class="pp-pill">\u00dcberblick</span><span class="pp-t">GTA 6: Alles was wir wissen</span><span class="pp-more">Alle Infos \u2192</span></a>`;
 }
 function portalDbHtml(){
   return `<div class="p-sh"><h2>Datenbank</h2><a class="p-more" style="margin-left:auto" href="/datenbank/" onclick="return goClick(event,'datenbank')">Alle Rubriken \u2192</a></div><div class="p-rgrid">${dbTilesHtml()}</div>`;
