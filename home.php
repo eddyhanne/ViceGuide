@@ -41,6 +41,7 @@ ob_start();
 <section class="ssr-home">
   <h1 class="sr-only">ViceGuide: Der deutsche GTA-6-Hub mit Datenbank, Guides und News</h1>
   <p>ViceGuide ist die deutsche GTA-6-Zentrale: aktuelle News, Gerüchte und Leaks, eine große Datenbank zu Charakteren, Fahrzeugen, Waffen und Orten von Leonida, dazu ab dem Release am 19. November 2026 die Guides. Alles zu Grand Theft Auto VI auf Deutsch.</p>
+  <p class="ssr-lead-cta">Neu hier? Der beste Einstieg ist unser großer Überblick: <a href="/artikel/gta-6-alles-was-wir-wissen">GTA 6: Alles was wir wissen zu Release, Map und Story</a>.</p>
   <nav aria-label="Hauptbereiche" class="ssr-nav">
     <a href="/news">News &amp; Leaks</a>
     <a href="/datenbank/">Datenbank</a>
