@@ -2,6 +2,58 @@
   "articles": [
     {
       "author": null,
+      "cat": "news",
+      "content": [
+        "Die Vorbestellungen für GTA 6 haben in ihrer ersten Woche laut einer Analyse des Marktforschers Newzoo weltweit rund 260 Millionen Dollar an digitalen Ausgaben eingebracht. Die Zahl stammt nicht von Rockstar Games oder Take Two Interactive, die sich zu konkreten Verkaufszahlen bislang bedeckt halten, sondern aus dem Newzoo Game Performance Monitor.",
+        "Newzoo hat für die letzte Juniwoche digitale Ausgaben in Höhe von rund 180 Millionen Dollar in den USA sowie in Deutschland, Frankreich, Großbritannien, Italien und Spanien erfasst. Um daraus eine weltweite Zahl abzuleiten, nutzt das Analysehaus die bekannte Spielerverteilung von GTA 5: Rund 69 Prozent der Konsolenspieler des Vorgängers stammen aus genau diesen sechs Märkten. Überträgt man diesen Schlüssel auf GTA 6, ergibt sich der geschätzte globale Wert von etwa 260 Millionen Dollar.",
+        "- 180 Millionen Dollar digitale Ausgaben in sechs Kernmärkten",
+        "- Rund 260 Millionen Dollar geschätzter globaler Wert weltweit",
+        "- Nur digitale Käufe erfasst, physische Vorbestellungen im Handel fehlen in der Rechnung",
+        "quote:Der größte von Newzoo je beobachtete Vorbesteller-Start.|Ronan Patrick, Management Consultant bei Newzoo",
+        "Newzoo widerspricht in seiner Analyse ausdrücklich Behauptungen aus sozialen Netzwerken, GTA 6 habe bereits eine Milliarde Dollar an Vorbestellungen eingespielt. Nach Einschätzung der Marktforscher passt eine solche Summe nicht zu den typischen Vorbesteller-Kurven eines Spiels, das erst im November erscheint. Der eigentliche Umsatzschub stehe erst mit der Release-Woche bevor.",
+        "### Was die Zahlen für den Verkaufsstart im November bedeuten",
+        "Newzoo ordnet GTA 6 als bewährte Fortsetzung ein, also ein Spiel einer etablierten Reihe, bei dem viele Käufer schon früh vorbestellen. Bei diesem Modell entsprechen die Einnahmen der ersten Vorbestellwoche im Schnitt etwa 5,8 Prozent des Gesamtumsatzes bis zum Ende der Launch-Woche. Hochgerechnet kommt Newzoo damit auf bis zu 4,5 Milliarden Dollar Umsatz und rund 51 Millionen verkaufte Exemplare, bei einem angenommenen Durchschnittspreis von 88 Dollar. Selbst im vorsichtigeren Szenario, das von einem stärkeren Vorzieheffekt durch die außergewöhnliche Erwartungshaltung ausgeht, bleiben laut Newzoo noch etwa 3,25 Milliarden Dollar beziehungsweise 37 Millionen Exemplare.",
+        "Unserer Einschätzung nach ist vor allem eine Zahl wichtig, unabhängig von der genauen Spanne bis November: Rockstar und Take Two haben mit dem offiziellen Vorbestellstart am 25. Juni bereits jetzt den stärksten Kampagnenstart ausgelöst, den Newzoo je in seinen Daten gesehen hat. Das deckt sich mit dem hohen Preisniveau von 79,99 Dollar für die Standard- und 99,99 Dollar für die Ultimate Edition. Selbst bei diesem Einstiegspreis bremst die Nachfrage bislang nicht.",
+        "faq:Wie viele Vorbestellungen hat GTA 6 bisher erreicht?|Offizielle Stückzahlen nennt Rockstar nicht. Der Marktforscher Newzoo schätzt die digitalen Vorbestellausgaben der ersten Woche auf rund 260 Millionen Dollar weltweit.",
+        "faq:Sind die Newzoo-Zahlen offizielle Angaben von Rockstar oder Take Two?|Nein. Es handelt sich um eine Hochrechnung des Analysehauses Newzoo auf Basis eigener Marktdaten, nicht um bestätigte Verkaufszahlen der Hersteller.",
+        "faq:Wie viele Exemplare könnte GTA 6 in der ersten Verkaufswoche verkaufen?|Newzoo hält je nach Szenario zwischen 37 und 51 Millionen verkaufte Exemplare bis zum Ende der Launch-Woche im November für realistisch."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-18T16:34",
+      "id": "gta-6-vorbestellerzahlen-newzoo-260-millionen",
+      "img": "api/article_image.php?id=gta-6-vorbestellerzahlen-newzoo-260-millionen&v=2026-07-18+14%3A39%3A41",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Laut einer Analyse des Marktforschers Newzoo hat GTA 6 in der ersten Vorbestellwoche weltweit rund 260 Millionen Dollar an digitalen Vorbestellungen umgesetzt.",
+      "meta": "Analyse",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "VideoGamesChronicle",
+          "url": "https://www.videogameschronicle.com/news/analytics-firm-says-gta-6-has-the-strongest-pre-order-campaign-on-record-is-on-track-to-sell-37-51-million-in-its-first-week/"
+        },
+        {
+          "title": "ComputerBase",
+          "url": "https://www.computerbase.de/news/gaming/gta-6-vorbestellungen-sollen-schon-260-mio-dollar-bringen.98423/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Die Zahlen sind eine Hochrechnung des Marktforschers Newzoo, keine offiziell bestätigten Verkaufszahlen von Rockstar oder Take Two.",
+      "summary": "Newzoo schätzt globale Vorbestellausgaben für GTA 6 auf rund 260 Millionen Dollar in der ersten Woche.",
+      "title": "GTA 6 Vorbestellerzahlen: 260 Millionen Dollar in einer Woche",
+      "tldr": [
+        "Die Zahl stammt nicht von Rockstar oder Take Two, sondern aus einer Hochrechnung des Analysehauses Newzoo.",
+        "Newzoo spricht vom stärksten Vorbesteller-Start, den das Unternehmen je gemessen hat.",
+        "Für die komplette Launch-Woche im November hält Newzoo zwischen 3,25 und 5,2 Milliarden Dollar Umsatz für realistisch.",
+        "Kursierende Behauptungen, GTA 6 habe bereits eine Milliarde Dollar an Vorbestellungen eingespielt, weist Newzoo ausdrücklich zurück."
+      ],
+      "updated": "2026-07-18 14:39:41"
+    },
+    {
+      "author": null,
       "cat": "story",
       "content": [
         "Ein unscheinbarer Satz in der Beschreibung der Ultimate Edition sorgt für Aufsehen: GTA 6 scheint seine Story in Kapitel zu gliedern. Das wäre ein Novum, denn kein GTA-Hauptteil hat das bisher gemacht. Dexerto und Beebom haben den Hinweis zuerst eingeordnet, und er stammt nicht aus einem Leak, sondern aus dem offiziellen Store-Text zu Jason und Lucias Geschichte.",
