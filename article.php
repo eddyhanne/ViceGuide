@@ -359,9 +359,28 @@ if ($sources) {
    echten Links fuellen (gleiche Kategorie zuerst, dann neueste). Ankertext ist
    der Artikeltitel, das ist das SEO-relevante Signal. Fuer normale Besucher
    ueberschreibt openArticle() den Block beim Laden ohnehin clientseitig. */
-$moreStmt = $pdo->prepare('SELECT id, title, article_date FROM articles WHERE id <> ? ORDER BY (cat = ?) DESC, article_date DESC LIMIT 6');
-$moreStmt->execute([$row['id'], $row['cat']]);
+$pillarId = 'gta-6-alles-was-wir-wissen';
+$onPillar = ($row['id'] === $pillarId);
+$lim = $onPillar ? 6 : 5;
+if ($onPillar) {
+    $moreStmt = $pdo->prepare('SELECT id, title, article_date FROM articles WHERE id <> ? ORDER BY (cat = ?) DESC, article_date DESC LIMIT ' . $lim);
+    $moreStmt->execute([$row['id'], $row['cat']]);
+} else {
+    $moreStmt = $pdo->prepare('SELECT id, title, article_date FROM articles WHERE id <> ? AND id <> ? ORDER BY (cat = ?) DESC, article_date DESC LIMIT ' . $lim);
+    $moreStmt->execute([$row['id'], $pillarId, $row['cat']]);
+}
 $moreHtml = '';
+/* Rueckverlinkung: die grosse Pillarseite als erste Karte (Ankertext = Titel),
+   ausser auf der Pillarseite selbst. Reziproker interner Link fuer Crawler. */
+if (!$onPillar) {
+    $pStmt = $pdo->prepare('SELECT id, title FROM articles WHERE id = ? LIMIT 1');
+    $pStmt->execute([$pillarId]);
+    if ($p = $pStmt->fetch()) {
+        $moreHtml .= '<a class="mcard" href="/artikel/' . vg_esc($p['id']) . '">'
+            . '<div class="mcb"><span class="mtag">Überblick</span><span class="mt">' . vg_esc($p['title']) . '</span>'
+            . '<span class="mdate">Zur Übersicht</span></div></a>';
+    }
+}
 foreach ($moreStmt->fetchAll() as $m) {
     $moreHtml .= '<a class="mcard" href="/artikel/' . vg_esc($m['id']) . '">'
         . '<div class="mcb"><span class="mt">' . vg_esc($m['title']) . '</span>'
