@@ -66,6 +66,7 @@ if ($method === 'POST') {
 if ($method === 'DELETE') {
     vg_require_admin($cfg);
     $pdo->exec('DELETE FROM hits');
+    try { $pdo->exec('DELETE FROM events'); } catch (Throwable $e) {}
     vg_out_h(['ok' => true]);
 }
 
@@ -230,6 +231,18 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     $searchLike = implode(' OR ', array_map(fn($s) => "ref_host LIKE '%" . $s . "%'", vg_search_hosts()));
     $entriesSearch = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND ($searchLike) GROUP BY path ORDER BY c DESC LIMIT 15", [$startU, $endU])->fetchAll();
 
+    // Ereignis-Auswertung (interne Suche, Engagement). Tabelle kann auf einem
+    // frischen Stand fehlen, daher defensiv.
+    $searches = []; $engRows = []; $engTotals = ['c' => 0, 'avg_sec' => 0, 'avg_depth' => 0];
+    try {
+        $sr = $run("SELECT q, COUNT(*) c, MAX(num) maxres FROM events WHERE type='search' AND created_at >= ? AND created_at < ? GROUP BY q ORDER BY c DESC LIMIT 20", [$startU, $endU])->fetchAll();
+        foreach ($sr as $r) { $searches[] = ['q' => $r['q'], 'c' => (int)$r['c'], 'maxres' => (int)$r['maxres']]; }
+        $er = $run("SELECT path, COUNT(*) c, AVG(num) avg_sec, AVG(num2) avg_depth FROM events WHERE type='engage' AND created_at >= ? AND created_at < ? GROUP BY path ORDER BY c DESC LIMIT 20", [$startU, $endU])->fetchAll();
+        foreach ($er as $r) { $engRows[] = ['path' => $r['path'], 'c' => (int)$r['c'], 'avg_sec' => (int)round((float)$r['avg_sec']), 'avg_depth' => (int)round((float)$r['avg_depth'])]; }
+        $et = $run("SELECT COUNT(*) c, AVG(num) avg_sec, AVG(num2) avg_depth FROM events WHERE type='engage' AND created_at >= ? AND created_at < ?", [$startU, $endU])->fetch();
+        if ($et) $engTotals = ['c' => (int)$et['c'], 'avg_sec' => (int)round((float)$et['avg_sec']), 'avg_depth' => (int)round((float)$et['avg_depth'])];
+    } catch (Throwable $e) { /* Tabelle noch nicht vorhanden */ }
+
     // Referrer roh holen und in PHP zusammenfassen (Google/Instagram-Varianten).
     $refRows = $run("SELECT ref_host, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host", [$startU, $endU])->fetchAll();
     $refMerged = [];
@@ -263,6 +276,8 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         'instagram' => ['by_referrer' => $instaByRef, 'by_utm' => $instaByUtm, 'prev_by_utm' => $prevInstaUtm],
         'channels' => ['cur' => $channelsCur, 'prev' => $channelsPrev],
         'entries_search' => $entriesSearch,
+        'searches' => $searches,
+        'engagement' => ['rows' => $engRows, 'totals' => $engTotals],
         'series' => $series,
         'prev_series' => $prevSeries,
         'top_paths' => $topPaths,
@@ -357,6 +372,7 @@ td.num2 .delta{margin-top:0}
 .trend.up,.trend.new{color:var(--ok);background:var(--ok-bg)}
 .trend.down{color:var(--bad);background:var(--bad-bg)}
 .trend.flat{color:var(--soft);background:var(--bg-2)}
+tr.thead td{color:var(--soft);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -579,6 +595,12 @@ function renderDash(){
   h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
   h+='</div>';
 
+  h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
+  h+='<div class="twocol">';
+  h+='<div class="chartcard"><div class="charthead"><h2>Interne Suche</h2></div><p class="help">Wonach auf der Seite gesucht wird. Rot markiert = null Treffer, also ein direkter Hinweis, welchen Artikel du als Naechstes schreiben solltest.</p><table id="intSearchTbl"></table></div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Lese-Engagement <span id="engAvg" class="cardtag"></span></h2></div><p class="help">Verweildauer und maximale Scrolltiefe pro Artikel. Zeigt, ob Artikel wirklich gelesen oder sofort weggeklickt werden. Verweildauer ist grob, ein offener Tab im Hintergrund kann sie verlaengern.</p><table id="engTbl"></table></div>';
+  h+='</div>';
+
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
   h+='<div class="daterow"><span class="ctrllbl">Tag</span><input type="date" id="detailDate"></div></div>';
@@ -608,6 +630,8 @@ function renderDash(){
   renderMain();
   renderChannels();
   renderSearchEntries();
+  renderInternalSearch();
+  renderEngagement();
   renderHeatmap();
   renderCards();
 
@@ -658,6 +682,30 @@ function renderChannels(){
 function renderSearchEntries(){
   var t=document.getElementById('searchTbl');if(!t)return;
   t.innerHTML=barRows(DATA.entries_search,function(r){return pathLabel(r.path);});
+}
+function fmtSecs(s){s=+s||0;if(s<60)return s+' s';var m=Math.floor(s/60),r=s%60;return m+':'+pad2(r)+' min';}
+function renderInternalSearch(){
+  var t=document.getElementById('intSearchTbl');if(!t)return;
+  var rows=DATA.searches||[];
+  if(!rows.length){t.innerHTML='<tr><td class="empty">Noch keine internen Suchen erfasst (Daten sammeln sich ab jetzt).</td></tr>';return;}
+  var max=1;rows.forEach(function(r){if(r.c>max)max=r.c;});
+  t.innerHTML=rows.map(function(r){
+    var pct=Math.round(r.c/max*100);
+    var zero=r.maxres===0?' <span class="trend down">0 Treffer</span>':'';
+    return '<tr><td class="lbl" title="'+esc(r.q)+'">'+esc(r.q)+zero+'</td><td class="barcell"><div class="bar" style="width:'+pct+'%"></div></td><td class="num">'+r.c+'</td></tr>';
+  }).join('');
+}
+function renderEngagement(){
+  var t=document.getElementById('engTbl');if(!t)return;
+  var e=DATA.engagement||{rows:[],totals:{c:0,avg_sec:0,avg_depth:0}};
+  var tag=document.getElementById('engAvg');
+  if(tag)tag.textContent=e.totals.c?('Schnitt '+fmtSecs(e.totals.avg_sec)+' / '+e.totals.avg_depth+'%'):'';
+  var rows=e.rows||[];
+  if(!rows.length){t.innerHTML='<tr><td class="empty">Noch keine Lesedaten erfasst (Daten sammeln sich ab jetzt).</td></tr>';return;}
+  t.innerHTML='<tr class="thead"><td class="lbl">Artikel</td><td class="num">Aufrufe</td><td class="num">Verweildauer</td><td class="num">Scrolltiefe</td></tr>'+
+    rows.map(function(r){
+      return '<tr><td class="lbl" title="'+esc(pathLabel(r.path))+'">'+esc(pathLabel(r.path))+'</td><td class="num">'+r.c+'</td><td class="num">'+fmtSecs(r.avg_sec)+'</td><td class="num">'+r.avg_depth+'%</td></tr>';
+    }).join('');
 }
 function renderHeatmap(){
   var host=document.getElementById('heatmap');if(!host)return;

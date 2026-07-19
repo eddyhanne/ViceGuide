@@ -3653,8 +3653,9 @@ function openArticle(i){
   $('a-more').innerHTML=cards;
   renderComments(i);
   $('view').style.display="none"; $('article').classList.add('show'); updateHeaderBack(); window.scrollTo({top:0,behavior:isRestoringRoute?'auto':'smooth'}); syncHash();
+  vgEngFlush(); vgEngStart(g.id, articleHref(g.id));
 }
-function closeArticle(){$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();renderFaqSchema(null);}
+function closeArticle(){vgEngFlush();$('article').classList.remove('show');$('view').style.display="block";curArticle=null;updateHeaderBack();syncHash();renderFaqSchema(null);}
 
 /* ---- GLOBAL SEARCH ---- */
 function globalSearch(q){
@@ -3710,8 +3711,8 @@ function renderSuggest(q){
 }
 function pickSuggest(idx){ const r=(window.__sg||[])[idx]; if(!r)return; $('suggest').classList.remove('show'); if(r.type==='guide'){closeArticle();openArticle(r.i);} else if(r.type==='db'){ current=r.sec; renderSidebar(); renderMobileNav(); renderView(); openModal(r.sec,r.i); } else if(r.type==='video'){ go('videos'); } }
 function clearGlobal(){$('gsearch').value='';gquery='';$('gclear').style.display='none';$('suggest').classList.remove('show');renderView();$('gsearch').focus();}
-$('gsearch').addEventListener('input',e=>{gquery=e.target.value;$('gclear').style.display=gquery?'grid':'none';renderSuggest(gquery);});
-$('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){ $('suggest').classList.remove('show'); globalSearch(gquery); } else if(e.key==='Escape'){ $('suggest').classList.remove('show'); } });
+$('gsearch').addEventListener('input',e=>{gquery=e.target.value;$('gclear').style.display=gquery?'grid':'none';renderSuggest(gquery);clearTimeout(vgSearchTimer);vgSearchTimer=setTimeout(()=>vgLogSearch(gquery),1300);});
+$('gsearch').addEventListener('keydown',e=>{ if(e.key==='Enter'&&gquery.trim()){ $('suggest').classList.remove('show'); vgLogSearch(gquery); globalSearch(gquery); } else if(e.key==='Escape'){ $('suggest').classList.remove('show'); } });
 document.addEventListener('click',e=>{ const w=document.querySelector('.searchwrap'); if(w && !w.contains(e.target)){ const el=$('suggest'); if(el)el.classList.remove('show'); } });
 
 /* Admin / KI */
@@ -4501,6 +4502,41 @@ function vgTrack(path){
     }
   }catch(e){}
 }
+
+/* ---- Ereignis-Tracking (siehe api/events.php): interne Suche + Lese-Engagement.
+   Weiterhin cookiefrei, anonym, aggregiert. Feuert nur fuer echte Besucher,
+   der eingeloggte Admin wird ausgenommen. ---- */
+function vgEvent(obj){
+  try{
+    if(isAdmin) return;
+    const payload=JSON.stringify(obj);
+    if(navigator.sendBeacon){ navigator.sendBeacon('api/events.php', new Blob([payload],{type:'application/json'})); }
+    else { fetch('api/events.php',{method:'POST',headers:{'Content-Type':'application/json'},body:payload,keepalive:true}).catch(()=>{}); }
+  }catch(e){}
+}
+let vgSearchTimer=null, vgLastLoggedQ='';
+function vgLogSearch(q){
+  q=(q||'').trim(); if(q.length<2 || q===vgLastLoggedQ) return;
+  vgLastLoggedQ=q; let n=0; try{ n=searchAll(q).length; }catch(e){}
+  vgEvent({type:'search', q:q.slice(0,120), results:n});
+}
+let vgEng=null; // {id, path, start, maxDepth}
+function vgEngStart(id,path){ if(isAdmin) return; vgEng={id:id, path:path, start:Date.now(), maxDepth:0}; }
+function vgEngScroll(){
+  if(!vgEng) return;
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  const d=h>0 ? Math.min(100, Math.round(window.scrollY/h*100)) : 100;
+  if(d>vgEng.maxDepth) vgEng.maxDepth=d;
+}
+function vgEngFlush(){
+  if(!vgEng) return;
+  const e=vgEng; vgEng=null;
+  const secs=Math.round((Date.now()-e.start)/1000);
+  vgEvent({type:'engage', path:e.path, seconds:secs, depth:e.maxDepth});
+}
+window.addEventListener('scroll', vgEngScroll, {passive:true});
+window.addEventListener('pagehide', vgEngFlush);
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='hidden') vgEngFlush(); });
 
 /* ---- Routing: URL-Hash spiegelt Ansicht + offenen Artikel/Eintrag, Reload und Zurueck-Button bleiben auf der Seite ---- */
 function buildHash(){

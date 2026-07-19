@@ -75,6 +75,7 @@ function vg_db(): array {
         $pdo->query('SELECT comment_id FROM comment_votes LIMIT 1');
         $pdo->query('SELECT id FROM newsletter_subscribers LIMIT 1');
         $pdo->query('SELECT id FROM hits LIMIT 1');
+        $pdo->query('SELECT id FROM events LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -170,6 +171,15 @@ function vg_db(): array {
             utm_source TEXT NULL,
             utm_medium TEXT NULL,
             utm_campaign TEXT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,
+            path TEXT NULL,
+            q TEXT NULL,
+            num INTEGER NOT NULL DEFAULT 0,
+            num2 INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
@@ -325,6 +335,16 @@ function vg_db(): array {
             INDEX idx_created (created_at),
             INDEX idx_ref_host (ref_host),
             INDEX idx_utm_source (utm_source)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS events (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            type VARCHAR(16) NOT NULL,
+            path VARCHAR(300) NULL,
+            q VARCHAR(160) NULL,
+            num INT NOT NULL DEFAULT 0,
+            num2 INT NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_type_created (type, created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
