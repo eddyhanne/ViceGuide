@@ -97,6 +97,26 @@ function vg_ref_group(?string $host): string {
     return $host;
 }
 
+/* Kanal-Gruppierung wie bei Google Analytics: jeder Aufruf wird aus Referrer
+   und UTM-Tag in Suche / Social / Verweis / Direkt einsortiert. Das ist die
+   Kernfrage fuers SEO ("kommt der Traffic aus der Suche?"). */
+function vg_search_hosts(): array {
+    return ['google', 'bing', 'duckduckgo', 'ecosia', 'yahoo', 'yandex', 'qwant', 'startpage', 'brave', 'search.'];
+}
+function vg_channel(?string $host, string $us): string {
+    $socialUtm = ['instagram', 'ig', 'facebook', 'fb', 'meta', 'tiktok', 'youtube', 'yt', 'twitter', 'x', 'threads', 'reddit', 'pinterest', 'linkedin', 'snapchat'];
+    $socialHosts = ['instagram', 'facebook', 'fb.', 'tiktok', 'youtube', 'youtu.be', 't.co', 'twitter', 'x.com', 'threads', 'reddit', 'pinterest', 'linkedin', 'snapchat', 'lm.facebook'];
+    if ($us !== '' && in_array($us, $socialUtm, true)) return 'social';
+    $h = $host ? strtolower($host) : '';
+    if ($h !== '') {
+        foreach (vg_search_hosts() as $s) if (strpos($h, $s) !== false) return 'search';
+        foreach ($socialHosts as $s) if (strpos($h, $s) !== false) return 'social';
+        return 'referral';
+    }
+    if ($us !== '') return 'referral'; // getaggter Link ohne Referrer-Host (z.B. Newsletter)
+    return 'direct';
+}
+
 function vg_build_stats(PDO $pdo, array $cfg): array {
     $isSqlite = str_starts_with($cfg['db_dsn'], 'sqlite:');
     $berlin = new DateTimeZone('Europe/Berlin');
@@ -171,7 +191,44 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         $guard++;
     }
 
+    // Vorperioden-Zeitreihe (gleiche Laenge, direkt davor), parallel zur
+    // aktuellen Reihe fuer den Overlay-Vergleich. Als reines Zahlen-Array,
+    // Index i deckt sich mit series[i].
+    $phrows = $run("SELECT $hourExpr AS t, COUNT(*) AS c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY t", [$prevStartU, $prevEndU])->fetchAll();
+    $pbc = [];
+    foreach ($phrows as $r) {
+        $dt = new DateTime($r['t'], $utc); $dt->setTimezone($berlin);
+        $k = $dt->format('Y-m-d H');
+        $pbc[$k] = ($pbc[$k] ?? 0) + (int)$r['c'];
+    }
+    $prevSeries = [];
+    $pcur = clone $prevStartB; $pg = 0;
+    while ($pcur < $prevEndB && $pg < 200000) {
+        $prevSeries[] = $pbc[$pcur->format('Y-m-d H')] ?? 0;
+        $pcur->modify('+1 hour'); $pg++;
+    }
+
     $topPaths = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY path ORDER BY c DESC LIMIT 25", [$startU, $endU])->fetchAll();
+    // Vorperiode je Seite fuer Trend-Kennzeichnung im Leaderboard.
+    $prevPathRows = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY path", [$prevStartU, $prevEndU])->fetchAll();
+    $prevPathMap = [];
+    foreach ($prevPathRows as $r) { $prevPathMap[$r['path']] = (int)$r['c']; }
+    foreach ($topPaths as &$tp) { $tp['prev'] = $prevPathMap[$tp['path']] ?? 0; }
+    unset($tp);
+
+    // Kanal-Gruppierung fuer aktuelle Periode und Vorperiode.
+    $chan = function (string $a, string $b) use ($run): array {
+        $rows = $run("SELECT ref_host, LOWER(COALESCE(utm_source,'')) us, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host, LOWER(COALESCE(utm_source,''))", [$a, $b])->fetchAll();
+        $o = ['search' => 0, 'social' => 0, 'referral' => 0, 'direct' => 0];
+        foreach ($rows as $r) { $o[vg_channel($r['ref_host'], (string)$r['us'])] += (int)$r['c']; }
+        return $o;
+    };
+    $channelsCur = $chan($startU, $endU);
+    $channelsPrev = $chan($prevStartU, $prevEndU);
+
+    // Einstiegsseiten aus der Suche: welche Seite holt Besucher aus Suchmaschinen rein.
+    $searchLike = implode(' OR ', array_map(fn($s) => "ref_host LIKE '%" . $s . "%'", vg_search_hosts()));
+    $entriesSearch = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND ($searchLike) GROUP BY path ORDER BY c DESC LIMIT 15", [$startU, $endU])->fetchAll();
 
     // Referrer roh holen und in PHP zusammenfassen (Google/Instagram-Varianten).
     $refRows = $run("SELECT ref_host, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host", [$startU, $endU])->fetchAll();
@@ -204,7 +261,10 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         'total' => $total,
         'prev_total' => $prevTotal,
         'instagram' => ['by_referrer' => $instaByRef, 'by_utm' => $instaByUtm, 'prev_by_utm' => $prevInstaUtm],
+        'channels' => ['cur' => $channelsCur, 'prev' => $channelsPrev],
+        'entries_search' => $entriesSearch,
         'series' => $series,
+        'prev_series' => $prevSeries,
         'top_paths' => $topPaths,
         'top_referrers' => $topRef,
         'top_utm_sources' => $topSrc,
@@ -275,6 +335,28 @@ input[type=date]{font-family:inherit;font-size:.85rem;padding:6px 10px;border:1p
 .bars .gbar{fill:var(--accent);opacity:.85;transition:opacity .1s}
 .bars .hit:hover + .gbar,.bars .gbar:hover{opacity:1}
 .bars .hit.clk{cursor:pointer}
+.bars .cmpline{fill:none;stroke:var(--text);stroke-width:1.6;stroke-dasharray:4 3;opacity:.45}
+.bars .cmpdot{fill:var(--text);opacity:.45}
+.bars.heat .hmlbl{fill:var(--soft);font-size:10px}
+.bars.heat .hmcell{cursor:default}
+.headctrls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toggle{border:1px solid var(--line);background:var(--surface);color:var(--soft);font-family:inherit;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer}
+.toggle.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.leg{display:inline-flex;align-items:center;gap:6px;margin-left:10px;color:var(--soft)}
+.legbar{display:inline-block;width:11px;height:11px;border-radius:2px;background:var(--accent);opacity:.85;margin-right:2px}
+.legline{display:inline-block;width:16px;border-top:2px dashed var(--text);opacity:.5;margin-right:2px}
+.twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:8px}
+.twocol .chartcard{margin-bottom:0}
+td.num2{text-align:right;white-space:nowrap;padding-left:8px}
+td.num2 .delta{margin-top:0}
+.bar.chan-search{background:#0F7A3D}
+.bar.chan-social{background:#D00059}
+.bar.chan-referral{background:#B26A00}
+.bar.chan-direct{background:#6B5E85}
+.trend{display:inline-block;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle}
+.trend.up,.trend.new{color:var(--ok);background:var(--ok-bg)}
+.trend.down{color:var(--bad);background:var(--bad-bg)}
+.trend.flat{color:var(--soft);background:var(--bg-2)}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -328,7 +410,7 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 
 <script>
 var API=location.pathname;
-var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false;
+var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false;
 var WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -342,7 +424,7 @@ function niceNum(x){if(x<=5)return 5;var p=Math.pow(10,Math.floor(Math.log10(x))
 /* ---- Tooltip ---- */
 var tip;
 function ensureTip(){if(!tip){tip=document.createElement('div');tip.className='tip';document.body.appendChild(tip);}}
-function showTip(e,el){ensureTip();tip.innerHTML='<b>'+esc(el.getAttribute('data-c'))+'</b> Aufrufe<br><span>'+esc(el.getAttribute('data-full'))+'</span>';tip.style.display='block';moveTip(e);}
+function showTip(e,el){ensureTip();var p=el.getAttribute('data-p');var extra=p!=null?'<br><span>Vorperiode: '+esc(p)+'</span>':'';tip.innerHTML='<b>'+esc(el.getAttribute('data-c'))+'</b> Aufrufe<br><span>'+esc(el.getAttribute('data-full'))+'</span>'+extra;tip.style.display='block';moveTip(e);}
 function moveTip(e){if(!tip)return;var w=tip.offsetWidth||160;var x=e.clientX+14;if(x+w>window.innerWidth-8)x=e.clientX-w-14;tip.style.left=x+'px';tip.style.top=(e.clientY+16)+'px';}
 function hideTip(){if(tip)tip.style.display='none';}
 
@@ -359,7 +441,8 @@ function drawBars(host,buckets,opts){
   var fits=needW<=hostW;               // passt ohne Scrollen in die Breite
   var W=fits?hostW:needW;
   var plotW=W-padL-padR;
-  var rawMax=1;buckets.forEach(function(b){if(b.c>rawMax)rawMax=b.c;});
+  var cmp=!!opts.compare;
+  var rawMax=1;buckets.forEach(function(b){if(b.c>rawMax)rawMax=b.c;if(cmp&&(b.p||0)>rawMax)rawMax=b.p;});
   var max=niceNum(rawMax);
   var slot=plotW/nn;
   var barW=Math.min(slot*0.68,44);
@@ -375,20 +458,27 @@ function drawBars(host,buckets,opts){
   buckets.forEach(function(b,i){
     var cx=padL+slot*i+slot/2,x=cx-barW/2,y=yOf(b.c),bh=padT+plotH-y;
     bars+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+Math.max(0,bh).toFixed(1)+'" rx="3" class="gbar"></rect>';
-    bars+='<rect x="'+(padL+slot*i).toFixed(1)+'" y="'+padT+'" width="'+slot.toFixed(1)+'" height="'+plotH+'" fill="transparent" class="hit'+(opts.clickable&&b.day?' clk':'')+'" data-full="'+esc(b.full)+'" data-c="'+b.c+'"'+(b.day?' data-day="'+esc(b.day)+'"':'')+'></rect>';
+    bars+='<rect x="'+(padL+slot*i).toFixed(1)+'" y="'+padT+'" width="'+slot.toFixed(1)+'" height="'+plotH+'" fill="transparent" class="hit'+(opts.clickable&&b.day?' clk':'')+'" data-full="'+esc(b.full)+'" data-c="'+b.c+'"'+(cmp?' data-p="'+(b.p||0)+'"':'')+(b.day?' data-day="'+esc(b.day)+'"':'')+'></rect>';
     if(nn<=28&&b.c>0)labels+='<text x="'+cx.toFixed(1)+'" y="'+(y-4).toFixed(1)+'" class="vl" text-anchor="middle">'+b.c+'</text>';
     if(i%step===0||i===nn-1){
       labels+='<text x="'+cx.toFixed(1)+'" y="'+(H-(opts.subLabels?18:12)).toFixed(1)+'" class="xl" text-anchor="middle">'+esc(b.label)+'</text>';
       if(opts.subLabels&&b.sub)labels+='<text x="'+cx.toFixed(1)+'" y="'+(H-5)+'" class="xs" text-anchor="middle">'+esc(b.sub)+'</text>';
     }
   });
+  // Vorperiode als helle Vergleichslinie ueber die Balken legen.
+  var overlay='';
+  if(cmp){
+    var pts=buckets.map(function(b,i){return (padL+slot*i+slot/2).toFixed(1)+','+yOf(b.p||0).toFixed(1);}).join(' ');
+    overlay+='<polyline points="'+pts+'" class="cmpline"></polyline>';
+    if(nn<=40)buckets.forEach(function(b,i){overlay+='<circle cx="'+(padL+slot*i+slot/2).toFixed(1)+'" cy="'+yOf(b.p||0).toFixed(1)+'" r="2.5" class="cmpdot"></circle>';});
+  }
   // Passt alles rein, wird das SVG auf 100% Breite gerendert, damit es bei
   // Subpixel-Rundung oder auftauchendem Seiten-Scrollbalken nie uebersteht
   // (kein ungewollter horizontaler Scrollbalken). Nur wenn mehr Balken als
   // Platz da sind, feste Pixelbreite plus horizontales Scrollen.
   var wAttr=fits?'100%':W;
   var par=fits?'none':'xMidYMid meet';
-  host.innerHTML='<svg width="'+wAttr+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="'+par+'" class="bars">'+g+bars+labels+'</svg>';
+  host.innerHTML='<svg width="'+wAttr+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="'+par+'" class="bars">'+g+bars+overlay+labels+'</svg>';
   host.querySelectorAll('.hit').forEach(function(el){
     el.addEventListener('mouseenter',function(e){showTip(e,el);});
     el.addEventListener('mousemove',moveTip);
@@ -400,27 +490,27 @@ function drawBars(host,buckets,opts){
 /* ---- Bucketing aus der Stundenreihe ---- */
 function bucketsDay(series){
   var m=new Map();
-  series.forEach(function(s){var d=s.t.slice(0,10);m.set(d,(m.get(d)||0)+s.c);});
-  var out=[];m.forEach(function(c,d){out.push({day:d,label:fmtDay(d),full:wdDay(d)+', '+fmtFullDay(d),c:c});});
+  series.forEach(function(s){var d=s.t.slice(0,10);if(!m.has(d))m.set(d,{c:0,p:0});var o=m.get(d);o.c+=s.c;o.p+=(s.p||0);});
+  var out=[];m.forEach(function(o,d){out.push({day:d,label:fmtDay(d),full:wdDay(d)+', '+fmtFullDay(d),c:o.c,p:o.p});});
   return out;
 }
 function bucket6h(series){
   var m=new Map();
   series.forEach(function(s){
     var d=s.t.slice(0,10),h=+s.t.slice(11,13),blk=Math.floor(h/6)*6,key=d+' '+blk;
-    if(!m.has(key))m.set(key,{day:d,blk:blk,c:0});
-    m.get(key).c+=s.c;
+    if(!m.has(key))m.set(key,{day:d,blk:blk,c:0,p:0});
+    var o=m.get(key);o.c+=s.c;o.p+=(s.p||0);
   });
   var out=[];m.forEach(function(o){
     var end=o.blk+6;
-    out.push({day:o.day,label:pad2(o.blk),sub:fmtDay(o.day),full:fmtDay(o.day)+' '+pad2(o.blk)+' bis '+pad2(end===24?24:end)+' Uhr',c:o.c});
+    out.push({day:o.day,label:pad2(o.blk),sub:fmtDay(o.day),full:fmtDay(o.day)+' '+pad2(o.blk)+' bis '+pad2(end===24?24:end)+' Uhr',c:o.c,p:o.p});
   });
   return out;
 }
 function bucketHour(series){
   return series.map(function(s){
     var d=s.t.slice(0,10),h=+s.t.slice(11,13);
-    return {day:d,label:pad2(h),sub:fmtDay(d),full:fmtDay(d)+' '+pad2(h)+':00 bis '+pad2((h+1)%24)+':00 Uhr',c:s.c};
+    return {day:d,label:pad2(h),sub:fmtDay(d),full:fmtDay(d)+' '+pad2(h)+':00 bis '+pad2((h+1)%24)+':00 Uhr',c:s.c,p:(s.p||0)};
   });
 }
 function bucket24(series){
@@ -445,6 +535,21 @@ function barRows(rows,labelFn){
     return '<tr><td class="lbl" title="'+esc(lab)+'">'+esc(lab)+'</td><td class="barcell"><div class="bar" style="width:'+pct+'%"></div></td><td class="num">'+r.c+'</td></tr>';
   }).join('');
 }
+function trendChip(cur,prev){
+  if(prev<=0)return cur>0?'<span class="trend new">neu</span>':'';
+  var p=Math.round((cur-prev)/prev*100);
+  if(p>=15)return '<span class="trend up">steigt '+p+'%</span>';
+  if(p<=-15)return '<span class="trend down">faellt '+p+'%</span>';
+  return '<span class="trend flat">stabil</span>';
+}
+function pathTrendRows(rows){
+  if(!rows||!rows.length)return '<tr><td colspan="3" class="empty">Noch keine Daten in diesem Zeitraum.</td></tr>';
+  var max=1;rows.forEach(function(r){if(+r.c>max)max=+r.c;});
+  return rows.map(function(r){
+    var lab=pathLabel(r.path),pct=Math.round(r.c/max*100);
+    return '<tr><td class="lbl" title="'+esc(lab)+'">'+esc(lab)+' '+trendChip(r.c,r.prev||0)+'</td><td class="barcell"><div class="bar" style="width:'+pct+'%"></div></td><td class="num">'+r.c+'</td></tr>';
+  }).join('');
+}
 
 /* ---- Rendering ---- */
 function defaultGran(days){if(days<=1)return 'hour';if(days<=3)return '6h';return 'day';}
@@ -463,9 +568,16 @@ function renderDash(){
 
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2>Verlauf</h2>';
-  h+='<div class="seg" id="gran"><button data-g="hour">Stunde</button><button data-g="6h">6 Std</button><button data-g="day">Tag</button></div></div>';
-  h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken oeffnet den 24-Stunden-Verlauf des Tages unten.</p>';
+  h+='<div class="headctrls"><button id="cmpBtn" class="toggle" title="Vorperiode als Vergleichslinie einblenden">Vorperiode vergleichen</button>';
+  h+='<div class="seg" id="gran"><button data-g="hour">Stunde</button><button data-g="6h">6 Std</button><button data-g="day">Tag</button></div></div></div>';
+  h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken oeffnet den 24-Stunden-Verlauf des Tages unten.<span id="cmplegend"></span></p>';
   h+='<div class="chartscroll"><div id="mainchart"></div></div></div>';
+
+  h+='<div class="sectionlbl">Woher der Traffic kommt</div>';
+  h+='<div class="twocol">';
+  h+='<div class="chartcard"><div class="charthead"><h2>Kanaele</h2></div><p class="help">Jeder Aufruf einsortiert in Suche, Social, Verweis oder Direkt. Die wichtigste SEO-Kennzahl: waechst der Anteil aus der Suche?</p><table id="chanTbl"></table></div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
+  h+='</div>';
 
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
@@ -473,6 +585,9 @@ function renderDash(){
   h+='<p class="help">Voller 24-Stunden-Verlauf eines einzelnen Tages. Zeigt genau, zu welcher Uhrzeit die Aufrufe reinkamen. Tag frei waehlbar, unabhaengig vom Zeitraum oben.</p>';
   h+='<div class="chartscroll"><div id="detailchart"></div></div>';
   h+='<div class="detailmeta" id="detailmeta"></div></div>';
+
+  h+='<div class="sectionlbl">Aktivitaet nach Wochentag und Uhrzeit</div>';
+  h+='<div class="chartcard"><p class="help">Wann kommen die Aufrufe rein (Berlin-Zeit). Dunkler heisst mehr. Zeigt dir den besten Zeitpunkt fuers Veroeffentlichen und fuer Instagram-Posts.</p><div class="chartscroll"><div id="heatmap"></div></div></div>';
 
   h+='<div class="sectionlbl">Akquise &amp; Verhalten, Reihenfolge per Ziehen anpassbar</div>';
   h+='<div id="vg-cards"></div>';
@@ -485,7 +600,15 @@ function renderDash(){
     b.classList.toggle('active',b.getAttribute('data-g')===GRAN);
     b.addEventListener('click',function(){GRAN=b.getAttribute('data-g');GRAN_LOCK=true;document.querySelectorAll('#gran button').forEach(function(x){x.classList.toggle('active',x===b);});renderMain();});
   });
+  // Vorperioden-Vergleich
+  var cb=document.getElementById('cmpBtn');
+  cb.classList.toggle('on',COMPARE);
+  cb.addEventListener('click',function(){COMPARE=!COMPARE;cb.classList.toggle('on',COMPARE);renderMain();});
+
   renderMain();
+  renderChannels();
+  renderSearchEntries();
+  renderHeatmap();
   renderCards();
 
   // Tagesdetail
@@ -517,7 +640,55 @@ function renderMain(){
   if(GRAN==='hour'){b=bucketHour(DATA.series);minSlot=13;}
   else if(GRAN==='6h'){b=bucket6h(DATA.series);minSlot=18;}
   else{b=bucketsDay(DATA.series);minSlot=28;}
-  drawBars(host,b,{clickable:true,minSlot:minSlot,subLabels:GRAN!=='day',onClick:function(day){var di=document.getElementById('detailDate');di.value=day;loadDetail(day);document.getElementById('detailtitle').scrollIntoView({behavior:'smooth',block:'center'});}});
+  drawBars(host,b,{clickable:true,compare:COMPARE,minSlot:minSlot,subLabels:GRAN!=='day',onClick:function(day){var di=document.getElementById('detailDate');di.value=day;loadDetail(day);document.getElementById('detailtitle').scrollIntoView({behavior:'smooth',block:'center'});}});
+  var leg=document.getElementById('cmplegend');
+  if(leg)leg.innerHTML=COMPARE?' <span class="leg"><span class="legbar"></span>Zeitraum &nbsp; <span class="legline"></span>Vorperiode ('+(DATA.range.days)+' Tage davor)</span>':'';
+}
+var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',direct:'Direkt'};
+function renderChannels(){
+  var t=document.getElementById('chanTbl');if(!t)return;
+  var cur=DATA.channels.cur,prev=DATA.channels.prev;
+  var keys=['search','social','referral','direct'];
+  var max=1;keys.forEach(function(k){if(cur[k]>max)max=cur[k];});
+  t.innerHTML=keys.map(function(k){
+    var pct=Math.round(cur[k]/max*100);
+    return '<tr><td class="lbl">'+esc(CHAN_LABELS[k])+'</td><td class="barcell"><div class="bar chan-'+k+'" style="width:'+pct+'%"></div></td><td class="num">'+cur[k]+'</td><td class="num2">'+deltaHtml(cur[k],prev[k])+'</td></tr>';
+  }).join('');
+}
+function renderSearchEntries(){
+  var t=document.getElementById('searchTbl');if(!t)return;
+  t.innerHTML=barRows(DATA.entries_search,function(r){return pathLabel(r.path);});
+}
+function renderHeatmap(){
+  var host=document.getElementById('heatmap');if(!host)return;
+  // 7x24-Matrix (Mo..So x 0..23) aus der Berlin-Stundenreihe.
+  var grid=[];for(var r=0;r<7;r++){grid.push(new Array(24).fill(0));}
+  DATA.series.forEach(function(s){
+    var day=new Date(s.t.slice(0,10)+'T00:00:00').getDay(); // 0=So..6=Sa
+    var row=(day+6)%7; // 0=Mo..6=So
+    var hr=+s.t.slice(11,13);
+    grid[row][hr]+=s.c;
+  });
+  var max=1;grid.forEach(function(row){row.forEach(function(v){if(v>max)max=v;});});
+  var rows=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  var cell=26,padL=34,padT=18,H=padT+7*cell+4,W=padL+24*cell+4;
+  var hostW=Math.max(280,Math.floor(host.clientWidth||760));
+  var fits=W<=hostW;
+  var svg='';
+  for(var c=0;c<24;c++){if(c%2===0)svg+='<text x="'+(padL+c*cell+cell/2)+'" y="'+(padT-6)+'" class="hmlbl" text-anchor="middle">'+pad2(c)+'</text>';}
+  for(var rr=0;rr<7;rr++){
+    svg+='<text x="'+(padL-8)+'" y="'+(padT+rr*cell+cell/2+3)+'" class="hmlbl" text-anchor="end">'+rows[rr]+'</text>';
+    for(var cc=0;cc<24;cc++){
+      var v=grid[rr][cc];var op=v===0?0.05:(0.15+0.85*(v/max));
+      svg+='<rect x="'+(padL+cc*cell+1)+'" y="'+(padT+rr*cell+1)+'" width="'+(cell-2)+'" height="'+(cell-2)+'" rx="3" class="hmcell" fill="var(--accent)" fill-opacity="'+op.toFixed(3)+'" data-full="'+esc(rows[rr]+' '+pad2(cc)+':00 bis '+pad2((cc+1)%24)+':00 Uhr')+'" data-c="'+v+'"></rect>';
+    }
+  }
+  host.innerHTML='<svg width="'+(fits?'100%':W)+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="'+(fits?'none':'xMidYMid meet')+'" class="bars heat">'+svg+'</svg>';
+  host.querySelectorAll('.hmcell').forEach(function(el){
+    el.addEventListener('mouseenter',function(e){showTip(e,el);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+  });
 }
 function renderDetail(day){
   var host=document.getElementById('detailchart');if(!host)return;
@@ -532,7 +703,7 @@ function renderDetail(day){
 function renderCards(){
   var d=DATA;
   var cards={
-    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, unabhaengig davon woher der Besuch kam.',rows:barRows(d.top_paths,function(r){return pathLabel(r.path);})},
+    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, mit Trend gegen die Vorperiode.',rows:pathTrendRows(d.top_paths)},
     top_sources:{tag:'Akquise',title:'Top-Quellen (UTM-Source)',help:'Gruppiert nach dem Tag im geklickten Link, unabhaengig vom technischen Referrer.',rows:barRows(d.top_utm_sources,function(r){return r.utm_source;})},
     top_campaigns:{tag:'Akquise',title:'Top-Kampagnen',help:'Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.',rows:barRows(d.top_utm_campaigns,function(r){return r.utm_source+' / '+r.utm_campaign;})},
     top_referrers:{tag:'Akquise',title:'Top-Referrer',help:'Technische Herkunfts-Domain laut Browser, Google und Instagram jeweils zusammengefasst. Zeigt auch Besuche ohne UTM-Link.',rows:barRows(d.top_referrers,function(r){return r.ref_host;})}
@@ -592,7 +763,7 @@ function load(q){
   document.getElementById('dash').innerHTML='<div class="loading">Lade Daten...</div>';
   fetch(API+'?'+usp.toString(),{headers:{'Accept':'application/json'}})
     .then(function(r){return r.json();})
-    .then(function(d){DATA=d;syncControls();renderDash();})
+    .then(function(d){DATA=d;if(DATA.prev_series){DATA.series.forEach(function(s,i){s.p=DATA.prev_series[i]||0;});}syncControls();renderDash();})
     .catch(function(){document.getElementById('dash').innerHTML='<div class="loading">Laden fehlgeschlagen.</div>';});
 }
 function loadDetail(day){
@@ -634,7 +805,7 @@ document.getElementById('applyDay').addEventListener('click',function(){
 });
 
 var reTimer;
-window.addEventListener('resize',function(){clearTimeout(reTimer);reTimer=setTimeout(function(){if(DATA){renderMain();if(DET&&document.getElementById('detailDate'))renderDetail(document.getElementById('detailDate').value);}},180);});
+window.addEventListener('resize',function(){clearTimeout(reTimer);reTimer=setTimeout(function(){if(DATA){renderMain();renderHeatmap();if(DET&&document.getElementById('detailDate'))renderDetail(document.getElementById('detailDate').value);}},180);});
 
 function vgResetStats(){
   if(!confirm('Wirklich ALLE bisher gesammelten Statistik-Daten unwiderruflich loeschen? Das kann nicht rueckgaengig gemacht werden.'))return;
