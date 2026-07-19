@@ -15,11 +15,15 @@
         "faq:Kann man in GTA 6 jagen oder mit Tieren interagieren?|Das ist offen. Rockstar hat keine Tier-Spielmechanik offiziell bestätigt. Die Tiere sind bislang nur in Trailern und Bildern zu sehen.",
         "faq:Gibt es Alligatoren in GTA 6?|Ja, der Alligator ist mehrfach in offiziellem Material zu sehen, unter anderem in den Sümpfen von Grassrivers und in einer Ladenszene."
       ],
-      "credit": null,
+      "credit": "Rockstar",
       "date": "2026-07-19T09:02",
       "id": "gta-6-wildtiere-leonida",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=gta-6-wildtiere-leonida&v=2026-07-19+07%3A18%3A32",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "Leonida ist voller Tierleben, und schon die ersten Trailer zeigen Alligatoren in den Sümpfen und Delfine vor der Küste.",
       "meta": "Datenbank",
       "pinned": false,
@@ -42,7 +46,7 @@
         "Insgesamt haben Fans über zwanzig Arten in offiziellem Material entdeckt, von Flamingo bis Florida-Panther.",
         "Gesichtet ist nicht gleich bestätigt: Rockstar hat keine Tier-Spielmechanik offiziell benannt."
       ],
-      "updated": "2026-07-19 07:02:24"
+      "updated": "2026-07-19 07:18:32"
     },
     {
       "author": null,
@@ -61,11 +65,15 @@
         "faq:Gibt es in GTA 6 neue Fahrzeugtypen?|Ja, neu für die Serie ist das Airboat, ein Sumpfboot mit Heckpropeller, passend zu den Feuchtgebieten von Leonida.",
         "faq:Sind alle gesichteten Fahrzeuge bestätigt?|Nein. Viele stammen aus Standbildern der Trailer. Dass ein Fahrzeug zu sehen ist, sagt noch nichts über seine Rolle oder Fahrbarkeit im fertigen Spiel."
       ],
-      "credit": null,
+      "credit": "Rockstar",
       "date": "2026-07-19T09:02",
       "id": "gta-6-fahrzeuge-ueberblick",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=gta-6-fahrzeuge-ueberblick&v=2026-07-19+07%3A18%3A32",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "In den Trailern und Bildern zu GTA 6 sind bereits über 200 Fahrzeuge aufgetaucht, von Sportwagen über Jetskis bis zu einem für die Serie völlig neuen Sumpfboot.",
       "meta": "Überblick",
       "pinned": false,
@@ -92,7 +100,7 @@
         "Neu für die Serie ist das Airboat, ein Sumpfboot passend zu den Feuchtgebieten von Leonida.",
         "Gesichtet heißt nicht bestätigt: die genaue Spielrolle vieler Fahrzeuge bleibt offen."
       ],
-      "updated": "2026-07-19 07:02:14"
+      "updated": "2026-07-19 07:18:32"
     },
     {
       "author": null,
@@ -109,11 +117,15 @@
         "faq:Was gehört zur Tauchausrüstung in GTA 6?|Aus dem gezeigten Material lassen sich Maske, Sauerstofftank und Flossen ableiten, die tiefere und längere Tauchgänge als beim einfachen Schwimmen erlauben.",
         "faq:Gibt es Unterwasserhöhlen und Wracks in GTA 6?|Solche Berichte stammen bislang aus Leaks, nicht aus offiziellen Quellen. Die belebte Unterwasserwelt selbst ist dagegen durch ein offizielles Bild belegt."
       ],
-      "credit": null,
+      "credit": "Rockstar",
       "date": "2026-07-19T09:02",
       "id": "gta-6-schwimmen-tauchen-unterwasser",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=gta-6-schwimmen-tauchen-unterwasser&v=2026-07-19+07%3A18%3A32",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "GTA 6 setzt sichtbar aufs Wasser, ein offizielles Bild aus den Leonida Keys zeigt einen Taucher zwischen Meeresschildkröten und Korallen.",
       "meta": "Überblick",
       "pinned": false,
@@ -136,7 +148,7 @@
         "Zur Ausrüstung gehören offenbar Maske, Sauerstofftank und Flossen für tiefere und längere Tauchgänge.",
         "Details zu Wracks, Höhlen und Sammelobjekten stammen bislang eher aus Leaks als aus offiziellen Quellen."
       ],
-      "updated": "2026-07-19 07:02:32"
+      "updated": "2026-07-19 07:18:32"
     },
     {
       "author": null,
@@ -153,11 +165,15 @@
         "faq:In welchem Jahr spielte das erste Vice City?|Das originale GTA Vice City von 2002 spielte im Jahr 1986 und war ein Prequel zu GTA III.",
         "faq:Warum kehrt Rockstar nach Vice City zurück?|Vice City ist einer der beliebtesten Schauplätze der Serie. GTA 6 nutzt die vertraute Miami-Kulisse, überträgt sie aber in eine moderne, größere Spielwelt im Bundesstaat Leonida."
       ],
-      "credit": null,
+      "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-19T09:02",
       "id": "vice-city-geschichte-1986-bis-heute",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=vice-city-geschichte-1986-bis-heute&v=2026-07-19+07%3A20%3A40",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "Vice City ist zurück, aber nicht als Neuland: GTA 6 bringt dieselbe fiktive Miami-Stadt zurück, die 2002 schon einmal Schauplatz war, nur vierzig Jahre später.",
       "meta": "Hintergrund",
       "pinned": false,
@@ -180,7 +196,7 @@
         "GTA 6 kehrt in dieselbe fiktive Stadt zurück, diesmal in der Gegenwart.",
         "Vorbild ist beide Male Miami, die Stimmung hat sich aber vom Neon-Achtziger zum modernen Influencer-Zeitalter verschoben."
       ],
-      "updated": "2026-07-19 07:02:42"
+      "updated": "2026-07-19 07:20:40"
     },
     {
       "author": null,
@@ -2890,16 +2906,18 @@
         "### Keine Switch-2-Version",
         "Eine Nintendo Switch 2 ist trotz ihres starken Verkaufsstarts nicht geplant, Take-Two hat das ausdrücklich verneint. Technisch ist das nachvollziehbar. Die Switch 2 ist trotz des großen Sprungs ein Hybrid-Gerät mit mobilem Chipsatz und liegt bei GPU- und Speicherleistung unter PS5 und Xbox Series X. Bei den dichten NPC-Massen und dem dynamischen Wetter von GTA 6 würde das schnell zum Flaschenhals.",
         "### PS5 Pro läuft, PC folgt später",
-        "Sony hat PS5-Pro-Unterstützung bestätigt, ohne bislang Details zu den Verbesserungen zu nennen. Für den normalen Betrieb genügt eine Standard-PS5 oder Xbox Series X/S. Laut Rockstar wurde das gesamte Material für Trailer 2 sogar auf einer normalen PS5 ohne Pro-Modell aufgenommen. Eine PC-Version ist ausdrücklich nicht Teil des Launches. Wann sie realistisch kommen könnte, ordnen wir in [[wann-pc-version|unserem Artikel zur PC-Version]] ein. Die Historie der Reihe spricht für einen deutlichen Abstand zum Konsolenstart, wie auch GTA BOOM zusammenträgt.",
+        "Sony hat PS5-Pro-Unterstützung bestätigt, ohne bislang Details zu den Verbesserungen zu nennen. Für den normalen Betrieb genügt eine Standard-PS5 oder Xbox Series X/S. Laut Rockstar wurde das gesamte Material für Trailer 2 sogar auf einer normalen PS5 ohne Pro-Modell aufgenommen. Eine PC-Version ist ausdrücklich nicht Teil des Launches. Wann sie realistisch kommen könnte, ordnen wir in [[wann-pc-version|unserem Artikel zur PC-Version]] ein. Die Historie der Reihe spricht für einen deutlichen Abstand zum Konsolenstart, wie auch GTA BOOM zusammenträgt. Den Gesamtstand zu GTA 6 bündelt unsere [[gta-6-alles-was-wir-wissen|große Übersicht]].",
         "faq:Für welche Plattformen erscheint GTA 6?|Zum Release ausschließlich für PlayStation 5 und Xbox Series X/S.",
+        "faq:Auf welchen Konsolen läuft GTA 6?|Auf PlayStation 5 samt PS5 Pro sowie Xbox Series X und S. Ältere Konsolen, die Switch 2 und der PC sind zum Launch nicht dabei.",
         "faq:Kommt GTA 6 für PS4 oder Xbox One?|Nein, GTA 6 erscheint nur für die aktuelle Konsolengeneration.",
+        "faq:Läuft GTA 6 auf der normalen PS5?|Ja. Eine Standard-PS5 genügt, das Material für Trailer 2 wurde laut Rockstar sogar auf einer normalen PS5 ohne Pro-Modell aufgenommen.",
         "faq:Gibt es eine Nintendo Switch 2 Version?|Nein, Take-Two hat eine Switch-2-Version ausdrücklich ausgeschlossen.",
         "faq:Kommt GTA 6 für den PC?|Zum Launch nicht. Eine PC-Version ist offiziell nicht angekündigt und dürfte wie bei früheren GTA-Teilen erst später folgen."
       ],
       "credit": "KI-generiert / Viceguide",
       "date": "2026-06-05T17:12",
       "id": "plattformen-zu-release",
-      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-16+11%3A47%3A26",
+      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-19+07%3A18%3A32",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2927,7 +2945,7 @@
         "PS4, Xbox One, Switch 2 und PC fallen zum Launch raus, die Switch 2 hat Take-Two ausdrücklich ausgeschlossen.",
         "Eine PC-Version folgt der Reihen-Historie zufolge erst deutlich später."
       ],
-      "updated": "2026-07-16 11:47:26"
+      "updated": "2026-07-19 07:18:32"
     },
     {
       "author": null,
@@ -3088,13 +3106,17 @@
       "author": null,
       "cat": "leaks",
       "content": [
+        "Kein anderer GTA-6-Leak reicht an diesen heran. Was im September 2022 aus einem Hotelzimmer heraus ins Netz gelangte, war echt, und fast alles davon stimmte. Hier die ganze Geschichte, von der Tat bis zu dem, was sich daraus bewahrheitete.",
         "### Was am 18. September 2022 passierte",
-        "Ein Nutzer namens teapotuberhacker veröffentlichte auf GTAForums einen Download-Link zu über 90 Entwicklervideos, angeblich aus einer frühen Version des nächsten GTA-Teils. Innerhalb weniger Stunden verbreitete sich das Material über Reddit, Twitter und Dutzende weitere Plattformen, trotz sofortiger Löschversuche von Take-Two. Schon am Folgetag bestätigte Rockstar den Vorfall offiziell und sprach von einer unautorisierten Netzwerkeindringung.",
+        "Ein Nutzer namens teapotuberhacker veröffentlichte auf GTAForums einen Download-Link zu über 90 Entwicklervideos, angeblich aus einer frühen Version des nächsten GTA-Teils. Innerhalb weniger Stunden verbreitete sich das Material über Reddit, Twitter und Dutzende weitere Plattformen, trotz sofortiger Löschversuche von Take-Two, wie Variety damals dokumentierte. Schon am Folgetag bestätigte Rockstar den Vorfall offiziell und sprach von einer unautorisierten Netzwerkeindringung.",
         "### Wer dahintersteckte",
         "Hinter dem Konto stand Arion Kurtaj, ein damals minderjähriger Brite aus Oxford und Mitglied der Hackergruppe Lapsus$. Die Gruppe hatte zuvor bereits Microsoft, Nvidia, Samsung und Uber angegriffen. Kurtaj saß zum Zeitpunkt des Hacks bereits wegen früherer Vorwürfe auf Kaution und unter Internetverbot. Er umging das, indem er über einen Amazon Fire Stick am Hotelfernseher eines Travelodge-Zimmers online ging. Ein Gericht verurteilte ihn laut BBC wegen Hacking, Betrug und Erpressung. Wegen seiner Autismus-Diagnose wurde er für nicht verhandlungsfähig erklärt und Ende 2023 unbefristet in einer gesicherten Klinik untergebracht. Rockstar bezifferte den Schaden auf rund fünf Millionen Dollar.",
         "### Was die Videos zeigten und was daraus wurde",
-        "Zu sehen waren frühe Alpha-Aufnahmen mit zwei spielbaren Figuren, darunter eine weibliche Protagonistin, dazu ein modernes Vice-City-Setting, UI-Elemente, Missionsskripte und vertonte NPC-Dialoge. Als zwei Monate später der offizielle Trailer 1 erschien, bestätigte sich fast jedes überprüfbare Detail aus den geleakten Clips, vom Setting bis zu einzelnen Gebäuden. Das macht diesen Leak bis heute zum einzigen großen GTA-6-Leak, den Rockstar selbst offiziell als echt eingestuft hat. Jeder andere kursierende Leak seitdem liegt unterhalb dieser Bestätigungsstufe. Was Trailer 1 im Detail zeigte, steht in unserer Trailer-1-Analyse.",
-        "Ein zweiter, kleinerer Vorfall ereignete sich im April 2026, als die Gruppe ShinyHunters über den Dienstleister Anodot Zugriff auf einen Teil von Rockstars Unternehmensdaten erhielt. Rockstar bestätigte auch das, betonte aber, betroffen seien nur Unternehmensinformationen, keine Spieldaten oder Quellcode. Mit dem Leak von 2022 hat dieser Vorfall nichts zu tun, neue Spielinhalte lieferte er nicht.",
+        "Zu sehen waren frühe Alpha-Aufnahmen mit zwei spielbaren Figuren, darunter eine weibliche Protagonistin. Dazu kamen ein modernes Vice-City-Setting, UI-Elemente, Missionsskripte und vertonte NPC-Dialoge. Als zwei Monate später der offizielle Trailer 1 erschien, bestätigte sich fast jedes überprüfbare Detail aus den geleakten Clips, vom Setting bis zu einzelnen Gebäuden. Das macht diesen Leak bis heute zum einzigen großen GTA-6-Leak, den Rockstar selbst offiziell als echt eingestuft hat. Jeder andere kursierende Leak seitdem liegt unterhalb dieser Bestätigungsstufe. Was Trailer 1 im Detail zeigte, steht in unserer [[trailer-1-analyse|Trailer-1-Analyse]].",
+        "### Der zweite Vorfall von 2026",
+        "Ein zweiter, kleinerer Vorfall ereignete sich im April 2026, als die Gruppe ShinyHunters über den Dienstleister Anodot Zugriff auf einen Teil von Rockstars Unternehmensdaten erhielt. Rockstar bestätigte auch diesen Vorfall. Laut Computer Weekly betonte das Studio aber, dass nur Unternehmensinformationen betroffen seien, keine Spieldaten oder Quellcode. Mit dem Leak von 2022 hat dieser Vorfall nichts zu tun, neue Spielinhalte lieferte er nicht. Den Gesamtüberblick zu allem Bestätigten liefert unsere [[gta-6-alles-was-wir-wissen|große GTA-6-Übersicht]].",
+        "faq:Wann war der große GTA-6-Leak?|Am 18. September 2022. Ein Nutzer veröffentlichte über 90 Entwicklervideos, Rockstar bestätigte den Vorfall am Folgetag.",
+        "faq:Was wurde 2022 bei GTA 6 geleakt?|Über 90 frühe Entwicklervideos, zu sehen waren zwei spielbare Figuren mit einer weiblichen Protagonistin, das moderne Vice-City-Setting sowie UI-Elemente und Missionsskripte.",
         "faq:War der Leak von 2022 wirklich echt?|Ja, Rockstar hat den Vorfall selbst am Folgetag bestätigt. Es ist der einzige große GTA-6-Leak mit offizieller Bestätigung.",
         "faq:Wer steckte hinter dem Hack?|Arion Kurtaj, ein Teenager aus Oxford und Mitglied der Gruppe Lapsus$, wurde dafür gerichtlich verurteilt und in einer gesicherten Klinik untergebracht.",
         "faq:Hat der Leak von 2022 etwas mit dem Vorfall von 2026 zu tun?|Nein, der Vorfall im April 2026 durch ShinyHunters betraf nur Unternehmensdaten und steht in keinem Bezug zu den 2022 geleakten Spielinhalten."
@@ -3102,7 +3124,7 @@
       "credit": "Rockstar",
       "date": "2026-05-06T11:15",
       "id": "der-grosse-leak-von-2022",
-      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=der-grosse-leak-von-2022&v=2026-07-19+07%3A27%3A56",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -3126,7 +3148,7 @@
         }
       ],
       "status": "mixed",
-      "statusnote": null,
+      "statusnote": "Der Leak von 2022 ist offiziell von Rockstar bestätigt, spätere kursierende Leaks sind es nicht.",
       "summary": "Wie ein Teenager aus einem Hotelzimmer heraus 90 Entwicklervideos leakte und damit den bis heute einzigen bestätigten GTA-6-Leak auslöste.",
       "title": "Der große GTA-6-Leak von 2022: Was damals geschah",
       "tldr": [
@@ -3134,7 +3156,7 @@
         "Hinter dem Hack stand der Teenager Arion Kurtaj aus der Gruppe Lapsus$, verurteilt und in einer Klinik untergebracht.",
         "Fast jedes überprüfbare Detail der Videos bestätigte sich später in Trailer 1."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-19 07:27:56"
     },
     {
       "author": null,
