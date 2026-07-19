@@ -102,11 +102,20 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     $berlin = new DateTimeZone('Europe/Berlin');
     $utc = new DateTimeZone('UTC');
 
+    $preset = (string)($_GET['preset'] ?? '');
     $fromP = (string)($_GET['from'] ?? '');
     $toP = (string)($_GET['to'] ?? '');
     $custom = (bool)(preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromP) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $toP));
 
-    if ($custom) {
+    if ($preset === 'yesterday') {
+        // Gestern als voller Kalendertag (Berlin), fuer den direkten
+        // Tag-zu-Tag-Vergleich. Vorperiode ist dann automatisch vorgestern.
+        $custom = false;
+        $today0 = (new DateTime('now', $berlin))->setTime(0, 0, 0);
+        $endB = clone $today0;                       // heute 00:00 = exklusives Ende
+        $startB = (clone $today0)->modify('-1 day'); // gestern 00:00
+        $days = 1;
+    } elseif ($custom) {
         $startB = new DateTime($fromP . ' 00:00:00', $berlin);
         $endB = new DateTime($toP . ' 00:00:00', $berlin);
         if ($endB < $startB) { $tmp = $startB; $startB = $endB; $endB = $tmp; }
@@ -190,6 +199,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
             'to' => (clone $endB)->modify('-1 day')->format('Y-m-d'),
             'days' => $days,
             'custom' => $custom,
+            'preset' => $preset === 'yesterday' ? 'yesterday' : null,
         ],
         'total' => $total,
         'prev_total' => $prevTotal,
@@ -218,6 +228,7 @@ function vg_render_shell(): void {
 <style>
 :root{--bg:#FBF3E7;--bg-2:#F4E8D6;--surface:#FFFDFB;--text:#221041;--soft:#6B5E85;--accent:#D00059;--accent-soft:rgba(208,0,89,.12);--line:rgba(34,16,65,.12);--ok:#0F7A3D;--ok-bg:rgba(15,122,61,.1);--bad:#C0264B;--bad-bg:rgba(192,38,75,.1);}
 *{box-sizing:border-box}
+html{overflow-y:scroll}
 body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px 16px 60px}
 .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 h1{font-size:1.4rem;margin:0 0 4px;font-weight:700}
@@ -298,6 +309,7 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
   <div class="ctrlgrp"><span class="ctrllbl">Schnellauswahl</span>
     <div class="tabs" id="quicktabs">
       <span class="tab" data-days="1">Heute</span>
+      <span class="tab" data-preset="yesterday">Gestern</span>
       <span class="tab" data-days="7">7 Tage</span>
       <span class="tab" data-days="30">30 Tage</span>
       <span class="tab" data-days="90">90 Tage</span>
@@ -324,6 +336,7 @@ function pad2(n){return (n<10?'0':'')+n;}
 function fmtDay(day){var p=day.split('-');return p[2]+'.'+p[1]+'.';}
 function fmtFullDay(day){var p=day.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
 function wdDay(day){return WD[new Date(day+'T00:00:00').getDay()];}
+function pathLabel(p){return p==='/'?'Startseite':p;}
 function niceNum(x){if(x<=5)return 5;var p=Math.pow(10,Math.floor(Math.log10(x)));var f=x/p,nf;if(f<=1)nf=1;else if(f<=2)nf=2;else if(f<=2.5)nf=2.5;else if(f<=5)nf=5;else nf=10;return nf*p;}
 
 /* ---- Tooltip ---- */
@@ -340,9 +353,11 @@ function drawBars(host,buckets,opts){
   var H=opts.height||260,padT=18,padB=opts.subLabels?46:38,padL=44,padR=10;
   var plotH=H-padT-padB;
   var minSlot=opts.minSlot||20;
-  var hostW=Math.max(280,host.clientWidth||760);
+  var hostW=Math.max(280,Math.floor(host.clientWidth||760));
   var nn=buckets.length;
-  var W=Math.max(hostW,padL+padR+nn*minSlot);
+  var needW=padL+padR+nn*minSlot;
+  var fits=needW<=hostW;               // passt ohne Scrollen in die Breite
+  var W=fits?hostW:needW;
   var plotW=W-padL-padR;
   var rawMax=1;buckets.forEach(function(b){if(b.c>rawMax)rawMax=b.c;});
   var max=niceNum(rawMax);
@@ -367,7 +382,13 @@ function drawBars(host,buckets,opts){
       if(opts.subLabels&&b.sub)labels+='<text x="'+cx.toFixed(1)+'" y="'+(H-5)+'" class="xs" text-anchor="middle">'+esc(b.sub)+'</text>';
     }
   });
-  host.innerHTML='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" class="bars">'+g+bars+labels+'</svg>';
+  // Passt alles rein, wird das SVG auf 100% Breite gerendert, damit es bei
+  // Subpixel-Rundung oder auftauchendem Seiten-Scrollbalken nie uebersteht
+  // (kein ungewollter horizontaler Scrollbalken). Nur wenn mehr Balken als
+  // Platz da sind, feste Pixelbreite plus horizontales Scrollen.
+  var wAttr=fits?'100%':W;
+  var par=fits?'none':'xMidYMid meet';
+  host.innerHTML='<svg width="'+wAttr+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="'+par+'" class="bars">'+g+bars+labels+'</svg>';
   host.querySelectorAll('.hit').forEach(function(el){
     el.addEventListener('mouseenter',function(e){showTip(e,el);});
     el.addEventListener('mousemove',moveTip);
@@ -437,7 +458,7 @@ function renderDash(){
   h+='<div class="tile"><div class="n">'+d.total+'</div><div class="l">Seitenaufrufe gesamt</div>'+deltaHtml(d.total,d.prev_total)+'</div>';
   h+='<div class="tile"><div class="n">'+d.instagram.by_utm+'</div><div class="l">Instagram (per UTM-Tag)</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)+'</div>';
   h+='<div class="tile"><div class="n small">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="l">Top-Quelle ('+(topSrc.c||0)+')</div><div class="l2">Woher die meisten Besucher mit UTM-Tag kamen.</div></div>';
-  h+='<div class="tile"><div class="n small">'+esc(topPath.path||'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am haeufigsten aufgerufene Seite/Artikel.</div></div>';
+  h+='<div class="tile"><div class="n small">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am haeufigsten aufgerufene Seite/Artikel.</div></div>';
   h+='</div>';
 
   h+='<div class="chartcard">';
@@ -477,6 +498,7 @@ function renderDash(){
 
 function rangeLabel(){
   var r=DATA.range;
+  if(r.preset==='yesterday')return 'Gestern, '+wdDay(r.from)+' '+fmtFullDay(r.from);
   if(!r.custom){
     if(r.days===1)return 'Heute';
     return 'letzte '+r.days+' Tage';
@@ -501,7 +523,7 @@ function renderDetail(day){
   var host=document.getElementById('detailchart');if(!host)return;
   drawBars(host,bucket24(DET.series),{minSlot:24,maxLabels:24});
   document.getElementById('detailtitle').textContent='Tages-Detail, '+wdDay(day)+' '+fmtFullDay(day)+' ('+DET.total+' Aufrufe)';
-  var mp=barRows(DET.top_paths.slice(0,6),function(r){return r.path;});
+  var mp=barRows(DET.top_paths.slice(0,6),function(r){return pathLabel(r.path);});
   var mr=barRows(DET.top_referrers.slice(0,6),function(r){return r.ref_host;});
   document.getElementById('detailmeta').innerHTML=
     '<div class="mini"><h3>Top-Seiten an diesem Tag</h3><table>'+mp+'</table></div>'+
@@ -510,7 +532,7 @@ function renderDetail(day){
 function renderCards(){
   var d=DATA;
   var cards={
-    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, unabhaengig davon woher der Besuch kam.',rows:barRows(d.top_paths,function(r){return r.path;})},
+    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, unabhaengig davon woher der Besuch kam.',rows:barRows(d.top_paths,function(r){return pathLabel(r.path);})},
     top_sources:{tag:'Akquise',title:'Top-Quellen (UTM-Source)',help:'Gruppiert nach dem Tag im geklickten Link, unabhaengig vom technischen Referrer.',rows:barRows(d.top_utm_sources,function(r){return r.utm_source;})},
     top_campaigns:{tag:'Akquise',title:'Top-Kampagnen',help:'Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.',rows:barRows(d.top_utm_campaigns,function(r){return r.utm_source+' / '+r.utm_campaign;})},
     top_referrers:{tag:'Akquise',title:'Top-Referrer',help:'Technische Herkunfts-Domain laut Browser, Google und Instagram jeweils zusammengefasst. Zeigt auch Besuche ohne UTM-Link.',rows:barRows(d.top_referrers,function(r){return r.ref_host;})}
@@ -558,7 +580,8 @@ function wireDrag(box){
 function currentQuery(){
   var p=new URLSearchParams(location.search);
   var q={};
-  if(p.get('from')&&p.get('to')){q.from=p.get('from');q.to=p.get('to');}
+  if(p.get('preset'))q.preset=p.get('preset');
+  else if(p.get('from')&&p.get('to')){q.from=p.get('from');q.to=p.get('to');}
   else q.days=p.get('days')||'30';
   return q;
 }
@@ -586,7 +609,9 @@ function setUrl(q){
 function syncControls(){
   var r=DATA.range;
   document.querySelectorAll('#quicktabs .tab').forEach(function(t){
-    t.classList.toggle('active',!r.custom&&+t.getAttribute('data-days')===r.days);
+    var pre=t.getAttribute('data-preset');
+    if(pre)t.classList.toggle('active',r.preset===pre);
+    else t.classList.toggle('active',!r.custom&&!r.preset&&+t.getAttribute('data-days')===r.days);
   });
   document.getElementById('fromDate').value=r.from;
   document.getElementById('toDate').value=r.to;
@@ -594,7 +619,8 @@ function syncControls(){
 
 document.getElementById('quicktabs').addEventListener('click',function(e){
   var t=e.target.closest('.tab');if(!t)return;
-  var q={days:t.getAttribute('data-days')};setUrl(q);load(q);
+  var q=t.getAttribute('data-preset')?{preset:t.getAttribute('data-preset')}:{days:t.getAttribute('data-days')};
+  setUrl(q);load(q);
 });
 document.getElementById('applyRange').addEventListener('click',function(){
   var f=document.getElementById('fromDate').value,t=document.getElementById('toDate').value;
