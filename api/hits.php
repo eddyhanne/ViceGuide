@@ -786,19 +786,25 @@ function renderHeatmap(){
   });
   var max=1;grid.forEach(function(row){row.forEach(function(v){if(v>max)max=v;});});
   var rows=['Mo','Di','Mi','Do','Fr','Sa','So'];
-  var cell=26,padL=34,padT=18,H=padT+7*cell+4,W=padL+24*cell+4;
+  // Zellgroesse aus der Containerbreite, quadratisch gehalten und begrenzt, damit
+  // die Zellen die Breite fuellen ohne verzerrt (breitgezogen) zu werden. Echte
+  // Pixelbreite statt 100%-Stretch, daher keine Verzerrung.
+  var padL=34,padT=18;
   var hostW=Math.max(280,Math.floor(host.clientWidth||760));
-  var fits=W<=hostW;
+  var cell=Math.floor((hostW-padL-6)/24);
+  cell=Math.max(16,Math.min(cell,46));
+  var W=padL+24*cell+2, H=padT+7*cell+6;
   var svg='';
-  for(var c=0;c<24;c++){if(c%2===0)svg+='<text x="'+(padL+c*cell+cell/2)+'" y="'+(padT-6)+'" class="hmlbl" text-anchor="middle">'+pad2(c)+'</text>';}
+  var lstep=cell<26?4:2; // bei schmalen Zellen weniger Stundenlabels
+  for(var c=0;c<24;c++){if(c%lstep===0)svg+='<text x="'+(padL+c*cell+cell/2).toFixed(1)+'" y="'+(padT-6)+'" class="hmlbl" text-anchor="middle">'+pad2(c)+'</text>';}
   for(var rr=0;rr<7;rr++){
-    svg+='<text x="'+(padL-8)+'" y="'+(padT+rr*cell+cell/2+3)+'" class="hmlbl" text-anchor="end">'+rows[rr]+'</text>';
+    svg+='<text x="'+(padL-8)+'" y="'+(padT+rr*cell+cell/2+3).toFixed(1)+'" class="hmlbl" text-anchor="end">'+rows[rr]+'</text>';
     for(var cc=0;cc<24;cc++){
       var v=grid[rr][cc];var op=v===0?0.05:(0.15+0.85*(v/max));
-      svg+='<rect x="'+(padL+cc*cell+1)+'" y="'+(padT+rr*cell+1)+'" width="'+(cell-2)+'" height="'+(cell-2)+'" rx="3" class="hmcell" fill="var(--accent)" fill-opacity="'+op.toFixed(3)+'" data-full="'+esc(rows[rr]+' '+pad2(cc)+':00 bis '+pad2((cc+1)%24)+':00 Uhr')+'" data-c="'+v+'"></rect>';
+      svg+='<rect x="'+(padL+cc*cell+1).toFixed(1)+'" y="'+(padT+rr*cell+1).toFixed(1)+'" width="'+(cell-2)+'" height="'+(cell-2)+'" rx="3" class="hmcell" fill="var(--accent)" fill-opacity="'+op.toFixed(3)+'" data-full="'+esc(rows[rr]+' '+pad2(cc)+':00 bis '+pad2((cc+1)%24)+':00 Uhr')+'" data-c="'+v+'"></rect>';
     }
   }
-  host.innerHTML='<svg width="'+(fits?'100%':W)+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="'+(fits?'none':'xMidYMid meet')+'" class="bars heat">'+svg+'</svg>';
+  host.innerHTML='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" class="bars heat" style="display:block;margin:0 auto">'+svg+'</svg>';
   host.querySelectorAll('.hmcell').forEach(function(el){
     el.addEventListener('mouseenter',function(e){showTip(e,el);});
     el.addEventListener('mousemove',moveTip);
