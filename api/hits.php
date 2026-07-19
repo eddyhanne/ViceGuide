@@ -394,6 +394,16 @@ td.sortable{cursor:pointer;user-select:none;white-space:nowrap}
 td.sortable:hover{color:var(--accent)}
 td.activesort{color:var(--accent)}
 td.potcell{color:#8a5a00;font-weight:700}
+.topbtns{display:flex;gap:10px;flex-wrap:wrap}
+.expbtn{background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.expmodal{position:fixed;inset:0;background:rgba(34,16,65,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.expbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;max-width:840px;width:100%;max-height:90vh;display:flex;flex-direction:column;padding:18px 20px;box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+.exphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.exphead b{font-size:1rem}
+.expx{border:none;background:transparent;font-size:1.1rem;cursor:pointer;color:var(--soft)}
+.exphint{font-size:.78rem;color:var(--soft);margin:0 0 10px;line-height:1.5}
+.exparea{width:100%;flex:1;min-height:320px;font-family:"Space Mono",ui-monospace,monospace;font-size:.72rem;line-height:1.4;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);resize:vertical}
+.expbtns{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -422,7 +432,7 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 </style></head><body>
 <div class="topbar"><div><h1>ViceGuide Statistik</h1>
 <p class="sub">Eigenes, cookiefreies Tracking. Zaehlt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zaehlt nicht mit. Zeiten in Europe/Berlin.</p></div>
-<button class="resetbtn" onclick="vgResetStats()">Alle Daten zuruecksetzen</button></div>
+<div class="topbtns"><button class="expbtn" onclick="vgExportOpen()">Fuer Claude exportieren</button><button class="resetbtn" onclick="vgResetStats()">Alle Daten zuruecksetzen</button></div></div>
 
 <div class="controls">
   <div class="ctrlgrp"><span class="ctrllbl">Schnellauswahl</span>
@@ -1004,6 +1014,84 @@ document.getElementById('applyDay').addEventListener('click',function(){
 var reTimer;
 window.addEventListener('resize',function(){clearTimeout(reTimer);reTimer=setTimeout(function(){if(DATA){renderMain();renderHeatmap();if(DET&&document.getElementById('detailDate'))renderDetail(document.getElementById('detailDate').value);}},180);});
 
+/* ---- Kompletter Analytics-Export als Markdown fuer Claude ---- */
+function exportTopSlots(){
+  var grid=[];for(var r=0;r<7;r++)grid.push(new Array(24).fill(0));
+  (DATA.series||[]).forEach(function(s){var day=new Date(s.t.slice(0,10)+'T00:00:00').getDay();grid[(day+6)%7][+s.t.slice(11,13)]+=s.c;});
+  var rows=['Mo','Di','Mi','Do','Fr','Sa','So'],flat=[];
+  for(var r=0;r<7;r++)for(var h=0;h<24;h++)if(grid[r][h]>0)flat.push({d:rows[r],h:h,c:grid[r][h]});
+  flat.sort(function(a,b){return b.c-a.c;});
+  return flat.slice(0,5);
+}
+function buildExport(){
+  var d=DATA, g=GSC_DATA||{pages:[],queries:[],meta:{}};
+  var pipe=function(s){return String(s==null?'':s).replace(/\|/g,'/').replace(/\n/g,' ');};
+  var md=function(hs,rs){return '| '+hs.join(' | ')+' |\n|'+hs.map(function(){return '---';}).join('|')+'|\n'+rs.map(function(r){return '| '+r.join(' | ')+' |';}).join('\n')+'\n';};
+  var trend=function(c,p){if(p<=0)return c>0?'neu':'-';var x=Math.round((c-p)/p*100);return (x>0?'+':'')+x+'%';};
+  var withPot=function(arr){return (arr||[]).map(function(r){var o={};for(var k in r)o[k]=r[k];o.pot=gscPot(r);return o;}).sort(function(a,b){return b.pot-a.pot;});};
+  var o=[];
+  o.push('# ViceGuide Analytics-Export');
+  o.push('Erzeugt: '+new Date().toLocaleString('de-DE')+'  |  Zeitraum First-Party-Statistik: '+rangeLabel());
+  o.push('');
+  o.push('## Auftrag');
+  o.push('Du bist SEO- und Content-Partner fuer ViceGuide (deutschsprachiges GTA-6-Fanportal). Analysiere die folgenden Zahlen und leite konkrete Empfehlungen ab: welche bestehenden Artikel nachgeschaerft werden sollten (Titel, Meta-Description, interne Verlinkung, um CTR und Position zu verbessern), welche neuen Themen fehlen (aus internen Suchen mit 0 Treffern und aus Google-Suchanfragen ohne passende eigene Seite), worauf bei kommenden Artikeln zu achten ist, und welche gut laufenden Seiten ausgebaut werden sollten. Halte dich an die ViceGuide-Regeln aus CLAUDE.md (Ton eines Gaming-Redakteurs, keine Gedankenstriche).');
+  o.push('');
+  o.push('### Hinweise zur Interpretation');
+  o.push('- First-Party-Zahlen zaehlen Seitenaufrufe (keine Unique Visitors), cookiefrei, Zeiten in Europe/Berlin.');
+  o.push('- Instagram ist nur ueber den UTM-Tag verlaesslich, der technische Referrer wird von Instagram meist entfernt.');
+  o.push('- Google-Suchanfragen samt CTR und Position kommen aus der Search Console und sind der beste SEO-Hebel.');
+  o.push('- Spalte Potenzial: grobe Schaetzung ungenutzter Klicks (viele Impressionen, verbesserbare Position/CTR), nur zur Priorisierung.');
+  o.push('');
+  o.push('## Ueberblick');
+  o.push('- Seitenaufrufe gesamt: '+d.total+' (Vorperiode '+d.prev_total+', '+trend(d.total,d.prev_total)+')');
+  o.push('- Instagram per UTM-Tag: '+d.instagram.by_utm+' (Vorperiode '+d.instagram.prev_by_utm+')');
+  var ch=d.channels.cur; o.push('- Kanaele: Suche '+ch.search+', Social '+ch.social+', Verweis '+ch.referral+', Direkt '+ch.direct);
+  o.push('');
+  var slots=exportTopSlots();
+  if(slots.length){o.push('## Beste Zeiten (Wochentag und Stunde, meiste Aufrufe)');o.push(slots.map(function(s){return '- '+s.d+' '+pad2(s.h)+':00 Uhr: '+s.c;}).join('\n'));o.push('');}
+  if(d.top_paths&&d.top_paths.length){o.push('## Top-Seiten First-Party (mit Trend gegen Vorperiode)');o.push(md(['Seite','Aufrufe','Trend'],d.top_paths.slice(0,20).map(function(r){return [pipe(pathLabel(r.path)),r.c,trend(r.c,r.prev||0)];})));}
+  if(d.entries_search&&d.entries_search.length){o.push('## Einstiege aus Suchmaschinen (First-Party)');o.push(md(['Seite','Einstiege'],d.entries_search.slice(0,15).map(function(r){return [pipe(pathLabel(r.path)),r.c];})));}
+  if(d.searches&&d.searches.length){o.push('## Interne Suche auf der Seite (Content-Nachfrage)');o.push(md(['Suchbegriff','Anzahl','Treffer'],d.searches.slice(0,20).map(function(r){return [pipe(r.q),r.c,(r.maxres===0?'0 (LUECKE)':'ja')];})));}
+  var eng=(d.engagement&&d.engagement.rows)||[];
+  if(eng.length){o.push('## Lese-Engagement (Verweildauer, Scrolltiefe)');o.push(md(['Artikel','Aufrufe','Verweildauer','Scrolltiefe'],eng.slice(0,20).map(function(r){return [pipe(pathLabel(r.path)),r.c,fmtSecs(r.avg_sec),r.avg_depth+'%'];})));}
+  if(d.top_referrers&&d.top_referrers.length){o.push('## Herkunft (Referrer, Google und Instagram zusammengefasst)');o.push(md(['Quelle','Aufrufe'],d.top_referrers.slice(0,12).map(function(r){return [pipe(r.ref_host),r.c];})));}
+  if(d.top_utm_campaigns&&d.top_utm_campaigns.length){o.push('## Kampagnen (UTM)');o.push(md(['Quelle / Kampagne','Aufrufe'],d.top_utm_campaigns.slice(0,15).map(function(r){return [pipe(r.utm_source+' / '+r.utm_campaign),r.c];})));}
+  var gq=withPot(g.queries), gp=withPot(g.pages), mp=g.meta||{};
+  if(gq.length||gp.length){
+    o.push('## Google Search Console');
+    o.push('Stand: '+((mp.query&&(mp.query.range||mp.query.imported))||(mp.page&&(mp.page.range||mp.page.imported))||'unbekannt'));
+    o.push('');
+    if(gq.length){o.push('### Google-Suchanfragen (nach Potenzial)');o.push(md(['Suchanfrage','Klicks','Impr','CTR','Pos','Potenzial'],gq.slice(0,30).map(function(r){return [pipe(r.label),r.clicks,r.impressions,(+r.ctr).toFixed(1)+'%',(+r.position).toFixed(1),r.pot];})));}
+    if(gp.length){o.push('### Google-Seiten (nach Potenzial)');o.push(md(['Seite','Klicks','Impr','CTR','Pos','Potenzial'],gp.slice(0,30).map(function(r){return [pipe(pathLabel(gscShortPath(r.label))),r.clicks,r.impressions,(+r.ctr).toFixed(1)+'%',(+r.position).toFixed(1),r.pot];})));}
+  } else {
+    o.push('## Google Search Console');o.push('Noch keine Search-Console-Daten importiert.');
+  }
+  return o.join('\n');
+}
+function vgExportOpen(){
+  if(!DATA){alert('Daten noch nicht geladen.');return;}
+  var txt=buildExport();
+  var ov=document.createElement('div');ov.className='expmodal';
+  ov.innerHTML='<div class="expbox"><div class="exphead"><b>Analytics-Export fuer Claude</b><button class="expx" title="Schliessen">&#10005;</button></div>'
+    +'<p class="exphint">Kopier den Text in deinen ViceGuide-Claude-Chat oder lad ihn als Datei ins Projekt. Tipp: fuer einen aussagekraeftigen Export vorher oben einen laengeren Zeitraum waehlen (z.B. 30 oder 90 Tage). Die Search-Console-Zahlen sind unabhaengig vom Zeitraum und immer der zuletzt hochgeladene Stand.</p>'
+    +'<textarea class="exparea" readonly></textarea>'
+    +'<div class="expbtns"><button class="applybtn" data-a="copy">In Zwischenablage kopieren</button><button class="applybtn ghost" data-a="dl">Als .md-Datei herunterladen</button><span class="gscmsg" data-r></span></div></div>';
+  document.body.appendChild(ov);
+  var ta=ov.querySelector('.exparea');ta.value=txt;
+  var res=ov.querySelector('[data-r]');
+  ov.querySelector('.expx').onclick=function(){ov.remove();};
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  ov.querySelector('[data-a="copy"]').onclick=function(){
+    ta.focus();ta.select();
+    var done=function(){res.textContent='Kopiert.';res.className='gscmsg ok';};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(function(){try{document.execCommand('copy');done();}catch(e){res.textContent='Bitte manuell markieren und kopieren.';res.className='gscmsg err';}});}
+    else{try{document.execCommand('copy');done();}catch(e){res.textContent='Bitte manuell markieren und kopieren.';res.className='gscmsg err';}}
+  };
+  ov.querySelector('[data-a="dl"]').onclick=function(){
+    var blob=new Blob([txt],{type:'text/markdown'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='viceguide-analytics-'+(DATA.range.to||'export')+'.md';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},100);
+    res.textContent='Datei erzeugt.';res.className='gscmsg ok';
+  };
+}
 function vgResetStats(){
   if(!confirm('Wirklich ALLE bisher gesammelten Statistik-Daten unwiderruflich loeschen? Das kann nicht rueckgaengig gemacht werden.'))return;
   fetch(API,{method:'DELETE'}).then(function(r){if(r.ok){load(currentQuery());}else{alert('Loeschen fehlgeschlagen.');}}).catch(function(){alert('Loeschen fehlgeschlagen.');});
