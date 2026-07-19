@@ -60,4 +60,4 @@ if ($method === 'DELETE') {
     vg_out_e(['ok' => true]);
 }
 
-vg_out_e(['error' => 'Methode nicht unterstuetzt'], 405);
+vg_out_e(['error' => 'Methode nicht unterstützt'], 405);

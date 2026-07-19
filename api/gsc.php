@@ -167,7 +167,7 @@ if ($method === 'POST') {
     $csv = (string)($b['csv'] ?? '');
     if (trim($csv) === '') vg_out_g(['error' => 'csv fehlt'], 400);
     $rows = vg_parse_gsc_csv($csv);
-    if (!$rows) vg_out_g(['error' => 'Keine gueltigen Zeilen erkannt. Ist es die CSV aus der Search Console (Spalten Klicks, Impressionen, CTR, Position)?'], 422);
+    if (!$rows) vg_out_g(['error' => 'Keine gültigen Zeilen erkannt. Ist es die CSV aus der Search Console (Spalten Klicks, Impressionen, CTR, Position)?'], 422);
     try {
         vg_gsc_store($pdo, $cfg, $kind, $rows, $range);
     } catch (Throwable $e) {
@@ -190,4 +190,4 @@ if ($method === 'DELETE') {
     vg_out_g(['ok' => true]);
 }
 
-vg_out_g(['error' => 'Methode nicht unterstuetzt'], 405);
+vg_out_g(['error' => 'Methode nicht unterstützt'], 405);

@@ -1,18 +1,18 @@
 <?php
 /*
- * Eigenes, cookiefreies Analytics fuer ViceGuide (kein Drittanbieter, kein
- * Consent-Banner noetig). Speichert bewusst NUR Pfad, Referrer und UTM-Werte,
+ * Eigenes, cookiefreies Analytics für ViceGuide (kein Drittanbieter, kein
+ * Consent-Banner nötig). Speichert bewusst NUR Pfad, Referrer und UTM-Werte,
  * keine IP, keine Client-ID, kein Cookie, kein Personenbezug. Reicht, um zu
- * sehen, ueber welche Quelle Besucher kommen (z.B. Instagram), aber nicht,
+ * sehen, über welche Quelle Besucher kommen (z.B. Instagram), aber nicht,
  * um einzelne Besucher wiederzuerkennen.
  *
  * POST {path, referrer?, utm_source?, utm_medium?, utm_campaign?} -> loggt
- *      einen Seitenaufruf. Oeffentlich, kein Login noetig, feuert bei jeder
+ *      einen Seitenaufruf. Oeffentlich, kein Login nötig, feuert bei jeder
  *      SPA-Navigation aus index.html (siehe syncHash()).
  * GET  (Admin) -> interaktives Dashboard (HTML) oder, mit ?format=json, die
- *      aggregierten Rohdaten. Zeitraum ueber ?days=N ODER ?from=YYYY-MM-DD&
+ *      aggregierten Rohdaten. Zeitraum über ?days=N ODER ?from=YYYY-MM-DD&
  *      to=YYYY-MM-DD (Berliner Kalendertage, inklusive). Die Zeitreihe kommt
- *      stundengenau in Europe/Berlin zurueck, der Client bucketet daraus Tag,
+ *      stundengenau in Europe/Berlin zurück, der Client bucketet daraus Tag,
  *      6-Stunden- oder Stundenansicht und den 24-Stunden-Tagesverlauf.
  */
 
@@ -79,14 +79,14 @@ if ($method === 'GET') {
     exit;
 }
 
-vg_out_h(['error' => 'Methode nicht unterstuetzt'], 405);
+vg_out_h(['error' => 'Methode nicht unterstützt'], 405);
 
 /* ---------------------------------------------------------------------------
  * Datenaufbereitung
  * ------------------------------------------------------------------------- */
 
 /* Bekannte Schreibweisen derselben Herkunft zu einer Zeile zusammenfassen, nur
-   fuer die Anzeige, die Rohdaten bleiben unangetastet (analog canonCat() im
+   für die Anzeige, die Rohdaten bleiben unangetastet (analog canonCat() im
    Frontend). Google (google.com, search.google.com, news.google.com, google.de
    usw.) und Instagram (instagram.com, l.instagram.com, lm.instagram.com) landen
    jeweils in einer Zeile. */
@@ -100,7 +100,7 @@ function vg_ref_group(?string $host): string {
 
 /* Kanal-Gruppierung wie bei Google Analytics: jeder Aufruf wird aus Referrer
    und UTM-Tag in Suche / Social / Verweis / Direkt einsortiert. Das ist die
-   Kernfrage fuers SEO ("kommt der Traffic aus der Suche?"). */
+   Kernfrage fürs SEO ("kommt der Traffic aus der Suche?"). */
 function vg_search_hosts(): array {
     return ['google', 'bing', 'duckduckgo', 'ecosia', 'yahoo', 'yandex', 'qwant', 'startpage', 'brave', 'search.'];
 }
@@ -129,7 +129,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     $custom = (bool)(preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromP) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $toP));
 
     if ($preset === 'yesterday') {
-        // Gestern als voller Kalendertag (Berlin), fuer den direkten
+        // Gestern als voller Kalendertag (Berlin), für den direkten
         // Tag-zu-Tag-Vergleich. Vorperiode ist dann automatisch vorgestern.
         $custom = false;
         $today0 = (new DateTime('now', $berlin))->setTime(0, 0, 0);
@@ -169,7 +169,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     $prevTotal = $count('created_at >= ? AND created_at < ?', [$prevStartU, $prevEndU]);
 
     // Stundengenaue Zeitreihe. In der DB liegt created_at als UTC, hier auf
-    // Europe/Berlin umgerechnet und in eine luckenlose Stundenreihe gefuellt
+    // Europe/Berlin umgerechnet und in eine luckenlose Stundenreihe gefüllt
     // (fehlende Stunden als 0), damit der Client sauber weiterbucketen kann.
     $hourExpr = $isSqlite
         ? "strftime('%Y-%m-%d %H:00:00', created_at)"
@@ -192,8 +192,8 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         $guard++;
     }
 
-    // Vorperioden-Zeitreihe (gleiche Laenge, direkt davor), parallel zur
-    // aktuellen Reihe fuer den Overlay-Vergleich. Als reines Zahlen-Array,
+    // Vorperioden-Zeitreihe (gleiche Länge, direkt davor), parallel zur
+    // aktuellen Reihe für den Overlay-Vergleich. Als reines Zahlen-Array,
     // Index i deckt sich mit series[i].
     $phrows = $run("SELECT $hourExpr AS t, COUNT(*) AS c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY t", [$prevStartU, $prevEndU])->fetchAll();
     $pbc = [];
@@ -210,14 +210,14 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     }
 
     $topPaths = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY path ORDER BY c DESC LIMIT 25", [$startU, $endU])->fetchAll();
-    // Vorperiode je Seite fuer Trend-Kennzeichnung im Leaderboard.
+    // Vorperiode je Seite für Trend-Kennzeichnung im Leaderboard.
     $prevPathRows = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY path", [$prevStartU, $prevEndU])->fetchAll();
     $prevPathMap = [];
     foreach ($prevPathRows as $r) { $prevPathMap[$r['path']] = (int)$r['c']; }
     foreach ($topPaths as &$tp) { $tp['prev'] = $prevPathMap[$tp['path']] ?? 0; }
     unset($tp);
 
-    // Kanal-Gruppierung fuer aktuelle Periode und Vorperiode.
+    // Kanal-Gruppierung für aktuelle Periode und Vorperiode.
     $chan = function (string $a, string $b) use ($run): array {
         $rows = $run("SELECT ref_host, LOWER(COALESCE(utm_source,'')) us, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host, LOWER(COALESCE(utm_source,''))", [$a, $b])->fetchAll();
         $o = ['search' => 0, 'social' => 0, 'referral' => 0, 'direct' => 0];
@@ -284,14 +284,14 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         'top_referrers' => $topRef,
         'top_utm_sources' => $topSrc,
         'top_utm_campaigns' => $topCmp,
-        'note' => 'Instagram haengt den echten Referrer meist ab. Der Wert "Instagram (per UTM-Tag)" aus dem Bio-Link/Story-Sticker (?utm_source=instagram) ist verlaesslich, der Referrer nur zur Kontrolle. Google und Instagram sind in den Referrern jeweils zu einer Zeile zusammengefasst.',
+        'note' => 'Instagram hängt den echten Referrer meist ab. Der Wert "Instagram (per UTM-Tag)" aus dem Bio-Link/Story-Sticker (?utm_source=instagram) ist verlässlich, der Referrer nur zur Kontrolle. Google und Instagram sind in den Referrern jeweils zu einer Zeile zusammengefasst.',
     ];
 }
 
 /* ---------------------------------------------------------------------------
- * Dashboard-Huelle. Statisches HTML plus CSS/JS, die Daten holt der Client
- * selbst per ?format=json, damit Zeitraum, Granularitaet und Tagesdetail ohne
- * Server-Reload wechseln koennen.
+ * Dashboard-Hülle. Statisches HTML plus CSS/JS, die Daten holt der Client
+ * selbst per ?format=json, damit Zeitraum, Granularität und Tagesdetail ohne
+ * Server-Reload wechseln können.
  * ------------------------------------------------------------------------- */
 function vg_render_shell(): void {
     header('Content-Type: text/html; charset=utf-8');
@@ -431,8 +431,8 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 .loading{color:var(--soft);font-size:.85rem;padding:40px 0;text-align:center}
 </style></head><body>
 <div class="topbar"><div><h1>ViceGuide Statistik</h1>
-<p class="sub">Eigenes, cookiefreies Tracking. Zaehlt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zaehlt nicht mit. Zeiten in Europe/Berlin.</p></div>
-<div class="topbtns"><button class="expbtn" onclick="vgExportOpen()">Fuer Claude exportieren</button><button class="resetbtn" onclick="vgResetStats()">Alle Daten zuruecksetzen</button></div></div>
+<p class="sub">Eigenes, cookiefreies Tracking. Zählt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zählt nicht mit. Zeiten in Europe/Berlin.</p></div>
+<div class="topbtns"><button class="expbtn" onclick="vgExportOpen()">Für Claude exportieren</button><button class="resetbtn" onclick="vgResetStats()">Alle Daten zurücksetzen</button></div></div>
 
 <div class="controls">
   <div class="ctrlgrp"><span class="ctrllbl">Schnellauswahl</span>
@@ -512,7 +512,7 @@ function drawBars(host,buckets,opts){
       if(opts.subLabels&&b.sub)labels+='<text x="'+cx.toFixed(1)+'" y="'+(H-5)+'" class="xs" text-anchor="middle">'+esc(b.sub)+'</text>';
     }
   });
-  // Vorperiode als helle Vergleichslinie ueber die Balken legen.
+  // Vorperiode als helle Vergleichslinie über die Balken legen.
   var overlay='';
   if(cmp){
     var pts=buckets.map(function(b,i){return (padL+slot*i+slot/2).toFixed(1)+','+yOf(b.p||0).toFixed(1);}).join(' ');
@@ -520,7 +520,7 @@ function drawBars(host,buckets,opts){
     if(nn<=40)buckets.forEach(function(b,i){overlay+='<circle cx="'+(padL+slot*i+slot/2).toFixed(1)+'" cy="'+yOf(b.p||0).toFixed(1)+'" r="2.5" class="cmpdot"></circle>';});
   }
   // Passt alles rein, wird das SVG auf 100% Breite gerendert, damit es bei
-  // Subpixel-Rundung oder auftauchendem Seiten-Scrollbalken nie uebersteht
+  // Subpixel-Rundung oder auftauchendem Seiten-Scrollbalken nie übersteht
   // (kein ungewollter horizontaler Scrollbalken). Nur wenn mehr Balken als
   // Platz da sind, feste Pixelbreite plus horizontales Scrollen.
   var wAttr=fits?'100%':W;
@@ -570,9 +570,9 @@ function bucket24(series){
 function deltaHtml(cur,prev){
   if(prev<=0)return cur>0?'<span class="delta up">neu</span>':'<span class="delta flat">ohne Vergleichswert</span>';
   var p=Math.round((cur-prev)/prev*100);
-  if(p>0)return '<span class="delta up">+'+p+'% ggue. Vorperiode</span>';
-  if(p<0)return '<span class="delta down">'+p+'% ggue. Vorperiode</span>';
-  return '<span class="delta flat">0% ggue. Vorperiode</span>';
+  if(p>0)return '<span class="delta up">+'+p+'% ggü. Vorperiode</span>';
+  if(p<0)return '<span class="delta down">'+p+'% ggü. Vorperiode</span>';
+  return '<span class="delta flat">0% ggü. Vorperiode</span>';
 }
 function barRows(rows,labelFn){
   if(!rows||!rows.length)return '<tr><td colspan="3" class="empty">Noch keine Daten in diesem Zeitraum.</td></tr>';
@@ -586,7 +586,7 @@ function trendChip(cur,prev){
   if(prev<=0)return cur>0?'<span class="trend new">neu</span>':'';
   var p=Math.round((cur-prev)/prev*100);
   if(p>=15)return '<span class="trend up">steigt '+p+'%</span>';
-  if(p<=-15)return '<span class="trend down">faellt '+p+'%</span>';
+  if(p<=-15)return '<span class="trend down">fällt '+p+'%</span>';
   return '<span class="trend flat">stabil</span>';
 }
 function pathTrendRows(rows){
@@ -605,39 +605,39 @@ function renderDash(){
   var d=DATA;
   var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
   var h='';
-  h+='<div class="sectionlbl">Uebersicht ('+esc(rangeLabel())+')</div>';
+  h+='<div class="sectionlbl">Übersicht ('+esc(rangeLabel())+')</div>';
   h+='<div class="tiles">';
   h+='<div class="tile"><div class="n">'+d.total+'</div><div class="l">Seitenaufrufe gesamt</div>'+deltaHtml(d.total,d.prev_total)+'</div>';
   h+='<div class="tile"><div class="n">'+d.instagram.by_utm+'</div><div class="l">Instagram (per UTM-Tag)</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)+'</div>';
   h+='<div class="tile"><div class="n small">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="l">Top-Quelle ('+(topSrc.c||0)+')</div><div class="l2">Woher die meisten Besucher mit UTM-Tag kamen.</div></div>';
-  h+='<div class="tile"><div class="n small">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am haeufigsten aufgerufene Seite/Artikel.</div></div>';
+  h+='<div class="tile"><div class="n small">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am häufigsten aufgerufene Seite/Artikel.</div></div>';
   h+='</div>';
 
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2>Verlauf</h2>';
   h+='<div class="headctrls"><button id="cmpBtn" class="toggle" title="Vorperiode als Vergleichslinie einblenden">Vorperiode vergleichen</button>';
   h+='<div class="seg" id="gran"><button data-g="hour">Stunde</button><button data-g="6h">6 Std</button><button data-g="day">Tag</button></div></div></div>';
-  h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken oeffnet den 24-Stunden-Verlauf des Tages unten.<span id="cmplegend"></span></p>';
+  h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken öffnet den 24-Stunden-Verlauf des Tages unten.<span id="cmplegend"></span></p>';
   h+='<div class="chartscroll"><div id="mainchart"></div></div></div>';
 
   h+='<div class="sectionlbl">Woher der Traffic kommt</div>';
   h+='<div class="twocol">';
-  h+='<div class="chartcard"><div class="charthead"><h2>Kanaele</h2></div><p class="help">Jeder Aufruf einsortiert in Suche, Social, Verweis oder Direkt. Die wichtigste SEO-Kennzahl: waechst der Anteil aus der Suche?</p><table id="chanTbl"></table></div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Kanäle</h2></div><p class="help">Jeder Aufruf einsortiert in Suche, Social, Verweis oder Direkt. Die wichtigste SEO-Kennzahl: wächst der Anteil aus der Suche?</p><table id="chanTbl"></table></div>';
   h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
   h+='</div>';
 
   h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
   h+='<div class="twocol">';
-  h+='<div class="chartcard"><div class="charthead"><h2>Interne Suche</h2></div><p class="help">Wonach auf der Seite gesucht wird. Rot markiert = null Treffer, also ein direkter Hinweis, welchen Artikel du als Naechstes schreiben solltest.</p><table id="intSearchTbl"></table></div>';
-  h+='<div class="chartcard"><div class="charthead"><h2>Lese-Engagement <span id="engAvg" class="cardtag"></span></h2></div><p class="help">Verweildauer und maximale Scrolltiefe pro Artikel. Zeigt, ob Artikel wirklich gelesen oder sofort weggeklickt werden. Verweildauer ist grob, ein offener Tab im Hintergrund kann sie verlaengern.</p><table id="engTbl"></table></div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Interne Suche</h2></div><p class="help">Wonach auf der Seite gesucht wird. Rot markiert = null Treffer, also ein direkter Hinweis, welchen Artikel du als Nächstes schreiben solltest.</p><table id="intSearchTbl"></table></div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Lese-Engagement <span id="engAvg" class="cardtag"></span></h2></div><p class="help">Verweildauer und maximale Scrolltiefe pro Artikel. Zeigt, ob Artikel wirklich gelesen oder sofort weggeklickt werden. Verweildauer ist grob, ein offener Tab im Hintergrund kann sie verlängern.</p><table id="engTbl"></table></div>';
   h+='</div>';
 
   h+='<div class="sectionlbl">Google Search Console</div>';
   h+='<div class="chartcard gsc" id="gscCard">';
   h+='<div class="charthead"><h2><button class="caret" id="gscSecCaret" onclick="gscToggle(\'section\')" title="Ein-/ausklappen">&#9662;</button> Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
   h+='<div id="gscBody">';
-  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Am einfachsten die ganze Zip aus der Search Console (Leistung, Exportieren) hochladen, Seiten und Suchanfragen werden automatisch erkannt. Ueberschreibt den vorherigen Stand. Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen. Die Spalte Potenzial schaetzt grob die ungenutzten Klicks (Impressionen mit verbesserbarer Position und schwacher CTR), zum Sortieren draufklicken. Grobe Priorisierungshilfe, keine exakte Prognose.</p>';
-  h+='<div class="gscdrop" id="gscDrop"><b>Zip hierher ziehen</b><span>oder unten eine Datei waehlen</span></div>';
+  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Am einfachsten die ganze Zip aus der Search Console (Leistung, Exportieren) hochladen, Seiten und Suchanfragen werden automatisch erkannt. Überschreibt den vorherigen Stand. Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschärfen. Die Spalte Potenzial schätzt grob die ungenutzten Klicks (Impressionen mit verbesserbarer Position und schwacher CTR), zum Sortieren draufklicken. Grobe Priorisierungshilfe, keine exakte Prognose.</p>';
+  h+='<div class="gscdrop" id="gscDrop"><b>Zip hierher ziehen</b><span>oder unten eine Datei wählen</span></div>';
   h+='<div class="gscup">';
   h+='<label class="uplbl">Ganze Zip (empfohlen) <input type="file" accept=".zip,application/zip" id="gscZipFile"></label>';
   h+='<label class="uplbl">oder Seiten-CSV <input type="file" accept=".csv,text/csv" id="gscPageFile"></label>';
@@ -653,19 +653,19 @@ function renderDash(){
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
   h+='<div class="daterow"><span class="ctrllbl">Tag</span><input type="date" id="detailDate"></div></div>';
-  h+='<p class="help">Voller 24-Stunden-Verlauf eines einzelnen Tages. Zeigt genau, zu welcher Uhrzeit die Aufrufe reinkamen. Tag frei waehlbar, unabhaengig vom Zeitraum oben.</p>';
+  h+='<p class="help">Voller 24-Stunden-Verlauf eines einzelnen Tages. Zeigt genau, zu welcher Uhrzeit die Aufrufe reinkamen. Tag frei wählbar, unabhängig vom Zeitraum oben.</p>';
   h+='<div class="chartscroll"><div id="detailchart"></div></div>';
   h+='<div class="detailmeta" id="detailmeta"></div></div>';
 
-  h+='<div class="sectionlbl">Aktivitaet nach Wochentag und Uhrzeit</div>';
-  h+='<div class="chartcard"><p class="help">Wann kommen die Aufrufe rein (Berlin-Zeit). Dunkler heisst mehr. Zeigt dir den besten Zeitpunkt fuers Veroeffentlichen und fuer Instagram-Posts.</p><div class="chartscroll"><div id="heatmap"></div></div></div>';
+  h+='<div class="sectionlbl">Aktivität nach Wochentag und Uhrzeit</div>';
+  h+='<div class="chartcard"><p class="help">Wann kommen die Aufrufe rein (Berlin-Zeit). Dunkler heißt mehr. Zeigt dir den besten Zeitpunkt fürs Veröffentlichen und für Instagram-Posts.</p><div class="chartscroll"><div id="heatmap"></div></div></div>';
 
   h+='<div class="sectionlbl">Akquise &amp; Verhalten, Reihenfolge per Ziehen anpassbar</div>';
   h+='<div id="vg-cards"></div>';
   h+='<p class="note">'+esc(d.note)+' Die Kachel-Reihenfolge wird nur in diesem Browser gemerkt.</p>';
   document.getElementById('dash').innerHTML=h;
 
-  // Granularitaet
+  // Granularität
   if(!GRAN_LOCK)GRAN=defaultGran(d.range.days);
   document.querySelectorAll('#gran button').forEach(function(b){
     b.classList.toggle('active',b.getAttribute('data-g')===GRAN);
@@ -726,7 +726,7 @@ var GSC_COLS=[{k:'clicks',l:'Klicks'},{k:'impressions',l:'Impr.'},{k:'ctr',l:'CT
 var GSC_FMT={clicks:function(v){return v;},impressions:function(v){return v;},ctr:function(v){return (+v).toFixed(1)+'%';},position:function(v){return (+v).toFixed(1);},pot:function(v){return v>0?'~'+v:'0';}};
 var GSC_SORT={page:{col:'impressions',dir:'desc'},query:{col:'impressions',dir:'desc'}};
 function gscShortPath(u){try{if(/^https?:\/\//.test(u)){return new URL(u).pathname||'/';}}catch(e){}return u;}
-/* Potenzial-Heuristik: geschaetzte ungenutzte Klicks. Viele Impressionen mal
+/* Potenzial-Heuristik: geschätzte ungenutzte Klicks. Viele Impressionen mal
    ein Positionsgewicht (Platz 4 bis 20 hat am meisten Luft, Platz 1 bis 3 kaum)
    mal der Abstand zu einer realistisch erreichbaren CTR von rund 30%. Bewusst
    grob, nur zum Priorisieren, keine exakte Prognose. */
@@ -872,8 +872,8 @@ function renderHeatmap(){
   });
   var max=1;grid.forEach(function(row){row.forEach(function(v){if(v>max)max=v;});});
   var rows=['Mo','Di','Mi','Do','Fr','Sa','So'];
-  // Zellgroesse aus der Containerbreite, quadratisch gehalten und begrenzt, damit
-  // die Zellen die Breite fuellen ohne verzerrt (breitgezogen) zu werden. Echte
+  // Zellgröße aus der Containerbreite, quadratisch gehalten und begrenzt, damit
+  // die Zellen die Breite füllen ohne verzerrt (breitgezogen) zu werden. Echte
   // Pixelbreite statt 100%-Stretch, daher keine Verzerrung.
   var padL=34,padT=18;
   var hostW=Math.max(280,Math.floor(host.clientWidth||760));
@@ -910,8 +910,8 @@ function renderDetail(day){
 function renderCards(){
   var d=DATA;
   var cards={
-    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsaechlich aufgerufen wurden, mit Trend gegen die Vorperiode.',rows:pathTrendRows(d.top_paths)},
-    top_sources:{tag:'Akquise',title:'Top-Quellen (UTM-Source)',help:'Gruppiert nach dem Tag im geklickten Link, unabhaengig vom technischen Referrer.',rows:barRows(d.top_utm_sources,function(r){return r.utm_source;})},
+    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsächlich aufgerufen wurden, mit Trend gegen die Vorperiode.',rows:pathTrendRows(d.top_paths)},
+    top_sources:{tag:'Akquise',title:'Top-Quellen (UTM-Source)',help:'Gruppiert nach dem Tag im geklickten Link, unabhängig vom technischen Referrer.',rows:barRows(d.top_utm_sources,function(r){return r.utm_source;})},
     top_campaigns:{tag:'Akquise',title:'Top-Kampagnen',help:'Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.',rows:barRows(d.top_utm_campaigns,function(r){return r.utm_source+' / '+r.utm_campaign;})},
     top_referrers:{tag:'Akquise',title:'Top-Referrer',help:'Technische Herkunfts-Domain laut Browser, Google und Instagram jeweils zusammengefasst. Zeigt auch Besuche ohne UTM-Link.',rows:barRows(d.top_referrers,function(r){return r.ref_host;})}
   };
@@ -1002,19 +1002,19 @@ document.getElementById('quicktabs').addEventListener('click',function(e){
 });
 document.getElementById('applyRange').addEventListener('click',function(){
   var f=document.getElementById('fromDate').value,t=document.getElementById('toDate').value;
-  if(!f||!t){alert('Bitte Von- und Bis-Datum waehlen.');return;}
+  if(!f||!t){alert('Bitte Von- und Bis-Datum wählen.');return;}
   var q={from:f,to:t};setUrl(q);load(q);
 });
 document.getElementById('applyDay').addEventListener('click',function(){
   var f=document.getElementById('fromDate').value;
-  if(!f){alert('Bitte ein Von-Datum waehlen.');return;}
+  if(!f){alert('Bitte ein Von-Datum wählen.');return;}
   var q={from:f,to:f};setUrl(q);load(q);
 });
 
 var reTimer;
 window.addEventListener('resize',function(){clearTimeout(reTimer);reTimer=setTimeout(function(){if(DATA){renderMain();renderHeatmap();if(DET&&document.getElementById('detailDate'))renderDetail(document.getElementById('detailDate').value);}},180);});
 
-/* ---- Kompletter Analytics-Export als Markdown fuer Claude ---- */
+/* ---- Kompletter Analytics-Export als Markdown für Claude ---- */
 function exportTopSlots(){
   var grid=[];for(var r=0;r<7;r++)grid.push(new Array(24).fill(0));
   (DATA.series||[]).forEach(function(s){var day=new Date(s.t.slice(0,10)+'T00:00:00').getDay();grid[(day+6)%7][+s.t.slice(11,13)]+=s.c;});
@@ -1034,18 +1034,18 @@ function buildExport(){
   o.push('Erzeugt: '+new Date().toLocaleString('de-DE')+'  |  Zeitraum First-Party-Statistik: '+rangeLabel());
   o.push('');
   o.push('## Auftrag');
-  o.push('Du bist SEO- und Content-Partner fuer ViceGuide (deutschsprachiges GTA-6-Fanportal). Analysiere die folgenden Zahlen und leite konkrete Empfehlungen ab: welche bestehenden Artikel nachgeschaerft werden sollten (Titel, Meta-Description, interne Verlinkung, um CTR und Position zu verbessern), welche neuen Themen fehlen (aus internen Suchen mit 0 Treffern und aus Google-Suchanfragen ohne passende eigene Seite), worauf bei kommenden Artikeln zu achten ist, und welche gut laufenden Seiten ausgebaut werden sollten. Halte dich an die ViceGuide-Regeln aus CLAUDE.md (Ton eines Gaming-Redakteurs, keine Gedankenstriche).');
+  o.push('Du bist SEO- und Content-Partner für ViceGuide (deutschsprachiges GTA-6-Fanportal). Analysiere die folgenden Zahlen und leite konkrete Empfehlungen ab: welche bestehenden Artikel nachgeschärft werden sollten (Titel, Meta-Description, interne Verlinkung, um CTR und Position zu verbessern), welche neuen Themen fehlen (aus internen Suchen mit 0 Treffern und aus Google-Suchanfragen ohne passende eigene Seite), worauf bei kommenden Artikeln zu achten ist, und welche gut laufenden Seiten ausgebaut werden sollten. Halte dich an die ViceGuide-Regeln aus CLAUDE.md (Ton eines Gaming-Redakteurs, keine Gedankenstriche).');
   o.push('');
   o.push('### Hinweise zur Interpretation');
-  o.push('- First-Party-Zahlen zaehlen Seitenaufrufe (keine Unique Visitors), cookiefrei, Zeiten in Europe/Berlin.');
-  o.push('- Instagram ist nur ueber den UTM-Tag verlaesslich, der technische Referrer wird von Instagram meist entfernt.');
+  o.push('- First-Party-Zahlen zählen Seitenaufrufe (keine Unique Visitors), cookiefrei, Zeiten in Europe/Berlin.');
+  o.push('- Instagram ist nur über den UTM-Tag verlässlich, der technische Referrer wird von Instagram meist entfernt.');
   o.push('- Google-Suchanfragen samt CTR und Position kommen aus der Search Console und sind der beste SEO-Hebel.');
-  o.push('- Spalte Potenzial: grobe Schaetzung ungenutzter Klicks (viele Impressionen, verbesserbare Position/CTR), nur zur Priorisierung.');
+  o.push('- Spalte Potenzial: grobe Schätzung ungenutzter Klicks (viele Impressionen, verbesserbare Position/CTR), nur zur Priorisierung.');
   o.push('');
-  o.push('## Ueberblick');
+  o.push('## Überblick');
   o.push('- Seitenaufrufe gesamt: '+d.total+' (Vorperiode '+d.prev_total+', '+trend(d.total,d.prev_total)+')');
   o.push('- Instagram per UTM-Tag: '+d.instagram.by_utm+' (Vorperiode '+d.instagram.prev_by_utm+')');
-  var ch=d.channels.cur; o.push('- Kanaele: Suche '+ch.search+', Social '+ch.social+', Verweis '+ch.referral+', Direkt '+ch.direct);
+  var ch=d.channels.cur; o.push('- Kanäle: Suche '+ch.search+', Social '+ch.social+', Verweis '+ch.referral+', Direkt '+ch.direct);
   o.push('');
   var slots=exportTopSlots();
   if(slots.length){o.push('## Beste Zeiten (Wochentag und Stunde, meiste Aufrufe)');o.push(slots.map(function(s){return '- '+s.d+' '+pad2(s.h)+':00 Uhr: '+s.c;}).join('\n'));o.push('');}
@@ -1072,8 +1072,8 @@ function vgExportOpen(){
   if(!DATA){alert('Daten noch nicht geladen.');return;}
   var txt=buildExport();
   var ov=document.createElement('div');ov.className='expmodal';
-  ov.innerHTML='<div class="expbox"><div class="exphead"><b>Analytics-Export fuer Claude</b><button class="expx" title="Schliessen">&#10005;</button></div>'
-    +'<p class="exphint">Kopier den Text in deinen ViceGuide-Claude-Chat oder lad ihn als Datei ins Projekt. Tipp: fuer einen aussagekraeftigen Export vorher oben einen laengeren Zeitraum waehlen (z.B. 30 oder 90 Tage). Die Search-Console-Zahlen sind unabhaengig vom Zeitraum und immer der zuletzt hochgeladene Stand.</p>'
+  ov.innerHTML='<div class="expbox"><div class="exphead"><b>Analytics-Export für Claude</b><button class="expx" title="Schließen">&#10005;</button></div>'
+    +'<p class="exphint">Kopier den Text in deinen ViceGuide-Claude-Chat oder lad ihn als Datei ins Projekt. Tipp: für einen aussagekräftigen Export vorher oben einen längeren Zeitraum wählen (z.B. 30 oder 90 Tage). Die Search-Console-Zahlen sind unabhängig vom Zeitraum und immer der zuletzt hochgeladene Stand.</p>'
     +'<textarea class="exparea" readonly></textarea>'
     +'<div class="expbtns"><button class="applybtn" data-a="copy">In Zwischenablage kopieren</button><button class="applybtn ghost" data-a="dl">Als .md-Datei herunterladen</button><span class="gscmsg" data-r></span></div></div>';
   document.body.appendChild(ov);
@@ -1093,8 +1093,8 @@ function vgExportOpen(){
   };
 }
 function vgResetStats(){
-  if(!confirm('Wirklich ALLE bisher gesammelten Statistik-Daten unwiderruflich loeschen? Das kann nicht rueckgaengig gemacht werden.'))return;
-  fetch(API,{method:'DELETE'}).then(function(r){if(r.ok){load(currentQuery());}else{alert('Loeschen fehlgeschlagen.');}}).catch(function(){alert('Loeschen fehlgeschlagen.');});
+  if(!confirm('Wirklich ALLE bisher gesammelten Statistik-Daten unwiderruflich löschen? Das kann nicht rückgängig gemacht werden.'))return;
+  fetch(API,{method:'DELETE'}).then(function(r){if(r.ok){load(currentQuery());}else{alert('Löschen fehlgeschlagen.');}}).catch(function(){alert('Löschen fehlgeschlagen.');});
 }
 
 load(currentQuery());
