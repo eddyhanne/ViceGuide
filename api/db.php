@@ -76,6 +76,7 @@ function vg_db(): array {
         $pdo->query('SELECT id FROM newsletter_subscribers LIMIT 1');
         $pdo->query('SELECT id FROM hits LIMIT 1');
         $pdo->query('SELECT id FROM events LIMIT 1');
+        $pdo->query('SELECT id FROM gsc_rows LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -181,6 +182,20 @@ function vg_db(): array {
             num INTEGER NOT NULL DEFAULT 0,
             num2 INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS gsc_rows (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            kind TEXT NOT NULL,
+            label TEXT NOT NULL,
+            clicks INTEGER NOT NULL DEFAULT 0,
+            impressions INTEGER NOT NULL DEFAULT 0,
+            ctr REAL NOT NULL DEFAULT 0,
+            position REAL NOT NULL DEFAULT 0
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS gsc_meta (
+            kind TEXT PRIMARY KEY,
+            range_label TEXT NULL,
+            imported_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )');
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
@@ -345,6 +360,21 @@ function vg_db(): array {
             num2 INT NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_type_created (type, created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS gsc_rows (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            kind VARCHAR(10) NOT NULL,
+            label VARCHAR(400) NOT NULL,
+            clicks INT NOT NULL DEFAULT 0,
+            impressions INT NOT NULL DEFAULT 0,
+            ctr DOUBLE NOT NULL DEFAULT 0,
+            position DOUBLE NOT NULL DEFAULT 0,
+            INDEX idx_kind (kind)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS gsc_meta (
+            kind VARCHAR(10) PRIMARY KEY,
+            range_label VARCHAR(120) NULL,
+            imported_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();

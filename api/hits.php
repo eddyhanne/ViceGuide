@@ -373,6 +373,16 @@ td.num2 .delta{margin-top:0}
 .trend.down{color:var(--bad);background:var(--bad-bg)}
 .trend.flat{color:var(--soft);background:var(--bg-2)}
 tr.thead td{color:var(--soft);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
+.minih{font-size:.78rem;font-weight:700;margin:0 0 6px}
+.gscup{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.uplbl{font-size:.78rem;color:var(--soft);font-weight:600;display:flex;flex-direction:column;gap:4px}
+.uplbl input[type=file]{font-size:.75rem;color:var(--text)}
+.gscrange{font-family:inherit;font-size:.82rem;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);min-width:200px}
+.gscmsg{font-size:.78rem;color:var(--soft)}
+.gscmsg.ok{color:var(--ok)}
+.gscmsg.err{color:var(--bad)}
+.trend.opp{color:#8a5a00;background:rgba(178,106,0,.14)}
+tr.opp td{background:rgba(178,106,0,.06)}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -601,6 +611,21 @@ function renderDash(){
   h+='<div class="chartcard"><div class="charthead"><h2>Lese-Engagement <span id="engAvg" class="cardtag"></span></h2></div><p class="help">Verweildauer und maximale Scrolltiefe pro Artikel. Zeigt, ob Artikel wirklich gelesen oder sofort weggeklickt werden. Verweildauer ist grob, ein offener Tab im Hintergrund kann sie verlaengern.</p><table id="engTbl"></table></div>';
   h+='</div>';
 
+  h+='<div class="sectionlbl">Google Search Console</div>';
+  h+='<div class="chartcard gsc">';
+  h+='<div class="charthead"><h2>Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
+  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Export in der Search Console unter Leistung, dann die CSV hier hochladen (ueberschreibt den vorherigen Stand). Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen.</p>';
+  h+='<div class="gscup">';
+  h+='<label class="uplbl">Seiten-CSV <input type="file" accept=".csv,text/csv" id="gscPageFile"></label>';
+  h+='<label class="uplbl">Suchanfragen-CSV <input type="file" accept=".csv,text/csv" id="gscQueryFile"></label>';
+  h+='<input type="text" id="gscRange" placeholder="Zeitraum-Notiz, z.B. letzte 28 Tage" class="gscrange">';
+  h+='<span id="gscMsg" class="gscmsg"></span>';
+  h+='</div>';
+  h+='<div class="twocol" style="margin-top:14px">';
+  h+='<div><h3 class="minih">Top-Seiten (Google)</h3><div class="chartscroll"><table id="gscPageTbl"></table></div></div>';
+  h+='<div><h3 class="minih">Top-Suchanfragen (Google)</h3><div class="chartscroll"><table id="gscQueryTbl"></table></div></div>';
+  h+='</div></div>';
+
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
   h+='<div class="daterow"><span class="ctrllbl">Tag</span><input type="date" id="detailDate"></div></div>';
@@ -634,6 +659,8 @@ function renderDash(){
   renderEngagement();
   renderHeatmap();
   renderCards();
+  wireGsc();
+  loadGsc();
 
   // Tagesdetail
   var di=document.getElementById('detailDate');
@@ -667,6 +694,46 @@ function renderMain(){
   drawBars(host,b,{clickable:true,compare:COMPARE,minSlot:minSlot,subLabels:GRAN!=='day',onClick:function(day){var di=document.getElementById('detailDate');di.value=day;loadDetail(day);document.getElementById('detailtitle').scrollIntoView({behavior:'smooth',block:'center'});}});
   var leg=document.getElementById('cmplegend');
   if(leg)leg.innerHTML=COMPARE?' <span class="leg"><span class="legbar"></span>Zeitraum &nbsp; <span class="legline"></span>Vorperiode ('+(DATA.range.days)+' Tage davor)</span>':'';
+}
+/* ---- Google Search Console (CSV-Upload) ---- */
+function gscApi(){return API.replace(/hits\.php$/,'gsc.php');}
+function gscRows(rows,isQuery){
+  if(!rows||!rows.length)return '<tr><td colspan="5" class="empty">Noch kein CSV hochgeladen.</td></tr>';
+  var maxImp=1;rows.forEach(function(r){if(+r.impressions>maxImp)maxImp=+r.impressions;});
+  var head='<tr class="thead"><td class="lbl">'+(isQuery?'Suchanfrage':'Seite')+'</td><td class="num">Klicks</td><td class="num">Impr.</td><td class="num">CTR</td><td class="num">Pos.</td></tr>';
+  return head+rows.slice(0,50).map(function(r){
+    var opp=(+r.impressions>=maxImp*0.15)&&(+r.position>10||+r.ctr<2);
+    var lab=isQuery?r.label:pathLabel(gscShortPath(r.label));
+    return '<tr class="'+(opp?'opp':'')+'"><td class="lbl" title="'+esc(r.label)+'">'+esc(lab)+(opp?' <span class="trend opp">Potenzial</span>':'')+'</td><td class="num">'+r.clicks+'</td><td class="num">'+r.impressions+'</td><td class="num">'+(+r.ctr).toFixed(1)+'%</td><td class="num">'+(+r.position).toFixed(1)+'</td></tr>';
+  }).join('');
+}
+function gscShortPath(u){try{if(/^https?:\/\//.test(u)){var p=new URL(u);return p.pathname||'/';}}catch(e){}return u;}
+function loadGsc(){
+  fetch(gscApi(),{headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(d){
+    var pt=document.getElementById('gscPageTbl'),qt=document.getElementById('gscQueryTbl');
+    if(pt)pt.innerHTML=gscRows(d.pages,false);
+    if(qt)qt.innerHTML=gscRows(d.queries,true);
+    var m=document.getElementById('gscMeta');
+    if(m){var parts=[];if(d.meta&&d.meta.page)parts.push('Seiten: '+(d.meta.page.range||d.meta.page.imported||''));if(d.meta&&d.meta.query)parts.push('Anfragen: '+(d.meta.query.range||d.meta.query.imported||''));m.textContent=parts.join('  |  ');}
+  }).catch(function(){});
+}
+function gscUpload(kind,file){
+  var msg=document.getElementById('gscMsg');
+  var rd=new FileReader();
+  rd.onload=function(){
+    var range=document.getElementById('gscRange').value||'';
+    if(msg){msg.textContent='Lade hoch...';msg.className='gscmsg';}
+    fetch(gscApi(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,csv:rd.result,range:range})})
+      .then(function(r){return r.json();})
+      .then(function(res){if(res.ok){if(msg){msg.textContent=res.rows+' Zeilen importiert.';msg.className='gscmsg ok';}loadGsc();}else{if(msg){msg.textContent=res.error||'Fehler';msg.className='gscmsg err';}}})
+      .catch(function(){if(msg){msg.textContent='Upload fehlgeschlagen.';msg.className='gscmsg err';}});
+  };
+  rd.readAsText(file);
+}
+function wireGsc(){
+  var pf=document.getElementById('gscPageFile'),qf=document.getElementById('gscQueryFile');
+  if(pf)pf.addEventListener('change',function(){if(pf.files[0])gscUpload('page',pf.files[0]);});
+  if(qf)qf.addEventListener('change',function(){if(qf.files[0])gscUpload('query',qf.files[0]);});
 }
 var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',direct:'Direkt'};
 function renderChannels(){
