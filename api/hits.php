@@ -393,6 +393,7 @@ tr.opp td{background:rgba(178,106,0,.06)}
 td.sortable{cursor:pointer;user-select:none;white-space:nowrap}
 td.sortable:hover{color:var(--accent)}
 td.activesort{color:var(--accent)}
+td.potcell{color:#8a5a00;font-weight:700}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -625,7 +626,7 @@ function renderDash(){
   h+='<div class="chartcard gsc" id="gscCard">';
   h+='<div class="charthead"><h2><button class="caret" id="gscSecCaret" onclick="gscToggle(\'section\')" title="Ein-/ausklappen">&#9662;</button> Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
   h+='<div id="gscBody">';
-  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Am einfachsten die ganze Zip aus der Search Console (Leistung, Exportieren) hochladen, Seiten und Suchanfragen werden automatisch erkannt. Ueberschreibt den vorherigen Stand. Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen.</p>';
+  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Am einfachsten die ganze Zip aus der Search Console (Leistung, Exportieren) hochladen, Seiten und Suchanfragen werden automatisch erkannt. Ueberschreibt den vorherigen Stand. Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen. Die Spalte Potenzial schaetzt grob die ungenutzten Klicks (Impressionen mit verbesserbarer Position und schwacher CTR), zum Sortieren draufklicken. Grobe Priorisierungshilfe, keine exakte Prognose.</p>';
   h+='<div class="gscdrop" id="gscDrop"><b>Zip hierher ziehen</b><span>oder unten eine Datei waehlen</span></div>';
   h+='<div class="gscup">';
   h+='<label class="uplbl">Ganze Zip (empfohlen) <input type="file" accept=".zip,application/zip" id="gscZipFile"></label>';
@@ -711,9 +712,19 @@ function renderMain(){
 /* ---- Google Search Console ---- */
 function gscApi(){return API.replace(/hits\.php$/,'gsc.php');}
 var GSC_DATA={pages:[],queries:[],meta:{}};
-var GSC_COLS=[{k:'clicks',l:'Klicks'},{k:'impressions',l:'Impr.'},{k:'ctr',l:'CTR'},{k:'position',l:'Pos.'}];
+var GSC_COLS=[{k:'clicks',l:'Klicks'},{k:'impressions',l:'Impr.'},{k:'ctr',l:'CTR'},{k:'position',l:'Pos.'},{k:'pot',l:'Potenzial'}];
+var GSC_FMT={clicks:function(v){return v;},impressions:function(v){return v;},ctr:function(v){return (+v).toFixed(1)+'%';},position:function(v){return (+v).toFixed(1);},pot:function(v){return v>0?'~'+v:'0';}};
 var GSC_SORT={page:{col:'impressions',dir:'desc'},query:{col:'impressions',dir:'desc'}};
 function gscShortPath(u){try{if(/^https?:\/\//.test(u)){return new URL(u).pathname||'/';}}catch(e){}return u;}
+/* Potenzial-Heuristik: geschaetzte ungenutzte Klicks. Viele Impressionen mal
+   ein Positionsgewicht (Platz 4 bis 20 hat am meisten Luft, Platz 1 bis 3 kaum)
+   mal der Abstand zu einer realistisch erreichbaren CTR von rund 30%. Bewusst
+   grob, nur zum Priorisieren, keine exakte Prognose. */
+function gscPot(r){
+  var pos=+r.position||0, ctr=(+r.ctr||0)/100, imp=+r.impressions||0;
+  var pf=pos<=3?0.2:(pos<=10?1.0:(pos<=20?0.8:0.4));
+  return Math.round(imp*pf*Math.max(0,0.30-ctr));
+}
 function gscSetCollapsed(which,on){
   var map={section:['gscBody','gscSecCaret'],page:['gscPageWrap','gscPageCaret'],query:['gscQueryWrap','gscQueryCaret']};
   var m=map[which];if(!m)return;
@@ -738,17 +749,19 @@ function renderGscTable(kind){
   var isQuery=kind==='query';
   var tbl=document.getElementById(isQuery?'gscQueryTbl':'gscPageTbl');if(!tbl)return;
   var arr=(isQuery?GSC_DATA.queries:GSC_DATA.pages)||[];
-  if(!arr.length){tbl.innerHTML='<tr><td colspan="5" class="empty">Noch kein CSV/Zip hochgeladen.</td></tr>';return;}
+  if(!arr.length){tbl.innerHTML='<tr><td colspan="6" class="empty">Noch kein CSV/Zip hochgeladen.</td></tr>';return;}
   var maxImp=1;arr.forEach(function(r){if(+r.impressions>maxImp)maxImp=+r.impressions;});
+  var work=arr.map(function(r){var o={};for(var k in r)o[k]=r[k];o.pot=gscPot(r);return o;});
   var s=GSC_SORT[kind];
-  var sorted=arr.slice().sort(function(a,b){var d=(+a[s.col])-(+b[s.col]);return s.dir==='asc'?d:-d;});
+  var sorted=work.sort(function(a,b){var d=(+a[s.col])-(+b[s.col]);return s.dir==='asc'?d:-d;});
   var arrow=function(col){return s.col===col?(s.dir==='asc'?' ▲':' ▼'):'';};
   var head='<tr class="thead"><td class="lbl">'+(isQuery?'Suchanfrage':'Seite')+'</td>'+
     GSC_COLS.map(function(c){return '<td class="num sortable'+(s.col===c.k?' activesort':'')+'" onclick="gscSort(\''+kind+'\',\''+c.k+'\')">'+c.l+arrow(c.k)+'</td>';}).join('')+'</tr>';
   var body=sorted.slice(0,100).map(function(r){
     var opp=(+r.impressions>=maxImp*0.15)&&(+r.position>10||+r.ctr<2);
     var lab=isQuery?r.label:pathLabel(gscShortPath(r.label));
-    return '<tr class="'+(opp?'opp':'')+'"><td class="lbl" title="'+esc(r.label)+'">'+esc(lab)+(opp?' <span class="trend opp">Potenzial</span>':'')+'</td><td class="num">'+r.clicks+'</td><td class="num">'+r.impressions+'</td><td class="num">'+(+r.ctr).toFixed(1)+'%</td><td class="num">'+(+r.position).toFixed(1)+'</td></tr>';
+    var cells=GSC_COLS.map(function(c){return '<td class="num'+(c.k==='pot'&&r.pot>0?' potcell':'')+'">'+GSC_FMT[c.k](r[c.k])+'</td>';}).join('');
+    return '<tr class="'+(opp?'opp':'')+'"><td class="lbl" title="'+esc(r.label)+'">'+esc(lab)+(opp?' <span class="trend opp">Potenzial</span>':'')+'</td>'+cells+'</tr>';
   }).join('');
   tbl.innerHTML=head+body;
 }
