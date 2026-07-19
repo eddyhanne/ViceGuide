@@ -75,6 +75,7 @@
     --btn-bg:var(--accent); --btn-text:#1a0f28;
     --tag-bg:rgba(139,92,246,.18); --tag-text:#c9b6ff;
     --ntag-border:rgba(136,184,197,.55); --ntag-text:#9FCEDA;
+    --pill-bg:rgba(136,184,197,.08); --pill-ln:rgba(136,184,197,.24);
     --hero-overlay:linear-gradient(180deg,rgba(13,10,26,.35) 0%,rgba(13,10,26,.74) 66%,var(--bg) 100%);
     --logo-shadow:drop-shadow(0 14px 30px rgba(0,0,0,.55));
     --ok-t:#5EE49B; --ok-bg:rgba(94,228,155,.14); --ok-bd:rgba(94,228,155,.40);
@@ -90,6 +91,7 @@
     --btn-bg:#221041; --btn-text:#FBF3E7;
     --tag-bg:var(--bg-2); --tag-text:var(--text-soft);
     --ntag-border:rgba(255,45,149,.35); --ntag-text:#993556;
+    --pill-bg:rgba(208,0,89,.055); --pill-ln:rgba(208,0,89,.22);
     --hero-overlay:linear-gradient(180deg,rgba(251,243,231,.04) 0%,rgba(251,243,231,.55) 68%,var(--bg) 100%);
     --logo-shadow:drop-shadow(0 2px 1px rgba(28,10,48,.95)) drop-shadow(0 12px 22px rgba(28,10,48,.45));
     --ok-t:#0F7A3D; --ok-bg:rgba(15,122,61,.12); --ok-bd:rgba(15,122,61,.42);
@@ -181,18 +183,17 @@
   .p-newshead{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .p-newscat{font-family:'Inter';font-size:13px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer}
   .p-reltag{font-family:'Space Mono';font-size:11px;letter-spacing:1px;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:999px;padding:3px 10px}
-  .p-pillar{display:flex;align-items:center;gap:13px;margin:22px 0 0;padding:0 18px;min-height:56px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text);transition:border-color .15s}
+  .p-pillar{display:flex;align-items:center;gap:12px;margin:22px 0 0;padding:0 18px;min-height:56px;background:var(--pill-bg);border:1px solid var(--pill-ln);border-radius:12px;text-decoration:none;color:var(--text);transition:border-color .15s}
   .p-pillar:hover{border-color:var(--accent)}
-  .pp-pill{font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ntag-text);border:1px solid var(--ntag-border);padding:4px 10px;border-radius:6px;flex-shrink:0}
+  .pp-pill{font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;background:var(--accent);color:var(--btn-text);border-radius:6px;padding:5px 11px;flex-shrink:0}
   .pp-t{font-family:'Oswald';font-weight:600;font-size:16px;color:var(--heading);line-height:1.15;white-space:nowrap;flex-shrink:0}
   .pp-d{font-size:13px;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
   .pp-d::before{content:"\2022";margin-right:10px;opacity:.55}
-  .pp-more{color:var(--accent);font-weight:600;font-size:14px;white-space:nowrap;flex-shrink:0;padding-left:12px}
+  .pp-a{color:var(--accent);font-weight:700;font-size:17px;flex-shrink:0;padding-left:6px}
   @media(max-width:560px){
-    .p-pillar{gap:10px;padding:0 15px;min-height:52px}
-    .p-pillar .pp-d,.p-pillar .pp-more-t{display:none}
-    .p-pillar .pp-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:14px}
-    .p-pillar .pp-more{padding-left:10px;font-size:17px;line-height:1}
+    .p-pillar{justify-content:center;gap:10px;padding:0 14px;min-height:52px}
+    .p-pillar .pp-d{display:none}
+    .p-pillar .pp-t{font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis}
   }
   .pcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:border-color .15s,transform .15s}
   .pcard:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -1466,7 +1467,7 @@ function portalPillarHtml(){
   const g=GUIDES.find(x=>x.id===id);
   if(!g) return '';
   const idx=GUIDES.indexOf(g);
-  return `<a class="p-pillar" href="${articleHref(id)}" onclick="return articleClick(event,${idx})"><span class="pp-pill">Das Wichtigste zu GTA 6</span><span class="pp-t">Alles, was wir wissen</span><span class="pp-d">Release, Map, Story, Preis und Charaktere auf einer Seite</span><span class="pp-more"><span class="pp-more-t">Alle Infos </span>\u2192</span></a>`;
+  return `<a class="p-pillar" href="${articleHref(id)}" onclick="return articleClick(event,${idx})"><span class="pp-pill">Das Wichtigste zu GTA 6</span><span class="pp-t">Alles, was wir wissen</span><span class="pp-d">Release, Map, Story, Preis und Charaktere auf einer Seite</span><span class="pp-a">\u2192</span></a>`;
 }
 function portalDbHtml(){
   return `<div class="p-sh"><h2>Datenbank</h2><a class="p-more" style="margin-left:auto" href="/datenbank/" onclick="return goClick(event,'datenbank')">Alle Rubriken \u2192</a></div><div class="p-rgrid">${dbTilesHtml()}</div>`;
