@@ -383,6 +383,16 @@ tr.thead td{color:var(--soft);font-weight:700;font-size:.68rem;text-transform:up
 .gscmsg.err{color:var(--bad)}
 .trend.opp{color:#8a5a00;background:rgba(178,106,0,.14)}
 tr.opp td{background:rgba(178,106,0,.06)}
+.caret{border:none;background:transparent;color:var(--soft);font-size:.9rem;cursor:pointer;padding:0 4px 0 0;line-height:1;transition:transform .12s}
+.caret.closed{transform:rotate(-90deg)}
+.gscdrop{border:2px dashed var(--line);border-radius:12px;padding:16px;text-align:center;color:var(--soft);margin-bottom:12px;display:flex;flex-direction:column;gap:2px;transition:border-color .12s,background .12s}
+.gscdrop b{color:var(--text);font-size:.9rem}
+.gscdrop span{font-size:.78rem}
+.gscdrop.over{border-color:var(--accent);background:var(--accent-soft)}
+.tblwrap{max-height:440px;overflow:auto}
+td.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+td.sortable:hover{color:var(--accent)}
+td.activesort{color:var(--accent)}
 .empty2{color:var(--soft);font-style:italic;padding:40px 0;text-align:center}
 .detailmeta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}
 .detailmeta .mini{min-width:220px;flex:1}
@@ -612,19 +622,22 @@ function renderDash(){
   h+='</div>';
 
   h+='<div class="sectionlbl">Google Search Console</div>';
-  h+='<div class="chartcard gsc">';
-  h+='<div class="charthead"><h2>Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
-  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Export in der Search Console unter Leistung, dann die CSV hier hochladen (ueberschreibt den vorherigen Stand). Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen.</p>';
+  h+='<div class="chartcard gsc" id="gscCard">';
+  h+='<div class="charthead"><h2><button class="caret" id="gscSecCaret" onclick="gscToggle(\'section\')" title="Ein-/ausklappen">&#9662;</button> Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
+  h+='<div id="gscBody">';
+  h+='<p class="help">Impressionen, Klicks, CTR und Durchschnittsposition direkt aus Google, inklusive der echten Suchbegriffe. Das First-Party-Tracking kann das nicht sehen. Am einfachsten die ganze Zip aus der Search Console (Leistung, Exportieren) hochladen, Seiten und Suchanfragen werden automatisch erkannt. Ueberschreibt den vorherigen Stand. Gelb markiert = viele Impressionen, aber Position schlechter als 10 oder CTR unter 2%, also Potenzial zum Nachschaerfen.</p>';
+  h+='<div class="gscdrop" id="gscDrop"><b>Zip hierher ziehen</b><span>oder unten eine Datei waehlen</span></div>';
   h+='<div class="gscup">';
-  h+='<label class="uplbl">Seiten-CSV <input type="file" accept=".csv,text/csv" id="gscPageFile"></label>';
-  h+='<label class="uplbl">Suchanfragen-CSV <input type="file" accept=".csv,text/csv" id="gscQueryFile"></label>';
-  h+='<input type="text" id="gscRange" placeholder="Zeitraum-Notiz, z.B. letzte 28 Tage" class="gscrange">';
+  h+='<label class="uplbl">Ganze Zip (empfohlen) <input type="file" accept=".zip,application/zip" id="gscZipFile"></label>';
+  h+='<label class="uplbl">oder Seiten-CSV <input type="file" accept=".csv,text/csv" id="gscPageFile"></label>';
+  h+='<label class="uplbl">oder Suchanfragen-CSV <input type="file" accept=".csv,text/csv" id="gscQueryFile"></label>';
+  h+='<input type="text" id="gscRange" placeholder="Zeitraum-Notiz, z.B. letzte 3 Monate" class="gscrange">';
   h+='<span id="gscMsg" class="gscmsg"></span>';
   h+='</div>';
   h+='<div class="twocol" style="margin-top:14px">';
-  h+='<div><h3 class="minih">Top-Seiten (Google)</h3><div class="chartscroll"><table id="gscPageTbl"></table></div></div>';
-  h+='<div><h3 class="minih">Top-Suchanfragen (Google)</h3><div class="chartscroll"><table id="gscQueryTbl"></table></div></div>';
-  h+='</div></div>';
+  h+='<div class="gsctbl"><h3 class="minih"><button class="caret" id="gscPageCaret" onclick="gscToggle(\'page\')" title="Ein-/ausklappen">&#9662;</button> Top-Seiten (Google)</h3><div class="tblwrap" id="gscPageWrap"><table id="gscPageTbl"></table></div></div>';
+  h+='<div class="gsctbl"><h3 class="minih"><button class="caret" id="gscQueryCaret" onclick="gscToggle(\'query\')" title="Ein-/ausklappen">&#9662;</button> Top-Suchanfragen (Google)</h3><div class="tblwrap" id="gscQueryWrap"><table id="gscQueryTbl"></table></div></div>';
+  h+='</div></div></div>';
 
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
@@ -695,45 +708,95 @@ function renderMain(){
   var leg=document.getElementById('cmplegend');
   if(leg)leg.innerHTML=COMPARE?' <span class="leg"><span class="legbar"></span>Zeitraum &nbsp; <span class="legline"></span>Vorperiode ('+(DATA.range.days)+' Tage davor)</span>':'';
 }
-/* ---- Google Search Console (CSV-Upload) ---- */
+/* ---- Google Search Console ---- */
 function gscApi(){return API.replace(/hits\.php$/,'gsc.php');}
-function gscRows(rows,isQuery){
-  if(!rows||!rows.length)return '<tr><td colspan="5" class="empty">Noch kein CSV hochgeladen.</td></tr>';
-  var maxImp=1;rows.forEach(function(r){if(+r.impressions>maxImp)maxImp=+r.impressions;});
-  var head='<tr class="thead"><td class="lbl">'+(isQuery?'Suchanfrage':'Seite')+'</td><td class="num">Klicks</td><td class="num">Impr.</td><td class="num">CTR</td><td class="num">Pos.</td></tr>';
-  return head+rows.slice(0,50).map(function(r){
+var GSC_DATA={pages:[],queries:[],meta:{}};
+var GSC_COLS=[{k:'clicks',l:'Klicks'},{k:'impressions',l:'Impr.'},{k:'ctr',l:'CTR'},{k:'position',l:'Pos.'}];
+var GSC_SORT={page:{col:'impressions',dir:'desc'},query:{col:'impressions',dir:'desc'}};
+function gscShortPath(u){try{if(/^https?:\/\//.test(u)){return new URL(u).pathname||'/';}}catch(e){}return u;}
+function gscSetCollapsed(which,on){
+  var map={section:['gscBody','gscSecCaret'],page:['gscPageWrap','gscPageCaret'],query:['gscQueryWrap','gscQueryCaret']};
+  var m=map[which];if(!m)return;
+  var body=document.getElementById(m[0]),car=document.getElementById(m[1]);
+  if(body)body.style.display=on?'none':'';
+  if(car)car.classList.toggle('closed',on);
+}
+function gscToggle(which){
+  var map={section:'gscBody',page:'gscPageWrap',query:'gscQueryWrap'};
+  var body=document.getElementById(map[which]);if(!body)return;
+  var on=body.style.display!=='none';
+  gscSetCollapsed(which,on);
+  try{var c=JSON.parse(localStorage.getItem('vg_gsc_collapse')||'{}');c[which]=on;localStorage.setItem('vg_gsc_collapse',JSON.stringify(c));}catch(e){}
+}
+function gscSort(kind,col){
+  var s=GSC_SORT[kind];
+  if(s.col===col){s.dir=s.dir==='asc'?'desc':'asc';}else{s.col=col;s.dir=(col==='position')?'asc':'desc';}
+  try{localStorage.setItem('vg_gsc_sort',JSON.stringify(GSC_SORT));}catch(e){}
+  renderGscTable(kind);
+}
+function renderGscTable(kind){
+  var isQuery=kind==='query';
+  var tbl=document.getElementById(isQuery?'gscQueryTbl':'gscPageTbl');if(!tbl)return;
+  var arr=(isQuery?GSC_DATA.queries:GSC_DATA.pages)||[];
+  if(!arr.length){tbl.innerHTML='<tr><td colspan="5" class="empty">Noch kein CSV/Zip hochgeladen.</td></tr>';return;}
+  var maxImp=1;arr.forEach(function(r){if(+r.impressions>maxImp)maxImp=+r.impressions;});
+  var s=GSC_SORT[kind];
+  var sorted=arr.slice().sort(function(a,b){var d=(+a[s.col])-(+b[s.col]);return s.dir==='asc'?d:-d;});
+  var arrow=function(col){return s.col===col?(s.dir==='asc'?' ▲':' ▼'):'';};
+  var head='<tr class="thead"><td class="lbl">'+(isQuery?'Suchanfrage':'Seite')+'</td>'+
+    GSC_COLS.map(function(c){return '<td class="num sortable'+(s.col===c.k?' activesort':'')+'" onclick="gscSort(\''+kind+'\',\''+c.k+'\')">'+c.l+arrow(c.k)+'</td>';}).join('')+'</tr>';
+  var body=sorted.slice(0,100).map(function(r){
     var opp=(+r.impressions>=maxImp*0.15)&&(+r.position>10||+r.ctr<2);
     var lab=isQuery?r.label:pathLabel(gscShortPath(r.label));
     return '<tr class="'+(opp?'opp':'')+'"><td class="lbl" title="'+esc(r.label)+'">'+esc(lab)+(opp?' <span class="trend opp">Potenzial</span>':'')+'</td><td class="num">'+r.clicks+'</td><td class="num">'+r.impressions+'</td><td class="num">'+(+r.ctr).toFixed(1)+'%</td><td class="num">'+(+r.position).toFixed(1)+'</td></tr>';
   }).join('');
+  tbl.innerHTML=head+body;
 }
-function gscShortPath(u){try{if(/^https?:\/\//.test(u)){var p=new URL(u);return p.pathname||'/';}}catch(e){}return u;}
 function loadGsc(){
   fetch(gscApi(),{headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(d){
-    var pt=document.getElementById('gscPageTbl'),qt=document.getElementById('gscQueryTbl');
-    if(pt)pt.innerHTML=gscRows(d.pages,false);
-    if(qt)qt.innerHTML=gscRows(d.queries,true);
+    GSC_DATA={pages:d.pages||[],queries:d.queries||[],meta:d.meta||{}};
+    renderGscTable('page');renderGscTable('query');
     var m=document.getElementById('gscMeta');
-    if(m){var parts=[];if(d.meta&&d.meta.page)parts.push('Seiten: '+(d.meta.page.range||d.meta.page.imported||''));if(d.meta&&d.meta.query)parts.push('Anfragen: '+(d.meta.query.range||d.meta.query.imported||''));m.textContent=parts.join('  |  ');}
+    if(m){var parts=[];if(GSC_DATA.meta.page)parts.push('Seiten: '+(GSC_DATA.meta.page.range||GSC_DATA.meta.page.imported||''));if(GSC_DATA.meta.query)parts.push('Anfragen: '+(GSC_DATA.meta.query.range||GSC_DATA.meta.query.imported||''));m.textContent=parts.join('  |  ');}
   }).catch(function(){});
 }
-function gscUpload(kind,file){
-  var msg=document.getElementById('gscMsg');
+function gscMsg(txt,cls){var m=document.getElementById('gscMsg');if(m){m.textContent=txt;m.className='gscmsg'+(cls?' '+cls:'');}}
+function gscRange(){var el=document.getElementById('gscRange');return el?el.value||'':'';}
+function gscPost(payload,okmsg){
+  gscMsg('Lade hoch...','');
+  fetch(gscApi(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(res){if(res.ok){gscMsg(okmsg(res),'ok');loadGsc();}else{gscMsg(res.error||'Fehler','err');}})
+    .catch(function(){gscMsg('Upload fehlgeschlagen.','err');});
+}
+function gscUploadZip(file){
+  if(!/\.zip$/i.test(file.name||'')){gscMsg('Bitte eine .zip aus der Search Console (oder unten die einzelne CSV).','err');return;}
   var rd=new FileReader();
-  rd.onload=function(){
-    var range=document.getElementById('gscRange').value||'';
-    if(msg){msg.textContent='Lade hoch...';msg.className='gscmsg';}
-    fetch(gscApi(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,csv:rd.result,range:range})})
-      .then(function(r){return r.json();})
-      .then(function(res){if(res.ok){if(msg){msg.textContent=res.rows+' Zeilen importiert.';msg.className='gscmsg ok';}loadGsc();}else{if(msg){msg.textContent=res.error||'Fehler';msg.className='gscmsg err';}}})
-      .catch(function(){if(msg){msg.textContent='Upload fehlgeschlagen.';msg.className='gscmsg err';}});
-  };
+  rd.onload=function(){gscPost({zip:rd.result,range:gscRange()},function(res){return 'Import: '+res.pages+' Seiten, '+res.queries+' Suchanfragen.';});};
+  rd.readAsDataURL(file);
+}
+function gscUploadCsv(kind,file){
+  var rd=new FileReader();
+  rd.onload=function(){gscPost({kind:kind,csv:rd.result,range:gscRange()},function(res){return res.rows+' Zeilen importiert.';});};
   rd.readAsText(file);
 }
 function wireGsc(){
-  var pf=document.getElementById('gscPageFile'),qf=document.getElementById('gscQueryFile');
-  if(pf)pf.addEventListener('change',function(){if(pf.files[0])gscUpload('page',pf.files[0]);});
-  if(qf)qf.addEventListener('change',function(){if(qf.files[0])gscUpload('query',qf.files[0]);});
+  var zf=document.getElementById('gscZipFile'),pf=document.getElementById('gscPageFile'),qf=document.getElementById('gscQueryFile');
+  if(zf)zf.addEventListener('change',function(){if(zf.files[0])gscUploadZip(zf.files[0]);});
+  if(pf)pf.addEventListener('change',function(){if(pf.files[0])gscUploadCsv('page',pf.files[0]);});
+  if(qf)qf.addEventListener('change',function(){if(qf.files[0])gscUploadCsv('query',qf.files[0]);});
+  var dz=document.getElementById('gscDrop');
+  if(dz){
+    ['dragenter','dragover'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();e.stopPropagation();dz.classList.add('over');});});
+    ['dragleave','dragend','drop'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.remove('over');});});
+    dz.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)gscUploadZip(f);});
+  }
+  // Klapp- und Sortier-Zustand aus dem Browser wiederherstellen.
+  try{
+    var c=JSON.parse(localStorage.getItem('vg_gsc_collapse')||'{}');
+    ['section','page','query'].forEach(function(k){if(c[k])gscSetCollapsed(k,true);});
+    var ss=JSON.parse(localStorage.getItem('vg_gsc_sort')||'null');if(ss)GSC_SORT=ss;
+  }catch(e){}
 }
 var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',direct:'Direkt'};
 function renderChannels(){

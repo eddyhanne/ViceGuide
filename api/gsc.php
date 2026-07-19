@@ -54,6 +54,68 @@ function vg_parse_gsc_csv(string $csv): array {
     return $out;
 }
 
+/* Speichert die geparsten Zeilen einer Art (page|query) und ersetzt den
+   vorherigen Stand komplett. */
+function vg_gsc_store(PDO $pdo, array $cfg, string $kind, array $rows, ?string $range): void {
+    $pdo->beginTransaction();
+    try {
+        $pdo->prepare('DELETE FROM gsc_rows WHERE kind = ?')->execute([$kind]);
+        $ins = $pdo->prepare('INSERT INTO gsc_rows (kind, label, clicks, impressions, ctr, position) VALUES (?, ?, ?, ?, ?, ?)');
+        foreach ($rows as $r) { $ins->execute([$kind, $r[0], $r[1], $r[2], $r[3], $r[4]]); }
+        $pdo->prepare('DELETE FROM gsc_meta WHERE kind = ?')->execute([$kind]);
+        if (str_starts_with($cfg['db_dsn'], 'sqlite:')) {
+            $pdo->prepare('INSERT INTO gsc_meta (kind, range_label, imported_at) VALUES (?, ?, ?)')->execute([$kind, $range, date('Y-m-d H:i:s')]);
+        } else {
+            $pdo->prepare('INSERT INTO gsc_meta (kind, range_label) VALUES (?, ?)')->execute([$kind, $range]);
+        }
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+/* Aus dem Search-Console-Zip die richtigen zwei CSVs herausfinden, ohne auf
+   die (lokalisierten) Dateinamen angewiesen zu sein: Die Seiten-CSV hat URLs
+   in der ersten Spalte, die Suchanfragen-CSV ist die uebrige KPI-Tabelle mit
+   den meisten Zeilen (Laender, Geraete, Darstellung werden per Namensmuster
+   ausgeschlossen). Gibt [pagesRows|null, queriesRows|null] zurueck. */
+function vg_gsc_from_zip(string $bin): array {
+    if (!class_exists('ZipArchive')) throw new RuntimeException('no-zip-ext');
+    $tmp = tempnam(sys_get_temp_dir(), 'gsc');
+    file_put_contents($tmp, $bin);
+    $za = new ZipArchive();
+    if ($za->open($tmp) !== true) { @unlink($tmp); throw new RuntimeException('zip-unreadable'); }
+    $csvs = [];
+    for ($i = 0; $i < $za->numFiles; $i++) {
+        $name = $za->getNameIndex($i);
+        if (preg_match('/\.csv$/i', $name)) $csvs[$name] = $za->getFromIndex($i);
+    }
+    $za->close();
+    @unlink($tmp);
+
+    $pages = null; $cand = [];
+    foreach ($csvs as $name => $content) {
+        $rows = vg_parse_gsc_csv((string)$content);
+        if (!$rows) continue;
+        $urlish = 0;
+        foreach ($rows as $r) { if (preg_match('#^https?://#i', $r[0])) $urlish++; }
+        if ($urlish >= max(1, (int)floor(count($rows) * 0.5))) { $pages = $rows; continue; }
+        $ln = mb_strtolower(basename($name));
+        if (preg_match('/(l(ä|ae)nder|land|countr|pais|paese|ger(ä|ae)t|device|dispositiv|darstellung|appear|aussehen|apparence|filter|filtre|diagram|chart|grafik|datum|date|fecha)/u', $ln)) continue;
+        $cand[] = ['name' => $ln, 'rows' => $rows];
+    }
+    $queries = null;
+    foreach ($cand as $c) {
+        if (preg_match('/(anfrage|abfrage|quer|query|consultas|requ|zoekop|zapyt|ricerch|consulta)/u', $c['name'])) { $queries = $c['rows']; break; }
+    }
+    if ($queries === null && $cand) {
+        usort($cand, fn($a, $b) => count($b['rows']) - count($a['rows']));
+        $queries = $cand[0]['rows'];
+    }
+    return [$pages, $queries];
+}
+
 if ($method === 'GET') {
     vg_require_admin($cfg);
     $fetch = function (string $kind) use ($pdo): array {
@@ -72,34 +134,43 @@ if ($method === 'POST') {
     vg_require_admin($cfg);
     $b = json_decode(file_get_contents('php://input'), true);
     if (!is_array($b)) $b = [];
+    $range = trim((string)($b['range'] ?? ''));
+    $range = $range !== '' ? mb_substr($range, 0, 120) : null;
+
+    // Variante 1: ganze Search-Console-Zip, Seiten und Suchanfragen automatisch.
+    if (isset($b['zip']) && is_string($b['zip']) && $b['zip'] !== '') {
+        $raw = $b['zip'];
+        if (($p = strpos($raw, ',')) !== false && strncmp($raw, 'data:', 5) === 0) $raw = substr($raw, $p + 1);
+        $bin = base64_decode($raw, true);
+        if ($bin === false || $bin === '') vg_out_g(['error' => 'Zip nicht lesbar'], 400);
+        try {
+            [$pages, $queries] = vg_gsc_from_zip($bin);
+        } catch (RuntimeException $e) {
+            $msg = $e->getMessage() === 'no-zip-ext'
+                ? 'Der Server kann Zip-Dateien nicht entpacken. Bitte die einzelnen CSVs (Seiten, Suchanfragen) hochladen.'
+                : 'Zip nicht lesbar. Ist es der Original-Export aus der Search Console?';
+            vg_out_g(['error' => $msg], 422);
+        }
+        if (!$pages && !$queries) vg_out_g(['error' => 'In der Zip wurden keine Seiten- oder Suchanfragen-Tabelle erkannt.'], 422);
+        try {
+            if ($pages) vg_gsc_store($pdo, $cfg, 'page', $pages, $range);
+            if ($queries) vg_gsc_store($pdo, $cfg, 'query', $queries, $range);
+        } catch (Throwable $e) {
+            vg_out_g(['error' => 'Import fehlgeschlagen'], 500);
+        }
+        vg_out_g(['ok' => true, 'pages' => $pages ? count($pages) : 0, 'queries' => $queries ? count($queries) : 0]);
+    }
+
+    // Variante 2: einzelne CSV mit ausdruecklicher Art.
     $kind = ($b['kind'] ?? '') === 'query' ? 'query' : (($b['kind'] ?? '') === 'page' ? 'page' : '');
     if ($kind === '') vg_out_g(['error' => 'kind muss page oder query sein'], 400);
     $csv = (string)($b['csv'] ?? '');
     if (trim($csv) === '') vg_out_g(['error' => 'csv fehlt'], 400);
     $rows = vg_parse_gsc_csv($csv);
     if (!$rows) vg_out_g(['error' => 'Keine gueltigen Zeilen erkannt. Ist es die CSV aus der Search Console (Spalten Klicks, Impressionen, CTR, Position)?'], 422);
-
-    $range = trim((string)($b['range'] ?? ''));
-    $range = $range !== '' ? mb_substr($range, 0, 120) : null;
-
-    $pdo->beginTransaction();
     try {
-        $del = $pdo->prepare('DELETE FROM gsc_rows WHERE kind = ?');
-        $del->execute([$kind]);
-        $ins = $pdo->prepare('INSERT INTO gsc_rows (kind, label, clicks, impressions, ctr, position) VALUES (?, ?, ?, ?, ?, ?)');
-        foreach ($rows as $r) { $ins->execute([$kind, $r[0], $r[1], $r[2], $r[3], $r[4]]); }
-        // Meta upsert, portabel ueber delete+insert.
-        $pdo->prepare('DELETE FROM gsc_meta WHERE kind = ?')->execute([$kind]);
-        $isSqlite = str_starts_with($cfg['db_dsn'], 'sqlite:');
-        $now = $isSqlite ? date('Y-m-d H:i:s') : null;
-        if ($now !== null) {
-            $pdo->prepare('INSERT INTO gsc_meta (kind, range_label, imported_at) VALUES (?, ?, ?)')->execute([$kind, $range, $now]);
-        } else {
-            $pdo->prepare('INSERT INTO gsc_meta (kind, range_label) VALUES (?, ?)')->execute([$kind, $range]);
-        }
-        $pdo->commit();
+        vg_gsc_store($pdo, $cfg, $kind, $rows, $range);
     } catch (Throwable $e) {
-        $pdo->rollBack();
         vg_out_g(['error' => 'Import fehlgeschlagen'], 500);
     }
     vg_out_g(['ok' => true, 'kind' => $kind, 'rows' => count($rows)]);
