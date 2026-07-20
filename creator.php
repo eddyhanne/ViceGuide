@@ -120,6 +120,7 @@ function vg_cr_footer(): string {
       . 'function vgToggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);try{localStorage.setItem("vg-theme",n);}catch(e){}vgSyncTheme();}'
       . 'function vgSyncTheme(){var d=document.documentElement.getAttribute("data-theme")==="dark";document.getElementById("tico").textContent=d?"☾":"☀";document.getElementById("tlbl").textContent=d?"Dunkel":"Hell";}vgSyncTheme();'
       . 'function vgLoadYt(el){var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
+      . 'function vgCopyShare(btn){var t=(document.getElementById("shareTxt")||{}).textContent||"";function ok(){var o=btn.textContent;btn.textContent="Kopiert ✓";setTimeout(function(){btn.textContent=o;},2000);}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){});}else{try{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(e){}}}'
       . 'function vgLoadTwitch(el){var login=el.getAttribute("data-twitch");if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.textContent="Im Livebetrieb läuft hier dein Twitch-Stream. Wir betten ihn erst auf Klick ein, vorher wird keine Verbindung zu Twitch aufgebaut (DSGVO-konform).";el.after(n);return;}var f=document.createElement("iframe");f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:16px";f.allowFullscreen=true;f.src="https://player.twitch.tv/?channel="+encodeURIComponent(login)+"&parent="+location.hostname+"&autoplay=true";el.replaceWith(f);}'
       . '</script></body></html>';
 }
@@ -150,7 +151,14 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .wrap{max-width:1000px;margin:0 auto;padding:0 20px 10px}
 .eyebrow{font-family:'Space Mono';font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
 /* Profil-Hero */
-.chero{position:relative;overflow:hidden;background:#2a1a5e url('/palms-hero.webp') center 32%/cover;border-radius:20px;margin:22px 0 0;padding:40px 22px 30px;text-align:center}
+.cstate{margin:18px 0 0;padding:11px 16px;border-radius:12px;background:var(--pill-bg);border:1px solid var(--pill-ln);color:var(--text-soft);font-size:13.5px;text-align:center}
+.cbadge{display:inline-flex;align-items:center;gap:6px;margin:0 auto 12px;font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:5px 13px;backdrop-filter:blur(4px)}
+.cbadge svg{color:#fff}
+.sharebox{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.sharebox code{flex:1;min-width:0;font-family:'Space Mono';font-size:12.5px;color:var(--text);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;line-height:1.5;word-break:break-word}
+.sharebox button{flex:0 0 auto;font-family:'Inter';font-weight:700;font-size:14px;color:var(--btn-text);background:var(--btn-bg);border:0;border-radius:12px;padding:0 20px;cursor:pointer}
+.sharebox button:hover{opacity:.92}
+.chero{position:relative;overflow:hidden;background:#2a1a5e url('/palms-hero.webp') center 32%/cover;border-radius:20px;margin:16px 0 0;padding:40px 22px 30px;text-align:center}
 .chero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,5,32,.35) 0%,rgba(12,5,32,.55) 55%,rgba(12,5,32,.8) 100%)}
 .chero-in{position:relative;z-index:2}
 .cavatar{width:118px;height:118px;border-radius:999px;object-fit:cover;margin:0 auto 14px;display:block;border:3px solid rgba(255,255,255,.85);box-shadow:0 10px 30px rgba(0,0,0,.5)}
@@ -233,10 +241,10 @@ $slug = preg_replace('/[^a-z0-9-]/', '', $_GET['slug'] ?? '');
 
 if ($slug === '') {
     /* ===== Uebersicht /creator/ ===== */
-    $rows = $pdo->query('SELECT * FROM creators WHERE active = 1 ORDER BY sort_order, id')->fetchAll();
-    $indexable = false;
-    foreach ($rows as $r) { if (!empty($r['seo_index'])) { $indexable = true; break; } }
-    // Uebersicht nur indexieren, wenn mindestens ein echter (seo=1) Partner drauf ist.
+    // Nur oeffentliche Partner (seo=1) werden gelistet. seo=0 ist der Vorschau-/
+    // Demo-Zustand: per Link erreichbar, aber nicht in der Uebersicht und noindex.
+    $rows = $pdo->query('SELECT * FROM creators WHERE active = 1 AND seo_index = 1 ORDER BY sort_order, id')->fetchAll();
+    $indexable = count($rows) > 0;
     $canonical = 'https://viceguide.de/creator/';
     $title = 'Partner-Creator - ViceGuide';
     $desc = 'Die Partner-Creator der deutschen GTA-6-Zentrale ViceGuide: ihre Profile, Kanäle und Lieblings-Einträge aus der Datenbank.';
@@ -330,9 +338,18 @@ $ld = [[
 echo vg_cr_head($title, $desc, $canonical, $isDemo, $ogImage, $ld, $accent);
 echo '<div class="wrap">';
 
+// Zustands-Banner: Demo bzw. private Vorschau (seo=0). Oeffentliche Partner
+// (seo=1) bekommen keinen Banner.
+if ($isDemo) {
+    $stateTxt = $twitchPlaceholder && $c['slug'] === 'beispiel'
+        ? 'Beispiel-Profil. So sieht eine Creator-Seite bei ViceGuide aus.'
+        : 'Deine Vorschau. Diese Seite ist noch nicht öffentlich, nur über diesen Link sichtbar.';
+    echo '<div class="cstate">' . $stateTxt . '</div>';
+}
+
 // Hero
 echo '<section class="chero"><div class="veil"></div><div class="chero-in">';
-if ($isDemo) echo '<div class="cdemo">Beispiel-Profil</div><br>';
+echo '<div class="cbadge"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 1.6l2.4 1.7 2.9-.2 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.2L12 22.4l-2.4-1.7-2.9.2-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.2L12 1.6zm-1.2 13.9l5-5-1.4-1.4-3.6 3.6-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg>ViceGuide-Partner</div>';
 echo $hasAvatar
     ? '<img class="cavatar" src="' . vg_cr_esc($avatarUrl) . '" alt="' . vg_cr_esc($name) . '">'
     : '<div class="cavatar ph">' . vg_cr_esc(mb_substr($name, 0, 1)) . '</div>';
@@ -409,6 +426,16 @@ if ($videos) {
     }
     echo '</div></section>';
 }
+
+// Für-deine-Community-Block: fertiger Beschreibungstext plus messbarer Link.
+// utm_source=<slug> laesst ViceGuide sehen, wie viele Besucher der Creator
+// schickt (eigenes hits-Tracking). Als Geschenk an die Community geframt.
+$shareUrl = 'https://viceguide.de/?utm_source=' . rawurlencode($c['slug']) . '&utm_medium=partner';
+$shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
+echo '<section class="sec"><h2 class="sec-h">Für deine Videobeschreibung</h2>'
+   . '<p class="sec-lead">Ein Satz für deine Beschreibung oder dein Panel: deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.</p>'
+   . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
+   . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
 
 echo '<a class="cback" href="/creator/">← Alle Partner-Creator</a>';
 echo '</div>' . vg_cr_footer();
