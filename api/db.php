@@ -42,16 +42,29 @@ function vg_seed_status_from_cat(PDO $pdo): void {
 function vg_seed_demo_creator(PDO $pdo): void {
     try {
         $n = (int)$pdo->query('SELECT COUNT(*) c FROM creators')->fetch()['c'];
-        if ($n > 0) return;
+        if ($n > 0) {
+            // Bereits vorhandener Demo (z.B. aus einem frueheren Deploy ohne
+            // accent/twitch): fehlende Felder nachruesten, Bestehendes nie
+            // ueberschreiben. Beruehrt nur den Demo-Datensatz 'beispiel'.
+            $st = $pdo->prepare("SELECT id, twitch_login, accent FROM creators WHERE slug = 'beispiel' LIMIT 1");
+            $st->execute();
+            $d = $st->fetch();
+            if ($d) {
+                $tw = trim((string)($d['twitch_login'] ?? '')) === '' ? 'beispiel' : $d['twitch_login'];
+                $ac = trim((string)($d['accent'] ?? '')) === '' ? '#8B3CFF' : $d['accent'];
+                $pdo->prepare('UPDATE creators SET twitch_login = ?, accent = ? WHERE id = ?')->execute([$tw, $ac, (int)$d['id']]);
+            }
+            return;
+        }
         $platforms = json_encode([
             ['label' => 'YouTube',   'url' => 'https://youtube.com/@beispiel'],
             ['label' => 'Twitch',    'url' => 'https://twitch.tv/beispiel'],
             ['label' => 'TikTok',    'url' => 'https://tiktok.com/@beispiel'],
             ['label' => 'Instagram', 'url' => 'https://instagram.com/beispiel'],
         ], JSON_UNESCAPED_UNICODE);
-        $bio = 'So könnte deine Creator-Seite bei ViceGuide aussehen. NeonNico ist ein erfundenes Beispiel: hier stehen dein Profil, deine Kanäle, deine Lieblings-Einträge aus der Datenbank und deine eingebetteten Videos. Deine Community sieht auf einen Blick, wer du bist, und findet dich dort, wo sie ohnehin nachschlägt.';
-        $ins = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, active, seo_index, sort_order) VALUES (?,?,?,?,?,1,0,0)');
-        $ins->execute(['beispiel', 'NeonNico', 'GTA-6-Creator, Beispiel-Profil', $bio, $platforms]);
+        $bio = 'So könnte deine Creator-Seite bei ViceGuide aussehen. NeonNico ist ein erfundenes Beispiel: hier stehen dein Profil, deine Kanäle, dein Live-Stream, deine Lieblings-Einträge aus der Datenbank und deine Videos. Deine Community sieht auf einen Blick, wer du bist, und findet dich dort, wo sie ohnehin nachschlägt.';
+        $ins = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, twitch_login, accent, active, seo_index, sort_order) VALUES (?,?,?,?,?,?,?,1,0,0)');
+        $ins->execute(['beispiel', 'NeonNico', 'GTA-6-Creator, Beispiel-Profil', $bio, $platforms, 'beispiel', '#8B3CFF']);
         $cid = (int)$pdo->lastInsertId();
         $favs = [
             ['vehicles',   'declasse-tulip-m-100', 'Lieblingsauto',      'Der Wagen von Jason und Lucia, für mich das Herz von GTA 6.'],
@@ -109,7 +122,7 @@ function vg_db(): array {
         $pdo->query('SELECT id FROM hits LIMIT 1');
         $pdo->query('SELECT id FROM events LIMIT 1');
         $pdo->query('SELECT id FROM gsc_rows LIMIT 1');
-        $pdo->query('SELECT id FROM creators LIMIT 1');
+        $pdo->query('SELECT id, accent FROM creators LIMIT 1');
         $pdo->query('SELECT id FROM creator_favorites LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
@@ -242,6 +255,7 @@ function vg_db(): array {
             avatar TEXT,
             avatarfit_json TEXT,
             twitch_login TEXT,
+            accent TEXT,
             active INTEGER NOT NULL DEFAULT 1,
             seo_index INTEGER NOT NULL DEFAULT 1,
             sort_order INTEGER NOT NULL DEFAULT 0,
@@ -258,6 +272,10 @@ function vg_db(): array {
             quote TEXT,
             sort_order INTEGER NOT NULL DEFAULT 0
         )');
+        try {
+            $ccols = array_column($pdo->query("PRAGMA table_info(creators)")->fetchAll(), 'name');
+            if (!in_array('accent', $ccols, true)) { $pdo->exec('ALTER TABLE creators ADD COLUMN accent TEXT'); }
+        } catch (Throwable $e) {}
         vg_seed_demo_creator($pdo);
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
@@ -449,6 +467,7 @@ function vg_db(): array {
             avatar MEDIUMTEXT NULL,
             avatarfit_json VARCHAR(100) NULL,
             twitch_login VARCHAR(100) NULL,
+            accent VARCHAR(20) NULL,
             active TINYINT NOT NULL DEFAULT 1,
             seo_index TINYINT NOT NULL DEFAULT 1,
             sort_order INT NOT NULL DEFAULT 0,
@@ -468,6 +487,10 @@ function vg_db(): array {
             INDEX idx_entry (section, entry_slug),
             FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        try {
+            $cc = $pdo->query("SHOW COLUMNS FROM creators LIKE 'accent'")->fetchAll();
+            if (!$cc) { $pdo->exec('ALTER TABLE creators ADD COLUMN accent VARCHAR(20) NULL'); }
+        } catch (Throwable $e) {}
         vg_seed_demo_creator($pdo);
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
