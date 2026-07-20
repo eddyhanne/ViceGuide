@@ -70,11 +70,17 @@ function vg_cr_icon(string $label): string {
 }
 
 /* ---- gemeinsame Seiten-Huelle (Head, Header, Footer) ---- */
-function vg_cr_head(string $title, string $desc, string $canonical, bool $noindex, string $ogImage, array $jsonLd): string {
+function vg_cr_head(string $title, string $desc, string $canonical, bool $noindex, string $ogImage, array $jsonLd, string $accent = ''): string {
     $robots = $noindex ? 'noindex, follow' : 'index, follow';
     $ld = '';
     foreach ($jsonLd as $obj) {
         $ld .= '<script type="application/ld+json">' . json_encode($obj, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+    }
+    // Markenfarbe des Creators: faerbt die ganze Profilseite (Links, Badges,
+    // Buttons) in seiner Farbe, in Hell und Dunkel. Nur gueltige Hex-Werte.
+    $accentStyle = '';
+    if ($accent !== '' && preg_match('/^#[0-9a-fA-F]{3,8}$/', $accent)) {
+        $accentStyle = '<style>:root{--accent:' . $accent . '}:root[data-theme="light"]{--accent:' . $accent . '}</style>';
     }
     $e = fn($s) => vg_cr_esc($s);
     return '<!doctype html><html lang="de" data-theme="light"><head>'
@@ -91,7 +97,7 @@ function vg_cr_head(string $title, string $desc, string $canonical, bool $noinde
       . '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">'
       . '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
       . $ld
-      . '<style>' . vg_cr_css() . '</style></head><body>'
+      . '<style>' . vg_cr_css() . '</style>' . $accentStyle . '</head><body>'
       . vg_cr_header();
 }
 
@@ -114,6 +120,7 @@ function vg_cr_footer(): string {
       . 'function vgToggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);try{localStorage.setItem("vg-theme",n);}catch(e){}vgSyncTheme();}'
       . 'function vgSyncTheme(){var d=document.documentElement.getAttribute("data-theme")==="dark";document.getElementById("tico").textContent=d?"☾":"☀";document.getElementById("tlbl").textContent=d?"Dunkel":"Hell";}vgSyncTheme();'
       . 'function vgLoadYt(el){var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
+      . 'function vgLoadTwitch(el){var login=el.getAttribute("data-twitch");if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.textContent="Im Livebetrieb läuft hier dein Twitch-Stream. Wir betten ihn erst auf Klick ein, vorher wird keine Verbindung zu Twitch aufgebaut (DSGVO-konform).";el.after(n);return;}var f=document.createElement("iframe");f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:16px";f.allowFullscreen=true;f.src="https://player.twitch.tv/?channel="+encodeURIComponent(login)+"&parent="+location.hostname+"&autoplay=true";el.replaceWith(f);}'
       . '</script></body></html>';
 }
 
@@ -183,6 +190,16 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .ytplay svg{width:24px;height:24px;fill:#221041;margin-left:3px}
 .vid-t{padding:12px 15px;font-weight:600;font-size:14.5px;color:var(--text)}
 .vid-note{padding:0 15px 13px;font-size:11.5px;color:var(--text-soft)}
+/* Live-Stream-Modul */
+.twph{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:16px;overflow:hidden;cursor:pointer;background:#2a1a5e url('/palms-hero.webp') center/cover}
+.tw-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,5,32,.45),rgba(12,5,32,.72))}
+.tw-live{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;color:#fff;background:#e23636;padding:5px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(226,54,54,.5)}
+.tw-badge{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;color:#fff;background:#9147ff;padding:5px 11px;border-radius:999px}
+.tw-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:74px;height:74px;border-radius:999px;background:rgba(145,71,255,.95);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .15s}
+.twph:hover .tw-play{transform:translate(-50%,-50%) scale(1.08)}
+.tw-play svg{width:32px;height:32px;fill:#fff;margin-left:4px}
+.tw-name{position:absolute;bottom:14px;left:16px;z-index:2;font-family:'Space Mono';font-size:13px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.tw-note{margin-top:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;font-size:13.5px;color:var(--text-soft);line-height:1.55}
 /* Zurueck-Link */
 .cback{display:inline-flex;align-items:center;gap:6px;margin:20px 0 0;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none}
 /* Uebersicht */
@@ -279,6 +296,9 @@ $avatarUrl = $hasAvatar ? ('/api/creator_image.php?id=' . $cid . '&v=' . urlenco
 $ogImage = $hasAvatar ? ('https://viceguide.de/api/creator_image.php?id=' . $cid) : 'https://viceguide.de/og-image.jpg';
 $canonical = 'https://viceguide.de/creator/' . $c['slug'];
 $isDemo = empty($c['seo_index']);   // die Beispiel-/Vorschauseite wird nicht indexiert
+$accent = trim((string)($c['accent'] ?? ''));
+$twitch = trim((string)($c['twitch_login'] ?? ''));
+$twitchPlaceholder = ($twitch === 'beispiel');   // Demo-Kanal, echter Embed waere leer
 
 $title = $name . ($tagline !== '' ? ' - ' . $tagline : ' - Partner-Creator') ;
 if (mb_strlen($title . ' - ViceGuide') <= 60) $title .= ' - ViceGuide';
@@ -307,7 +327,7 @@ $ld = [[
     ],
 ]];
 
-echo vg_cr_head($title, $desc, $canonical, $isDemo, $ogImage, $ld);
+echo vg_cr_head($title, $desc, $canonical, $isDemo, $ogImage, $ld, $accent);
 echo '<div class="wrap">';
 
 // Hero
@@ -328,6 +348,25 @@ if ($platforms) {
     echo '</div>';
 }
 echo '</div></section>';
+
+// Live-Stream (Stufe 3): prominentes, DSGVO-konformes Click-to-Load-Modul.
+// Fuer den Demo-Kanal (twitch=beispiel) wird statt eines leeren Embeds eine
+// Erklaerflaeche gezeigt. Fuer echte Creator laedt der Klick player.twitch.tv
+// mit parent=<domain>. Ein rotes LIVE-Signal zeigt nur die Demo als Illustration.
+if ($twitch !== '') {
+    $liveTag = $twitchPlaceholder
+        ? '<span class="tw-live">● LIVE</span>'
+        : '<span class="tw-badge">Twitch</span>';
+    $lead = $twitchPlaceholder
+        ? 'So wird dein Live-Stream eingebettet, direkt und prominent auf deiner Seite. Er lädt erst auf Klick, DSGVO-konform.'
+        : 'Lädt erst auf Klick, es wird vorher keine Verbindung zu Twitch aufgebaut.';
+    echo '<section class="sec"><h2 class="sec-h">Live-Stream</h2><p class="sec-lead">' . $lead . '</p>'
+       . '<button class="twph" data-twitch="' . vg_cr_esc($twitch) . '"' . ($twitchPlaceholder ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
+       . '<span class="tw-veil"></span>' . $liveTag
+       . '<span class="tw-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
+       . '<span class="tw-name">twitch.tv/' . vg_cr_esc($twitch) . '</span>'
+       . '</button></section>';
+}
 
 // Bio
 if ($bio !== '') {
