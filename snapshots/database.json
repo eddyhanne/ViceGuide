@@ -1069,7 +1069,12 @@
           "Typ": "Inselgruppe",
           "Vorbild": "Venetian Islands (Miami)"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=81&v=2026-07-20+15%3A44%3A08",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.2
+        },
         "name": "Venetian Islands",
         "seo": false,
         "slug": "venetian-islands",
@@ -1166,12 +1171,18 @@
       {
         "_id": 86,
         "cat": "Port Gellhorn",
+        "credit": "Rockstar",
         "desc": "Gellhorn International ist der Flughafen bei Port Gellhorn. Als zweiter großer Luftfahrt-Knoten neben Vice City erweitert er die Reise- und Missionsmöglichkeiten im Westen.",
         "fields": {
           "Erstmals": "Karte",
           "Typ": "Flughafen"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=86&v=2026-07-20+15%3A44%3A08",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Gellhorn International",
         "seo": false,
         "slug": "gellhorn-international",
@@ -1264,7 +1275,12 @@
           "Erstmals": "Karte",
           "Typ": "Siedlung"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=92&v=2026-07-20+15%3A44%3A08",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.17
+        },
         "name": "Hamlet",
         "seo": false,
         "slug": "hamlet",
@@ -1295,6 +1311,7 @@
       {
         "_id": 94,
         "cat": "Vice City",
+        "credit": "Rockstar",
         "desc": "Der VC Port ist der Seehafen von Vice City, Umschlagplatz für Fracht und ein naheliegender Schauplatz für Schmuggel und Überfälle. Ein industrielles Gegengewicht zu den Stränden.",
         "fields": {
           "Erstmals": "Karte",
@@ -1310,13 +1327,19 @@
       {
         "_id": 95,
         "cat": "Ambrosia",
+        "credit": "Rockstar",
         "desc": "Der Stock Golf Club liegt in der Region um Ambrosia. Er passt zu möglichen Freizeitaktivitäten wie Golf und ist ein typischer Schauplatz für die gehobene, spießige Seite Leonidas.",
         "fields": {
           "Erstmals": "Karte",
           "Region": "Ambrosia",
           "Typ": "Golfclub"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=95&v=2026-07-20+15%3A44%3A08",
+        "imgfit": {
+          "x": 69,
+          "y": 56,
+          "zoom": 1.21
+        },
         "name": "Stock Golf Club",
         "seo": false,
         "slug": "stock-golf-club",
@@ -1369,13 +1392,19 @@
       {
         "_id": 208,
         "cat": "Vice City",
+        "credit": "Rockstar",
         "desc": "La Perle ist das haitianisch geprägte Viertel von Vice City, angelehnt an Miamis Little Haiti. Der Name ist kreolisch für „die Perle\". Hier ist unter anderem die Straßengang San4San zu Hause, das Viertel bringt die haitianische Kultur ins Stadtbild.",
         "fields": {
           "Erstmals": "Karte",
           "Typ": "Stadtviertel",
           "Vorbild": "Little Haiti (Miami)"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=208&v=2026-07-20+15%3A37%3A52",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
         "name": "La Perle",
         "seo": false,
         "slug": "la-perle",
@@ -1385,12 +1414,18 @@
       {
         "_id": 209,
         "cat": "Vice City",
+        "credit": "Rockstar",
         "desc": "Crosstown ist eines der Stadtviertel von Vice City, das in den Trailern auftaucht. Es steht für die dichteren, alltäglichen Wohn- und Geschäftsstraßen jenseits der Glamour-Strände. Nähere Details folgen mit mehr Material.",
         "fields": {
           "Erstmals": "Trailer",
           "Typ": "Stadtviertel"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=209&v=2026-07-20+15%3A37%3A52",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Crosstown",
         "seo": false,
         "slug": "crosstown",
