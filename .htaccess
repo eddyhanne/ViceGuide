@@ -28,6 +28,12 @@ RewriteRule ^artikel/gta6-trailer-3-wann-kommt-er/?$ https://viceguide.de/artike
 RewriteRule ^ig/?$ https://viceguide.de/?utm_source=instagram&utm_medium=bio&utm_campaign=profil [L,R=302]
 RewriteRule ^ig/([a-z0-9-]+)/?$ https://viceguide.de/?utm_source=instagram&utm_medium=story&utm_campaign=$1 [L,R=302]
 
+# Kurzer, huebscher Partner-Link fuer die Videobeschreibung eines Creators.
+# /c/<creator-slug> leitet mit dem Tracking auf die Startseite (utm_source=<slug>),
+# damit die kopierte Zeile kurz bleibt statt der langen UTM-URL. 302, reiner
+# Marketing-/Tracking-Link (wie /ig).
+RewriteRule ^c/([a-z0-9-]+)/?$ https://viceguide.de/?utm_source=$1&utm_medium=partner [L,R=302]
+
 # Trailing-Slash-Normalisierung (Duplicate Content vermeiden). Greift nur echte
 # Browser-Requests ueber THE_REQUEST ab, die internen Rewrites auf die PHP-Fassaden
 # bleiben unberuehrt, daher keine Endlosschleife.
