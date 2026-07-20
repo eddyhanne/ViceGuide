@@ -461,7 +461,7 @@ if ($preview) {
 // Für-deine-Community-Block: fertiger Beschreibungstext plus messbarer Link.
 // utm_source=<slug> laesst ViceGuide sehen, wie viele Besucher der Creator
 // schickt (eigenes hits-Tracking). Als Geschenk an die Community geframt.
-$shareUrl = 'https://viceguide.de/?utm_source=' . rawurlencode($c['slug']) . '&utm_medium=partner';
+$shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
 $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
 echo '<section class="sec"><h2 class="sec-h">Für deine Videobeschreibung</h2>'
    . '<p class="sec-lead">Ein Satz für deine Beschreibung oder dein Panel: deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.</p>'
