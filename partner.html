@@ -124,7 +124,11 @@
   .cta p{color:var(--text-soft);font-size:15px;max-width:560px;margin:0 auto 18px}
   .btn{display:inline-block;font-family:'Inter';font-weight:700;font-size:15px;text-decoration:none;background:var(--btn-bg);color:var(--btn-text);padding:14px 28px;border-radius:999px;transition:transform .15s,box-shadow .15s}
   .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-  .cta .mailhint{display:block;margin-top:12px;font-family:'Space Mono';font-size:12.5px;color:var(--text-soft)}
+  .cta .mailhint{display:inline-block;margin-top:12px;font-family:'Space Mono';font-size:12.5px;color:var(--text-soft);background:none;border:none;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+  .cta .mailhint:hover{color:var(--accent)}
+  /* Bestaetigungs-Toast, falls kein Mailprogramm registriert ist (Desktop-Webmail). */
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);background:var(--btn-bg);color:var(--btn-text);font-family:'Inter';font-size:14px;font-weight:600;padding:12px 20px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;max-width:calc(100vw - 32px);text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* Footer */
   footer{margin-top:46px;border-top:1px solid var(--line);background:var(--bg-2)}
@@ -148,7 +152,7 @@
     </a>
     <div class="top-right">
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Zwischen Hell- und Dunkelmodus wechseln"><span id="tico">☀</span><span id="tlbl">Hell</span></button>
-      <a class="top-cta" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide">Schreib uns</a>
+      <a class="top-cta" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide" onclick="contactClick()">Schreib uns</a>
     </div>
   </div>
 </header>
@@ -252,8 +256,8 @@
   <section class="cta">
     <h3>Klingt nach einer Zusammenarbeit?</h3>
     <p>Schreib uns eine Zeile mit deinem Kanal und deinem nächsten Thema. Du bekommst ein Beispiel-Faktenpaket, unverbindlich, ohne Haken.</p>
-    <a class="btn" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide">Partner werden</a>
-    <span class="mailhint">info@viceguide.de</span>
+    <a class="btn" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide" onclick="contactClick()">Partner werden</a>
+    <button class="mailhint" type="button" onclick="contactClick()">info@viceguide.de kopieren</button>
   </section>
 
 </div>
@@ -270,7 +274,41 @@
   </div>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
+  var VG_MAIL='info@viceguide.de';
+  var toastTimer;
+  function showToast(msg){
+    var t=document.getElementById('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.classList.remove('show');},3200);
+  }
+  // Kopiert die Adresse in die Zwischenablage und gibt sichtbares Feedback.
+  // Das mailto laeuft parallel weiter (kein preventDefault): wer ein
+  // Mailprogramm hat, dem oeffnet es sich; wer keins hat (Desktop-Webmail),
+  // bekommt trotzdem die kopierte Adresse plus Bestaetigung statt "nichts".
+  function contactClick(){
+    var done=function(){showToast('E-Mail-Adresse kopiert: '+VG_MAIL);};
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(VG_MAIL).then(done,fallbackCopy);
+      }else{fallbackCopy();}
+    }catch(e){fallbackCopy();}
+  }
+  function fallbackCopy(){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=VG_MAIL;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.focus();ta.select();
+      document.execCommand('copy');document.body.removeChild(ta);
+      showToast('E-Mail-Adresse kopiert: '+VG_MAIL);
+    }catch(e){
+      showToast('Schreib uns an: '+VG_MAIL);
+    }
+  }
   function toggleTheme(){
     var h=document.documentElement;
     var n=h.getAttribute('data-theme')==='dark'?'light':'dark';
