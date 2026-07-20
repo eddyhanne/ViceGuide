@@ -152,45 +152,50 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .eyebrow{font-family:'Space Mono';font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
 /* Profil-Hero */
 .cstate{margin:18px 0 0;padding:11px 16px;border-radius:12px;background:var(--pill-bg);border:1px solid var(--pill-ln);color:var(--text-soft);font-size:13.5px;text-align:center}
-.cbadge{display:inline-flex;align-items:center;gap:6px;margin:0 auto 12px;font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:5px 13px;backdrop-filter:blur(4px)}
+.cbadge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin:0 0 2px;font-family:'Space Mono';font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 11px;backdrop-filter:blur(4px)}
+@media(max-width:560px){.cbadge{align-self:center}}
 .cbadge svg{color:#fff}
 .sharebox{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
 .sharebox code{flex:1;min-width:0;font-family:'Space Mono';font-size:12.5px;color:var(--text);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;line-height:1.5;word-break:break-word}
 .sharebox button{flex:0 0 auto;font-family:'Inter';font-weight:700;font-size:14px;color:var(--btn-text);background:var(--btn-bg);border:0;border-radius:12px;padding:0 20px;cursor:pointer}
 .sharebox button:hover{opacity:.92}
-.chero{position:relative;overflow:hidden;background:#2a1a5e url('/palms-hero.webp') center 32%/cover;border-radius:20px;margin:16px 0 0;padding:40px 22px 30px;text-align:center}
-.chero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,5,32,.35) 0%,rgba(12,5,32,.55) 55%,rgba(12,5,32,.8) 100%)}
-.chero-in{position:relative;z-index:2}
-.cavatar{width:118px;height:118px;border-radius:999px;object-fit:cover;margin:0 auto 14px;display:block;border:3px solid rgba(255,255,255,.85);box-shadow:0 10px 30px rgba(0,0,0,.5)}
-.cavatar.ph{display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-weight:700;font-size:44px;color:#fff;background:linear-gradient(135deg,#7a3cff,#d0367f)}
-.chero h1{font-family:'Oswald';font-weight:700;font-size:clamp(28px,5vw,42px);color:#fff;line-height:1.05;letter-spacing:.5px;text-shadow:0 3px 18px rgba(0,0,0,.55)}
-.ctag{color:rgba(255,255,255,.92);font-weight:500;font-size:clamp(14px,2.2vw,17px);margin-top:6px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
-.cdemo{display:inline-block;margin-bottom:12px;font-family:'Space Mono';font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:4px 12px}
-.cplat{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:16px}
-.cplat a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:600;font-size:13.5px;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 15px;backdrop-filter:blur(4px);transition:background .15s}
-.cplat a:hover{background:rgba(255,255,255,.26)}
-.sec{margin:38px 0 0}
-.sec-h{font-family:'Oswald';font-weight:700;font-size:clamp(20px,3vw,26px);color:var(--heading);letter-spacing:.4px;margin:0 0 4px}
+.chero{position:relative;overflow:hidden;background:#2a1a5e url('/palms-hero.webp') center 32%/cover;border-radius:18px;margin:16px 0 0;padding:22px}
+.chero .veil{position:absolute;inset:0;background:linear-gradient(120deg,rgba(12,5,32,.74) 0%,rgba(12,5,32,.5) 60%,rgba(12,5,32,.34) 100%)}
+.chero-in{position:relative;z-index:2;display:flex;align-items:center;gap:18px}
+.cmeta{min-width:0;display:flex;flex-direction:column;gap:4px}
+.cavatar{width:88px;height:88px;border-radius:999px;object-fit:cover;display:block;flex:0 0 auto;border:3px solid rgba(255,255,255,.85);box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.cavatar.ph{display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-weight:700;font-size:34px;color:#fff;background:linear-gradient(135deg,#7a3cff,#d0367f)}
+.chero h1{font-family:'Oswald';font-weight:700;font-size:clamp(24px,3.6vw,34px);color:#fff;line-height:1.06;letter-spacing:.4px;text-shadow:0 3px 18px rgba(0,0,0,.55)}
+.ctag{color:rgba(255,255,255,.92);font-weight:500;font-size:14.5px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.cplat{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;margin-top:6px}
+.cplat a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;font-size:13px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px;backdrop-filter:blur(4px);transition:background .15s}
+.cplat a:hover{background:rgba(255,255,255,.28)}
+@media(max-width:560px){.chero-in{flex-direction:column;text-align:center;gap:12px}.cplat{justify-content:center}.cmeta{align-items:center}}
+.sec{margin:26px 0 0}
+.sec-h{font-family:'Oswald';font-weight:700;font-size:clamp(18px,2.6vw,22px);color:var(--heading);letter-spacing:.3px;margin:0 0 4px}
 .sec-lead{color:var(--text-soft);font-size:14.5px;margin:0 0 16px}
 .cbio{color:var(--text);font-size:16px;line-height:1.7;max-width:760px}
 .cbio p{margin:0 0 12px}
 /* Favoriten-Grid */
-.favgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:800px){.favgrid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.favgrid{grid-template-columns:1fr}}
+.favgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+@media(max-width:800px){.favgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.favgrid{grid-template-columns:1fr 1fr}}
 .favcard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
 .favcard:hover{border-color:var(--accent);transform:translateY(-2px)}
 .fav-th{aspect-ratio:16/10;background:var(--surface-2);position:relative;overflow:hidden}
 .fav-th img{width:100%;height:100%;object-fit:cover;display:block}
 .fav-th.ph{display:grid;place-items:center;color:var(--accent);font-family:'Oswald';font-size:30px;opacity:.6}
 .fav-lbl{position:absolute;top:9px;left:9px;font-family:'Space Mono';font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);padding:4px 9px;border-radius:999px}
-.fav-b{padding:13px 15px 15px}
-.fav-n{font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.15}
-.fav-s{font-family:'Space Mono';font-size:11px;color:var(--text-soft);margin-top:2px}
-.fav-q{margin-top:10px;font-size:13.5px;font-style:italic;color:var(--text-soft);line-height:1.5;border-left:2px solid var(--accent);padding-left:10px}
+.fav-b{padding:10px 12px 12px}
+.fav-n{font-family:'Oswald';font-weight:600;font-size:15.5px;color:var(--heading);line-height:1.15}
+.fav-s{font-family:'Space Mono';font-size:10.5px;color:var(--text-soft);margin-top:2px}
+.fav-q{margin-top:8px;font-size:12.5px;font-style:italic;color:var(--text-soft);line-height:1.45;border-left:2px solid var(--accent);padding-left:9px}
+.fav-lbl{font-size:9px}
 /* Videos */
-.vidgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:640px){.vidgrid{grid-template-columns:1fr}}
+.vidgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.vidgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.vidgrid{grid-template-columns:1fr}}
+.vid-t{font-size:13.5px;padding:10px 13px}
 .vidcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .ytph{position:relative;aspect-ratio:16/9;background:#2a1a5e url('/palms-hero.webp') center/cover;cursor:pointer;display:grid;place-items:center;border:0;width:100%}
 .ytph::after{content:"";position:absolute;inset:0;background:rgba(12,5,32,.5)}
@@ -199,7 +204,7 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .vid-t{padding:12px 15px;font-weight:600;font-size:14.5px;color:var(--text)}
 .vid-note{padding:0 15px 13px;font-size:11.5px;color:var(--text-soft)}
 /* Live-Stream-Modul */
-.twph{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:16px;overflow:hidden;cursor:pointer;background:#2a1a5e url('/palms-hero.webp') center/cover}
+.twph{position:relative;display:block;width:100%;max-width:620px;aspect-ratio:16/9;border:0;border-radius:14px;overflow:hidden;cursor:pointer;background:#2a1a5e url('/palms-hero.webp') center/cover}
 .tw-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,5,32,.45),rgba(12,5,32,.72))}
 .tw-live{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;color:#fff;background:#e23636;padding:5px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(226,54,54,.5)}
 .tw-badge{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;color:#fff;background:#9147ff;padding:5px 11px;border-radius:999px}
@@ -351,12 +356,16 @@ if ($isDemo) {
     echo '<div class="cstate">' . $stateTxt . '</div>';
 }
 
-// Hero
-echo '<section class="chero"><div class="veil"></div><div class="chero-in">';
-echo '<div class="cbadge"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 1.6l2.4 1.7 2.9-.2 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.2L12 22.4l-2.4-1.7-2.9.2-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.2L12 1.6zm-1.2 13.9l5-5-1.4-1.4-3.6 3.6-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg>ViceGuide-Partner</div>';
+// Hero (kompaktes horizontales Band). Eigener Cover-Hintergrund, falls gesetzt,
+// sonst die Palmen-Optik.
+$coverUrl = !empty($c['cover']) ? ('/api/creator_image.php?id=' . $cid . '&field=cover&v=' . urlencode((string)($c['updated_at'] ?? ''))) : '';
+$heroStyle = $coverUrl ? (' style="background-image:url(\'' . vg_cr_esc($coverUrl) . '\')"') : '';
+echo '<section class="chero"' . $heroStyle . '><div class="veil"></div><div class="chero-in">';
 echo $hasAvatar
     ? '<img class="cavatar" src="' . vg_cr_esc($avatarUrl) . '" alt="' . vg_cr_esc($name) . '">'
     : '<div class="cavatar ph">' . vg_cr_esc(mb_substr($name, 0, 1)) . '</div>';
+echo '<div class="cmeta">';
+echo '<div class="cbadge"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 1.6l2.4 1.7 2.9-.2 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.2L12 22.4l-2.4-1.7-2.9.2-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.2L12 1.6zm-1.2 13.9l5-5-1.4-1.4-3.6 3.6-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg>ViceGuide-Partner</div>';
 echo '<h1>' . vg_cr_esc($name) . '</h1>';
 if ($tagline !== '') echo '<div class="ctag">' . vg_cr_esc($tagline) . '</div>';
 if ($platforms) {
@@ -368,6 +377,7 @@ if ($platforms) {
     }
     echo '</div>';
 }
+echo '</div>';
 echo '</div></section>';
 
 // Live-Stream (Stufe 3): prominentes, DSGVO-konformes Click-to-Load-Modul.

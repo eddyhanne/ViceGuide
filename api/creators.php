@@ -125,6 +125,7 @@ function vg_creatorRow(PDO $pdo, array $r, bool $full = false): array {
         'avatar'   => $hasAvatar ? ($full ? $r['avatar'] : ('api/creator_image.php?id=' . (int)$r['id'] . '&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'twitch'   => $r['twitch_login'] ?: null,
         'accent'   => $r['accent'] ?: null,
+        'cover'    => !empty($r['cover']) ? ($full ? $r['cover'] : ('api/creator_image.php?id=' . (int)$r['id'] . '&field=cover&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'active'   => !empty($r['active']),
         'seo'      => !empty($r['seo_index']),
         'favorites'=> vg_resolve_favorites($pdo, vg_creator_fav_rows($pdo, (int)$r['id'])),
@@ -146,6 +147,7 @@ function vg_writeCreatorFields(PDO $pdo, int $id, array $d, bool $clearDraft): v
     if (array_key_exists('platforms', $d)) { $sets[] = 'platforms_json = ?'; $vals[] = $d['platforms'] ? json_encode($d['platforms'], JSON_UNESCAPED_UNICODE) : null; }
     if (array_key_exists('videos', $d))    { $sets[] = 'videos_json = ?';    $vals[] = $d['videos'] ? json_encode($d['videos'], JSON_UNESCAPED_UNICODE) : null; }
     if (array_key_exists('avatar', $d))    { $sets[] = 'avatar = ?';         $vals[] = $d['avatar']; }
+    if (array_key_exists('cover', $d))     { $sets[] = 'cover = ?';          $vals[] = $d['cover']; }
     if (array_key_exists('avatarfit', $d)) { $sets[] = 'avatarfit_json = ?'; $vals[] = $d['avatarfit'] ? json_encode($d['avatarfit'], JSON_UNESCAPED_UNICODE) : null; }
     if (array_key_exists('active', $d))    { $sets[] = 'active = ?';         $vals[] = !empty($d['active']) ? 1 : 0; }
     if (array_key_exists('seo', $d))       { $sets[] = 'seo_index = ?';      $vals[] = !empty($d['seo']) ? 1 : 0; }
@@ -217,8 +219,8 @@ if ($method === 'POST') {
     $slug = vg_creator_slug($pdo, trim((string)($b['slug'] ?? '')) ?: $name);
     $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) m FROM creators')->fetch()['m'] + 1;
 
-    $stmt = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, videos_json, avatar, avatarfit_json, twitch_login, accent, active, seo_index, sort_order)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, videos_json, avatar, avatarfit_json, twitch_login, accent, cover, active, seo_index, sort_order)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute([
         $slug,
         $name,
@@ -230,6 +232,7 @@ if ($method === 'POST') {
         isset($b['avatarfit']) ? json_encode($b['avatarfit'], JSON_UNESCAPED_UNICODE) : null,
         $b['twitch'] ?? null,
         $b['accent'] ?? null,
+        $b['cover'] ?? null,
         array_key_exists('active', $b) ? (!empty($b['active']) ? 1 : 0) : 1,
         array_key_exists('seo', $b) ? (!empty($b['seo']) ? 1 : 0) : 1,
         $maxOrder,
@@ -257,7 +260,7 @@ if ($method === 'PUT') {
     if (!$row) vg_c_out(['error' => 'Creator nicht gefunden'], 404);
 
     $draft = $row['draft_json'] ? (json_decode($row['draft_json'], true) ?: []) : [];
-    $allowed = ['name','tagline','bio','platforms','videos','avatar','avatarfit','twitch','accent','active','seo','favorites'];
+    $allowed = ['name','tagline','bio','platforms','videos','avatar','avatarfit','twitch','accent','cover','active','seo','favorites'];
     foreach ($allowed as $key) {
         if (array_key_exists($key, $b)) { $draft[$key] = $b[$key]; }
     }
