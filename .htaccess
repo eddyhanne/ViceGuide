@@ -94,6 +94,12 @@ RewriteRule ^news/?$ section.php?page=news [L,QSA]
 # Eigene URLs pro News-Rubrik (/news/leaks ...), section.php filtert per cat.
 RewriteRule ^news/([a-z]+)/?$ section.php?page=news&cat=$1 [L,QSA]
 
+# Partner-Landingpage (Creator-Akquise). Saubere URL /partner liefert die
+# statische partner.html intern aus (kein Redirect, Adresse bleibt /partner).
+# Bewusst NICHT in der Sidebar verlinkt und per <meta robots noindex> aus dem
+# Index gehalten: erreichbar nur ueber den Link in der Ansprache-Mail.
+RewriteRule ^partner/?$ partner.html [L]
+
 # Sitemap dynamisch aus der Datenbank erzeugen, Adresse bleibt /sitemap.xml.
 RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
 
