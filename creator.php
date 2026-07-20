@@ -119,7 +119,7 @@ function vg_cr_footer(): string {
       . '<script>'
       . 'function vgToggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);try{localStorage.setItem("vg-theme",n);}catch(e){}vgSyncTheme();}'
       . 'function vgSyncTheme(){var d=document.documentElement.getAttribute("data-theme")==="dark";document.getElementById("tico").textContent=d?"☾":"☀";document.getElementById("tlbl").textContent=d?"Dunkel":"Hell";}vgSyncTheme();'
-      . 'function vgLoadYt(el){var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
+      . 'function vgLoadYt(el){if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.style.margin="0";n.textContent="Im Livebetrieb erscheint hier dein Video, DSGVO-konform auf Klick.";var card=el.parentNode;if(card){card.appendChild(n);}return;}var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
       . 'function vgCopyShare(btn){var t=(document.getElementById("shareTxt")||{}).textContent||"";function ok(){var o=btn.textContent;btn.textContent="Kopiert ✓";setTimeout(function(){btn.textContent=o;},2000);}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){});}else{try{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(e){}}}'
       . 'function vgLoadTwitch(el){var login=el.getAttribute("data-twitch");if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.textContent="Im Livebetrieb läuft hier dein Twitch-Stream. Wir betten ihn erst auf Klick ein, vorher wird keine Verbindung zu Twitch aufgebaut (DSGVO-konform).";el.after(n);return;}var f=document.createElement("iframe");f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:16px";f.allowFullscreen=true;f.src="https://player.twitch.tv/?channel="+encodeURIComponent(login)+"&parent="+location.hostname+"&autoplay=true";el.replaceWith(f);}'
       . '</script></body></html>';
@@ -306,7 +306,11 @@ $canonical = 'https://viceguide.de/creator/' . $c['slug'];
 $isDemo = empty($c['seo_index']);   // die Beispiel-/Vorschauseite wird nicht indexiert
 $accent = trim((string)($c['accent'] ?? ''));
 $twitch = trim((string)($c['twitch_login'] ?? ''));
-$twitchPlaceholder = ($twitch === 'beispiel');   // Demo-Kanal, echter Embed waere leer
+// seo=0 heisst Demo oder private Vorschau: alles wird illustrativ gezeigt (kein
+// echter Stream, keine echten fremden Videos), damit der Creator nur SIEHT, wie
+// seine Seite aussehen wird. Erst die oeffentliche Live-Seite (seo=1) bettet
+// echte Inhalte ein.
+$preview = $isDemo;
 
 $title = $name . ($tagline !== '' ? ' - ' . $tagline : ' - Partner-Creator') ;
 if (mb_strlen($title . ' - ViceGuide') <= 60) $title .= ' - ViceGuide';
@@ -341,7 +345,7 @@ echo '<div class="wrap">';
 // Zustands-Banner: Demo bzw. private Vorschau (seo=0). Oeffentliche Partner
 // (seo=1) bekommen keinen Banner.
 if ($isDemo) {
-    $stateTxt = $twitchPlaceholder && $c['slug'] === 'beispiel'
+    $stateTxt = $c['slug'] === 'beispiel'
         ? 'Beispiel-Profil. So sieht eine Creator-Seite bei ViceGuide aus.'
         : 'Deine Vorschau. Diese Seite ist noch nicht öffentlich, nur über diesen Link sichtbar.';
     echo '<div class="cstate">' . $stateTxt . '</div>';
@@ -370,18 +374,20 @@ echo '</div></section>';
 // Fuer den Demo-Kanal (twitch=beispiel) wird statt eines leeren Embeds eine
 // Erklaerflaeche gezeigt. Fuer echte Creator laedt der Klick player.twitch.tv
 // mit parent=<domain>. Ein rotes LIVE-Signal zeigt nur die Demo als Illustration.
-if ($twitch !== '') {
-    $liveTag = $twitchPlaceholder
-        ? '<span class="tw-live">● LIVE</span>'
-        : '<span class="tw-badge">Twitch</span>';
-    $lead = $twitchPlaceholder
-        ? 'So wird dein Live-Stream eingebettet, direkt und prominent auf deiner Seite. Er lädt erst auf Klick, DSGVO-konform.'
+// Im Vorschau-/Demo-Zustand immer illustrativ zeigen (auch ohne gesetzten Kanal),
+// auf der Live-Seite nur wenn ein echter Twitch-Kanal hinterlegt ist.
+$showStream = $preview || $twitch !== '';
+if ($showStream) {
+    $handle = $twitch !== '' ? $twitch : ($c['slug'] ?: 'deinkanal');
+    $liveTag = $preview ? '<span class="tw-live">● LIVE</span>' : '<span class="tw-badge">Twitch</span>';
+    $lead = $preview
+        ? 'So wird dein Live-Stream eingebettet, direkt und prominent auf deiner Seite. Auf der echten Seite läuft hier dein Twitch-Stream, DSGVO-konform erst auf Klick.'
         : 'Lädt erst auf Klick, es wird vorher keine Verbindung zu Twitch aufgebaut.';
     echo '<section class="sec"><h2 class="sec-h">Live-Stream</h2><p class="sec-lead">' . $lead . '</p>'
-       . '<button class="twph" data-twitch="' . vg_cr_esc($twitch) . '"' . ($twitchPlaceholder ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
+       . '<button class="twph" data-twitch="' . vg_cr_esc($handle) . '"' . ($preview ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
        . '<span class="tw-veil"></span>' . $liveTag
        . '<span class="tw-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
-       . '<span class="tw-name">twitch.tv/' . vg_cr_esc($twitch) . '</span>'
+       . '<span class="tw-name">twitch.tv/' . vg_cr_esc($handle) . '</span>'
        . '</button></section>';
 }
 
@@ -412,8 +418,23 @@ if ($favs) {
     echo '</div></section>';
 }
 
-// Videos (DSGVO click-to-load)
-if ($videos) {
+// Videos (DSGVO click-to-load). Vorschau/Demo: illustrative Platzhalter, damit
+// der Creator die Optik sieht, ohne dass fremde Videos in einer Demo landen.
+// Live-Seite (seo=1): die echten Videos des Creators.
+if ($preview) {
+    $ph = [
+        'Dein neuestes Video',
+        'Dein GTA-6-Content',
+    ];
+    echo '<section class="sec"><h2 class="sec-h">Videos von ' . vg_cr_esc($name) . '</h2>'
+       . '<p class="sec-lead">Hier erscheinen deine neuesten Videos, direkt auf deiner Seite eingebettet (DSGVO-konform, laden erst auf Klick).</p><div class="vidgrid">';
+    foreach ($ph as $t) {
+        echo '<div class="vidcard"><button class="ytph" data-demo="1" onclick="vgLoadYt(this)" aria-label="Beispiel-Video"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
+           . '<div class="vid-t">' . vg_cr_esc($t) . '</div>'
+           . '<div class="vid-note">Beispiel. Auf deiner Seite steht hier dein echtes Video.</div></div>';
+    }
+    echo '</div></section>';
+} elseif ($videos) {
     echo '<section class="sec"><h2 class="sec-h">Videos von ' . vg_cr_esc($name) . '</h2>'
        . '<p class="sec-lead">Lädt erst auf Klick, es wird vorher keine Verbindung zu YouTube aufgebaut.</p><div class="vidgrid">';
     foreach ($videos as $v) {
