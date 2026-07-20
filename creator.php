@@ -18,7 +18,7 @@ require __DIR__ . '/api/db.php';
 
 const VG_CR_SECMAP = [
     'characters' => ['prefix' => 'charaktere',   'label' => 'Charaktere', 'fav' => 'Lieblingscharakter'],
-    'vehicles'   => ['prefix' => 'fahrzeuge',    'label' => 'Fahrzeuge',  'fav' => 'Lieblingsfahrzeug'],
+    'vehicles'   => ['prefix' => 'fahrzeuge',    'label' => 'Fahrzeuge',  'fav' => 'Lieblingsauto'],
     'weapons'    => ['prefix' => 'waffen',       'label' => 'Waffen',     'fav' => 'Lieblingswaffe'],
     'wildlife'   => ['prefix' => 'wildtiere',    'label' => 'Wildtiere',  'fav' => 'Lieblingstier'],
     'gangs'      => ['prefix' => 'gangs',        'label' => 'Gangs',      'fav' => 'Lieblingsgang'],
