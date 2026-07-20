@@ -4187,7 +4187,7 @@ async function submitCreatorImport(){
 /* Visueller Creator-Editor im Admin-Panel (Formular statt JSON). Nutzt die
    bestehenden Helfer slugify/compressImageFile/loadExternal und schreibt ueber
    api/creators.php (POST neu, PUT plus publish beim Bearbeiten). */
-const CR_SECTIONS=[['characters','Charaktere','Lieblingscharakter'],['vehicles','Fahrzeuge','Lieblingsfahrzeug'],['weapons','Waffen','Lieblingswaffe'],['wildlife','Wildtiere','Lieblingstier'],['gangs','Gangs','Lieblingsgang'],['radio','Radio','Lieblingssender'],['activities','Aktivitäten','Lieblingsaktivität'],['locations','Orte','Lieblingsort']];
+const CR_SECTIONS=[['characters','Charaktere','Lieblingscharakter'],['vehicles','Fahrzeuge','Lieblingsauto'],['weapons','Waffen','Lieblingswaffe'],['wildlife','Wildtiere','Lieblingstier'],['gangs','Gangs','Lieblingsgang'],['radio','Radio','Lieblingssender'],['activities','Aktivitäten','Lieblingsaktivität'],['locations','Orte','Lieblingsort']];
 const CR_PLATLABELS=['YouTube','Twitch','TikTok','Instagram','X','Discord','Website'];
 let crState={editId:null, avatar:undefined, cover:undefined};
 function crInit(){ if(!$('cr-name'))return; crNew(); crRenderList(); }
@@ -4214,24 +4214,18 @@ function crEntryOptions(section,selSlug){
   (DB[section]||[]).forEach(e=>{ if(!e.slug)return; o+='<option value="'+e.slug+'"'+(e.slug===selSlug?' selected':'')+'>'+(e.name||e.slug)+'</option>'; });
   return o;
 }
-function crFavRow(section,slug,label,quote){
+function crFavRow(section,slug,quote){
   section=section||'vehicles';
   const secOpts=CR_SECTIONS.map(s=>'<option value="'+s[0]+'"'+(s[0]===section?' selected':'')+'>'+s[1]+'</option>').join('');
   const row=document.createElement('div'); row.className='cr-row'; row.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:10px';
-  row.innerHTML='<select class="nl-fld cr-f-sec" onchange="crFavSecChange(this)" style="flex:0 0 38%">'+secOpts+'</select>'
+  row.innerHTML='<select class="nl-fld cr-f-sec" onchange="crFavSecChange(this)" style="flex:0 0 40%">'+secOpts+'</select>'
     +'<select class="nl-fld cr-f-slug" style="flex:1">'+crEntryOptions(section,slug)+'</select>'
-    +'<input class="nl-fld cr-f-label" type="text" placeholder="Label, z.B. Lieblingsauto" value="'+(label?String(label).replace(/"/g,'&quot;'):'')+'" style="flex:1 1 100%">'
-    +'<input class="nl-fld cr-f-quote" type="text" placeholder="Zitat (optional)" value="'+(quote?String(quote).replace(/"/g,'&quot;'):'')+'" style="flex:1 1 100%">'
+    +'<input class="nl-fld cr-f-quote" type="text" placeholder="Zitat des Creators (optional)" value="'+(quote?String(quote).replace(/"/g,'&quot;'):'')+'" style="flex:1 1 100%">'
     +'<button type="button" onclick="this.closest(\'.cr-row\').remove()" style="background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;color:var(--text-soft);padding:6px 12px;cursor:pointer">Entfernen</button>';
   return row;
 }
-function crFavSecChange(sel){
-  const row=sel.closest('.cr-row'); const sec=sel.value;
-  row.querySelector('.cr-f-slug').innerHTML=crEntryOptions(sec,'');
-  const lbl=row.querySelector('.cr-f-label'); const f=CR_SECTIONS.find(s=>s[0]===sec);
-  if(lbl && !lbl.value && f)lbl.value=f[2];
-}
-function crAddFav(section,slug,label,quote){ const f=CR_SECTIONS.find(s=>s[0]===(section||'vehicles')); if($('cr-favs'))$('cr-favs').appendChild(crFavRow(section,slug,label||(f?f[2]:''),quote)); }
+function crFavSecChange(sel){ const row=sel.closest('.cr-row'); row.querySelector('.cr-f-slug').innerHTML=crEntryOptions(sel.value,''); }
+function crAddFav(section,slug,label,quote){ if($('cr-favs'))$('cr-favs').appendChild(crFavRow(section,slug,quote)); }
 function crNew(){
   crState={editId:null, avatar:undefined, cover:undefined};
   ['cr-name','cr-slug','cr-tagline','cr-bio','cr-twitch','cr-accent-hex'].forEach(id=>{ if($(id))$(id).value=''; });
@@ -4271,7 +4265,7 @@ function crCollect(){
     twitch:($('cr-twitch').value||'').trim(), accent:($('cr-accent-hex').value||'').trim(),
     active:1, seo:$('cr-vis').value==='public', platforms:[], favorites:[] };
   document.querySelectorAll('#cr-plats .cr-row').forEach(r=>{ const l=r.querySelector('.cr-p-label').value; const u=(r.querySelector('.cr-p-url').value||'').trim(); if(u)obj.platforms.push({label:l,url:u}); });
-  document.querySelectorAll('#cr-favs .cr-row').forEach(r=>{ const sec=r.querySelector('.cr-f-sec').value; const sl=r.querySelector('.cr-f-slug').value; if(!sl)return; obj.favorites.push({section:sec,slug:sl,label:(r.querySelector('.cr-f-label').value||'').trim(),quote:(r.querySelector('.cr-f-quote').value||'').trim()}); });
+  document.querySelectorAll('#cr-favs .cr-row').forEach(r=>{ const sec=r.querySelector('.cr-f-sec').value; const sl=r.querySelector('.cr-f-slug').value; if(!sl)return; const f=CR_SECTIONS.find(s=>s[0]===sec); obj.favorites.push({section:sec,slug:sl,label:f?f[2]:'',quote:(r.querySelector('.cr-f-quote').value||'').trim()}); });
   if(crState.avatar!==undefined)obj.avatar=crState.avatar;
   if(crState.cover!==undefined)obj.cover=crState.cover;
   return obj;
@@ -4291,10 +4285,11 @@ async function crSave(){
       if(!pr.ok)throw 0; const rd=await pr.json().catch(()=>({})); if(rd.slug)obj.slug=rd.slug;
     }
     await loadExternal(); crRenderList();
-    const res=$('creator-result'); res.style.display='block';
-    res.innerHTML='Gespeichert. <a href="/creator/'+encodeURIComponent(obj.slug)+'" target="_blank" style="color:var(--accent)">Seite öffnen</a>';
-    toast('Creator gespeichert.');
     crEdit(obj.slug);
+    const res=$('creator-result'); res.style.display='block';
+    res.innerHTML='✓ Gespeichert. <a href="/creator/'+encodeURIComponent(obj.slug)+'" target="_blank" style="color:var(--accent);font-weight:700">Seite öffnen ↗</a>';
+    res.scrollIntoView({behavior:'smooth',block:'center'});
+    toast('Creator gespeichert.');
   }catch(e){ toast('Speichern fehlgeschlagen.'); }
   btn.disabled=false; btn.textContent=lbl;
 }
@@ -4430,9 +4425,11 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     </div>
     <div style="font-size:11.5px;color:var(--text-soft);margin-top:3px">Ohne Bild bleibt die Palmen-Optik. Die Markenfarbe färbt zusätzlich Links und Buttons.</div>
     <div class="nl-lbl">Kanäle</div>
+    <div style="font-size:11.5px;color:var(--text-soft);margin:0 0 2px">Links zu seinen Profilen, erscheinen als Buttons oben im Profil.</div>
     <div id="cr-plats"></div>
     <button type="button" onclick="crAddPlat()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Kanal</button>
     <div class="nl-lbl">Favoriten aus der Datenbank</div>
+    <div style="font-size:11.5px;color:var(--text-soft);margin:0 0 2px">Seine Lieblings-Einträge, z.B. sein Lieblingsauto. Rubrik wählen, dann den Eintrag aus deiner Datenbank. Sie erscheinen auf seiner Seite und als Badge „★ … von [Name]" auf dem jeweiligen Eintrag. Zitat ist optional.</div>
     <div id="cr-favs"></div>
     <button type="button" onclick="crAddFav()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Favorit</button>
     <div class="nl-lbl">Sichtbarkeit</div>
