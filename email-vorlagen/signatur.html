@@ -1,0 +1,53 @@
+<!--
+  ViceGuide E-Mail-Signatur fuer info@viceguide.de
+  ================================================
+
+  Zweck: gebrandete Signatur fuer manuell verschickte Mails (z. B. Creator-Ansprache)
+  aus dem Hostinger-Webmail. Wird EINMAL hinterlegt, dann traegt jede Mail das Branding.
+
+  Bewusst robust fuer Mail-Clients gebaut:
+   - reine Tabellen-Layouts, alle Stile inline (Gmail/Outlook strippen <style>-Bloecke)
+   - KEINE Webfonts (Mail-Clients laden @font-face in Signaturen nicht zuverlaessig),
+     stattdessen Arial/Helvetica plus Letter-Spacing als Nicken an die Oswald-Optik
+   - Logo per absoluter URL (https://viceguide.de/logo.png), damit es ueberall laedt
+   - Farben aus den echten Design-Tokens (mail.php): Akzent-Pink #D00059,
+     Ueberschrift-Lila #221041, gedaempftes #6b6478
+
+  Einbauen: siehe Anleitung, die Claude mitgeliefert hat. Kurz: Hostinger-Webmail
+  (Roundcube) -> Einstellungen -> Identitaeten -> info@viceguide.de -> HTML-Signatur
+  aktivieren -> Quellcode-Knopf (< >) -> genau den Block ZWISCHEN den beiden
+  Markierungen unten einfuegen.
+-->
+
+<!-- ===== SIGNATUR-ANFANG (ab hier kopieren) ===== -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif">
+  <tr>
+    <!-- Logo -->
+    <td style="vertical-align:top;padding:0 16px 0 0">
+      <a href="https://viceguide.de/" style="text-decoration:none">
+        <img src="https://viceguide.de/logo.png" alt="ViceGuide" width="54" height="54" style="display:block;width:54px;height:54px;border:0;outline:none">
+      </a>
+    </td>
+    <!-- Akzent-Trennstrich -->
+    <td style="padding:0;width:3px;background-color:#D00059;font-size:1px;line-height:1px">&nbsp;</td>
+    <!-- Text -->
+    <td style="vertical-align:top;padding:0 0 0 16px">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;letter-spacing:.5px;color:#221041;line-height:1.3">Eddy Hann&eacute;</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6b6478;line-height:1.5;padding-top:2px">ViceGuide &ndash; die deutschsprachige GTA-6-Zentrale</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6b6478;line-height:1.6;padding-top:8px">
+        <a href="mailto:info@viceguide.de" style="color:#D00059;text-decoration:none">info@viceguide.de</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://viceguide.de/" style="color:#D00059;text-decoration:none">viceguide.de</a>
+      </div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6b6478;line-height:1.6;padding-top:2px">
+        <a href="https://viceguide.de/partner" style="color:#D00059;text-decoration:none">F&uuml;r Partner</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://www.instagram.com/viceguide/" style="color:#D00059;text-decoration:none">Instagram @viceguide</a>
+      </div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#9a90ac;line-height:1.5;padding-top:10px">
+        ViceGuide ist ein inoffizielles Fan-Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.
+      </div>
+    </td>
+  </tr>
+</table>
+<!-- ===== SIGNATUR-ENDE (bis hier kopieren) ===== -->
