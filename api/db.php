@@ -33,6 +33,38 @@ function vg_seed_status_from_cat(PDO $pdo): void {
         // Seeding darf den Request nie hinunterreissen (analog zur uebrigen Migration).
     }
 }
+/* Legt einmalig einen Beispiel-Creator ("NeonNico", slug "beispiel") an, sobald
+   die creators-Tabelle frisch entstanden und noch leer ist. Er dient als
+   Vorzeige-/Demoseite fuer die Partner-Akquise (von der Partner-Seite verlinkt,
+   noindex, nicht in der oeffentlichen Uebersicht, solange seo=0). Die Favoriten
+   verweisen auf echte, bestehende Live-Eintraege. Laeuft nur einmal, analog zu
+   vg_seed_seo_allowlist(). */
+function vg_seed_demo_creator(PDO $pdo): void {
+    try {
+        $n = (int)$pdo->query('SELECT COUNT(*) c FROM creators')->fetch()['c'];
+        if ($n > 0) return;
+        $platforms = json_encode([
+            ['label' => 'YouTube',   'url' => 'https://youtube.com/@beispiel'],
+            ['label' => 'Twitch',    'url' => 'https://twitch.tv/beispiel'],
+            ['label' => 'TikTok',    'url' => 'https://tiktok.com/@beispiel'],
+            ['label' => 'Instagram', 'url' => 'https://instagram.com/beispiel'],
+        ], JSON_UNESCAPED_UNICODE);
+        $bio = 'So könnte deine Creator-Seite bei ViceGuide aussehen. NeonNico ist ein erfundenes Beispiel: hier stehen dein Profil, deine Kanäle, deine Lieblings-Einträge aus der Datenbank und deine eingebetteten Videos. Deine Community sieht auf einen Blick, wer du bist, und findet dich dort, wo sie ohnehin nachschlägt.';
+        $ins = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, active, seo_index, sort_order) VALUES (?,?,?,?,?,1,0,0)');
+        $ins->execute(['beispiel', 'NeonNico', 'GTA-6-Creator, Beispiel-Profil', $bio, $platforms]);
+        $cid = (int)$pdo->lastInsertId();
+        $favs = [
+            ['vehicles',   'declasse-tulip-m-100', 'Lieblingsauto',      'Der Wagen von Jason und Lucia, für mich das Herz von GTA 6.'],
+            ['locations',  'ocean-beach',          'Lieblingsort',       'Hier drehe ich die meisten Clips, das Neon am Strand ist einfach ikonisch.'],
+            ['weapons',    'girardi-es9',          'Lieblingswaffe',     'Jasons Pistole, zuverlässig und stylisch im Freeroam.'],
+            ['characters', 'jason-duval',          'Lieblingscharakter', 'Sein Bogen durch die Story trägt für mich das ganze Spiel.'],
+        ];
+        $fi = $pdo->prepare('INSERT INTO creator_favorites (creator_id, section, entry_slug, label, quote, sort_order) VALUES (?,?,?,?,?,?)');
+        foreach ($favs as $i => $f) { $fi->execute([$cid, $f[0], $f[1], $f[2], $f[3], $i]); }
+    } catch (Throwable $e) {
+        // Seeding darf den Request nie hinunterreissen (wie die uebrige Migration).
+    }
+}
 function vg_db(): array {
     $cfgPath = __DIR__ . '/config.php';
     if (!file_exists($cfgPath)) {
@@ -226,6 +258,7 @@ function vg_db(): array {
             quote TEXT,
             sort_order INTEGER NOT NULL DEFAULT 0
         )');
+        vg_seed_demo_creator($pdo);
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
             $names = array_column($cols, 'name');
@@ -435,6 +468,7 @@ function vg_db(): array {
             INDEX idx_entry (section, entry_slug),
             FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        vg_seed_demo_creator($pdo);
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();
             if (!$cols) {

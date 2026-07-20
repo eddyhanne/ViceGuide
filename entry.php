@@ -212,10 +212,30 @@ try {
     }
 } catch (Throwable $e) { $sibHtml = ''; }
 
+// Stufe 1: Badge, wenn ein aktiver Partner-Creator diesen Eintrag als Favoriten
+// fuehrt ("Lieblingsauto von X"), mit Link zur Creator-Seite. Crawlbar, damit
+// Google die interne Verlinkung Eintrag -> Creator sieht.
+$favBadge = '';
+try {
+    $fq = $pdo->prepare("SELECT c.name AS cname, c.slug AS cslug, f.label AS flabel
+        FROM creator_favorites f JOIN creators c ON c.id = f.creator_id
+        WHERE f.section = ? AND f.entry_slug = ? AND c.active = 1 ORDER BY f.sort_order, f.id");
+    $fq->execute([$section, $slug]);
+    $favRows = $fq->fetchAll();
+    if ($favRows) {
+        $pills = '';
+        foreach ($favRows as $fr) {
+            $lbl = $fr['flabel'] ?: 'Favorit';
+            $pills .= '<a href="/creator/' . vg_esc2($fr['cslug']) . '" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--pill-bg);border:1px solid var(--pill-ln);color:var(--text);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600"><span style="color:var(--accent)">★</span> ' . vg_esc2($lbl) . ' von <b style="color:var(--accent)">' . vg_esc2($fr['cname']) . '</b></a>';
+        }
+        $favBadge = '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px">' . $pills . '</div>';
+    }
+} catch (Throwable $e) { $favBadge = ''; }
+
 $modalInner =
     ($hasImg ? '<img src="' . vg_esc2($imgUrl) . '" alt="' . vg_esc2($name) . '" style="width:100%;border-radius:16px 16px 0 0">' : '') .
     '<div class="mbody">' . $crumb . '<h1>' . vg_esc2($name) . '</h1><div class="msub">' . vg_esc2($sub) . '</div>' .
-    $chips . $fieldsHtml .
+    $favBadge . $chips . $fieldsHtml .
     '<div class="mabout">Beschreibung</div>' . $descHtml . $sibHtml .
     '</div>';
 

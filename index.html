@@ -2569,13 +2569,22 @@ function goToArticleId(id){
   if(idx<0){ toast('Verlinkter Artikel wurde nicht gefunden.'); return; }
   openArticle(idx);
 }
+/* Stufe 1: Badge "★ Lieblingsauto von <Creator>" auf einer Eintragsseite, wenn
+   ein Partner-Creator diesen Eintrag als Favoriten fuehrt. Verlinkt auf die
+   Creator-Seite (echte /creator/<slug>-URL, voller Seitenwechsel, bewusst). */
+function creatorFavHtml(secId,d){
+  const map=window.CREATOR_FAV_BY_ENTRY||{}; const slug=d&&d.slug; if(!slug)return '';
+  const list=map[secId+'/'+slug]; if(!list||!list.length)return '';
+  const pills=list.map(c=>'<a href="/creator/'+encodeURIComponent(c.slug)+'" style="display:inline-flex;align-items:center;gap:7px;text-decoration:none;background:var(--pill-bg);border:1px solid var(--pill-ln);color:var(--text);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600"><span style="color:var(--accent)">★</span>'+(c.label||'Favorit')+' von <b style="color:var(--accent);margin-left:2px">'+c.name+'</b></a>').join('');
+  return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px">'+pills+'</div>';
+}
 function openModal(secId,i){
   curModal={sec:secId,i};
   const sec=SECTIONS.find(s=>s.id===secId); const d=DB[secId][i];
   const selfKey=secId+':'+i;
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
-  $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>
+  $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>${creatorFavHtml(secId,d)}
     <div class="mrow"><a class="chip chip-link" href="${sectionHref(secId)}" onclick="return modalHubClick(event,'${secId}')" title="Zur Rubrik ${sec.label}">‹ Alle ${sec.label}</a><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
     <div class="mabout">Beschreibung</div><div class="mdesc">${renderDescHtml(d.desc,selfKey)}</div></div>`;
@@ -4120,6 +4129,59 @@ async function approveAi(){
 }
 
 /* externe Daten laden (falls vorhanden) */
+/* Fuellt das Creator-Textfeld mit einem fertigen Beispiel-Creator, der echte
+   Live-Datenbank-Eintraege als Favoriten referenziert. active:1 macht die Seite
+   sichtbar, seo:false haelt sie aus Google raus (Beispiel-/Vorschauprofil). */
+function fillCreatorExample(){
+  const ex={
+    name:"NeonNico", slug:"beispiel",
+    tagline:"GTA-6-Creator, Beispiel-Profil",
+    bio:"So könnte deine Creator-Seite bei ViceGuide aussehen. NeonNico ist ein erfundenes Beispiel: hier stehen dein Profil, deine Kanäle, deine Lieblings-Einträge aus der Datenbank und deine eingebetteten Videos. Deine Community sieht auf einen Blick, wer du bist, und findet dich dort, wo sie ohnehin nachschlägt.",
+    platforms:[
+      {label:"YouTube",url:"https://youtube.com/@beispiel"},
+      {label:"Twitch",url:"https://twitch.tv/beispiel"},
+      {label:"TikTok",url:"https://tiktok.com/@beispiel"},
+      {label:"Instagram",url:"https://instagram.com/beispiel"}
+    ],
+    active:1, seo:false,
+    favorites:[
+      {section:"vehicles", slug:"declasse-tulip-m-100", label:"Lieblingsauto", quote:"Der Wagen von Jason und Lucia, für mich das Herz von GTA 6."},
+      {section:"locations", slug:"ocean-beach", label:"Lieblingsort", quote:"Hier drehe ich die meisten Clips, das Neon am Strand ist einfach ikonisch."},
+      {section:"weapons", slug:"girardi-es9", label:"Lieblingswaffe", quote:"Jasons Pistole, zuverlässig und stylisch im Freeroam."},
+      {section:"characters", slug:"jason-duval", label:"Lieblingscharakter", quote:"Sein Bogen durch die Story trägt für mich das ganze Spiel."}
+    ]
+  };
+  const ta=$('creator-json'); if(ta){ ta.value=JSON.stringify(ex,null,2); toast('Beispiel eingefügt. Prüfen und speichern.'); }
+}
+/* Creator-Import: Objekt oder Liste. Zuordnung per slug (vorhandener Creator
+   wird als Entwurf aktualisiert und direkt veroeffentlicht, neuer sofort live
+   angelegt). Serverseitig admin-gated. */
+async function submitCreatorImport(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok) return; }
+  const ta=$('creator-json'), out=$('creator-result');
+  let data; try{ data=JSON.parse(ta.value); }catch(e){ toast('Ungültiges JSON.'); return; }
+  const list=Array.isArray(data)?data:[data];
+  let existing={};
+  try{ const r=await fetch('api/creators.php?full=1',{cache:'no-store'}); if(r.ok){ const d=await r.json(); (d.creators||[]).forEach(c=>{ existing[c.slug]=c.id; }); } }catch(e){}
+  let created=0, updated=0, fail=0; const saved=[];
+  for(const c of list){
+    if(!c||!c.name){ fail++; continue; }
+    const slug=c.slug||slugify(c.name);
+    try{
+      if(existing[slug]!==undefined){
+        const pr=await fetch('api/creators.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({},c,{slug}))});
+        if(!pr.ok) throw 0; updated++; saved.push({name:c.name,slug});
+      }else{
+        const pr=await fetch('api/creators.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)});
+        if(!pr.ok) throw 0; const rd=await pr.json().catch(()=>({})); created++; saved.push({name:c.name,slug:rd.slug||slug});
+      }
+    }catch(e){ fail++; }
+  }
+  if(updated){ try{ await fetch('api/creators.php?action=publish',{method:'POST'}); }catch(e){} }
+  if(out){ out.style.display='block'; out.innerHTML='Angelegt: '+created+', aktualisiert: '+updated+(fail?(', fehlgeschlagen: '+fail):'')+'.<br>'+saved.map(s=>'· '+s.name+' → <a href="/creator/'+encodeURIComponent(s.slug)+'" target="_blank" style="color:var(--accent)">Seite öffnen</a>').join('<br>'); }
+  await loadExternal();
+  if(created||updated) toast('Creator gespeichert.'); else toast('Nichts gespeichert.');
+}
 async function loadExternal(){
   let gotArticles=false, gotDb=false;
   try{
@@ -4147,6 +4209,10 @@ async function loadExternal(){
   }
   try{ const r=await fetch('api/sections.php',{cache:'no-store'}); if(r.ok){ const data=await r.json(); if(data.sections&&typeof data.sections==='object') SECTION_IMG=data.sections; } }catch(e){}
   try{ const r=await fetch('api/settings.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(d&&typeof d==='object'){ NEWS_SETTINGS.order=Array.isArray(d.news_cat_order)?d.news_cat_order:[]; NEWS_SETTINGS.pinned=d.news_pinned_cat||''; NEWS_SETTINGS.focusOrder=Array.isArray(d.focus_order)?d.focus_order:[]; DB_SETTINGS.dbOrder=Array.isArray(d.db_section_order)?d.db_section_order:[]; DB_SETTINGS.guidesOrder=Array.isArray(d.guides_cat_order)?d.guides_cat_order:[]; DB_SETTINGS.featured=Array.isArray(d.featured_tiles)?d.featured_tiles:[]; DB_SETTINGS.featuredEntries=Array.isArray(d.featured_entries)?d.featured_entries:[]; } } }catch(e){}
+  /* Partner-Creator laden und eine Karte Eintrag -> Creator-Favoriten bauen,
+     damit auf einer Datenbank-Eintragsseite ein Badge "Lieblingsauto von X"
+     erscheint (Stufe 1). Nur aktive Creator kommen aus der oeffentlichen API. */
+  try{ const r=await fetch('api/creators.php',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(Array.isArray(d.creators)){ window.CREATORS=d.creators; const map={}; d.creators.forEach(c=>{ (c.favorites||[]).forEach(f=>{ if(!f.slug||!f.section)return; const k=f.section+'/'+f.slug; (map[k]=map[k]||[]).push({name:c.name,slug:c.slug,label:f.label,quote:f.quote}); }); }); window.CREATOR_FAV_BY_ENTRY=map; } } }catch(e){}
   await checkAdminSession();
   vgTrack(location.pathname);
   restoreEditMode();
@@ -4209,6 +4275,14 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <textarea id="dbimport-json" rows="5" placeholder="Datenbank-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
     <button id="dbimport-btn" onclick="submitDbImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Datenbank-Einträge prüfen</button>
     <div id="dbimport-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
+  </details>
+  <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
+    <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">🤝 Partner-Creator <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)">/creator/…</span></summary>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Creator-JSON einfügen (Objekt oder Liste). Zuordnung per <code>slug</code>: vorhandener Creator wird aktualisiert, neuer angelegt. <code>favorites</code> verweisen per <code>section</code> und <code>slug</code> auf bestehende Datenbank-Einträge. <code>active</code> schaltet die Seite sichtbar, <code>seo:false</code> hält sie aus Google raus (für die Beispiel-Seite).</p>
+    <button onclick="fillCreatorExample()" style="width:100%;margin-bottom:8px;font-weight:700;font-size:14px;padding:11px;border-radius:10px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✨ Beispiel-Creator einfügen (Demo)</button>
+    <textarea id="creator-json" rows="5" placeholder="Creator-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
+    <button id="creator-btn" onclick="submitCreatorImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Creator speichern (live)</button>
+    <div id="creator-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
   </details>
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📧 Newsletter <span id="nl-adm-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
