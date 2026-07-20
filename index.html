@@ -3733,7 +3733,7 @@ async function openAdmin(){if(!isAdmin){const ok=await adminLogin();if(!ok)retur
   const lb=$('logout-btn');if(lb)lb.style.display=isAdmin?'block':'none';
   const eb=$('edit-btn');if(eb)eb.textContent=editMode?'Fertigstellen':'Editiermodus einschalten';
   const dbtn=$('discard-btn');if(dbtn)dbtn.style.display=editMode?'block':'none';
-  $('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();setTimeout(()=>$('draft-json').focus(),80);}
+  $('adm').classList.add('show');loadNewsletterStats();nlLoad();nlFillFields();crInit();setTimeout(()=>$('draft-json').focus(),80);}
 function closeAdmin(){$('adm').classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeAdmin();closeCatPick();}});
 /* Aktueller Zeitpunkt im "YYYY-MM-DDTHH:mm"-Format, lokale Ortszeit des
@@ -4184,6 +4184,118 @@ async function submitCreatorImport(){
   await loadExternal();
   if(created||updated) toast('Creator gespeichert.'); else toast('Nichts gespeichert.');
 }
+/* Visueller Creator-Editor im Admin-Panel (Formular statt JSON). Nutzt die
+   bestehenden Helfer slugify/compressImageFile/loadExternal und schreibt ueber
+   api/creators.php (POST neu, PUT plus publish beim Bearbeiten). */
+const CR_SECTIONS=[['characters','Charaktere','Lieblingscharakter'],['vehicles','Fahrzeuge','Lieblingsfahrzeug'],['weapons','Waffen','Lieblingswaffe'],['wildlife','Wildtiere','Lieblingstier'],['gangs','Gangs','Lieblingsgang'],['radio','Radio','Lieblingssender'],['activities','Aktivitäten','Lieblingsaktivität'],['locations','Orte','Lieblingsort']];
+const CR_PLATLABELS=['YouTube','Twitch','TikTok','Instagram','X','Discord','Website'];
+let crState={editId:null, avatar:undefined};
+function crInit(){ if(!$('cr-name'))return; crNew(); crRenderList(); }
+function crRenderList(){
+  const box=$('cr-list'); if(!box)return;
+  let h='<button type="button" onclick="crNew()" style="font-weight:600;font-size:12px;padding:6px 11px;border-radius:999px;color:var(--btn-text);background:var(--btn-bg);border:0;cursor:pointer">+ Neuer Creator</button>';
+  (window.CREATORS||[]).forEach(c=>{ h+='<button type="button" onclick="crEdit(\''+c.slug+'\')" style="font-weight:600;font-size:12px;padding:6px 11px;border-radius:999px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">'+(c.name||c.slug)+(c.seo?'':' · Vorschau')+'</button>'; });
+  box.innerHTML=h;
+}
+function crSlugPreview(){ if(crState.editId)return; const s=slugify($('cr-name').value||''); $('cr-slug').value=s; $('cr-slug-view').textContent=s?('Seite: /creator/'+s):''; }
+function crAccentSync(v){ try{ if(/^#[0-9a-fA-F]{6}$/.test(v))$('cr-accent').value=v; }catch(e){} }
+function crAvatarPick(file){ if(!file)return; compressImageFile(file,d=>{ if(!d){toast('Bild konnte nicht gelesen werden.');return;} crState.avatar=d; const im=$('cr-avatar-prev'); im.src=d; im.style.display='block'; }); }
+function crPlatRow(label,url){
+  const opts=CR_PLATLABELS.map(l=>'<option'+(l===label?' selected':'')+'>'+l+'</option>').join('');
+  const row=document.createElement('div'); row.className='cr-row'; row.style.cssText='display:flex;gap:6px;margin-top:6px';
+  row.innerHTML='<select class="nl-fld cr-p-label" style="flex:0 0 38%">'+opts+'</select><input class="nl-fld cr-p-url" type="text" placeholder="https://…" value="'+(url?String(url).replace(/"/g,'&quot;'):'')+'" style="flex:1"><button type="button" onclick="this.closest(\'.cr-row\').remove()" style="flex:0 0 auto;background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;color:var(--text-soft);width:38px;cursor:pointer">✕</button>';
+  return row;
+}
+function crAddPlat(label,url){ if($('cr-plats'))$('cr-plats').appendChild(crPlatRow(label||'YouTube',url||'')); }
+function crEntryOptions(section,selSlug){
+  let o='<option value="">Eintrag wählen…</option>';
+  (DB[section]||[]).forEach(e=>{ if(!e.slug)return; o+='<option value="'+e.slug+'"'+(e.slug===selSlug?' selected':'')+'>'+(e.name||e.slug)+'</option>'; });
+  return o;
+}
+function crFavRow(section,slug,label,quote){
+  section=section||'vehicles';
+  const secOpts=CR_SECTIONS.map(s=>'<option value="'+s[0]+'"'+(s[0]===section?' selected':'')+'>'+s[1]+'</option>').join('');
+  const row=document.createElement('div'); row.className='cr-row'; row.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:10px';
+  row.innerHTML='<select class="nl-fld cr-f-sec" onchange="crFavSecChange(this)" style="flex:0 0 38%">'+secOpts+'</select>'
+    +'<select class="nl-fld cr-f-slug" style="flex:1">'+crEntryOptions(section,slug)+'</select>'
+    +'<input class="nl-fld cr-f-label" type="text" placeholder="Label, z.B. Lieblingsauto" value="'+(label?String(label).replace(/"/g,'&quot;'):'')+'" style="flex:1 1 100%">'
+    +'<input class="nl-fld cr-f-quote" type="text" placeholder="Zitat (optional)" value="'+(quote?String(quote).replace(/"/g,'&quot;'):'')+'" style="flex:1 1 100%">'
+    +'<button type="button" onclick="this.closest(\'.cr-row\').remove()" style="background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;color:var(--text-soft);padding:6px 12px;cursor:pointer">Entfernen</button>';
+  return row;
+}
+function crFavSecChange(sel){
+  const row=sel.closest('.cr-row'); const sec=sel.value;
+  row.querySelector('.cr-f-slug').innerHTML=crEntryOptions(sec,'');
+  const lbl=row.querySelector('.cr-f-label'); const f=CR_SECTIONS.find(s=>s[0]===sec);
+  if(lbl && !lbl.value && f)lbl.value=f[2];
+}
+function crAddFav(section,slug,label,quote){ const f=CR_SECTIONS.find(s=>s[0]===(section||'vehicles')); if($('cr-favs'))$('cr-favs').appendChild(crFavRow(section,slug,label||(f?f[2]:''),quote)); }
+function crNew(){
+  crState={editId:null, avatar:undefined};
+  ['cr-name','cr-slug','cr-tagline','cr-bio','cr-twitch','cr-accent-hex'].forEach(id=>{ if($(id))$(id).value=''; });
+  if($('cr-accent'))$('cr-accent').value='#D00059';
+  if($('cr-avatar-prev')){ $('cr-avatar-prev').style.display='none'; $('cr-avatar-prev').src=''; }
+  if($('cr-avatar-file'))$('cr-avatar-file').value='';
+  if($('cr-slug-view'))$('cr-slug-view').textContent='';
+  if($('cr-vis'))$('cr-vis').value='preview';
+  if($('cr-slug'))$('cr-slug').removeAttribute('readonly');
+  if($('cr-plats'))$('cr-plats').innerHTML=''; if($('cr-favs'))$('cr-favs').innerHTML='';
+  crAddPlat('YouTube',''); crAddFav('vehicles','','','');
+  if($('cr-del'))$('cr-del').style.display='none';
+  if($('creator-result'))$('creator-result').style.display='none';
+}
+function crEdit(slug){
+  const c=(window.CREATORS||[]).find(x=>x.slug===slug); if(!c){ toast('Creator nicht gefunden, Seite neu laden.'); return; }
+  crState={editId:c.id, avatar:undefined};
+  $('cr-name').value=c.name||''; $('cr-slug').value=c.slug||''; $('cr-slug').setAttribute('readonly','readonly');
+  $('cr-tagline').value=c.tagline||''; $('cr-bio').value=c.bio||''; $('cr-twitch').value=c.twitch||'';
+  $('cr-accent-hex').value=c.accent||''; if(c.accent)crAccentSync(c.accent); else $('cr-accent').value='#D00059';
+  $('cr-slug-view').textContent='Seite: /creator/'+c.slug;
+  $('cr-vis').value=c.seo?'public':'preview';
+  const im=$('cr-avatar-prev'); if(c.avatar){ im.src=c.avatar; im.style.display='block'; } else { im.style.display='none'; }
+  $('cr-avatar-file').value='';
+  $('cr-plats').innerHTML=''; (c.platforms||[]).forEach(p=>crAddPlat(p.label||'Website',p.url||'')); if(!(c.platforms||[]).length)crAddPlat('YouTube','');
+  $('cr-favs').innerHTML=''; (c.favorites||[]).forEach(f=>crAddFav(f.section,f.slug,f.label,f.quote));
+  $('cr-del').style.display='block'; $('creator-result').style.display='none';
+}
+function crCollect(){
+  const name=($('cr-name').value||'').trim();
+  const obj={ name, slug:($('cr-slug').value||'').trim()||slugify(name),
+    tagline:($('cr-tagline').value||'').trim(), bio:($('cr-bio').value||'').trim(),
+    twitch:($('cr-twitch').value||'').trim(), accent:($('cr-accent-hex').value||'').trim(),
+    active:1, seo:$('cr-vis').value==='public', platforms:[], favorites:[] };
+  document.querySelectorAll('#cr-plats .cr-row').forEach(r=>{ const l=r.querySelector('.cr-p-label').value; const u=(r.querySelector('.cr-p-url').value||'').trim(); if(u)obj.platforms.push({label:l,url:u}); });
+  document.querySelectorAll('#cr-favs .cr-row').forEach(r=>{ const sec=r.querySelector('.cr-f-sec').value; const sl=r.querySelector('.cr-f-slug').value; if(!sl)return; obj.favorites.push({section:sec,slug:sl,label:(r.querySelector('.cr-f-label').value||'').trim(),quote:(r.querySelector('.cr-f-quote').value||'').trim()}); });
+  if(crState.avatar!==undefined)obj.avatar=crState.avatar;
+  return obj;
+}
+async function crSave(){
+  if(!isAdmin){ const ok=await adminLogin(); if(!ok)return; }
+  const obj=crCollect();
+  if(!obj.name){ toast('Bitte einen Namen eingeben.'); return; }
+  const btn=$('cr-save'); const lbl=btn.textContent; btn.disabled=true; btn.textContent='Speichern…';
+  try{
+    if(crState.editId){
+      const pr=await fetch('api/creators.php',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({id:crState.editId},obj))});
+      if(!pr.ok)throw 0;
+      await fetch('api/creators.php?action=publish',{method:'POST'});
+    }else{
+      const pr=await fetch('api/creators.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj)});
+      if(!pr.ok)throw 0; const rd=await pr.json().catch(()=>({})); if(rd.slug)obj.slug=rd.slug;
+    }
+    await loadExternal(); crRenderList();
+    const res=$('creator-result'); res.style.display='block';
+    res.innerHTML='Gespeichert. <a href="/creator/'+encodeURIComponent(obj.slug)+'" target="_blank" style="color:var(--accent)">Seite öffnen</a>';
+    toast('Creator gespeichert.');
+    crEdit(obj.slug);
+  }catch(e){ toast('Speichern fehlgeschlagen.'); }
+  btn.disabled=false; btn.textContent=lbl;
+}
+async function crDelete(){
+  if(!crState.editId)return;
+  if(!confirm('Diesen Creator wirklich löschen?'))return;
+  try{ const r=await fetch('api/creators.php',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:crState.editId})}); if(!r.ok)throw 0; await loadExternal(); crNew(); crRenderList(); toast('Creator gelöscht.'); }catch(e){ toast('Löschen fehlgeschlagen.'); }
+}
 async function loadExternal(){
   let gotArticles=false, gotDb=false;
   try{
@@ -4280,11 +4392,46 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
   </details>
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">🤝 Partner-Creator <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)">/creator/…</span></summary>
-    <p style="font-size:13px;color:var(--text-soft);margin-bottom:10px">Creator-JSON einfügen (Objekt oder Liste). Zuordnung per <code>slug</code>: vorhandener Creator wird aktualisiert, neuer angelegt. <code>favorites</code> verweisen per <code>section</code> und <code>slug</code> auf bestehende Datenbank-Einträge. <code>active</code> schaltet die Seite sichtbar, <code>seo:false</code> hält sie aus Google raus (für die Beispiel-Seite).</p>
-    <button onclick="fillCreatorExample()" style="width:100%;margin-bottom:8px;font-weight:700;font-size:14px;padding:11px;border-radius:10px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--accent);cursor:pointer">✨ Beispiel-Creator einfügen (Demo)</button>
-    <textarea id="creator-json" rows="5" placeholder="Creator-JSON hier einfügen…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:10px"></textarea>
-    <button id="creator-btn" onclick="submitCreatorImport()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">Creator speichern (live)</button>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:8px">Creator anlegen oder bearbeiten. Einfach die Felder ausfüllen, kein JSON nötig.</p>
+    <div id="cr-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px"></div>
+    <div class="nl-lbl">Name</div>
+    <input id="cr-name" class="nl-fld" type="text" placeholder="Creator-Name" oninput="crSlugPreview()">
+    <div class="nl-lbl">Kürzel in der URL</div>
+    <input id="cr-slug" class="nl-fld" type="text" placeholder="wird aus dem Namen erzeugt">
+    <div id="cr-slug-view" style="font-size:11px;color:var(--text-soft);margin-top:4px"></div>
+    <div class="nl-lbl">Tagline</div>
+    <input id="cr-tagline" class="nl-fld" type="text" placeholder="z.B. GTA-6-Creator und Streamer">
+    <div class="nl-lbl">Bio</div>
+    <textarea id="cr-bio" class="nl-fld" rows="3" placeholder="Kurzer Vorstellungstext"></textarea>
+    <div class="nl-lbl">Twitch-Name für den Live-Stream (optional)</div>
+    <input id="cr-twitch" class="nl-fld" type="text" placeholder="z.B. flensburgrp">
+    <div class="nl-lbl">Markenfarbe (optional)</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="cr-accent" type="color" value="#D00059" oninput="$('cr-accent-hex').value=this.value" style="width:46px;height:38px;border:1.5px solid var(--line);border-radius:9px;background:none;cursor:pointer;flex:0 0 auto">
+      <input id="cr-accent-hex" class="nl-fld" type="text" placeholder="leer = Standardfarbe" oninput="crAccentSync(this.value)" style="flex:1">
+    </div>
+    <div class="nl-lbl">Avatar (optional)</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <img id="cr-avatar-prev" alt="" style="display:none;width:52px;height:52px;border-radius:999px;object-fit:cover;flex:0 0 auto">
+      <input id="cr-avatar-file" type="file" accept="image/*" onchange="crAvatarPick(this.files&&this.files[0])" class="nl-fld" style="flex:1">
+    </div>
+    <div class="nl-lbl">Kanäle</div>
+    <div id="cr-plats"></div>
+    <button type="button" onclick="crAddPlat()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Kanal</button>
+    <div class="nl-lbl">Favoriten aus der Datenbank</div>
+    <div id="cr-favs"></div>
+    <button type="button" onclick="crAddFav()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Favorit</button>
+    <div class="nl-lbl">Sichtbarkeit</div>
+    <select id="cr-vis" class="nl-fld"><option value="preview">Vorschau, privat (nur per Link, nicht bei Google)</option><option value="public">Öffentlich (in der Übersicht, bei Google)</option></select>
+    <button id="cr-save" onclick="crSave()" style="width:100%;font-weight:700;font-size:15px;padding:13px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg);margin-top:14px">Creator speichern</button>
+    <button id="cr-del" onclick="crDelete()" style="display:none;width:100%;font-weight:600;font-size:13px;padding:10px;border-radius:11px;color:#e23636;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:8px">Diesen Creator löschen</button>
     <div id="creator-result" style="display:none;font-family:'Space Mono';font-size:12px;margin-top:12px;line-height:1.7"></div>
+    <details style="margin-top:14px;border-top:1px dashed var(--line);padding-top:8px">
+      <summary style="cursor:pointer;font-size:12px;color:var(--text-soft)">Fortgeschritten: per JSON importieren</summary>
+      <button onclick="fillCreatorExample()" style="width:100%;margin:8px 0 6px;font-weight:600;font-size:13px;padding:9px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer">Beispiel-JSON einfügen</button>
+      <textarea id="creator-json" rows="5" placeholder="Creator-JSON…" style="width:100%;font-family:'Space Mono';font-size:12px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);margin-bottom:8px"></textarea>
+      <button onclick="submitCreatorImport()" style="width:100%;font-weight:700;font-size:14px;padding:11px;border-radius:11px;color:var(--btn-text);background:var(--btn-bg)">JSON speichern</button>
+    </details>
   </details>
   <details style="border:1.5px solid var(--line);border-radius:14px;padding:2px 15px 14px;margin-bottom:14px">
     <summary style="padding:13px 0;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:17px">📧 Newsletter <span id="nl-adm-count" style="font-family:'Inter',sans-serif;font-weight:400;font-size:12px;color:var(--text-soft)"></span></summary>
