@@ -44,6 +44,8 @@
   body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:inherit}
   img{max-width:100%}
+  html{scroll-behavior:smooth}
+  #kontakt{scroll-margin-top:78px}
 
   /* Header */
   header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
@@ -124,11 +126,26 @@
   .cta p{color:var(--text-soft);font-size:15px;max-width:560px;margin:0 auto 18px}
   .btn{display:inline-block;font-family:'Inter';font-weight:700;font-size:15px;text-decoration:none;background:var(--btn-bg);color:var(--btn-text);padding:14px 28px;border-radius:999px;transition:transform .15s,box-shadow .15s}
   .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-  .cta .mailhint{display:inline-block;margin-top:12px;font-family:'Space Mono';font-size:12.5px;color:var(--text-soft);background:none;border:none;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
-  .cta .mailhint:hover{color:var(--accent)}
-  /* Bestaetigungs-Toast, falls kein Mailprogramm registriert ist (Desktop-Webmail). */
-  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);background:var(--btn-bg);color:var(--btn-text);font-family:'Inter';font-size:14px;font-weight:600;padding:12px 20px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;max-width:calc(100vw - 32px);text-align:center}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* Kontaktformular */
+  .pform{max-width:520px;margin:20px auto 0;text-align:left}
+  .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pf-in{width:100%;font-family:'Inter';font-size:15px;color:var(--text);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;outline:none;transition:border-color .15s,box-shadow .15s}
+  .pf-grid .pf-in{margin-top:0}
+  .pf-in::placeholder{color:var(--text-soft);opacity:.9}
+  .pf-in:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--pill-bg)}
+  .pf-ta{resize:vertical;min-height:84px;line-height:1.5}
+  .pf-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+  .pf-submit{margin-top:14px;width:100%;border:none;font-size:15px}
+  .pf-submit:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
+  .pf-status{min-height:18px;margin:12px 0 0;font-size:13.5px;text-align:center;color:var(--text-soft)}
+  .pf-status.err{color:var(--accent);font-weight:600}
+  @media(max-width:520px){.pf-grid{grid-template-columns:1fr;gap:0}}
+  /* Erfolgs-Zustand */
+  .pf-done{max-width:520px;margin:8px auto 0;text-align:center;animation:pfIn .35s ease}
+  @keyframes pfIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .pf-check{width:56px;height:56px;margin:0 auto 12px;border-radius:999px;background:var(--accent);color:var(--btn-text);font-size:28px;line-height:56px;text-align:center;font-weight:700}
+  .pf-done h4{font-family:'Oswald';font-weight:700;font-size:21px;color:var(--heading);margin:0 0 6px}
+  .pf-done p{color:var(--text-soft);font-size:15px;margin:0}
 
   /* Footer */
   footer{margin-top:46px;border-top:1px solid var(--line);background:var(--bg-2)}
@@ -152,7 +169,7 @@
     </a>
     <div class="top-right">
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Zwischen Hell- und Dunkelmodus wechseln"><span id="tico">☀</span><span id="tlbl">Hell</span></button>
-      <a class="top-cta" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide" onclick="contactClick()">Schreib uns</a>
+      <a class="top-cta" href="#kontakt">Schreib uns</a>
     </div>
   </div>
 </header>
@@ -253,11 +270,27 @@
     </div>
   </section>
 
-  <section class="cta">
+  <section class="cta" id="kontakt">
     <h3>Klingt nach einer Zusammenarbeit?</h3>
     <p>Schreib uns eine Zeile mit deinem Kanal und deinem nächsten Thema. Du bekommst ein Beispiel-Faktenpaket, unverbindlich, ohne Haken.</p>
-    <a class="btn" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide" onclick="contactClick()">Partner werden</a>
-    <button class="mailhint" type="button" onclick="contactClick()">info@viceguide.de kopieren</button>
+
+    <form class="pform" id="pform" novalidate>
+      <div class="pf-grid">
+        <input class="pf-in" type="text" id="pf-name" name="name" placeholder="Dein Name oder Creator-Name" autocomplete="name" maxlength="120" required>
+        <input class="pf-in" type="text" id="pf-channel" name="channel" placeholder="Dein Kanal (Link oder Handle)" maxlength="300" required>
+      </div>
+      <input class="pf-in" type="email" id="pf-email" name="email" placeholder="Deine E-Mail für die Antwort" autocomplete="email" maxlength="190" required>
+      <textarea class="pf-in pf-ta" id="pf-message" name="message" rows="3" maxlength="3000" placeholder="Worum geht es? Dein nächstes Video- oder Stream-Thema, deine Frage ..."></textarea>
+      <input class="pf-hp" type="text" id="pf-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn pf-submit" type="submit">Anfrage senden</button>
+      <p class="pf-status" id="pf-status" role="alert" aria-live="polite"></p>
+    </form>
+
+    <div class="pf-done" id="pf-done" hidden>
+      <div class="pf-check" aria-hidden="true">✓</div>
+      <h4>Danke, deine Anfrage ist raus.</h4>
+      <p>Ich melde mich zeitnah bei dir, meist innerhalb von ein bis zwei Tagen.</p>
+    </div>
   </section>
 
 </div>
@@ -274,41 +307,40 @@
   </div>
 </footer>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
 <script>
-  var VG_MAIL='info@viceguide.de';
-  var toastTimer;
-  function showToast(msg){
-    var t=document.getElementById('toast');
-    t.textContent=msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer=setTimeout(function(){t.classList.remove('show');},3200);
-  }
-  // Kopiert die Adresse in die Zwischenablage und gibt sichtbares Feedback.
-  // Das mailto laeuft parallel weiter (kein preventDefault): wer ein
-  // Mailprogramm hat, dem oeffnet es sich; wer keins hat (Desktop-Webmail),
-  // bekommt trotzdem die kopierte Adresse plus Bestaetigung statt "nichts".
-  function contactClick(){
-    var done=function(){showToast('E-Mail-Adresse kopiert: '+VG_MAIL);};
-    try{
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(VG_MAIL).then(done,fallbackCopy);
-      }else{fallbackCopy();}
-    }catch(e){fallbackCopy();}
-  }
-  function fallbackCopy(){
-    try{
-      var ta=document.createElement('textarea');
-      ta.value=VG_MAIL;ta.style.position='fixed';ta.style.opacity='0';
-      document.body.appendChild(ta);ta.focus();ta.select();
-      document.execCommand('copy');document.body.removeChild(ta);
-      showToast('E-Mail-Adresse kopiert: '+VG_MAIL);
-    }catch(e){
-      showToast('Schreib uns an: '+VG_MAIL);
-    }
-  }
+  // Kontaktformular: sendet an api/partner.php, zeigt Inline-Erfolg/Fehler,
+  // ganz ohne Mailprogramm oder Seitenwechsel.
+  (function(){
+    var form=document.getElementById('pform');
+    if(!form) return;
+    var status=document.getElementById('pf-status');
+    function setStatus(msg,isErr){ status.textContent=msg||''; status.className='pf-status'+(isErr?' err':''); }
+    function val(id){ return (document.getElementById(id).value||'').trim(); }
+    form.addEventListener('submit',async function(e){
+      e.preventDefault();
+      var payload={ name:val('pf-name'), channel:val('pf-channel'), email:val('pf-email'), message:val('pf-message'), website:val('pf-website') };
+      if(!payload.name||!payload.channel||!payload.email){ setStatus('Bitte fülle Name, Kanal und E-Mail aus.',true); return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)){ setStatus('Bitte eine gültige E-Mail-Adresse angeben.',true); return; }
+      var btn=form.querySelector('.pf-submit'); var label=btn.textContent;
+      btn.disabled=true; btn.textContent='Wird gesendet ...'; setStatus('',false);
+      try{
+        var r=await fetch('/api/partner.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        var d=await r.json().catch(function(){return {};});
+        if(r.ok && d && d.ok){
+          form.hidden=true;
+          var done=document.getElementById('pf-done');
+          done.hidden=false;
+          done.scrollIntoView({behavior:'smooth',block:'center'});
+          return;
+        }
+        setStatus((d && d.error) ? d.error : 'Senden fehlgeschlagen. Schreib uns direkt an info@viceguide.de.',true);
+      }catch(err){
+        setStatus('Keine Verbindung. Schreib uns direkt an info@viceguide.de.',true);
+      }
+      btn.disabled=false; btn.textContent=label;
+    });
+  })();
+
   function toggleTheme(){
     var h=document.documentElement;
     var n=h.getAttribute('data-theme')==='dark'?'light':'dark';
