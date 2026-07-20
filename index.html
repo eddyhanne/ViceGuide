@@ -4227,7 +4227,8 @@ function crFavSecChange(sel){
   const row=sel.closest('.cr-row'); const sec=sel.value;
   row.querySelector('.cr-f-slug').innerHTML=crEntryOptions(sec,'');
   const lbl=row.querySelector('.cr-f-label'); const f=CR_SECTIONS.find(s=>s[0]===sec);
-  if(lbl && !lbl.value && f)lbl.value=f[2];
+  const defaults=CR_SECTIONS.map(s=>s[2]);
+  if(lbl && f && (!lbl.value || defaults.indexOf(lbl.value)!==-1)) lbl.value=f[2];
 }
 function crAddFav(section,slug,label,quote){ const f=CR_SECTIONS.find(s=>s[0]===(section||'vehicles')); if($('cr-favs'))$('cr-favs').appendChild(crFavRow(section,slug,label||(f?f[2]:''),quote)); }
 function crNew(){
@@ -4284,10 +4285,11 @@ async function crSave(){
       if(!pr.ok)throw 0; const rd=await pr.json().catch(()=>({})); if(rd.slug)obj.slug=rd.slug;
     }
     await loadExternal(); crRenderList();
-    const res=$('creator-result'); res.style.display='block';
-    res.innerHTML='Gespeichert. <a href="/creator/'+encodeURIComponent(obj.slug)+'" target="_blank" style="color:var(--accent)">Seite öffnen</a>';
-    toast('Creator gespeichert.');
     crEdit(obj.slug);
+    const res=$('creator-result'); res.style.display='block';
+    res.innerHTML='✓ Gespeichert. <a href="/creator/'+encodeURIComponent(obj.slug)+'" target="_blank" style="color:var(--accent);font-weight:700">Seite öffnen ↗</a>';
+    res.scrollIntoView({behavior:'smooth',block:'center'});
+    toast('Creator gespeichert.');
   }catch(e){ toast('Speichern fehlgeschlagen.'); }
   btn.disabled=false; btn.textContent=lbl;
 }
@@ -4416,9 +4418,11 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
       <input id="cr-avatar-file" type="file" accept="image/*" onchange="crAvatarPick(this.files&&this.files[0])" class="nl-fld" style="flex:1">
     </div>
     <div class="nl-lbl">Kanäle</div>
+    <div style="font-size:11.5px;color:var(--text-soft);margin:0 0 2px">Links zu seinen Profilen, erscheinen als Buttons oben im Profil.</div>
     <div id="cr-plats"></div>
     <button type="button" onclick="crAddPlat()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Kanal</button>
     <div class="nl-lbl">Favoriten aus der Datenbank</div>
+    <div style="font-size:11.5px;color:var(--text-soft);margin:0 0 2px">Seine Lieblings-Einträge, z.B. sein Lieblingsauto. Rubrik wählen, dann den Eintrag aus deiner Datenbank. Sie erscheinen auf seiner Seite und als Badge „★ … von [Name]" auf dem jeweiligen Eintrag. Zitat ist optional.</div>
     <div id="cr-favs"></div>
     <button type="button" onclick="crAddFav()" style="font-weight:600;font-size:12px;padding:7px 12px;border-radius:9px;color:var(--accent);background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;margin-top:6px">+ Favorit</button>
     <div class="nl-lbl">Sichtbarkeit</div>
