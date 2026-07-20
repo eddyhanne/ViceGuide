@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{var t=localStorage.getItem('vg-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Partner werden bei ViceGuide, der deutschen GTA-6-Zentrale</title>
 <meta name="robots" content="noindex, nofollow">
@@ -15,8 +16,21 @@
   @font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/assets/fonts/spacemono-400.woff2') format('woff2')}
   @font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url('/assets/fonts/spacemono-700.woff2') format('woff2')}
 
-  /* Light ist die sichtbare Basis (wie die Startseite fuer die meisten Besucher). */
+  /* Gleiches Theming-Modell wie index.html: Dark ist die CSS-Basis, Light
+     ueberschreibt. Default-Theme ist Hell (data-theme="light" am <html>),
+     der Umschalter merkt die Wahl in localStorage 'vg-theme', identisch zur
+     Hauptseite, sodass die Praeferenz zwischen beiden Seiten mitwandert. */
   :root{
+    --bg:#0D0A1A; --bg-2:#151027; --surface:#1B1436; --surface-2:#241a45;
+    --text:#ECE6F7; --text-soft:#A99CC4; --heading:#F7E7C4;
+    --accent:#88B8C5;
+    --line:rgba(255,255,255,.10); --nav-bg:rgba(13,10,26,.85);
+    --shadow:0 22px 50px -22px rgba(0,0,0,.7);
+    --btn-bg:#88B8C5; --btn-text:#1a0f28;
+    --pill-bg:rgba(136,184,197,.05); --pill-ln:rgba(136,184,197,.24);
+    --logo-shadow:drop-shadow(0 14px 30px rgba(0,0,0,.55));
+  }
+  :root[data-theme="light"]{
     --bg:#FBF3E7; --bg-2:#F4E8D6; --surface:#FFFDFB; --surface-2:#FFF6EA;
     --text:#221041; --text-soft:#6B5E85; --heading:#221041;
     --accent:#D00059;
@@ -24,21 +38,7 @@
     --shadow:0 20px 44px -22px rgba(34,16,65,.4);
     --btn-bg:#221041; --btn-text:#FBF3E7;
     --pill-bg:rgba(208,0,89,.035); --pill-ln:rgba(208,0,89,.22);
-    --hero-overlay:linear-gradient(180deg,rgba(251,243,231,.04) 0%,rgba(251,243,231,.55) 68%,var(--bg) 100%);
     --logo-shadow:drop-shadow(0 2px 1px rgba(28,10,48,.95)) drop-shadow(0 12px 22px rgba(28,10,48,.45));
-  }
-  @media(prefers-color-scheme:dark){
-    :root{
-      --bg:#0D0A1A; --bg-2:#151027; --surface:#1B1436; --surface-2:#241a45;
-      --text:#ECE6F7; --text-soft:#A99CC4; --heading:#F7E7C4;
-      --accent:#88B8C5;
-      --line:rgba(255,255,255,.10); --nav-bg:rgba(13,10,26,.85);
-      --shadow:0 22px 50px -22px rgba(0,0,0,.7);
-      --btn-bg:#88B8C5; --btn-text:#1a0f28;
-      --pill-bg:rgba(136,184,197,.05); --pill-ln:rgba(136,184,197,.24);
-      --hero-overlay:linear-gradient(180deg,rgba(13,10,26,.35) 0%,rgba(13,10,26,.74) 66%,var(--bg) 100%);
-      --logo-shadow:drop-shadow(0 14px 30px rgba(0,0,0,.55));
-    }
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -52,8 +52,12 @@
   .brand img{height:38px;width:auto;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))}
   .brand b{font-family:'Oswald';font-weight:700;font-size:18px;letter-spacing:.3px}
   .brand span{font-family:'Space Mono';font-size:11px;color:var(--text-soft);letter-spacing:.5px}
-  .top-cta{margin-left:auto;font-family:'Inter';font-size:13px;font-weight:600;text-decoration:none;background:var(--btn-bg);color:var(--btn-text);padding:9px 15px;border-radius:999px;white-space:nowrap}
-  @media(max-width:560px){.brand span{display:none}}
+  .top-cta{font-family:'Inter';font-size:13px;font-weight:600;text-decoration:none;background:var(--btn-bg);color:var(--btn-text);padding:9px 15px;border-radius:999px;white-space:nowrap}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .theme-toggle{height:38px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:13px;font-weight:600;color:var(--text);background:none;cursor:pointer;transition:border-color .2s,color .2s;flex-shrink:0;white-space:nowrap}
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+  .theme-toggle #tico{font-size:15px;line-height:1}
+  @media(max-width:560px){.brand span{display:none} .theme-toggle{padding:0 10px} .theme-toggle #tlbl{display:none}}
 
   .wrap{max-width:1000px;margin:0 auto;padding:0 20px 10px}
 
@@ -142,7 +146,10 @@
       <img src="/logo.png" alt="ViceGuide">
       <b>ViceGuide</b><span>viceguide.de</span>
     </a>
-    <a class="top-cta" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide">Schreib uns</a>
+    <div class="top-right">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Zwischen Hell- und Dunkelmodus wechseln"><span id="tico">☀</span><span id="tlbl">Hell</span></button>
+      <a class="top-cta" href="mailto:info@viceguide.de?subject=Partner-Anfrage%20ViceGuide">Schreib uns</a>
+    </div>
   </div>
 </header>
 
@@ -262,6 +269,22 @@
     </div>
   </div>
 </footer>
+
+<script>
+  function toggleTheme(){
+    var h=document.documentElement;
+    var n=h.getAttribute('data-theme')==='dark'?'light':'dark';
+    h.setAttribute('data-theme',n);
+    try{localStorage.setItem('vg-theme',n);}catch(e){}
+    syncThemeButton();
+  }
+  function syncThemeButton(){
+    var dark=document.documentElement.getAttribute('data-theme')==='dark';
+    document.getElementById('tico').textContent=dark?'☾':'☀';
+    document.getElementById('tlbl').textContent=dark?'Dunkel':'Hell';
+  }
+  syncThemeButton();
+</script>
 
 </body>
 </html>
