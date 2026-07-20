@@ -174,6 +174,27 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .sec{margin:26px 0 0}
 .sec-h{font-family:'Oswald';font-weight:700;font-size:clamp(18px,2.6vw,22px);color:var(--heading);letter-spacing:.3px;margin:0 0 4px}
 .sec-lead{color:var(--text-soft);font-size:14.5px;margin:0 0 16px}
+/* Zweispaltiger Hub */
+.cgrid{display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px}
+@media(min-width:860px){.cgrid{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}}
+.cmain{min-width:0}
+.cside{min-width:0;display:flex;flex-direction:column;gap:20px}
+.sbox-h{font-family:'Oswald';font-weight:700;font-size:17px;color:var(--heading);letter-spacing:.3px;margin:0 0 10px}
+.mini-h{font-family:'Space Mono';font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);margin:18px 0 0}
+.cvids{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+@media(max-width:480px){.cvids{grid-template-columns:1fr}}
+.favlist{display:flex;flex-direction:column;gap:9px}
+.favitem{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.favitem:hover{border-color:var(--accent);transform:translateY(-1px)}
+.favitem-th{flex:0 0 56px;width:56px;height:42px;border-radius:8px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center;color:var(--accent);font-family:'Oswald';font-size:18px}
+.favitem-th img{width:100%;height:100%;object-fit:cover;display:block}
+.favitem-b{min-width:0;display:flex;flex-direction:column;gap:1px}
+.favitem .lbl{font-family:'Space Mono';font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.favitem .nm{font-family:'Oswald';font-weight:600;font-size:14.5px;color:var(--heading);line-height:1.15}
+.favitem .q{font-size:11.5px;font-style:italic;color:var(--text-soft);line-height:1.4;margin-top:2px}
+.cside .sharebox{flex-direction:column}
+.cside .sharebox code{flex:1 1 auto}
+.cside .sharebox button{padding:11px}
 .cbio{color:var(--text);font-size:16px;line-height:1.7;max-width:760px}
 .cbio p{margin:0 0 12px}
 /* Favoriten-Grid */
@@ -380,93 +401,82 @@ if ($platforms) {
 echo '</div>';
 echo '</div></section>';
 
-// Live-Stream (Stufe 3): prominentes, DSGVO-konformes Click-to-Load-Modul.
-// Fuer den Demo-Kanal (twitch=beispiel) wird statt eines leeren Embeds eine
-// Erklaerflaeche gezeigt. Fuer echte Creator laedt der Klick player.twitch.tv
-// mit parent=<domain>. Ein rotes LIVE-Signal zeigt nur die Demo als Illustration.
-// Im Vorschau-/Demo-Zustand immer illustrativ zeigen (auch ohne gesetzten Kanal),
-// auf der Live-Seite nur wenn ein echter Twitch-Kanal hinterlegt ist.
+// Zweispaltiger Hub: links Medien (Live & Videos), rechts Bio, Lieblinge, Teilen.
+// Mobil stapelt es untereinander, Medien zuerst.
 $showStream = $preview || $twitch !== '';
-if ($showStream) {
-    $handle = $twitch !== '' ? $twitch : ($c['slug'] ?: 'deinkanal');
-    $liveTag = $preview ? '<span class="tw-live">● LIVE</span>' : '<span class="tw-badge">Twitch</span>';
-    $lead = $preview
-        ? 'So wird dein Live-Stream eingebettet, direkt und prominent auf deiner Seite. Auf der echten Seite läuft hier dein Twitch-Stream, DSGVO-konform erst auf Klick.'
-        : 'Lädt erst auf Klick, es wird vorher keine Verbindung zu Twitch aufgebaut.';
-    echo '<section class="sec"><h2 class="sec-h">Live-Stream</h2><p class="sec-lead">' . $lead . '</p>'
-       . '<button class="twph" data-twitch="' . vg_cr_esc($handle) . '"' . ($preview ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
-       . '<span class="tw-veil"></span>' . $liveTag
-       . '<span class="tw-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
-       . '<span class="tw-name">twitch.tv/' . vg_cr_esc($handle) . '</span>'
-       . '</button></section>';
-}
+$hasVideos  = $preview || !empty($videos);
 
-// Bio
+echo '<div class="cgrid">';
+
+// ---- MAIN: Live & Videos ----
+echo '<div class="cmain">';
+if ($showStream || $hasVideos) {
+    echo '<section class="sec"><h2 class="sec-h">Live &amp; Videos</h2>';
+    if ($showStream) {
+        $handle = $twitch !== '' ? $twitch : ($c['slug'] ?: 'deinkanal');
+        $liveTag = $preview ? '<span class="tw-live">● LIVE</span>' : '<span class="tw-badge">Twitch</span>';
+        echo '<button class="twph" data-twitch="' . vg_cr_esc($handle) . '"' . ($preview ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
+           . '<span class="tw-veil"></span>' . $liveTag
+           . '<span class="tw-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
+           . '<span class="tw-name">twitch.tv/' . vg_cr_esc($handle) . '</span></button>';
+        echo '<p class="sec-lead" style="margin-top:8px">' . ($preview
+            ? 'Auf der echten Seite läuft hier dein Twitch-Stream, DSGVO-konform erst auf Klick.'
+            : 'Lädt erst auf Klick, vorher keine Verbindung zu Twitch.') . '</p>';
+    }
+    if ($hasVideos) {
+        echo '<div class="mini-h">Neueste Videos</div><div class="cvids">';
+        if ($preview) {
+            foreach (['Dein neuestes Video', 'Dein GTA-6-Content'] as $t) {
+                echo '<div class="vidcard"><button class="ytph" data-demo="1" onclick="vgLoadYt(this)" aria-label="Beispiel-Video"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
+                   . '<div class="vid-t">' . vg_cr_esc($t) . '</div>'
+                   . '<div class="vid-note">Beispiel. Hier steht dein echtes Video.</div></div>';
+            }
+        } else {
+            foreach ($videos as $v) {
+                $vid = preg_replace('/[^A-Za-z0-9_-]/', '', (string)($v['id'] ?? ''));
+                if ($vid === '') continue;
+                echo '<div class="vidcard"><button class="ytph" data-yt="' . vg_cr_esc($vid) . '" onclick="vgLoadYt(this)" aria-label="Video abspielen"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
+                   . '<div class="vid-t">' . vg_cr_esc($v['title'] ?? 'Video') . '</div></div>';
+            }
+        }
+        echo '</div>';
+    }
+    echo '</section>';
+}
+echo '</div>';
+
+// ---- SIDE: Bio, Lieblinge, Teilen ----
+echo '<aside class="cside">';
 if ($bio !== '') {
-    echo '<section class="sec"><h2 class="sec-h">Über ' . vg_cr_esc($name) . '</h2><div class="cbio">';
+    echo '<section class="sbox"><h2 class="sbox-h">Über ' . vg_cr_esc($name) . '</h2><div class="cbio">';
     foreach (preg_split('/\r?\n+/', $bio) as $para) {
         $para = trim($para);
         if ($para !== '') echo '<p>' . vg_cr_esc($para) . '</p>';
     }
     echo '</div></section>';
 }
-
-// Favoriten
 if ($favs) {
-    echo '<section class="sec"><h2 class="sec-h">' . vg_cr_esc($name) . 's Lieblinge aus der Datenbank</h2>'
-       . '<p class="sec-lead">Handverlesen aus der ViceGuide-GTA-6-Datenbank. Klick dich direkt zum Eintrag.</p><div class="favgrid">';
+    echo '<section class="sbox"><h2 class="sbox-h">Lieblinge aus der Datenbank</h2><div class="favlist">';
     foreach ($favs as $f) {
         $href = '/' . VG_CR_SECMAP[$f['section']]['prefix'] . '/' . vg_cr_esc($f['slug']);
-        echo '<a class="favcard" href="' . $href . '">';
-        if ($f['img']) echo '<div class="fav-th"><img src="' . vg_cr_esc($f['img']) . '" alt="' . vg_cr_esc($f['name']) . '"><span class="fav-lbl">' . vg_cr_esc($f['label']) . '</span></div>';
-        else echo '<div class="fav-th ph"><span class="fav-lbl">' . vg_cr_esc($f['label']) . '</span>' . vg_cr_esc(mb_substr($f['name'], 0, 1)) . '</div>';
-        echo '<div class="fav-b"><div class="fav-n">' . vg_cr_esc($f['name']) . '</div>';
-        if ($f['sub']) echo '<div class="fav-s">' . vg_cr_esc($f['sub']) . '</div>';
-        if ($f['quote']) echo '<div class="fav-q">' . vg_cr_esc($f['quote']) . '</div>';
-        echo '</div></a>';
+        echo '<a class="favitem" href="' . $href . '">';
+        if ($f['img']) echo '<span class="favitem-th"><img src="' . vg_cr_esc($f['img']) . '" alt="' . vg_cr_esc($f['name']) . '"></span>';
+        else echo '<span class="favitem-th">' . vg_cr_esc(mb_substr($f['name'], 0, 1)) . '</span>';
+        echo '<span class="favitem-b"><span class="lbl">' . vg_cr_esc($f['label']) . '</span><span class="nm">' . vg_cr_esc($f['name']) . '</span>';
+        if ($f['quote']) echo '<span class="q">' . vg_cr_esc($f['quote']) . '</span>';
+        echo '</span></a>';
     }
     echo '</div></section>';
 }
-
-// Videos (DSGVO click-to-load). Vorschau/Demo: illustrative Platzhalter, damit
-// der Creator die Optik sieht, ohne dass fremde Videos in einer Demo landen.
-// Live-Seite (seo=1): die echten Videos des Creators.
-if ($preview) {
-    $ph = [
-        'Dein neuestes Video',
-        'Dein GTA-6-Content',
-    ];
-    echo '<section class="sec"><h2 class="sec-h">Videos von ' . vg_cr_esc($name) . '</h2>'
-       . '<p class="sec-lead">Hier erscheinen deine neuesten Videos, direkt auf deiner Seite eingebettet (DSGVO-konform, laden erst auf Klick).</p><div class="vidgrid">';
-    foreach ($ph as $t) {
-        echo '<div class="vidcard"><button class="ytph" data-demo="1" onclick="vgLoadYt(this)" aria-label="Beispiel-Video"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
-           . '<div class="vid-t">' . vg_cr_esc($t) . '</div>'
-           . '<div class="vid-note">Beispiel. Auf deiner Seite steht hier dein echtes Video.</div></div>';
-    }
-    echo '</div></section>';
-} elseif ($videos) {
-    echo '<section class="sec"><h2 class="sec-h">Videos von ' . vg_cr_esc($name) . '</h2>'
-       . '<p class="sec-lead">Lädt erst auf Klick, es wird vorher keine Verbindung zu YouTube aufgebaut.</p><div class="vidgrid">';
-    foreach ($videos as $v) {
-        $vid = preg_replace('/[^A-Za-z0-9_-]/', '', (string)($v['id'] ?? ''));
-        if ($vid === '') continue;
-        $vt = $v['title'] ?? 'Video';
-        echo '<div class="vidcard"><button class="ytph" data-yt="' . vg_cr_esc($vid) . '" onclick="vgLoadYt(this)" aria-label="Video abspielen"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
-           . '<div class="vid-t">' . vg_cr_esc($vt) . '</div>'
-           . '<div class="vid-note">Beim Abspielen werden Daten an YouTube (Google) übertragen, im No-Cookie-Modus.</div></div>';
-    }
-    echo '</div></section>';
-}
-
-// Für-deine-Community-Block: fertiger Beschreibungstext plus messbarer Link.
-// utm_source=<slug> laesst ViceGuide sehen, wie viele Besucher der Creator
-// schickt (eigenes hits-Tracking). Als Geschenk an die Community geframt.
+// Für-deine-Videobeschreibung: kurzer, messbarer Link (utm ueber /c/<slug>).
 $shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
 $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
-echo '<section class="sec"><h2 class="sec-h">Für deine Videobeschreibung</h2>'
-   . '<p class="sec-lead">Ein Satz für deine Beschreibung oder dein Panel: deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.</p>'
+echo '<section class="sbox"><h2 class="sbox-h">Für deine Videobeschreibung</h2>'
+   . '<p class="sec-lead" style="margin-bottom:10px">Deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.</p>'
    . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
    . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
+echo '</aside>';
 
+echo '</div>'; // cgrid
 echo '<a class="cback" href="/creator/">← Alle Partner-Creator</a>';
 echo '</div>' . vg_cr_footer();
