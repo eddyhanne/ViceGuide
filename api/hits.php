@@ -330,6 +330,8 @@ input[type=date]{font-family:inherit;font-size:.85rem;padding:6px 10px;border:1p
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 8px 20px -14px rgba(34,16,65,.3)}
 .tile .n{font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1.2}
 .tile .n.small{font-size:1.05rem;line-height:1.3;word-break:break-word}
+.tile .nrow{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tile .ncmp{font-size:.9rem;font-weight:600;color:var(--soft);line-height:1.2}
 .tile .l{font-size:.78rem;color:var(--text);font-weight:600;margin-top:4px}
 .tile .l2{font-size:.7rem;color:var(--soft);margin-top:6px;line-height:1.4}
 .delta{display:inline-block;font-size:.68rem;font-weight:700;margin-top:6px;padding:2px 7px;border-radius:10px}
@@ -574,6 +576,19 @@ function deltaHtml(cur,prev){
   if(p<0)return '<span class="delta down">'+p+'% ggü. Vorperiode</span>';
   return '<span class="delta flat">0% ggü. Vorperiode</span>';
 }
+// Label der Vergleichsperiode, wandert mit dem gewaehlten Zeitraum mit:
+// "Heute" vergleicht mit gestern, "Gestern" mit vorgestern, sonst allgemein.
+function cmpLabel(){
+  var r=DATA.range;
+  if(r.preset==='yesterday')return 'vorgestern';
+  if(!r.custom&&r.days===1)return 'gestern';
+  return 'Vorperiode';
+}
+// Kleiner absoluter Vergleichswert neben der grossen Tageszahl (Direktvergleich).
+function nCmp(prev){
+  if(prev==null||prev<=0)return '';
+  return '<span class="ncmp">'+cmpLabel()+' '+prev+'</span>';
+}
 function barRows(rows,labelFn){
   if(!rows||!rows.length)return '<tr><td colspan="3" class="empty">Noch keine Daten in diesem Zeitraum.</td></tr>';
   var max=1;rows.forEach(function(r){if(+r.c>max)max=+r.c;});
@@ -607,8 +622,8 @@ function renderDash(){
   var h='';
   h+='<div class="sectionlbl">Übersicht ('+esc(rangeLabel())+')</div>';
   h+='<div class="tiles">';
-  h+='<div class="tile"><div class="n">'+d.total+'</div><div class="l">Seitenaufrufe gesamt</div>'+deltaHtml(d.total,d.prev_total)+'</div>';
-  h+='<div class="tile"><div class="n">'+d.instagram.by_utm+'</div><div class="l">Instagram (per UTM-Tag)</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)+'</div>';
+  h+='<div class="tile"><div class="nrow"><span class="n">'+d.total+'</span>'+nCmp(d.prev_total)+'</div><div class="l">Seitenaufrufe gesamt</div>'+deltaHtml(d.total,d.prev_total)+'</div>';
+  h+='<div class="tile"><div class="nrow"><span class="n">'+d.instagram.by_utm+'</span>'+nCmp(d.instagram.prev_by_utm)+'</div><div class="l">Instagram (per UTM-Tag)</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)+'</div>';
   h+='<div class="tile"><div class="n small">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="l">Top-Quelle ('+(topSrc.c||0)+')</div><div class="l2">Woher die meisten Besucher mit UTM-Tag kamen.</div></div>';
   h+='<div class="tile"><div class="n small">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am häufigsten aufgerufene Seite/Artikel.</div></div>';
   h+='</div>';
