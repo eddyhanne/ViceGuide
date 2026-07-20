@@ -77,6 +77,8 @@ function vg_db(): array {
         $pdo->query('SELECT id FROM hits LIMIT 1');
         $pdo->query('SELECT id FROM events LIMIT 1');
         $pdo->query('SELECT id FROM gsc_rows LIMIT 1');
+        $pdo->query('SELECT id FROM creators LIMIT 1');
+        $pdo->query('SELECT id FROM creator_favorites LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
         $schemaReady = false;
@@ -196,6 +198,33 @@ function vg_db(): array {
             kind TEXT PRIMARY KEY,
             range_label TEXT NULL,
             imported_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS creators (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            tagline TEXT,
+            bio TEXT,
+            platforms_json TEXT,
+            videos_json TEXT,
+            avatar TEXT,
+            avatarfit_json TEXT,
+            twitch_login TEXT,
+            active INTEGER NOT NULL DEFAULT 1,
+            seo_index INTEGER NOT NULL DEFAULT 1,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            draft_json TEXT,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS creator_favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            creator_id INTEGER NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
+            section TEXT NOT NULL,
+            entry_slug TEXT NOT NULL,
+            label TEXT,
+            quote TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0
         )');
         try {
             $cols = $pdo->query("PRAGMA table_info(db_entries)")->fetchAll();
@@ -375,6 +404,36 @@ function vg_db(): array {
             kind VARCHAR(10) PRIMARY KEY,
             range_label VARCHAR(120) NULL,
             imported_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS creators (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            slug VARCHAR(180) NOT NULL UNIQUE,
+            name VARCHAR(160) NOT NULL,
+            tagline VARCHAR(300) NULL,
+            bio MEDIUMTEXT NULL,
+            platforms_json TEXT NULL,
+            videos_json TEXT NULL,
+            avatar MEDIUMTEXT NULL,
+            avatarfit_json VARCHAR(100) NULL,
+            twitch_login VARCHAR(100) NULL,
+            active TINYINT NOT NULL DEFAULT 1,
+            seo_index TINYINT NOT NULL DEFAULT 1,
+            sort_order INT NOT NULL DEFAULT 0,
+            draft_json MEDIUMTEXT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS creator_favorites (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            creator_id INT NOT NULL,
+            section VARCHAR(30) NOT NULL,
+            entry_slug VARCHAR(180) NOT NULL,
+            label VARCHAR(80) NULL,
+            quote TEXT NULL,
+            sort_order INT NOT NULL DEFAULT 0,
+            INDEX idx_creator (creator_id),
+            INDEX idx_entry (section, entry_slug),
+            FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         try {
             $cols = $pdo->query("SHOW COLUMNS FROM db_entries LIKE 'slug'")->fetchAll();

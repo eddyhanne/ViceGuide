@@ -88,4 +88,20 @@ foreach ($entries as $r) {
     $lastmod = vg_sitemap_date($r['updated_at']);
     echo "  <url>\n    <loc>{$loc}</loc>\n    <lastmod>{$lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n";
 }
+// Creator-Seiten: nur aktive UND fuer Google freigegebene (seo_index=1). Das
+// Beispiel-/Vorschauprofil (seo=0) bleibt draussen, ebenso die Uebersicht,
+// solange kein echter Partner indexierbar ist.
+try {
+    $creators = $pdo->query("SELECT slug, updated_at FROM creators WHERE active = 1 AND seo_index = 1 ORDER BY sort_order")->fetchAll();
+} catch (Throwable $e) {
+    $creators = [];
+}
+if ($creators) {
+    echo "  <url>\n    <loc>https://viceguide.de/creator/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>\n";
+    foreach ($creators as $r) {
+        $loc = 'https://viceguide.de/creator/' . htmlspecialchars($r['slug'], ENT_QUOTES, 'UTF-8');
+        $lastmod = vg_sitemap_date($r['updated_at']);
+        echo "  <url>\n    <loc>{$loc}</loc>\n    <lastmod>{$lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n";
+    }
+}
 echo '</urlset>' . "\n";
