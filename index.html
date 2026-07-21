@@ -1177,6 +1177,7 @@ const RATGEBER=[
   {key:'plattform', label:'Plattformen & Technik', icon:'🖥️', ids:['plattformen-zu-release','gta-6-ps4-xbox-one','wann-pc-version','gta-6-pc-version-warum-spaeter','gta-6-cloud-gaming','gta-6-steam-deck','gta-6-ps5-vs-ps5-pro-unterschied','wetter-technik-engine','gta-6-ps5-emulatoren-sharpemu-pc']},
   {key:'release', label:'Rund um den Release', icon:'⏱️', ids:['gta-6-uhrzeit-freischaltung','gta-6-preload-termin-speicherplatz','gta-6-altersfreigabe-usk']},
   {key:'features', label:'Features & Modi', icon:'🎮', ids:['gta-6-online-modus','gta-6-offline-spielen','gta-6-splitscreen-koop','gta-6-dlc-season-pass','gta-online-zukunft-nach-gta-6','gta-6-crossplay-crossprogression','gta-6-cheats-was-bekannt','gta-6-deutsche-synchronisation']},
+  {key:'tipps', label:'Tipps & Guides', icon:'💡', ids:['gta-6-geld-verdienen']},
 ];
 const RATGEBER_IDS=new Set(RATGEBER.flatMap(b=>b.ids));
 /* Zwei Welten fuer die gesperrten Phase-2-Kacheln: Ratgeber unter Guides,
@@ -1225,7 +1226,8 @@ const RG_ICON={
  kauf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.2 11.2a1 1 0 0 0 1 .8h8.3a1 1 0 0 0 1-.8L20 8H6"/></svg>',
  plattform:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>',
  release:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9.5" x2="20" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/></svg>',
- features:ICONS.activities
+ features:ICONS.activities,
+ tipps:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.8 1 1.5 1 2.5h6c0-1 .3-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>'
 };
 function rgIcon(k){return RG_ICON[k]||ICONS.home;}
 const SEC_ICON={}; SECTIONS.forEach(s=>SEC_ICON[s.id]=s.icon);
