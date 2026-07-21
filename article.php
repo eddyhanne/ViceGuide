@@ -85,6 +85,32 @@ function vg_plain_content(array $content): string {
                 $lbl = $cap !== '' ? $cap : ($plat === 'instagram' ? 'Beitrag auf Instagram ansehen' : 'Beitrag auf X ansehen');
                 $out .= '<p><a href="' . vg_esc($url) . '" rel="noopener nofollow" target="_blank">' . vg_esc($lbl) . '</a></p>';
             }
+        } elseif (str_starts_with($text, 'table:')) {
+            // Vergleichstabelle, deckungsgleich zum Client (renderContentBlock):
+            // erste Zeile Kopf, Zellen per |, Aufwand-Woerter als Ampel-Pille.
+            $rows = array_values(array_filter(array_map('trim', explode("\n", substr($text, 6))), fn($r) => $r !== ''));
+            if ($rows) {
+                $strip = fn($s) => preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($s));
+                $cells = array_map(fn($r) => array_map('trim', explode('|', $r)), $rows);
+                $head = $cells[0];
+                $th = '';
+                foreach ($head as $h) { $th .= '<th><span>' . vg_esc($strip($h)) . '</span></th>'; }
+                $tb = '';
+                foreach (array_slice($cells, 1) as $r) {
+                    $tb .= '<tr>';
+                    foreach ($head as $ci => $_) {
+                        $c = trim($r[$ci] ?? ''); $low = mb_strtolower($c);
+                        if ($low === 'leicht' || $low === 'mittel' || $low === 'schwer') {
+                            $cell = '<span class="art-pill ' . $low . '">' . vg_esc($c) . '</span>';
+                        } else {
+                            $cell = vg_esc($strip($c));
+                        }
+                        $tb .= '<td' . ($ci === 0 ? ' class="art-td-h"' : '') . '>' . $cell . '</td>';
+                    }
+                    $tb .= '</tr>';
+                }
+                $out .= '<figure class="art-table-wrap"><table class="art-table"><thead><tr>' . $th . '</tr></thead><tbody>' . $tb . '</tbody></table></figure>';
+            }
         } else {
             $plain = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $text);
             $out .= '<p>' . vg_esc($plain) . '</p>';
