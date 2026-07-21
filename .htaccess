@@ -1,5 +1,27 @@
 RewriteEngine On
 
+# Interne Projektdateien (Doku, Konfig-Vorlage) nicht oeffentlich ausliefern.
+# Betrifft CLAUDE.md/SOCIAL.md/KANAELE.md/TOOLS.md und api/config.sample.php,
+# die sonst als statische Dateien unter viceguide.de/<name> abrufbar waeren.
+<FilesMatch "\.md$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+<Files "config.sample.php">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>
+
 # Kanonische URL erzwingen: https://viceguide.de/ (kein www, kein http, kein
 # /index.html). Verhindert Duplicate Content, da vorher www.viceguide.de,
 # viceguide.de und viceguide.de/index.html alle separat mit Status 200
