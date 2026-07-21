@@ -469,6 +469,12 @@
   .art-pill.leicht{color:var(--ok-t);background:var(--ok-bg);border-color:var(--ok-bd)}
   .art-pill.mittel{color:var(--mid-t);background:var(--mid-bg);border-color:var(--mid-bd)}
   .art-pill.schwer{color:var(--rum-t);background:var(--rum-bg);border-color:var(--rum-bd)}
+  .art-table.db-table{margin:0}
+  .art-table.db-table tbody tr{cursor:pointer;transition:background .12s}
+  .art-table.db-table tbody tr:hover{background:var(--surface-2)}
+  .art-table.db-table td a{color:inherit;text-decoration:none}
+  .art-table.db-table tbody tr:hover .art-td-h a{color:var(--accent)}
+  .art-table.db-table tbody tr.feat{background:var(--surface-2)}
   .art-steps{counter-reset:vgstep;list-style:none;padding:0;margin:22px 0}
   .art-steps li{position:relative;padding:2px 0 20px 48px;line-height:1.55;font-size:16px;color:var(--text)}
   .art-steps li:last-child{padding-bottom:0}
@@ -1789,7 +1795,7 @@ function renderDB(sec){
   const data=DB[sec.id]||[];
   const cats=["Alle",...Array.from(new Set(data.map(d=>canonCat(sec.id,d.cat)).filter(Boolean)))];
   $('view').innerHTML=`
-   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle">${editMode?`<button class="vt" onclick="addDbEntry('${sec.id}')">+ Neuer Eintrag</button>`:''}<button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button></div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
+   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle">${editMode?`<button class="vt" onclick="addDbEntry('${sec.id}')">+ Neuer Eintrag</button>`:''}<button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button><button class="vt ${dbView==='table'?'on':''}" onclick="setDbView('table')">▤ Tabelle</button></div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
    ${cats.length>2?`<div class="dbtabs" id="dbtabs"><button class="cp-open" onclick="openDbCatPick('${sec.id}')"><span class="cp-ic">▤</span>Rubrik</button>${cats.map(c=>`<button class="${c===dbCat?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>`:''}
    <div class="filterbar">
      <div class="dbsearchwrap"><input id="dbsearch" type="text" placeholder="In ${sec.label} suchen…" value="${dbQuery}"><button class="clearbtn dbclear" id="dbclear" onclick="clearDbSearch()" aria-label="Leeren" style="${dbQuery?'display:grid':'display:none'}">×</button></div>
@@ -1843,6 +1849,17 @@ function dbSortList(secId,list){
     return (a.name||'').localeCompare(b.name||'','de');
   });
 }
+/* Spalten fuer die Tabellen-Ansicht einer Rubrik: die bis zu drei fields, die
+   in mindestens 40 Prozent der Eintraege befuellt sind (kategoriale Felder wie
+   Klasse, Typ, Vorbild, Erstmals). Zahlen-Felder kommen erst ab Release dazu,
+   dann taucht die Spalte automatisch auf. */
+function dbTableCols(secId){
+  const data=DB[secId]||[]; if(!data.length) return [];
+  const freq={};
+  data.forEach(d=>{ const f=d.fields||{}; Object.keys(f).forEach(k=>{ if(String(f[k]||'').trim()) freq[k]=(freq[k]||0)+1; }); });
+  const n=data.length;
+  return Object.keys(freq).filter(k=>freq[k]/n>=0.4).sort((a,b)=>freq[b]-freq[a]).slice(0,3);
+}
 function drawDB(sec){
   const q=dbQuery.trim().toLowerCase();
   /* Beim Suchen die GANZE Datenbank durchsuchen (rubrikuebergreifend), nicht
@@ -1878,6 +1895,27 @@ function drawDB(sec){
   const grid=$('dbgrid'), empty=$('dbempty');
   if(!items.length){grid.innerHTML="";empty.style.display="block";return;}
   empty.style.display="none";
+  if(dbView==='table'){
+    /* Tabellen-Ansicht: sortierbare Uebersicht der Eintraege mit den
+       haeufigsten kategorialen fields der Rubrik (GTABase-Stil). Nutzt die
+       vorhandene .art-table-Optik und sortArtTable. Ganze Zeile klickbar,
+       der Name bleibt ein echter Link (Strg/Mittelklick oeffnet neuen Tab). */
+    const cols = cross ? ['Rubrik','Kategorie'] : dbTableCols(sec.id);
+    const heads = ['Name', ...cols];
+    const th = heads.map((h,ci)=>`<th onclick="sortArtTable(this,${ci})" onkeydown="if(event.key==='Enter')sortArtTable(this,${ci})" tabindex="0" role="button" aria-sort="none"><span>${esc(h)}</span></th>`).join('');
+    const trs = items.map(it=>{
+      const d=it.d, sid=it.sid, gi=it.gi, s=SECTIONS.find(x=>x.id===sid);
+      let cells;
+      if(cross){ cells=[ esc(s?s.label:''), esc(canonCat(sid,d.cat)) ]; }
+      else { const f=d.fields||{}; cells=cols.map(c=>esc(String(f[c]||'').trim())); }
+      const nameCell=`<a href="${entryHref(sid,d.slug)}">${esc(d.name)}</a>`;
+      const feat=isEntryFeat(d._id)?' feat':'';
+      return `<tr class="db-trow${feat}" onclick="entryClick(event,'${sid}',${gi})"><td class="art-td-h">${nameCell}</td>${cells.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+    }).join('');
+    grid.className='';
+    grid.innerHTML=`<figure class="art-table-wrap"><table class="art-table db-table"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></figure>`;
+    return;
+  }
   grid.className = dbView==='list' ? 'dblist' : 'grid';
   if(dbView==='list'){
     grid.innerHTML=items.map(it=>{
