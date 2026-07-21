@@ -48,9 +48,20 @@ function vg_fmt_date(?string $iso): string {
 // syntax (###, img:, - , faq:, [[id|text]]), nur reiner lesbarer Text.
 function vg_plain_content(array $content): string {
     $out = '';
+    $inSteps = false;
     foreach ($content as $block) {
         if (!is_string($block) || trim($block) === '') continue;
         $text = $block;
+        // Nummerierte Schritte (step:) zu einer <ol> gruppieren, deckungsgleich
+        // zum Client (renderContent). Ein Nicht-Schritt-Block schliesst die Liste.
+        $isStep = str_starts_with($text, 'step:');
+        if (!$isStep && $inSteps) { $out .= '</ol>'; $inSteps = false; }
+        if ($isStep) {
+            if (!$inSteps) { $out .= '<ol class="art-steps">'; $inSteps = true; }
+            $s = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim(substr($text, 5)));
+            $out .= '<li>' . vg_esc($s) . '</li>';
+            continue;
+        }
         if (str_starts_with($text, 'img:')) continue;
         if (str_starts_with($text, '###')) {
             $out .= '<h2>' . vg_esc(trim(preg_replace('/^###\s*/', '', $text))) . '</h2>';
@@ -116,6 +127,7 @@ function vg_plain_content(array $content): string {
             $out .= '<p>' . vg_esc($plain) . '</p>';
         }
     }
+    if ($inSteps) { $out .= '</ol>'; }
     return $out;
 }
 

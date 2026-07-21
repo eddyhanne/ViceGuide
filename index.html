@@ -469,6 +469,11 @@
   .art-pill.leicht{color:var(--ok-t);background:var(--ok-bg);border-color:var(--ok-bd)}
   .art-pill.mittel{color:var(--mid-t);background:var(--mid-bg);border-color:var(--mid-bd)}
   .art-pill.schwer{color:var(--rum-t);background:var(--rum-bg);border-color:var(--rum-bd)}
+  .art-steps{counter-reset:vgstep;list-style:none;padding:0;margin:22px 0}
+  .art-steps li{position:relative;padding:2px 0 20px 48px;line-height:1.55;font-size:16px;color:var(--text)}
+  .art-steps li:last-child{padding-bottom:0}
+  .art-steps li::before{counter-increment:vgstep;content:counter(vgstep);position:absolute;left:0;top:-2px;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-family:'Oswald';font-weight:600;font-size:16px;display:grid;place-items:center}
+  .art-steps li:not(:last-child)::after{content:"";position:absolute;left:15px;top:32px;bottom:2px;width:2px;background:var(--line)}
   .art-embed{margin:22px 0}
   .art-embed figcaption{margin-top:8px;font-size:13px;color:var(--text-soft);text-align:center}
   .vg-yt,.vg-emb{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;border-radius:12px;text-align:center;padding:22px 18px}
@@ -3472,6 +3477,13 @@ function renderContent(arr,outHeads,outFaqs,editable,seen){
       }
       html+=`<div class="art-faq">${items}</div>`; continue;
     }
+    if(typeof p==='string'&&p.startsWith('step:')){
+      let items='';
+      while(i<blocks.length&&typeof blocks[i]==='string'&&blocks[i].startsWith('step:')){
+        items+=`<li>${renderText(blocks[i].slice(5).trim(),seen)}</li>`; i++;
+      }
+      html+=`<ol class="art-steps">${items}</ol>`; continue;
+    }
     if(typeof p==='string'&&p.startsWith('###')){
       const text=p.replace(/^###\s*/,'').trim();
       let id=slugify(text)||'abschnitt';
@@ -3490,6 +3502,7 @@ function stripBlockPrefix(p){
   if(p.startsWith('- ')) return p.slice(2);
   if(p.startsWith('faq:')){ const parts=p.slice(4).split('|'); return (parts[0]||'')+' '+(parts[1]||''); }
   if(p.startsWith('table:')) return p.slice(6).replace(/[|\n]/g,' ');
+  if(p.startsWith('step:')) return p.slice(5);
   return p;
 }
 function jumpToSection(e,id){
@@ -3554,6 +3567,8 @@ function extractContentBlocks(container){
   Array.from(container.children).forEach(node=>{
     if(node.tagName==='H3'||node.tagName==='H2'){
       const t=extractTextPreservingRefs(node).trim(); if(t) out.push('### '+t);
+    }else if(node.tagName==='OL'){
+      Array.from(node.children).forEach(li=>{ const t=extractTextPreservingRefs(li).trim(); if(t) out.push('step:'+t); });
     }else if(node.tagName==='UL'){
       Array.from(node.children).forEach(li=>{ const t=extractTextPreservingRefs(li).trim(); if(t) out.push('- '+t); });
     }else if(node.classList&&node.classList.contains('art-faq')){
