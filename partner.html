@@ -105,6 +105,11 @@
   .rtile .lk{margin-left:auto;font-size:13px;opacity:.55}
   @media(max-width:760px){.rgrid{grid-template-columns:1fr 1fr}}
   @media(max-width:460px){.rgrid{grid-template-columns:1fr}}
+  .psteps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+  .pstep{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:11px}
+  .pstep .pn{width:34px;height:34px;flex:0 0 auto;border-radius:999px;background:var(--accent);color:var(--btn-text);font-family:'Oswald';font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center}
+  .pstep p{color:var(--text-soft);font-size:14.5px;line-height:1.5;margin:0}
+  @media(max-width:640px){.psteps{grid-template-columns:1fr}}
 
   /* Palms callout */
   .callout{position:relative;overflow:hidden;border-radius:18px;background:#2a1a5e url('/palms-hero.webp') center/cover;color:#fff;margin:22px 0 0}
@@ -233,10 +238,10 @@
       <p class="eyebrow">So einfach</p>
       <h2>So läuft die Zusammenarbeit</h2>
     </div>
-    <div class="rgrid">
-      <div class="rtile"><span class="rn">1. Du machst deine Videos zu GTA 6, so wie bisher.</span></div>
-      <div class="rtile"><span class="rn">2. Wir betten passende Videos in den richtigen Artikel ein und geben dir eine eigene Creator-Seite.</span></div>
-      <div class="rtile"><span class="rn">3. Du nennst oder verlinkst ViceGuide in deiner Videobeschreibung.</span></div>
+    <div class="psteps">
+      <div class="pstep"><span class="pn">1</span><p>Du machst deine Videos zu GTA 6, so wie bisher.</p></div>
+      <div class="pstep"><span class="pn">2</span><p>Wir betten passende Videos in den richtigen Artikel ein und geben dir eine eigene Creator-Seite.</p></div>
+      <div class="pstep"><span class="pn">3</span><p>Du nennst oder verlinkst ViceGuide in deiner Videobeschreibung.</p></div>
     </div>
   </section>
 
