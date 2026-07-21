@@ -23,11 +23,15 @@
         "faq:Kann man in GTA 6 im Heist zwischen Jason und Lucia wechseln?|Eine Händler-Listung behauptet einen Echtzeit-Wechsel mitten im Heist. Offiziell bestätigt ist das nicht, es ist der spannendste, aber unbelegteste Punkt des Leaks.",
         "faq:Woher kommt der GTA-6-Feature-Leak?|Von Produktseiten bei Amazon Brasilien und dem brasilianischen Händler KaBuM, aufgetaucht Ende Juni 2026 und von Vice, Dexerto und TheGamer aufgegriffen."
       ],
-      "credit": null,
+      "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-21T14:29",
       "id": "gta-6-feature-leak-amazon-listung",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=gta-6-feature-leak-amazon-listung&v=2026-07-21+17%3A11%3A29",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "Ende Juni tauchten auf Produktseiten von Amazon Brasilien und dem Händler KaBuM angebliche GTA-6-Features auf, bestätigt hat Rockstar keines davon.",
       "meta": "Echt oder Fake?",
       "pinned": false,
@@ -58,7 +62,7 @@
         "Wirklich neu sind nur zwei Punkte: Heist-Wechsel in Echtzeit und NPC-gesteuerte Nebenmissionen.",
         "Quelle sind Händler-Listungen bei Amazon Brasilien und KaBuM, Rockstar bestätigt nichts."
       ],
-      "updated": "2026-07-21 12:29:44"
+      "updated": "2026-07-21 17:11:29"
     },
     {
       "author": null,
@@ -79,11 +83,15 @@
         "faq:Wann soll der Switch-2-Port von GTA 6 erscheinen?|Der Leak nennt 2027, also rund 12 bis 18 Monate nach dem Konsolenstart am 19. November 2026. Ein festes Datum gibt es nicht.",
         "faq:Ist das Switch-2-Gerücht glaubwürdig?|Technisch schon, weil GTA 6 ohnehin auf der schwachen Xbox Series S laufen muss. Belegt ist es nicht, es fehlt jede Bestätigung von Rockstar, Nintendo oder Take-Two."
       ],
-      "credit": null,
+      "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-21T14:28",
       "id": "gta-6-switch-2-port-2027",
-      "img": null,
-      "imgfit": null,
+      "img": "api/article_image.php?id=gta-6-switch-2-port-2027&v=2026-07-21+17%3A07%3A15",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
       "lead": "Bestätigt sind für GTA 6 bislang nur PS5 und Xbox Series X und S, ein Leaker will jetzt trotzdem einen Nintendo-Switch-2-Port für 2027 kennen.",
       "meta": "Echt oder Fake?",
       "pinned": false,
@@ -110,7 +118,7 @@
         "Genannt wird 2027, also 12 bis 18 Monate nach dem Hauptrelease am 19. November 2026.",
         "Technisch plausibel, weil GTA 6 ohnehin auf der schwachen Xbox Series S laufen muss."
       ],
-      "updated": "2026-07-21 12:28:59"
+      "updated": "2026-07-21 17:07:15"
     },
     {
       "author": null,
