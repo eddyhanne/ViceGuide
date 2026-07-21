@@ -542,6 +542,47 @@ Ziel: so viel wie möglich automatisieren, Freigabe bleibt beim Betreiber.
 
 ---
 
+## Standard-Anschreiben für die Creator-Akquise (Default-Template)
+
+Vom Betreiber final formuliert und als Default festgelegt (Juli 2026). Bei jeder Creator-Ansprache diese Vorlage nehmen, nur die Platzhalter füllen, Ton und Aufbau nicht "optimieren". Regel 1 gilt (keine Gedankenstriche). Versand aus Gmail als `info@viceguide.de` mit der ViceGuide-Signatur. Die persönliche Vorschauseite bleibt auf `seo=0` (privat, noindex), bis der Creator zusagt.
+
+**Betreff:** Partnerschaft zwischen ViceGuide x [Creatorname]
+
+> Hey [Creatorname],
+>
+> ich verfolge deine [Content-Art, z. B. GTA-Streams und Clips] schon eine ganze Weile. Man merkt, dass du für die Reihe brennst. Genau deshalb schreibe ich dir.
+>
+> Ich baue aktuell mit ViceGuide.de die deutschsprachige Anlaufstelle für GTA 6 auf. Kein klassisches News-Portal, sondern eine Plattform mit News, Guides und einer umfangreichen Datenbank zu Charakteren, Fahrzeugen, Waffen, Orten und allem, was rund um GTA 6 relevant wird.
+>
+> Dafür suche ich bewusst nur eine kleine Gruppe von Creatorn, mit denen ich langfristig zusammenarbeiten möchte.
+>
+> Mein Gedanke ist simpel: Während deine Videos und Streams die Community direkt erreichen, kann ViceGuide dafür sorgen, dass deine Inhalte auch langfristig über Google gefunden werden.
+>
+> Konkret würde das für dich bedeuten:
+> - eine eigene Creator-Seite auf ViceGuide,
+> - Einbindung deiner Videos in passende Artikel,
+> - Verlinkung deines Kanals,
+> - dauerhafte Sichtbarkeit über unsere Inhalte,
+> - kostenlose Nutzung unserer Datenbank und News als Recherchequelle für deine Videos und Streams.
+>
+> Damit du dir das besser vorstellen kannst, habe ich sogar schon eine kleine Vorschau für dich vorbereitet:
+>
+> Partnerprogramm: https://viceguide.de/partner
+>
+> Deine persönliche Vorschauseite: https://viceguide.de/creator/[slug] (ist aktuell nicht öffentlich.)
+>
+> Im Gegenzug würde ich mich freuen, wenn ViceGuide bei Gelegenheit mal in einem Stream oder einer Videobeschreibung auftaucht. Es gibt keinen Vertrag, keine Exklusivität und keine Verpflichtungen. Wir schauen einfach, ob das für beide Seiten Sinn ergibt.
+>
+> Falls dich die Idee grundsätzlich anspricht, lass uns einfach mal 15 Minuten telefonieren, oder einfach bei WhatsApp schreiben.
+>
+> Ich glaube, dass wir zum GTA-6-Release gemeinsam etwas aufbauen können, von dem beide langfristig profitieren. 😎🤙
+>
+> Ganz liebe Grüße!
+
+**Platzhalter:** `[Creatorname]`, die Content-Art (Streams und Clips, oder Videos) und `[slug]` der Vorschauseite. Emojis am Ende nach Geschmack.
+
+---
+
 ## Für den nächsten Claude: Arbeitsweise mit dem Betreiber
 
 Der Betreiber (Eddy) kommuniziert direkt und iterativ, gibt pro Runde konkretes Feedback. Duzen, deutsch. Ehrlich gegenhalten statt nur zustimmen, wenn etwas fachlich oder rechtlich schiefliegt, das ist ausdrücklich erwünscht. Produkt-Vision beachten: internes Tooling bleibt für Besucher unsichtbar, Struktur ist an den Spiel-Lebenszyklus gekoppelt, alles bleibt im sauberen Fan-Rahmen.
