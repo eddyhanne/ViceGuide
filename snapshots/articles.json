@@ -2,6 +2,225 @@
   "articles": [
     {
       "author": null,
+      "cat": "leaks",
+      "content": [
+        "Produktseiten von Onlinehändlern sind eine berüchtigte Leak-Quelle. Mal stimmen sie, oft sind es aber automatisch erzeugte Texthülsen oder aus Fan-Wikis zusammenkopierte Werbetexte. Ende Juni 2026 listeten Amazon Brasilien und der Händler KaBuM eine Reihe von GTA-6-Features, die so noch niemand offiziell gehört hatte. Vice, Dexerto und TheGamer haben die Angaben aufgegriffen.",
+        "### Was in den Listungen stand",
+        "- Echtzeit-Wechsel zwischen Jason und Lucia mitten im Heist, statt nur zwischen Missionen.",
+        "- NPCs mit eigenen Tagesabläufen, aus denen zufällige Ereignisse auf der Karte entstehen.",
+        "- Ein integriertes In-Game-Social-Media, über das man virale Clips sieht, Influencern folgt und geheime Nebenmissionen findet.",
+        "- Dynamisches Wetter, das laut Listung sogar Physik und Spielverhalten verändert.",
+        "- Advanced Ray Tracing und eine eigene Optimierung für die PS5 Pro.",
+        "- Die größte und dichteste offene Welt, die Rockstar je gebaut hat, mit Vice City, Sümpfen, Stränden und mehreren Regionen Leonidas.",
+        "### Was davon neu ist, und was längst bekannt",
+        "Ein Teil davon ist keine Neuigkeit. Dynamisches Wetter und die enorme Kartengröße hat Rockstar in den Trailern längst gezeigt, das dichte NPC-Leben ebenfalls. Auch das In-Game-Social-Media passt zu dem, was aus Trailer 2 bekannt ist. Neu und deshalb interessant sind vor allem zwei Punkte: der Echtzeit-Wechsel der Protagonisten mitten im Heist und NPC-Routinen, die aktiv eigene Nebenmissionen auslösen. Beides wäre ein echter Sprung, beides steht aber nur in einem Shop-Text.",
+        "Feature für Feature sortiert:",
+        "table:Behauptetes Feature|Neu oder bekannt?|Belegt?\nEchtzeit-Wechsel im Heist|Neu|Unbestätigt\nNPC-Routinen lösen Missionen aus|Teils bekannt|Unbestätigt\nIn-Game-Social-Media|Teils bekannt|Aus Trailern angedeutet\nDynamisches Wetter mit Physik|Bekannt|In Trailern gezeigt\nRay Tracing und PS5-Pro-Modus|Bekannt|Plausibel\nGrößte Open World bei Rockstar|Bekannt|Marketing-Sprache",
+        "### Echt oder Marketing?",
+        "Meine Einschätzung: Das meiste ist echt, aber nicht neu, sondern bekannte Features in Werbesprache. Die zwei wirklich spannenden Behauptungen, Heist-Wechsel und NPC-Missionen, hängen an einer Shop-Beschreibung, die genauso gut aus einem Fan-Wiki stammen kann. RockstarINTEL zweifelt offen an der Echtheit. Weder Rockstar noch Take-Two noch die beiden Händler haben sich geäußert. Spannend als Ausblick, hart belegt ist nichts davon.",
+        "Wie das In-Game-Social-Media Leonida parodiert, haben wir hier auseinandergenommen, [[gta-6-social-media-satire|Social Media in GTA 6]]. Was Rockstar zu Wetter und Grafik wirklich gezeigt hat, steht in unserer Technik-Übersicht, [[wetter-technik-engine|die Technik hinter GTA 6]]. Und was die PS5 Pro konkret bringt, klärt [[gta-6-ps5-vs-ps5-pro-unterschied|der Vergleich PS5 gegen PS5 Pro]].",
+        "faq:Sind die geleakten GTA-6-Features echt?|Bestätigt ist keines. Sie stammen aus Produktseiten von Amazon Brasilien und KaBuM, die automatisch erzeugt oder aus Fan-Quellen kopiert sein können. Rockstar hat sich nicht geäußert.",
+        "faq:Kann man in GTA 6 im Heist zwischen Jason und Lucia wechseln?|Eine Händler-Listung behauptet einen Echtzeit-Wechsel mitten im Heist. Offiziell bestätigt ist das nicht, es ist der spannendste, aber unbelegteste Punkt des Leaks.",
+        "faq:Woher kommt der GTA-6-Feature-Leak?|Von Produktseiten bei Amazon Brasilien und dem brasilianischen Händler KaBuM, aufgetaucht Ende Juni 2026 und von Vice, Dexerto und TheGamer aufgegriffen."
+      ],
+      "credit": null,
+      "date": "2026-07-21T14:29",
+      "id": "gta-6-feature-leak-amazon-listung",
+      "img": null,
+      "imgfit": null,
+      "lead": "Ende Juni tauchten auf Produktseiten von Amazon Brasilien und dem Händler KaBuM angebliche GTA-6-Features auf, bestätigt hat Rockstar keines davon.",
+      "meta": "Echt oder Fake?",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Vice: GTA 6 Features Leaked, Including PS5 Pro Enhancements",
+          "url": "https://www.vice.com/en/article/gta-6-features-leaked-by-amazon-including-ps5-pro-enhancements/"
+        },
+        {
+          "title": "Dexerto: Amazon GTA 6 page leaks gameplay features, map details, weather, NPCs",
+          "url": "https://www.dexerto.com/gta/amazon-gta-6-page-leaks-gta-6-gameplay-features-map-details-dynamic-weather-social-media-more-3379716/"
+        },
+        {
+          "title": "TheGamer: Amazon Brazil's GTA 6 Listing Seemingly Shares New Gameplay Features",
+          "url": "https://www.thegamer.com/gta-6-amazon-brazil-listing-unrevealed-gameplay-details-social-media-leonida-regions/"
+        },
+        {
+          "title": "RockstarINTEL: New GTA 6 Features Reportedly Leaked By Amazon, Or Have They?",
+          "url": "https://rockstarintel.com/new-gta-6-features-reportedly-leaked-by-amazon-or-have-they/"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": "Die Features stammen aus Händler-Listungen bei Amazon Brasilien und KaBuM, Rockstar und Take-Two haben nichts bestätigt.",
+      "summary": "Händler-Listungen bei Amazon Brasilien und KaBuM nennen neue GTA-6-Features, Rockstar hat nichts davon bestätigt.",
+      "title": "GTA 6 Feature-Leak aus Amazons Shop: echt oder Marketing?",
+      "tldr": [
+        "Das meiste im Leak ist echt, aber altbekannt, nur in Werbesprache verpackt.",
+        "Wirklich neu sind nur zwei Punkte: Heist-Wechsel in Echtzeit und NPC-gesteuerte Nebenmissionen.",
+        "Quelle sind Händler-Listungen bei Amazon Brasilien und KaBuM, Rockstar bestätigt nichts."
+      ],
+      "updated": "2026-07-21 12:29:44"
+    },
+    {
+      "author": null,
+      "cat": "leaks",
+      "content": [
+        "Rockstar hat für GTA 6 zwei Plattformen zum Start am 19. November 2026 bestätigt: PS5 und Xbox Series X und S. Eine Version für die Nintendo Switch 2 steht auf dieser Liste nicht. Genau die bringt jetzt ein Leaker ins Spiel.",
+        "### Was der Leak behauptet",
+        "Die Quelle ist Nash Weedle, ein in der GTA-Szene bekannter Leaker, dessen Angaben Vice und ComicBook.com aufgegriffen haben. Weedle zufolge ist ein Switch-2-Port aktiv in Arbeit, ausgelagert an spezialisierte Studios außerhalb von Rockstar. Die technischen Hürden seien bereits genommen. Der Port stünde damit nicht mehr am Anfang, sondern kurz vor der Zielgeraden. Als Zeitfenster nennt er 2027, grob 12 bis 18 Monate nach dem Konsolenstart.",
+        "### Warum das Gerücht nicht abwegig ist",
+        "Ein Argument spricht klar für die Idee. GTA 6 muss ohnehin auf der Xbox Series S laufen, der mit Abstand schwächsten der bestätigten Konsolen. Wer eine Engine auf diese Hardware bringt, hat einen großen Teil der Arbeit erledigt, die auch ein Switch-2-Port braucht. Notebookcheck führt genau diesen Punkt an. Dazu kommt Rockstars eigene Geschichte: Große Titel erscheinen fast immer zeitversetzt auf weiteren Plattformen, GTA 5 lief am Ende sogar auf drei Konsolengenerationen.",
+        "### Warum trotzdem Vorsicht gilt",
+        "Gegen eine schnelle Bestätigung steht das Offensichtliche. Weder Rockstar noch Nintendo noch Take-Two haben sich zu einer Switch-2-Fassung geäußert. Die ganze Meldung hängt an einer einzelnen Leaker-Aussage ohne belegbares Dokument. Meiner Einschätzung nach gehört der Port damit in die Gerüchteküche, nicht in den Kalender. Plausibel ist er, bestätigt ist er nicht.",
+        "### GTA 6 Plattformen im Überblick",
+        "So sieht der Stand über alle Plattformen aus, von fest bestätigt bis reines Gerücht:",
+        "table:Plattform|Status|Erwarteter Zeitpunkt\nPS5|Bestätigt|19. November 2026\nXbox Series X und S|Bestätigt|19. November 2026\nPC|Unbestätigt, aber wahrscheinlich|Anfang 2027 (erwartet)\nNintendo Switch 2|Gerücht (Leaker Nash Weedle)|2027 (unbestätigt)",
+        "Mehr zum Thema liest du in unserer Übersicht, [[plattformen-zu-release|für welche Konsolen GTA 6 erscheint]]. Warum sich ausgerechnet die PC-Version so lange Zeit lässt, klären wir hier, [[gta-6-pc-version-warum-spaeter|warum Rockstar beim PC bremst]].",
+        "faq:Kommt GTA 6 für die Nintendo Switch 2?|Offiziell bestätigt ist nichts. Rockstar nennt bisher nur PS5 und Xbox Series X und S. Ein Switch-2-Port ist Stand Juli 2026 ein Gerücht des Leakers Nash Weedle.",
+        "faq:Wann soll der Switch-2-Port von GTA 6 erscheinen?|Der Leak nennt 2027, also rund 12 bis 18 Monate nach dem Konsolenstart am 19. November 2026. Ein festes Datum gibt es nicht.",
+        "faq:Ist das Switch-2-Gerücht glaubwürdig?|Technisch schon, weil GTA 6 ohnehin auf der schwachen Xbox Series S laufen muss. Belegt ist es nicht, es fehlt jede Bestätigung von Rockstar, Nintendo oder Take-Two."
+      ],
+      "credit": null,
+      "date": "2026-07-21T14:28",
+      "id": "gta-6-switch-2-port-2027",
+      "img": null,
+      "imgfit": null,
+      "lead": "Bestätigt sind für GTA 6 bislang nur PS5 und Xbox Series X und S, ein Leaker will jetzt trotzdem einen Nintendo-Switch-2-Port für 2027 kennen.",
+      "meta": "Echt oder Fake?",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Vice: GTA 6 Switch 2 Port Reportedly Releasing in 2027",
+          "url": "https://www.vice.com/en/article/gta-6-switch-2-port-reportedly-releasing-in-2027/"
+        },
+        {
+          "title": "ComicBook.com: GTA 6 Nintendo Switch 2 Version Leaked",
+          "url": "https://comicbook.com/gaming/news/gta-6-nintendo-switch-2-version-leaked/"
+        },
+        {
+          "title": "Notebookcheck: Leaker reveals GTA VI port plans for Nintendo Switch 2",
+          "url": "https://www.notebookcheck.net/Leaker-reveals-GTA-VI-port-plans-for-Nintendo-Switch-2-following-console-s-early-success.1164957.0.html"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": "Ein Switch-2-Port ist bisher nur eine Leaker-Behauptung, von Rockstar, Nintendo und Take-Two gibt es keine Bestätigung.",
+      "summary": "Ein Leaker will einen GTA-6-Port für die Switch 2 im Jahr 2027 kennen, bestätigt ist davon nichts.",
+      "title": "GTA 6 für die Switch 2: Kommt der Port 2027 wirklich?",
+      "tldr": [
+        "Ein Switch-2-Port ist reine Leaker-Behauptung, von Rockstar oder Nintendo kommt kein Wort.",
+        "Genannt wird 2027, also 12 bis 18 Monate nach dem Hauptrelease am 19. November 2026.",
+        "Technisch plausibel, weil GTA 6 ohnehin auf der schwachen Xbox Series S laufen muss."
+      ],
+      "updated": "2026-07-21 12:28:59"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Sobald GTA 6 erschienen ist, füllen wir diesen Guide mit echten, getesteten Methoden und konkreten Beträgen pro Stunde. Bis dahin ordnen wir ein, was aus den Trailern und vor allem aus GTA 5 zu erwarten ist. Rockstar hat GTA 6 als Einzelspieler-Erlebnis bestätigt. Die erste Einnahmequelle wird also die Story sein, kein Online-Grind.",
+        "### Welche Geld-Methoden zu erwarten sind",
+        "Die folgende Tabelle ist eine Erwartung, keine getestete Rangliste. Woher wir sie ableiten, steht in der zweiten Spalte.",
+        "table:Methode|Woraus wir das ableiten|Aufwand\nStory-Missionen|feste Belohnungen wie in jedem GTA|Leicht\nLäden und Transporter ausrauben|Startgeld-Methode aus GTA 5|Leicht\nImmobilien und Business|Passiv-Einkommen aus GTA Online|Mittel\nRaubüberfälle mit Crew|die großen Heists aus GTA 5|Schwer",
+        "### So gehst du die ersten Stunden an",
+        "step:Spiel zuerst die Story-Missionen, sie geben das sicherste Startgeld ohne großes Risiko.",
+        "step:Nimm unterwegs Gelegenheiten mit, Läden und Bargeld-Transporter, genau wie in GTA 5.",
+        "step:Steck dein erstes Geld in ein Business oder Eigentum, sobald das Spiel es freischaltet.",
+        "step:Heb dir die großen Raubüberfälle auf, bis du Ausrüstung, Waffen und Kontakte hast.",
+        "Wie GameStar für GTA 5 dokumentiert, tragen die großen Raubüberfälle am meisten ein, brauchen aber Vorbereitung. Das ist die Erwartung. Am 19. November prüfen wir jede Methode im Spiel und tragen die echten Beträge pro Stunde nach, mit Quelle.",
+        "faq:Wie verdient man in GTA 6 am schnellsten Geld?|Vor Release ist das nicht getestet. Am wahrscheinlichsten ist der schnellste Start über Story-Missionen und Gelegenheits-Raubüberfälle, wie in GTA 5.",
+        "faq:Gibt es schon vor Release Geld-Methoden für GTA 6?|Nein. Getestete Methoden mit echten Beträgen gibt es erst, wenn das Spiel am 19. November 2026 erschienen ist.",
+        "faq:Lohnen sich die großen Raubüberfälle sofort?|Vermutlich nicht. In GTA 5 brauchten die großen Heists Vorbereitung, Crew und Ausrüstung, das dürfte bei GTA 6 ähnlich sein."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-21T11:21",
+      "id": "gta-6-geld-verdienen",
+      "img": "api/article_image.php?id=gta-6-geld-verdienen&v=2026-07-21+09%3A27%3A02",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Vor Release gibt es keine getesteten Geld-Methoden für GTA 6, wohl aber eine klare Erwartung aus der Serie.",
+      "meta": "Guide",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Rockstar Games Newswire",
+          "url": "https://www.rockstargames.com/newswire"
+        },
+        {
+          "title": "GameStar: GTA 5 Geld-Guide",
+          "url": "https://www.gamestar.de/"
+        }
+      ],
+      "status": "rumor",
+      "statusnote": null,
+      "summary": "Vor Release noch ohne getestete Zahlen, dafür die klare Erwartung aus der GTA-Reihe.",
+      "title": "GTA 6 Geld verdienen: die besten Methoden zum Release",
+      "tldr": [
+        "Getestete Beträge pro Stunde tragen wir direkt nach dem Release am 19. November 2026 nach, hier zuerst.",
+        "Der wahrscheinlich schnellste Start sind Story-Missionen plus Gelegenheits-Raubüberfälle, wie in GTA 5.",
+        "Die großen Raubüberfälle lohnen sich vermutlich erst später, mit Crew und Ausrüstung."
+      ],
+      "updated": "2026-07-21 09:27:02"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Getragen wird der Antrag von der IWGB, der Independent Workers Union of Great Britain, über deren Game-Workers-Zweig. Betroffen sind fünf britische Standorte: Edinburgh, Dundee, Lincoln, Leeds und London. Die internationalen Büros bleiben außen vor. Die Gewerkschaft gibt an, einen erheblichen Teil der Belegschaft zu vertreten. Rockstar hat rund zehn Arbeitstage Zeit zu reagieren. Erkennt das Unternehmen die Gewerkschaft nicht freiwillig an, geht der Fall vor das Central Arbitration Committee, das eine Anerkennung erzwingen kann.",
+        "quote:Wir haben heute die Anerkennung bei Rockstar Games beantragt und fordern Rockstar auf, sich mit den Beschäftigten zusammenzusetzen und eine Vereinbarung für gute Arbeitsbedingungen, Fairness und ein Mitspracherecht zu treffen.|IWGB, zum Anerkennungsantrag|Today, we've filed for recognition with Rockstar Games, asking Rockstar to meet with their workers to agree a deal for good working conditions, fairness and a say at work.",
+        "### Die Vorgeschichte",
+        "Ende Oktober 2025 entließ Rockstar 34 Beschäftigte, 31 in Großbritannien und drei in Kanada, an zwei aufeinanderfolgenden Tagen. Die Betroffenen sagen, sie seien wegen gewerkschaftlicher Organisation über einen privaten Discord gefeuert worden. Rockstar spricht von der Weitergabe vertraulicher Informationen zu GTA 6 und anderen unangekündigten Projekten. Die Gewerkschaft sieht darin einen Vorwand gegen die Organisierung.",
+        "### Der Streit landet vor Gericht",
+        "Aus den Kündigungen ist längst ein Rechtsstreit geworden. Wie der Guardian berichtet, hat ein Arbeitsgericht Rockstars Versuch abgewiesen, den Umfang der zulässigen Union-Busting-Belege einzugrenzen. Die IWGB darf ihre Beweise damit breiter vortragen. Die abschließende Anhörung beginnt im September 2026, rund zwei Monate vor dem Release. Zugelassen ist zusätzlich eine separate Klage wegen Blacklisting.",
+        "### Was die Belegschaft fordert",
+        "Im Kern geht es um mehr Transparenz bei Gehältern und Boni, verbindliche Regeln gegen Crunch, flexiblere Arbeitsmodelle und formale Kanäle für Tarifverhandlungen. Zum Vorbild nimmt die IWGB ausdrücklich das Studio ZA/UM, das als erstes britisches Spielestudio eine Gewerkschaft anerkannt hat. Rockstar teilte IGN mit, man habe die Anfrage erhalten und werde ein Treffen arrangieren. Eine Zusage ist das nicht.",
+        "### Was das für den 19. November bedeutet",
+        "Realistisch gesehen wenig, aber nicht nichts. Eine dritte Verschiebung erwartet niemand ernsthaft. Ein Streik in der Endphase, in der laut Aussagen von Entwicklern Crunch praktisch eingeplant ist, träfe Rockstar aber an der empfindlichsten Stelle. Selbst ohne formale Verschiebung könnte er sich in Bugs und einer holprigen Startwoche niederschlagen. Take-Two hat seine gesamte Jahresprognose von 8,0 bis 8,2 Milliarden Dollar an diesen Launch gehängt. Der Druck, sich zu einigen, liegt damit am Ende eher auf der Konzernseite als auf der Belegschaft.",
+        "faq:Wird GTA 6 wegen des Streits verschoben?|Danach sieht es nicht aus. Der Release am 19. November gilt als sicher, ein Streik würde eher die Startphase mit Patches und Hotfixes treffen.",
+        "faq:Warum wurden 2025 Beschäftigte entlassen?|Rockstar nennt die Weitergabe vertraulicher Informationen über einen privaten Discord. Die Gewerkschaft sieht darin einen Vorwand gegen die Organisierung, ein Arbeitsgericht verhandelt den Fall ab September 2026.",
+        "faq:Wann entscheidet das Gericht über die Kündigungen?|Die abschließende Anhörung beginnt im September 2026, rund zwei Monate vor dem GTA-6-Release am 19. November.",
+        "faq:Was passiert, wenn Rockstar die Gewerkschaft nicht anerkennt?|Dann kann die IWGB das Central Arbitration Committee anrufen, das eine Anerkennung unter bestimmten Bedingungen erzwingen kann."
+      ],
+      "credit": "Rockstar",
+      "date": "2026-07-21T00:00",
+      "id": "rockstar-gewerkschaft-streik",
+      "img": "api/article_image.php?id=rockstar-gewerkschaft-streik&v=2026-07-21+12%3A35%3A23",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Ende Juni haben Beschäftigte der britischen Rockstar-Studios formell die Anerkennung ihrer Gewerkschaft beantragt, und ein Streik vor dem Launch ist nicht vom Tisch.",
+      "meta": "News",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "IWGB: Rockstar workers launch bid for union recognition",
+          "url": "https://iwgb.org.uk/en/post/rockstar-union-recognition-2/"
+        },
+        {
+          "title": "The Guardian (via PCGamesN)",
+          "url": "https://www.pcgamesn.com/grand-theft-auto-vi/rockstar-devs-strike-before-launch"
+        },
+        {
+          "title": "GamingBolt (IGN-Statement)",
+          "url": "https://gamingbolt.com/rockstar-games-employees-request-voluntary-recognition-of-union"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Der Streit ist real und läuft vor Gericht, eine Verschiebung des Release gilt aber als unwahrscheinlich.",
+      "summary": "Rockstars britische Belegschaft fordert Anerkennung ihrer Gewerkschaft. Ein Streik in der Endphase steht im Raum.",
+      "title": "Streikdrohung bei Rockstar: Wackelt der GTA-6-Termin?",
+      "tldr": [
+        "Eine Verschiebung des 19. November erwartet niemand ernsthaft.",
+        "Ein Streik in der Crunch-Endphase träfe Rockstar aber an der empfindlichsten Stelle und könnte die Startwoche holprig machen.",
+        "Der Kündigungsstreit läuft vor Gericht, die abschließende Anhörung beginnt im September 2026."
+      ],
+      "updated": "2026-07-21 12:35:23"
+    },
+    {
+      "author": null,
       "cat": "map",
       "content": [
         "Ein Bundesstaat nach dem Vorbild Floridas lebt von seiner Tierwelt, und Rockstar spielt das sichtbar aus. Schon der erste Trailer ist voller Leben, an Land, in der Luft und im Wasser.",
@@ -575,7 +794,7 @@
       "credit": "KI-generiert / ViceGuide",
       "date": "2026-07-18T21:57",
       "id": "gta-6-spielzeit-wie-lang",
-      "img": "api/article_image.php?id=gta-6-spielzeit-wie-lang&v=2026-07-18+20%3A16%3A07",
+      "img": "api/article_image.php?id=gta-6-spielzeit-wie-lang&v=2026-07-21+08%3A39%3A17",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -603,7 +822,7 @@
         "Die 75-Stunden-Angabe stammt von einem anonymen Insider ohne Erfolgsbilanz, vorsichtigere Schätzungen liegen bei 45 bis 50 Stunden.",
         "Das Duo aus Jason und Lucia könnte die Kampagne durch getrennte Missionsstränge verlängern."
       ],
-      "updated": "2026-07-18 20:16:07"
+      "updated": "2026-07-21 08:39:17"
     },
     {
       "author": null,
@@ -988,6 +1207,8 @@
       "cat": "news",
       "content": [
         "Wer beide Konsolen im Haus hat oder vor dem Kauf steht, fragt sich zu Recht: PS5 oder Xbox? Vorweg die Entwarnung, es gibt kein schlechteres Spiel. GTA 6 erscheint auf PS5 und Xbox Series X/S als identisches Spiel, wie GamesRadar bestätigt. Die Entscheidung fällt also nicht am Inhalt, sondern an drei anderen Punkten.",
+        "### PS5 und Xbox im direkten Vergleich",
+        "table:Kriterium|PlayStation|Xbox\nSpielinhalt|identisch|identisch\nLeistungsstärkste Konsole|PS5 Pro|Series X\nEinstiegsmodell|Standard-PS5|Series S\nUltimate Edition|nur im PS Store|nur im Microsoft Store\nGame Pass zum Launch|Nein|Nein",
         "### Ökosystem und Freunde zuerst",
         "Der wichtigste Faktor ist, wo ihr ohnehin zu Hause seid. Auf welcher Plattform liegt euer Guthaben, wo sind eure Freunde, welchen Controller mögt ihr lieber? Ein späterer Online-Modus lebt von den Leuten, mit denen ihr spielt. Was plattformübergreifend an Crossplay und Fortschritt möglich ist, ordnen wir separat ein.",
         "### Technik: PS5 Pro als Spitze",
@@ -1003,7 +1224,7 @@
       "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-17T08:42",
       "id": "gta-6-ps5-oder-xbox-kaufen",
-      "img": "api/article_image.php?id=gta-6-ps5-oder-xbox-kaufen&v=2026-07-17+07%3A05%3A55",
+      "img": "api/article_image.php?id=gta-6-ps5-oder-xbox-kaufen&v=2026-07-21+08%3A55%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1031,7 +1252,7 @@
         "Ausschlaggebend sind Ökosystem, Freundeskreis und Hardware, die PS5 Pro bietet die beste Technik.",
         "Ein Start im Game Pass ist nicht vorgesehen, GTA 6 kostet auf beiden Plattformen den vollen Preis."
       ],
-      "updated": "2026-07-17 07:05:55"
+      "updated": "2026-07-21 08:55:26"
     },
     {
       "author": null,
@@ -1291,6 +1512,8 @@
       "cat": "news",
       "content": [
         "Der Vollpreis für GTA 6 liegt bei rund 80 Euro für die Standard Edition, die Ultimate Edition kostet etwa 100 Euro. Das ist der Ausgangspunkt, nicht das letzte Wort. Schon jetzt zeigen mehrere Preisvergleiche, dass zwischen dem teuersten und dem günstigsten Angebot ein zweistelliger Betrag liegt. Wer klug bestellt, spart also spürbar.",
+        "### Wo GTA 6 wie viel kostet",
+        "table:Bezugsweg|Preis Standard Edition|Hinweis\nPlayStation Store und Microsoft Store|79,99 Euro|Listenpreis, Ultimate nur hier erhältlich\nDeutsche Ketten (Amazon, MediaMarkt, Saturn)|um 79,99 Euro|bei Aktionen etwas günstiger\nEU-Importhändler (z.B. Cdiscount)|teils unter 60 Euro|Aktionspreis Stand Juli 2026, EMEA-Code gültig, kurzlebig\nRabattiertes PSN- oder Xbox-Guthaben|einige Prozent günstiger|nur innerhalb der EMEA-Region einlösbar",
         "### Wo es aktuell am günstigsten ist",
         "Stand Juli 2026 unterbieten sich vor allem ausländische Onlineshops. GameStar und PC Games verfolgen die Preorder-Preise laufend und melden Angebote deutlich unter Vollpreis. MyDealz berichtet von Wegen, GTA 6 über den französischen Händler Cdiscount für rund 65 Euro statt 80 Euro zu bekommen, mit Neukunden-Gutschein zeitweise sogar für etwa 55 Euro. Solche Aktionscodes sind kurzlebig, den grundsätzlichen Preisunterschied zu deutschen Ketten gibt es aber unabhängig davon.",
         "### Achtung bei ausländischen Codes",
@@ -1306,7 +1529,7 @@
       "credit": "Rockstar",
       "date": "2026-07-16T10:30",
       "id": "gta-6-guenstig-kaufen",
-      "img": "api/article_image.php?id=gta-6-guenstig-kaufen&v=2026-07-17+11%3A20%3A11",
+      "img": "api/article_image.php?id=gta-6-guenstig-kaufen&v=2026-07-21+08%3A55%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1338,7 +1561,7 @@
         "Ausländische Shops unterbieten deutsche Ketten, innerhalb der EMEA-Region sind die Codes gültig.",
         "Wer bis zum 20. November vorbestellt, sichert sich zusätzlich das gratis Vintage Vice City Pack."
       ],
-      "updated": "2026-07-17 11:20:11"
+      "updated": "2026-07-21 08:55:26"
     },
     {
       "author": null,
@@ -1620,7 +1843,7 @@
       "credit": "KI-generiert / Viceguide / Rockstar",
       "date": "2026-07-16T00:25",
       "id": "gta-6-altersfreigabe-usk",
-      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-19+07%3A08%3A37",
+      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-21+09%3A33%3A31",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1645,14 +1868,14 @@
       ],
       "status": "mixed",
       "statusnote": "Die formale USK-Einstufung steht noch aus, USK 18 gilt inhaltlich aber als so gut wie sicher.",
-      "summary": "Warum GTA 6 fast sicher USK 18 wird, ab welchem Alter ihr es kaufen dürft und ob es geschnitten ist.",
-      "title": "GTA 6 Altersfreigabe: USK 18 und ab welchem Alter",
+      "summary": "GTA 6 wird voraussichtlich USK 18. Was das bedeutet, warum die FSK nicht zuständig ist und ob die deutsche Version geschnitten erscheint.",
+      "title": "GTA 6 Altersfreigabe: USK 18, FSK und ab welchem Alter",
       "tldr": [
         "USK 18 bedeutet Keine Jugendfreigabe: Verkauf und Weitergabe nur an Erwachsene.",
         "Von GTA 3 bis GTA 5 war die Reihe durchgängig USK 18, ein Bruch wäre eine echte Überraschung.",
         "Bei Spielen zählt die USK, nicht die FSK, und die formale Einstufung kommt erst kurz vor Release."
       ],
-      "updated": "2026-07-19 07:08:37"
+      "updated": "2026-07-21 09:33:31"
     },
     {
       "author": null,
@@ -2541,55 +2764,9 @@
       "author": null,
       "cat": "news",
       "content": [
-        "Getragen wird der Antrag von der IWGB, der Independent Workers Union of Great Britain, über deren Game-Workers-Zweig. Betroffen sind fünf britische Standorte: Edinburgh, Dundee, Lincoln, Leeds und London. Die internationalen Büros bleiben außen vor. Die Gewerkschaft gibt an, einen erheblichen Teil der Belegschaft zu vertreten. Rockstar hat rund zehn Arbeitstage Zeit zu reagieren. Erkennt das Unternehmen die Gewerkschaft nicht freiwillig an, geht der Fall vor das Central Arbitration Committee, das eine Anerkennung erzwingen kann.",
-        "### Die Vorgeschichte",
-        "Im Oktober und November 2025 entließ Rockstar rund 31 Beschäftigte in Großbritannien, laut einzelnen Berichten dazu drei weitere in Toronto. Die Betroffenen sagen, sie seien wegen gewerkschaftlicher Organisation über Discord gefeuert worden. Rockstar spricht von schwerwiegendem Fehlverhalten und der Weitergabe vertraulicher Informationen. Ein Arbeitsgericht hat entschieden, dass die Vorwürfe verhandelt werden, die abschließende Anhörung ist für September 2026 angesetzt, also rund zwei Monate vor dem Release. Zugelassen ist auch eine separate Klage wegen Blacklisting.",
-        "### Was die Belegschaft fordert",
-        "Im Kern geht es um mehr Transparenz bei Gehältern und Boni, verbindliche Regeln gegen Crunch, flexiblere Arbeitsmodelle und formale Kanäle für Tarifverhandlungen. Zum Vorbild nimmt die IWGB ausdrücklich das Studio ZA/UM, das als erstes britisches Spielestudio eine Gewerkschaft anerkannt hat. Rockstar teilte IGN mit, man habe die Anfrage erhalten und werde ein Treffen arrangieren. Eine Zusage ist das nicht.",
-        "### Was das für den 19. November bedeutet",
-        "Realistisch gesehen wenig, aber nicht nichts. Eine dritte Verschiebung erwartet niemand ernsthaft. Ein Streik in der Endphase, in der laut Aussagen von Entwicklern Crunch praktisch eingeplant ist, träfe Rockstar aber an der empfindlichsten Stelle. Selbst ohne formale Verschiebung könnte er sich in Bugs und einer holprigen Startwoche niederschlagen. Take-Two hat seine gesamte Jahresprognose von 8,0 bis 8,2 Milliarden Dollar an diesen Launch gehängt. Der Druck, sich zu einigen, liegt damit am Ende eher auf der Konzernseite als auf der Belegschaft.",
-        "faq:Wird GTA 6 wegen des Streits verschoben?|Danach sieht es nicht aus. Der Release am 19. November gilt als sicher, ein Streik würde eher die Startphase mit Patches und Hotfixes treffen.",
-        "faq:Warum wurden 2025 Beschäftigte entlassen?|Rockstar nennt die Weitergabe vertraulicher Informationen über Discord. Die Gewerkschaft sieht darin einen Vorwand gegen die Organisierung, ein Gericht verhandelt den Fall im September 2026.",
-        "faq:Was passiert, wenn Rockstar die Gewerkschaft nicht anerkennt?|Dann kann die IWGB das Central Arbitration Committee anrufen, das eine Anerkennung unter bestimmten Bedingungen erzwingen kann."
-      ],
-      "credit": "Rockstar",
-      "date": "2026-07-07T18:33",
-      "id": "rockstar-gewerkschaft-streik",
-      "img": "api/article_image.php?id=rockstar-gewerkschaft-streik&v=2026-07-16+08%3A40%3A52",
-      "imgfit": {
-        "x": 50,
-        "y": 50,
-        "zoom": 1
-      },
-      "lead": "Am 1. Juli haben Beschäftigte der britischen Rockstar-Studios formell die Anerkennung ihrer Gewerkschaft beantragt, und ein Streik vor dem Launch ist nicht vom Tisch.",
-      "meta": "News",
-      "pinned": false,
-      "sources": [
-        {
-          "title": "The Guardian (via PCGamesN)",
-          "url": "https://www.pcgamesn.com/grand-theft-auto-vi/rockstar-devs-strike-before-launch"
-        },
-        {
-          "title": "GamingBolt (IGN-Statement)",
-          "url": "https://gamingbolt.com/rockstar-games-employees-request-voluntary-recognition-of-union"
-        }
-      ],
-      "status": "mixed",
-      "statusnote": null,
-      "summary": "Rockstars britische Belegschaft fordert Anerkennung ihrer Gewerkschaft. Ein Streik in der Endphase steht im Raum.",
-      "title": "Streikdrohung bei Rockstar: Wackelt der GTA-6-Termin?",
-      "tldr": [
-        "Eine Verschiebung des 19. November erwartet niemand ernsthaft.",
-        "Ein Streik in der Crunch-Endphase träfe Rockstar aber an der empfindlichsten Stelle und könnte die Startwoche holprig machen.",
-        "Weil Take-Two die 8-Milliarden-Prognose an den Launch hängt, liegt der Einigungsdruck eher beim Konzern."
-      ],
-      "updated": "2026-07-16 08:40:52"
-    },
-    {
-      "author": null,
-      "cat": "news",
-      "content": [
-        "Der zentrale Vorbesteller-Bonus heißt Vintage Vice City Pack und ist an keine bestimmte Edition gebunden. Wer GTA 6 vor dem 20. November kauft, egal ob Standard oder Ultimate, bekommt ihn automatisch dazu. Was in den beiden Editionen selbst steckt, erklären wir in [[ultimate-edition-paywall|unserem Artikel zur Ultimate Edition]].",
+        "Der zentrale Vorbesteller-Bonus heißt Vintage Vice City Pack und ist an keine bestimmte Edition gebunden. Wer GTA 6 vor dem 20. November kauft, egal ob Standard oder Ultimate, bekommt ihn automatisch dazu. Was in den beiden Editionen selbst steckt, erklären wir in [[ultimate-edition-paywall|unserem Artikel zur Ultimate Edition]]. Bei physischen Vorbestellungen gilt das Paket, solange der Vorrat reicht.",
+        "### Welcher Bonus, für wen, wo nutzbar",
+        "table:Bonus|Wer bekommt ihn|Wo nutzbar\nVintage Vice City Pack|alle Vorbesteller vor dem 20.11.2026|in GTA 6\n1 Monat GTA Plus|nur digitale Vorbesteller|im aktuellen GTA Online, nicht in GTA 6",
         "### Inhalt des Vintage Vice City Pack",
         "- Ein 55er Vapid Stanier im klassischen Amerikana-Look",
         "- Die Shore Court Garage nahe Ocean Beach, mit Waffenschrank und Möglichkeit, gestohlene Ware zu verwahren",
@@ -2605,7 +2782,7 @@
       "credit": "Rockstar",
       "date": "2026-07-04T12:19",
       "id": "vorbesteller-boni",
-      "img": "api/article_image.php?id=vorbesteller-boni&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=vorbesteller-boni&v=2026-07-21+08%3A55%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2633,7 +2810,7 @@
         "Digitale Vorbesteller bekommen zusätzlich einen Monat GTA Plus, nutzbar sofort im bestehenden GTA Online.",
         "Dieser GTA-Plus-Monat gilt fürs alte GTA Online, nicht für einen künftigen GTA-6-Modus."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-21 08:55:26"
     },
     {
       "author": null,
@@ -2744,20 +2921,22 @@
       "author": null,
       "cat": "news",
       "content": [
-        "### Standard Edition, rund 80 Euro",
+        "### Standard vs Ultimate auf einen Blick",
+        "table:Merkmal|Standard Edition|Ultimate Edition\nPreis|79,99 Euro|99,99 Euro\nKomplette Hauptstory (Jason und Lucia)|Ja|Ja\nExtra-Fahrzeuge und Waffen|Nein|Ja\nBonus-Läden und Zusatzmission|Nein|Ja\nKosmetik-Pakete|Nein|Ja",
+        "### Standard Edition, 79,99 Euro",
         "Enthält die komplette Story mit Jason und Lucia in vollem Umfang. Hier fehlen keine Inhalte, es handelt sich um das vollständige Hauptspiel ohne Zusätze.",
-        "### Ultimate Edition, rund 100 Euro",
+        "### Ultimate Edition, 99,99 Euro",
         "Bringt zusätzlich eine Sammlung an Fahrzeugen, Waffen und Kosmetik mit, freigeschaltet Stück für Stück im Verlauf der Kapitel. Konkret dabei sind unter anderem der 95er Grotti Cheetah, die Dinka Enduro, der Crest Kayak, der 67er Vapid Dominator Buggy samt Garage in Watson Bay sowie personalisierte Pistolen für beide Hauptfiguren. Dazu kommen exklusive Läden wie Rideout Customs, One-Eyed Willie's und das Tattoostudio Electric Fang, außerdem eine exklusive Mission zur Erstürmung eines Gangverstecks der PTT Youngin$. Eine sortenreine Übersicht, was davon offiziell bestätigt ist, steht in unserem Artikel zu bestätigten Fahrzeugen und Waffen.",
         "### Upgrade und physische Fassung",
         "Wer zunächst die Standard Edition kauft, kann das Ultimate-Upgrade jederzeit separat nachkaufen, auch bei der physischen Fassung nach Einlösen des Downloadcodes. Man verpasst also nichts, wenn man sich später umentscheidet. Eine physische Fassung gibt es zwar im Handel, sie enthält aber keine Disc, sondern nur einen Code, wie wir in [[physische-edition-ohne-disc|unserem Artikel zur Boxversion]] erklären. Eine klassische Collector's oder Deluxe Edition mit Steelbook oder Merchandise ist zum Launch nicht vorgesehen.",
-        "faq:Welche GTA-6-Editionen gibt es?|Genau zwei: die Standard Edition für rund 80 Euro und die Ultimate Edition für rund 100 Euro. Eine Collector's Edition gibt es nicht.",
+        "faq:Welche GTA-6-Editionen gibt es?|Genau zwei: die Standard Edition für 79,99 Euro und die Ultimate Edition für 99,99 Euro. Eine Collector's Edition gibt es nicht.",
         "faq:Was ist der Unterschied zwischen Standard und Ultimate?|Die Standard Edition enthält die komplette Story ohne Abstriche. Die Ultimate Edition legt exklusive Fahrzeuge, Waffen, Läden und eine Bonus-Mission obendrauf.",
         "faq:Kann ich später von Standard auf Ultimate upgraden?|Ja, das Upgrade lässt sich jederzeit separat nachkaufen, auch bei einer physisch gekauften Fassung nach Einlösen des Codes."
       ],
       "credit": "Rockstar",
       "date": "2026-06-24T10:56",
       "id": "editionen-zu-release",
-      "img": "api/article_image.php?id=editionen-zu-release&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=editionen-zu-release&v=2026-07-21+09%3A00%3A05",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2785,7 +2964,7 @@
         "Die Standard Edition enthält die komplette Story ohne Abstriche.",
         "Ein Upgrade auf Ultimate lässt sich jederzeit nachkaufen, auch bei der Box."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-21 09:00:05"
     },
     {
       "author": null,
@@ -2920,7 +3099,7 @@
       "credit": "KI-generiert / Viceguide",
       "date": "2026-06-05T17:12",
       "id": "plattformen-zu-release",
-      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-19+07%3A18%3A32",
+      "img": "api/article_image.php?id=plattformen-zu-release&v=2026-07-21+09%3A48%3A01",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2941,14 +3120,14 @@
       ],
       "status": "confirmed",
       "statusnote": null,
-      "summary": "Zum Start erscheint GTA 6 nur für PS5 und Xbox Series X/S. Weder ältere Konsolen noch die Switch 2 sind dabei.",
-      "title": "GTA 6 Plattformen: Für welche Konsolen es erscheint",
+      "summary": "Zum Start erscheint GTA 6 nur für PS5 und Xbox Series X/S. Was mit PC, alten Konsolen und der Switch 2 ist.",
+      "title": "GTA 6 Plattformen: PS5 und Xbox, PC-Gamer müssen warten",
       "tldr": [
         "Bestätigt sind nur PS5 samt Pro und Xbox Series X/S.",
         "PS4, Xbox One, Switch 2 und PC fallen zum Launch raus, die Switch 2 hat Take-Two ausdrücklich ausgeschlossen.",
         "Eine PC-Version folgt der Reihen-Historie zufolge erst deutlich später."
       ],
-      "updated": "2026-07-19 07:18:32"
+      "updated": "2026-07-21 09:48:01"
     },
     {
       "author": null,
