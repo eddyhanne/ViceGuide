@@ -10,4 +10,5 @@ return [
     ['key' => 'plattform', 'label' => 'Plattformen & Technik', 'ids' => ['plattformen-zu-release', 'gta-6-ps4-xbox-one', 'wann-pc-version', 'gta-6-pc-version-warum-spaeter', 'gta-6-cloud-gaming', 'gta-6-steam-deck', 'gta-6-ps5-vs-ps5-pro-unterschied', 'wetter-technik-engine', 'gta-6-ps5-emulatoren-sharpemu-pc']],
     ['key' => 'release',   'label' => 'Rund um den Release',   'ids' => ['gta-6-uhrzeit-freischaltung', 'gta-6-preload-termin-speicherplatz', 'gta-6-altersfreigabe-usk']],
     ['key' => 'features',  'label' => 'Features & Modi',       'ids' => ['gta-6-online-modus', 'gta-6-offline-spielen', 'gta-6-splitscreen-koop', 'gta-6-dlc-season-pass', 'gta-online-zukunft-nach-gta-6', 'gta-6-crossplay-crossprogression', 'gta-6-cheats-was-bekannt', 'gta-6-deutsche-synchronisation']],
+    ['key' => 'tipps',     'label' => 'Tipps & Guides',        'ids' => ['gta-6-geld-verdienen']],
 ];
