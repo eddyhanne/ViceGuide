@@ -74,7 +74,7 @@ def lint(a):
     # 6 Komma-Ketten (Sing-Sang-Heuristik)
     long_comma = []
     for c in ctext:
-        if c.strip().lower().startswith(("faq:","img:","### ","- ","table:")): continue
+        if c.strip().lower().startswith(("faq:","img:","### ","- ","table:","step:")): continue
         for s in sentences(c):
             if s.count(",") >= 4: long_comma.append(s)
     if long_comma:
