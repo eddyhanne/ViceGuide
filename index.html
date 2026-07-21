@@ -1795,7 +1795,7 @@ function renderDB(sec){
   const data=DB[sec.id]||[];
   const cats=["Alle",...Array.from(new Set(data.map(d=>canonCat(sec.id,d.cat)).filter(Boolean)))];
   $('view').innerHTML=`
-   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle">${editMode?`<button class="vt" onclick="addDbEntry('${sec.id}')">+ Neuer Eintrag</button>`:''}<button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button><button class="vt ${dbView==='table'?'on':''}" onclick="setDbView('table')">▤ Tabelle</button></div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
+   <div class="sec-head"><div class="news-head"><div class="sec-title"><span class="sec-ic">${secIcon(sec.id)}</span>${sec.label}</div><div class="viewtoggle">${editMode?`<button class="vt" onclick="addDbEntry('${sec.id}')">+ Neuer Eintrag</button>`:''}<button class="vt ${dbView==='list'?'on':''}" onclick="setDbView('list')">☰ Liste</button><button class="vt ${dbView==='cards'?'on':''}" onclick="setDbView('cards')">▦ Kacheln</button>${dbHasComparable(sec.id)?`<button class="vt ${dbView==='table'?'on':''}" onclick="setDbView('table')">▤ Tabelle</button>`:''}</div></div><div class="sec-note">${SEC_NOTE[sec.id]||''}</div></div>
    ${cats.length>2?`<div class="dbtabs" id="dbtabs"><button class="cp-open" onclick="openDbCatPick('${sec.id}')"><span class="cp-ic">▤</span>Rubrik</button>${cats.map(c=>`<button class="${c===dbCat?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>`:''}
    <div class="filterbar">
      <div class="dbsearchwrap"><input id="dbsearch" type="text" placeholder="In ${sec.label} suchen…" value="${dbQuery}"><button class="clearbtn dbclear" id="dbclear" onclick="clearDbSearch()" aria-label="Leeren" style="${dbQuery?'display:grid':'display:none'}">×</button></div>
@@ -1860,6 +1860,20 @@ function dbTableCols(secId){
   const n=data.length;
   return Object.keys(freq).filter(k=>freq[k]/n>=0.4).sort((a,b)=>freq[b]-freq[a]).slice(0,3);
 }
+/* Ein Feldwert gilt als echte Kennzahl, wenn er im Kern eine Zahl ist (optional
+   mit Einheit/Waehrung), z.B. "250 km/h", "79,99 €", "1.200.000". Rein textliche
+   Werte wie "Trailer 2" oder "Sportwagen" zaehlen NICHT. */
+function dbFieldIsNumeric(v){ return /^[$€]?\s?\d[\d.,]*\s*(?:km\/h|kmh|mph|ps|kg|s|%|€|\$|m)?$/i.test(String(v||'').trim()); }
+/* Nur wenn eine Rubrik echte vergleichbare Kennzahlen hat (also mindestens ein
+   Feld, das ueberwiegend Zahlen enthaelt), lohnt die sortierbare Tabellen-Ansicht.
+   Vor Release (nur kategoriale Felder) bleibt der Umschalter darum aus, zum
+   Release taucht er automatisch auf, sobald Zahlen-fields gepflegt sind. */
+function dbHasComparable(secId){
+  const data=DB[secId]||[]; if(data.length<3) return false;
+  const stat={};
+  data.forEach(d=>{ const f=d.fields||{}; for(const k in f){ const v=String(f[k]||'').trim(); if(!v) continue; (stat[k]=stat[k]||{n:0,num:0}).n++; if(dbFieldIsNumeric(v)) stat[k].num++; } });
+  return Object.values(stat).some(o=>o.n>=data.length*0.4 && o.num/o.n>=0.6);
+}
 function drawDB(sec){
   const q=dbQuery.trim().toLowerCase();
   /* Beim Suchen die GANZE Datenbank durchsuchen (rubrikuebergreifend), nicht
@@ -1895,7 +1909,7 @@ function drawDB(sec){
   const grid=$('dbgrid'), empty=$('dbempty');
   if(!items.length){grid.innerHTML="";empty.style.display="block";return;}
   empty.style.display="none";
-  if(dbView==='table'){
+  if(dbView==='table' && !cross && dbHasComparable(sec.id)){
     /* Tabellen-Ansicht: sortierbare Uebersicht der Eintraege mit den
        haeufigsten kategorialen fields der Rubrik (GTABase-Stil). Nutzt die
        vorhandene .art-table-Optik und sortArtTable. Ganze Zeile klickbar,
