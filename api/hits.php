@@ -433,11 +433,31 @@ td{padding:7px 4px;font-size:.85rem;vertical-align:middle;border-bottom:1px soli
 tr:last-child td{border-bottom:none}
 td.lbl{color:var(--text);white-space:nowrap;padding-right:12px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
 td.num{text-align:right;color:var(--soft);font-variant-numeric:tabular-nums;padding-left:10px;white-space:nowrap;font-weight:600}
-td.barcell{width:100%}
-.bar{height:8px;background:var(--accent);border-radius:4px;min-width:2px;opacity:.85}
+td.barcell{width:150px}
+.bar{height:8px;background:var(--accent);border-radius:4px;min-width:2px;opacity:.85;max-width:150px}
 td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none}
 .note{color:var(--soft);font-size:.75rem;margin-top:16px;line-height:1.5}
 .loading{color:var(--soft);font-size:.85rem;padding:40px 0;text-align:center}
+
+/* Anpassbares Widget-Board (Uebersicht): Kacheln per Griff verschiebbar, Groesse
+   ueber S/M/L, Anordnung im Browser gemerkt (wie iOS-Widgets). */
+#board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;margin-bottom:20px}
+.wg{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:13px 15px;grid-column:span 1;min-height:110px;display:flex;flex-direction:column}
+.wg.m{grid-column:span 2}.wg.l{grid-column:span 4}
+.wg.dragging{opacity:.4}.wg.over{outline:2px dashed var(--accent);outline-offset:2px}
+.wgh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.wgh .t{font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700}
+.wgh .grip{cursor:grab;color:var(--soft);opacity:.55;font-size:.95rem;line-height:1;user-select:none;padding:1px 2px}
+.wgh .grip:active{cursor:grabbing}
+.wgsz{margin-left:auto;display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.wgsz button{border:none;background:var(--surface);color:var(--soft);font:inherit;font-size:.62rem;font-weight:700;width:23px;height:20px;cursor:pointer}
+.wgsz button.on{background:var(--accent);color:#fff}
+.wg .kbig{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--accent)}
+.wg .kbig.sm{font-size:1.1rem;color:var(--text);word-break:break-word}
+.wg .kcmp{font-size:.82rem;font-weight:600;color:var(--soft);margin-left:7px}
+.wg .klbl{font-size:.78rem;color:var(--soft);margin-top:7px}
+.wg table{margin-top:2px}
+@media(max-width:820px){#board{grid-template-columns:repeat(2,1fr)}.wg.l{grid-column:span 2}}
 </style></head><body>
 <div class="topbar"><div><h1>ViceGuide Statistik</h1>
 <p class="sub">Eigenes, cookiefreies Tracking. Zählt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zählt nicht mit. Zeiten in Europe/Berlin.</p></div>
@@ -466,7 +486,7 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 
 <script>
 var API=location.pathname;
-var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false;
+var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false, BOARD_WS=[];
 var WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -628,12 +648,7 @@ function renderDash(){
   var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
   var h='';
   h+='<div class="sectionlbl">Übersicht ('+esc(rangeLabel())+')</div>';
-  h+='<div class="tiles">';
-  h+='<div class="tile"><div class="nrow"><span class="n">'+d.total+'</span>'+nCmp(d.prev_total)+'</div><div class="l">Seitenaufrufe gesamt</div>'+deltaHtml(d.total,d.prev_total)+'</div>';
-  h+='<div class="tile"><div class="nrow"><span class="n">'+d.instagram.by_utm+'</span>'+nCmp(d.instagram.prev_by_utm)+'</div><div class="l">Instagram (per UTM-Tag)</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)+'</div>';
-  h+='<div class="tile"><div class="n small">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="l">Top-Quelle ('+(topSrc.c||0)+')</div><div class="l2">Woher die meisten Besucher mit UTM-Tag kamen.</div></div>';
-  h+='<div class="tile"><div class="n small">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="l">Top-Seite ('+(topPath.c||0)+')</div><div class="l2">Am häufigsten aufgerufene Seite/Artikel.</div></div>';
-  h+='</div>';
+  h+='<div id="board"></div>';
 
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2>Verlauf</h2>';
@@ -641,15 +656,6 @@ function renderDash(){
   h+='<div class="seg" id="gran"><button data-g="hour">Stunde</button><button data-g="6h">6 Std</button><button data-g="day">Tag</button></div></div></div>';
   h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken öffnet den 24-Stunden-Verlauf des Tages unten.<span id="cmplegend"></span></p>';
   h+='<div class="chartscroll"><div id="mainchart"></div></div></div>';
-
-  h+='<div class="sectionlbl">Woher der Traffic kommt</div>';
-  h+='<div class="twocol">';
-  h+='<div class="chartcard"><div class="charthead"><h2>Kanäle</h2></div><p class="help">Jeder Aufruf einsortiert in Suche, Social, Verweis oder Direkt. Die wichtigste SEO-Kennzahl: wächst der Anteil aus der Suche?</p><table id="chanTbl"></table></div>';
-  h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
-  h+='</div>';
-
-  h+='<div class="sectionlbl">Creator- und Partner-Seiten</div>';
-  h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Akquise-Seiten</h2></div><p class="help">Jeder Aufruf einer Creator-Seite (/creator/) und der Partnerseite (/partner). Zeigt, ob ein verschickter Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Bei Creator-Seiten steht hinter dem Doppelpunkt der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
 
   h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
   h+='<div class="twocol">';
@@ -701,6 +707,7 @@ function renderDash(){
   cb.classList.toggle('on',COMPARE);
   cb.addEventListener('click',function(){COMPARE=!COMPARE;cb.classList.toggle('on',COMPARE);renderMain();});
 
+  renderBoard();
   renderMain();
   renderChannels();
   renderSearchEntries();
@@ -871,6 +878,65 @@ function creatorLabel(path){
 function renderCreatorPages(){
   var t=document.getElementById('creatorTbl');if(!t)return;
   t.innerHTML=barRows(DATA.creator_pages,function(r){return creatorLabel(r.path);});
+}
+
+/* ---- Anpassbares Widget-Board (Uebersicht) ----
+   Kacheln per Griff verschiebbar, Groesse ueber S/M/L, Anordnung im Browser
+   gemerkt (vg_board_layout). Die Listen-Widgets enthalten dieselben Tabellen
+   (chanTbl/creatorTbl/searchTbl), die renderChannels/renderCreatorPages/
+   renderSearchEntries danach befuellen. */
+var BOARD_KEY='vg_board_layout';
+function boardWidgets(){
+  var d=DATA;
+  var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
+  return [
+    {id:'pv',size:'s',t:'Seitenaufrufe',body:'<div class="kbig tnum">'+d.total+'</div>'+(d.prev_total>0?'<div class="klbl tnum">'+cmpLabel()+' '+d.prev_total+'</div>':'')+deltaHtml(d.total,d.prev_total)},
+    {id:'ig',size:'s',t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
+    {id:'src',size:'s',t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
+    {id:'page',size:'s',t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'},
+    {id:'chan',size:'m',t:'Kanäle',body:'<table id="chanTbl"></table>'},
+    {id:'cr',size:'m',t:'Creator & Partner',body:'<table id="creatorTbl"></table>'},
+    {id:'sea',size:'m',t:'Einstiege aus der Suche',body:'<table id="searchTbl"></table>'}
+  ];
+}
+function renderBoard(){
+  var box=document.getElementById('board');if(!box)return;
+  var ws=boardWidgets();
+  try{
+    var saved=JSON.parse(localStorage.getItem(BOARD_KEY)||'[]');
+    if(saved.length){
+      var map={};ws.forEach(function(w){map[w.id]=w;});
+      var out=[];
+      saved.forEach(function(o){if(map[o.id]){if(o.size)map[o.id].size=o.size;out.push(map[o.id]);delete map[o.id];}});
+      ws.forEach(function(w){if(map[w.id])out.push(w);});
+      ws=out;
+    }
+  }catch(e){}
+  BOARD_WS=ws;
+  box.innerHTML=ws.map(function(w){
+    return '<div class="wg '+w.size+'" draggable="true" data-id="'+w.id+'"><div class="wgh"><span class="grip" title="Ziehen zum Verschieben">&#10287;</span><span class="t">'+esc(w.t)+'</span>'+
+      '<span class="wgsz">'+['s','m','l'].map(function(sz){return '<button class="'+(w.size===sz?'on':'')+'" data-sz="'+sz+'">'+sz.toUpperCase()+'</button>';}).join('')+'</span></div><div class="wgbody">'+w.body+'</div></div>';
+  }).join('');
+  wireBoard(box);
+}
+function boardSave(){try{localStorage.setItem(BOARD_KEY,JSON.stringify(BOARD_WS.map(function(w){return {id:w.id,size:w.size};})));}catch(e){}}
+function fillBoardTables(){renderChannels();renderCreatorPages();renderSearchEntries();}
+function wireBoard(box){
+  box.querySelectorAll('.wgsz button').forEach(function(btn){
+    btn.addEventListener('click',function(){var id=btn.closest('.wg').getAttribute('data-id'),sz=btn.getAttribute('data-sz');BOARD_WS.forEach(function(w){if(w.id===id)w.size=sz;});boardSave();renderBoard();fillBoardTables();});
+  });
+  var dragId=null;
+  box.querySelectorAll('.wg').forEach(function(el){
+    el.addEventListener('dragstart',function(){dragId=el.getAttribute('data-id');el.classList.add('dragging');});
+    el.addEventListener('dragend',function(){dragId=null;el.classList.remove('dragging');box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});});
+    el.addEventListener('dragover',function(e){e.preventDefault();if(el.getAttribute('data-id')===dragId)return;box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});el.classList.add('over');});
+    el.addEventListener('dragleave',function(){el.classList.remove('over');});
+    el.addEventListener('drop',function(e){e.preventDefault();if(!dragId||dragId===el.getAttribute('data-id'))return;
+      var from=BOARD_WS.findIndex(function(w){return w.id===dragId;});
+      var to=BOARD_WS.findIndex(function(w){return w.id===el.getAttribute('data-id');});
+      if(from<0||to<0)return;
+      var mv=BOARD_WS.splice(from,1)[0];BOARD_WS.splice(to,0,mv);boardSave();renderBoard();fillBoardTables();});
+  });
 }
 function fmtSecs(s){s=+s||0;if(s<60)return s+' s';var m=Math.floor(s/60),r=s%60;return m+':'+pad2(r)+' min';}
 function renderInternalSearch(){
