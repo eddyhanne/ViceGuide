@@ -110,6 +110,7 @@ function vg_channel(?string $host, string $us): string {
     if ($us !== '' && in_array($us, $socialUtm, true)) return 'social';
     $h = $host ? strtolower($host) : '';
     if ($h !== '') {
+        if ($h === 'viceguide.de') return 'internal'; // interne Klicks von Seite zu Seite, nicht als fremder Verweis zaehlen
         foreach (vg_search_hosts() as $s) if (strpos($h, $s) !== false) return 'search';
         foreach ($socialHosts as $s) if (strpos($h, $s) !== false) return 'social';
         return 'referral';
@@ -239,7 +240,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     // Kanal-Gruppierung für aktuelle Periode und Vorperiode.
     $chan = function (string $a, string $b) use ($run): array {
         $rows = $run("SELECT ref_host, LOWER(COALESCE(utm_source,'')) us, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host, LOWER(COALESCE(utm_source,''))", [$a, $b])->fetchAll();
-        $o = ['search' => 0, 'social' => 0, 'referral' => 0, 'direct' => 0];
+        $o = ['search' => 0, 'social' => 0, 'referral' => 0, 'internal' => 0, 'direct' => 0];
         foreach ($rows as $r) { $o[vg_channel($r['ref_host'], (string)$r['us'])] += (int)$r['c']; }
         return $o;
     };
@@ -391,6 +392,7 @@ td.num2 .delta{margin-top:0}
 .bar.chan-search{background:#0F7A3D}
 .bar.chan-social{background:#D00059}
 .bar.chan-referral{background:#B26A00}
+.bar.chan-internal{background:#2B6C8F}
 .bar.chan-direct{background:#6B5E85}
 .trend{display:inline-block;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle}
 .trend.up,.trend.new{color:var(--ok);background:var(--ok-bg)}
@@ -984,11 +986,11 @@ function wireGsc(){
     var ss=JSON.parse(localStorage.getItem('vg_gsc_sort')||'null');if(ss)GSC_SORT=ss;
   }catch(e){}
 }
-var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',direct:'Direkt'};
+var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',internal:'Intern (eigene Seite)',direct:'Direkt'};
 function renderChannels(){
   var t=document.getElementById('chanTbl');if(!t)return;
   var cur=DATA.channels.cur,prev=DATA.channels.prev;
-  var keys=['search','social','referral','direct'];
+  var keys=['search','social','referral','internal','direct'];
   var max=1;keys.forEach(function(k){if(cur[k]>max)max=cur[k];});
   t.innerHTML=keys.map(function(k){
     var pct=Math.round(cur[k]/max*100);
@@ -1010,7 +1012,7 @@ function renderCreatorPages(){
   t.innerHTML=barRows(DATA.creator_pages,function(r){return creatorLabel(r.path);});
 }
 /* Zugriffs-Protokoll: einzelne Aufrufe mit Uhrzeit (neueste zuerst). */
-function hitSource(r){ if(r.utm_source)return r.utm_source; if(r.ref_host)return r.ref_host; return 'direkt'; }
+function hitSource(r){ if(r.utm_source)return r.utm_source; if(r.ref_host){ return r.ref_host==='viceguide.de' ? 'intern (eigene Seite)' : r.ref_host; } return 'direkt'; }
 function logTableHtml(rows,labelFn){
   if(!rows||!rows.length)return '<table class="logtbl"><tr><td class="p" style="color:var(--soft);font-style:italic;font-weight:400">Noch keine Aufrufe in diesem Zeitraum.</td></tr></table>';
   return '<table class="logtbl">'+rows.map(function(r){
@@ -1048,10 +1050,10 @@ function boardWidgets(){
 /* Kanaele als fertige Tabellenzeilen fuers Board-Widget (eigenstaendig, keine
    geteilte ID mit dem Detail-Bereich Quellen & Kanaele). */
 function chanRowsHtml(){
-  var cur=(DATA.channels&&DATA.channels.cur)||{},keys=['search','social','referral','direct'];
+  var cur=(DATA.channels&&DATA.channels.cur)||{},keys=['search','social','referral','internal','direct'];
   var max=1;keys.forEach(function(k){if((cur[k]||0)>max)max=cur[k];});
   return '<table>'+keys.map(function(k){var v=cur[k]||0,pct=Math.round(v/max*100);
-    return '<tr><td class="lbl">'+esc(CHAN_LABELS[k])+'</td><td class="barcell"><div class="bar" style="width:'+pct+'%"></div></td><td class="num">'+v+'</td></tr>';
+    return '<tr><td class="lbl">'+esc(CHAN_LABELS[k])+'</td><td class="barcell"><div class="bar chan-'+k+'" style="width:'+pct+'%"></div></td><td class="num">'+v+'</td></tr>';
   }).join('')+'</table>';
 }
 function renderBoard(){
