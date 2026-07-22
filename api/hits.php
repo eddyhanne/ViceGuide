@@ -399,6 +399,8 @@ td.num2 .delta{margin-top:0}
 .trend.down{color:var(--bad);background:var(--bad-bg)}
 .trend.flat{color:var(--soft);background:var(--bg-2)}
 tr.thead td{color:var(--soft);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
+tr.thead td.sorth{cursor:pointer;user-select:none;white-space:nowrap}
+tr.thead td.sorth:hover{color:var(--accent)}
 .minih{font-size:.78rem;font-weight:700;margin:0 0 6px}
 .gscup{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .uplbl{font-size:.78rem;color:var(--soft);font-weight:600;display:flex;flex-direction:column;gap:4px}
@@ -531,6 +533,7 @@ table.logtbl td.s{white-space:nowrap;text-align:right;color:var(--soft);width:1%
         <div class="tabs" id="quicktabs">
           <span class="tab" data-days="1">Heute</span>
           <span class="tab" data-preset="yesterday">Gestern</span>
+          <span class="tab" data-days="3">3 Tage</span>
           <span class="tab" data-days="7">7 Tage</span>
           <span class="tab" data-days="30">30 Tage</span>
           <span class="tab" data-days="90">90 Tage</span>
@@ -987,6 +990,8 @@ function wireGsc(){
   }catch(e){}
 }
 var CHAN_LABELS={search:'Suche (SEO)',social:'Social',referral:'Verweis',internal:'Intern (eigene Seite)',direct:'Direkt'};
+var ENG_SORT={k:'c',d:-1};
+function engSortBy(k){ if(ENG_SORT.k===k){ENG_SORT.d=-ENG_SORT.d;}else{ENG_SORT.k=k;ENG_SORT.d=-1;} renderEngagement(); }
 function renderChannels(){
   var t=document.getElementById('chanTbl');if(!t)return;
   var cur=DATA.channels.cur,prev=DATA.channels.prev;
@@ -1112,9 +1117,16 @@ function renderEngagement(){
   var e=DATA.engagement||{rows:[],totals:{c:0,avg_sec:0,avg_depth:0}};
   var tag=document.getElementById('engAvg');
   if(tag)tag.textContent=e.totals.c?('Schnitt '+fmtSecs(e.totals.avg_sec)+' / '+e.totals.avg_depth+'%'):'';
-  var rows=e.rows||[];
+  var rows=(e.rows||[]).slice();
   if(!rows.length){t.innerHTML='<tr><td class="empty">Noch keine Lesedaten erfasst (Daten sammeln sich ab jetzt).</td></tr>';return;}
-  t.innerHTML='<tr class="thead"><td class="lbl">Artikel</td><td class="num">Aufrufe</td><td class="num">Verweildauer</td><td class="num">Scrolltiefe</td></tr>'+
+  var sk=ENG_SORT.k,sd=ENG_SORT.d;
+  rows.sort(function(a,b){
+    var x,y;
+    if(sk==='path'){x=pathLabel(a.path).toLowerCase();y=pathLabel(b.path).toLowerCase();return x<y?-sd:(x>y?sd:0);}
+    x=+a[sk]||0;y=+b[sk]||0;return (x-y)*sd;
+  });
+  function arw(k){ return ENG_SORT.k===k ? (ENG_SORT.d<0?' ▼':' ▲') : ''; }
+  t.innerHTML='<tr class="thead"><td class="lbl sorth" onclick="engSortBy(\'path\')">Artikel'+arw('path')+'</td><td class="num sorth" onclick="engSortBy(\'c\')">Aufrufe'+arw('c')+'</td><td class="num sorth" onclick="engSortBy(\'avg_sec\')">Verweildauer'+arw('avg_sec')+'</td><td class="num sorth" onclick="engSortBy(\'avg_depth\')">Scrolltiefe'+arw('avg_depth')+'</td></tr>'+
     rows.map(function(r){
       return '<tr><td class="lbl" title="'+esc(pathLabel(r.path))+'">'+esc(pathLabel(r.path))+'</td><td class="num">'+r.c+'</td><td class="num">'+fmtSecs(r.avg_sec)+'</td><td class="num">'+r.avg_depth+'%</td></tr>';
     }).join('');
