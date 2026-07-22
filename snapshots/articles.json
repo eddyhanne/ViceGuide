@@ -1576,23 +1576,25 @@
       "cat": "news",
       "content": [
         "Zu zweit auf einer Couch durch Vice City fahren, das wäre ein Traum, und genau danach suchen viele. Die ehrliche Antwort zum Release: dafür gibt es keine Grundlage. GTA 6 startet am 19. November 2026 als reines Singleplayer-Erlebnis. Einen Splitscreen oder lokalen Zwei-Spieler-Modus hat Rockstar an keiner Stelle bestätigt, und die GTA-Reihe hatte einen geteilten Bildschirm noch nie.",
+        "table:Spielmodus|In GTA 6 zum Launch?\nEinzelspieler-Story|Ja, das Kernerlebnis\nSplitscreen (geteilter Bildschirm)|Nein, nie in der Reihe, nicht angekündigt\nLokaler Koop auf einer Konsole|Nein, keine Grundlage\nStory zu zweit online|Nein, reine Spekulation\nOnline-Mehrspieler (GTA-Online-Nachfolger)|Nicht zum Launch, evtl. später",
         "### Kann man die Story zu zweit spielen?",
-        "Immer wieder kursiert die Hoffnung, GTA 6 lasse zwei Spieler die komplette Story gemeinsam durchspielen. ScreenRant hat die Debatte in der Community aufgegriffen und zeigt, wie gespalten die Reaktionen sind. Belegt ist davon nichts. Ein Story-Koop ist Wunschdenken, keine angekündigte Funktion. Wer sich darauf verlässt, baut auf Sand.",
+        "Immer wieder kursiert die Hoffnung, GTA 6 lasse zwei Spieler die komplette Story gemeinsam durchspielen. ScreenRant hat die Debatte in der Community aufgegriffen und zeigt, wie gespalten die Reaktionen sind. Belegt ist davon nichts. Ein Story-Koop, oft auch Co-op geschrieben, ist Wunschdenken, keine angekündigte Funktion. Wer sich darauf verlässt, baut auf Sand.",
         "### Splitscreen: sehr unwahrscheinlich",
-        "Ein geteilter Bildschirm ist technisch besonders aufwendig, weil die riesige Spielwelt dann doppelt gerendert werden müsste. Kein GTA-Teil hat das je geboten, und für GTA 6 gibt es keinerlei Hinweis darauf. Rechne für den lokalen Zwei-Spieler-Traum zum Launch nicht damit.",
+        "Ein geteilter Bildschirm ist technisch besonders aufwendig, weil die riesige Spielwelt dann doppelt gerendert werden müsste. Der Modus wird oft als split screen in zwei Wörtern gesucht, gemeint ist dasselbe: zwei Spieler an einer Konsole mit geteiltem Bild. Kein GTA-Teil hat das je geboten, und für GTA 6 gibt es keinerlei Hinweis darauf. Rechne für den lokalen Zwei-Spieler-Traum zum Launch nicht damit.",
         "### Der einzige realistische Mehrspieler-Weg",
-        "Gemeinsam spielen dürfte am ehesten online möglich werden, über einen Nachfolger von GTA Online. Der ist allerdings weder bestätigt noch terminiert und läuft nach aktuellem Stand getrennt vom Hauptspiel, wie RockstarINTEL zusammenfasst. Ein Koop-Erlebnis auf einer Konsole im selben Raum ersetzt das nicht. Was zum Online-Modus wirklich bekannt ist, steht in unserem [[gta-6-online-modus|Artikel zum Online-Modus]].",
+        "Gemeinsam spielen dürfte am ehesten online möglich werden, über einen Nachfolger von GTA Online. Der ist allerdings weder bestätigt noch terminiert und läuft nach aktuellem Stand getrennt vom Hauptspiel, wie RockstarINTEL zusammenfasst. Dass an so einem Modus gearbeitet wird, deutet ein Detail an: Bei einem britischen Arbeitsgerichtsverfahren im Oktober 2025 wurden laut PC Gamer interne Nachrichten öffentlich, die Playtests für einen Mehrspielermodus mit bis zu 32 Spielern erwähnen. Das Muster kennt man von Rockstar. GTA Online kam rund zwei Wochen nach GTA 5, Red Dead Online folgte etwa einen Monat nach Red Dead Redemption 2. Ein Koop-Erlebnis auf einer Konsole im selben Raum ersetzt das alles nicht. Was zum Online-Modus wirklich bekannt ist, steht in unserem [[gta-6-online-modus|Artikel zum Online-Modus]].",
         "### Unsere Einschätzung",
         "Wir halten einen Splitscreen für sehr unwahrscheinlich, weil er technisch aufwendig ist und keiner der bisherigen GTA-Teile ihn hatte. Ein Story-Koop zu zweit bleibt bis zu einer offiziellen Ansage ein Gerücht. Rechnet zum Launch mit einem klassischen Solo-Abenteuer, alles andere wäre eine Überraschung. Den Gesamtstand bündelt die [[gta-6-alles-was-wir-wissen|große GTA-6-Übersicht]].",
         "faq:Hat GTA 6 einen Splitscreen-Modus?|Nein, dafür gibt es keine Ankündigung. Kein GTA-Teil bot bisher einen geteilten Bildschirm, und für GTA 6 ist er nicht bestätigt.",
         "faq:Kann man die Story von GTA 6 zu zweit spielen?|Ein Story-Koop ist reine Spekulation. Rockstar hat GTA 6 als Singleplayer bestätigt, ein gemeinsames Durchspielen ist nicht angekündigt.",
         "faq:Gibt es einen lokalen Koop-Modus in GTA 6?|Nein. Gemeinsames Spielen dürfte höchstens online über einen späteren GTA-Online-Nachfolger kommen, nicht lokal auf einer Konsole.",
+        "faq:Wann könnte ein Online-Modus für GTA 6 kommen?|Ein Termin steht nicht fest. Bei GTA 5 kam GTA Online rund zwei Wochen nach dem Hauptspiel, bei Red Dead Redemption 2 folgte der Online-Teil etwa einen Monat später. Ein ähnlicher Rhythmus wäre denkbar, bestätigt ist er nicht.",
         "faq:Kommt Koop später per Update?|Möglich wäre gemeinsames Spielen über einen GTA-Online-Nachfolger, der ist aber weder bestätigt noch terminiert. Ein lokaler Koop ist auch dann nicht zu erwarten."
       ],
       "credit": "KI-generiert / ViceGuide",
       "date": "2026-07-16T10:20",
       "id": "gta-6-splitscreen-koop",
-      "img": "api/article_image.php?id=gta-6-splitscreen-koop&v=2026-07-19+07%3A08%3A37",
+      "img": "api/article_image.php?id=gta-6-splitscreen-koop&v=2026-07-21+21%3A32%3A09",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1609,6 +1611,10 @@
         {
           "title": "RockstarINTEL: GTA 6 is single-player only",
           "url": "https://rockstarintel.com/"
+        },
+        {
+          "title": "PC Gamer: GTA 6 is a singleplayer experience",
+          "url": "https://www.pcgamer.com/games/action/gta-6-is-a-singleplayer-experience-leaving-me-to-question-whats-going-on-with-gta-online/"
         }
       ],
       "status": "rumor",
@@ -1620,7 +1626,7 @@
         "Ein gemeinsamer Story-Modus ist reine Fan-Spekulation, kein angekündigtes Feature.",
         "Zusammen spielen dürfte höchstens später online gehen, über einen GTA-Online-Nachfolger."
       ],
-      "updated": "2026-07-19 07:08:37"
+      "updated": "2026-07-21 21:32:09"
     },
     {
       "author": null,
@@ -1729,6 +1735,7 @@
       "cat": "news",
       "content": [
         "Die Frage kommt vor jedem großen Rockstar-Titel auf, und die Antwort fällt seit Jahren gleich aus. Weder die GTA-Reihe noch Red Dead Redemption 1 und 2 oder L.A. Noire hatten je eine deutsche Sprachausgabe. Die Figuren sprechen Englisch, Deutsch kommt über Untertitel und Menütexte ins Spiel. Für GTA 6 deutet nichts auf einen Kurswechsel hin.",
+        "table:Element|Sprache in GTA 6\nSprachausgabe der Figuren|Englisch, die Originalstimmen\nUntertitel|Deutsch\nMenüs und Bildschirmtexte|Deutsch\nRadiosender und Werbespots|Englisch",
         "### Sprachausgabe oder nur Untertitel?",
         "Beides sauber getrennt: Mit Sprachausgabe ist die Vertonung der Figuren gemeint, sie bleibt bei GTA 6 aller Voraussicht nach englisch. Untertitel und Bildschirmtexte sind davon unabhängig und erscheinen auf Deutsch. Wer GTA 6 auf Deutsch spielen will, kann das also über Text tun, die Stimmen bleiben im Original.",
         "### Warum Rockstar auf Deutsch verzichtet",
@@ -1740,6 +1747,7 @@
         "### Was du zum Release erwarten kannst",
         "Realistisch bekommt GTA 6 in Deutschland vollständige deutsche Bildschirmtexte, Menüs und Untertitel, dazu die originale englische Sprachausgabe. Wer lieber hört als liest, wird sich damit arrangieren müssen, solange Rockstar nichts anderes ankündigt. Den kompletten Fakten-Überblick liefert unsere [[gta-6-alles-was-wir-wissen|große GTA-6-Übersicht]].",
         "faq:Kommt GTA 6 auf Deutsch?|Ja, über deutsche Untertitel und Menütexte. Eine deutsche Sprachausgabe ist dagegen sehr unwahrscheinlich.",
+        "faq:Kann man GTA 6 komplett auf Deutsch spielen?|Text ja, Ton nein. Menüs, Bildschirmtexte und Untertitel erscheinen auf Deutsch, die Stimmen der Figuren bleiben englisch.",
         "faq:Wird GTA 6 eine deutsche Sprachausgabe haben?|Sehr unwahrscheinlich. Rockstar hat noch nie ein Spiel auf Deutsch vertont, ein Bruch mit dieser Linie ist nicht angekündigt.",
         "faq:Gibt es deutsche Untertitel in GTA 6?|Aller Voraussicht nach ja. Deutsche Texte und Untertitel gehörten bei Rockstar bisher immer dazu.",
         "faq:Warum synchronisiert Rockstar nicht auf Deutsch?|Setting, Slang und Radiokultur sind stark englischsprachig geprägt, dazu kommt der hohe Aufwand einer lippensynchronen Vollvertonung."
@@ -1747,7 +1755,7 @@
       "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-16T00:26",
       "id": "gta-6-deutsche-synchronisation",
-      "img": "api/article_image.php?id=gta-6-deutsche-synchronisation&v=2026-07-19+07%3A08%3A37",
+      "img": "api/article_image.php?id=gta-6-deutsche-synchronisation&v=2026-07-21+21%3A37%3A15",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1775,7 +1783,7 @@
         "Deutsche Untertitel und Menütexte sind dagegen so gut wie sicher.",
         "Die Community wünscht sich eine Synchro deutlich, an Rockstars Linie ändert das bislang nichts."
       ],
-      "updated": "2026-07-19 07:08:37"
+      "updated": "2026-07-21 21:37:15"
     },
     {
       "author": null,
@@ -1840,18 +1848,22 @@
         "Viele suchen nach der FSK von GTA 6, doch die FSK ist für Filme zuständig. Für Computer- und Videospiele vergibt in Deutschland die USK die Alterskennzeichen. Bei GTA 6 ist also die USK-Einstufung entscheidend, und die läuft auf 18 hinaus.",
         "### Ist die Einstufung schon offiziell?",
         "Die USK bewertet ein Spiel meist erst in den Wochen vor dem Release, eine formale Endeinstufung stand zum Zeitpunkt dieses Artikels noch aus. An der Richtung ändert das wenig. Wie GamesWirtschaft in seinem GTA-6-FAQ festhält, wäre alles unter 18 angesichts der Serieninhalte kaum vorstellbar.",
+        "### Wie ist GTA 6 international eingestuft?",
+        "Ein Blick über Deutschland hinaus stützt die USK-18-Erwartung. In den USA führt die ESRB GTA 6 bereits als Mature 17+. Bekannt wurde das im Mai 2026 über Sonys PlayStation-Marketing, während Rockstars eigene Seite noch Rating Pending zeigte. Für Europa gilt PEGI 18 als sehr wahrscheinlich, offiziell vergeben ist es aber noch nicht. Alle drei Systeme laufen auf dasselbe hinaus: einen Titel ausschließlich für Erwachsene.",
+        "table:Region|Einstufung|Stand\nUSA (ESRB)|Mature 17+|Über Sonys PlayStation-Marketing bekannt, Mai 2026\nEuropa (PEGI)|PEGI 18 erwartet|Offiziell noch nicht vergeben\nDeutschland (USK)|USK 18 erwartet|Formale Einstufung steht aus",
         "### Geschnitten oder ungeschnitten?",
         "Für den deutschen Markt zählt vor allem eines: Seit GTA 5 erscheinen die Teile hierzulande ungeschnitten, also inhaltlich identisch zur internationalen Fassung. Eine entschärfte deutsche Version ist nicht zu erwarten, die USK-18-Freigabe macht einen Schnitt gerade überflüssig. Alle weiteren Fakten zum Spiel bündelt unsere [[gta-6-alles-was-wir-wissen|große GTA-6-Übersicht]].",
         "faq:Welche Altersfreigabe bekommt GTA 6?|Aller Voraussicht nach USK 18, also Keine Jugendfreigabe, wie bei jedem bisherigen Hauptteil der Reihe.",
         "faq:Ab welchem Alter darf man GTA 6 kaufen?|Bei einer USK-18-Einstufung erst ab 18 Jahren, im Handel wie in den digitalen Stores mit Altersprüfung.",
         "faq:Warum ist GTA 6 ab 18?|Wegen der Inhalte: freie Gewalt mit Schusswaffen, Drogen und drastische Sprache. Diese Mischung führt bei der USK zur höchsten Alterskennzeichnung.",
         "faq:Ist GTA 6 USK oder FSK?|Bei Spielen gilt die USK, die FSK ist für Filme zuständig. Für GTA 6 ist also die USK-Einstufung maßgeblich, voraussichtlich USK 18.",
+        "faq:Welche Altersfreigabe hat GTA 6 in den USA?|Die ESRB führt GTA 6 als Mature 17+. Das wurde im Mai 2026 über Sonys PlayStation-Marketing bekannt. Für Deutschland bleibt unabhängig davon die USK zuständig, dort wird USK 18 erwartet.",
         "faq:Erscheint GTA 6 in Deutschland geschnitten?|Nicht zu erwarten. Seit GTA 5 kommen die Teile hierzulande ungeschnitten, die USK-18-Freigabe erlaubt die vollständige Fassung."
       ],
       "credit": "KI-generiert / Viceguide / Rockstar",
       "date": "2026-07-16T00:25",
       "id": "gta-6-altersfreigabe-usk",
-      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-21+09%3A33%3A31",
+      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-21+21%3A28%3A53",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1870,6 +1882,10 @@
           "url": "https://www.gameswirtschaft.de/marketing-pr/grand-theft-auto-6-faq-fragen-antworten-020726/"
         },
         {
+          "title": "ESRB (Entertainment Software Rating Board)",
+          "url": "https://www.esrb.org/"
+        },
+        {
           "title": "USK: Unterhaltungssoftware Selbstkontrolle",
           "url": "https://usk.de/"
         }
@@ -1881,9 +1897,9 @@
       "tldr": [
         "USK 18 bedeutet Keine Jugendfreigabe: Verkauf und Weitergabe nur an Erwachsene.",
         "Von GTA 3 bis GTA 5 war die Reihe durchgängig USK 18, ein Bruch wäre eine echte Überraschung.",
-        "Bei Spielen zählt die USK, nicht die FSK, und die formale Einstufung kommt erst kurz vor Release."
+        "International schon sichtbar: In den USA ist GTA 6 als ESRB Mature 17+ eingestuft."
       ],
-      "updated": "2026-07-21 09:33:31"
+      "updated": "2026-07-21 21:28:53"
     },
     {
       "author": null,
