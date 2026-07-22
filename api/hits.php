@@ -217,10 +217,11 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     foreach ($topPaths as &$tp) { $tp['prev'] = $prevPathMap[$tp['path']] ?? 0; }
     unset($tp);
 
-    // Aufrufe der Creator-Seiten (/creator/...), damit sichtbar wird, ob ein
-    // verschickter Creator-Link wirklich geoeffnet wurde. Eigene Sektion, weil
-    // creator.php eigenstaendig ist und der Name hinter /creator/ interessiert.
-    $creatorPages = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND path LIKE '/creator%' GROUP BY path ORDER BY c DESC LIMIT 50", [$startU, $endU])->fetchAll();
+    // Aufrufe der Akquise-Seiten (/creator/... und /partner), damit sichtbar
+    // wird, ob ein verschickter Link wirklich geoeffnet wurde. Eigene Sektion,
+    // weil creator.php und partner.html eigenstaendig sind und der Name hinter
+    // /creator/ interessiert.
+    $creatorPages = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND (path LIKE '/creator%' OR path LIKE '/partner%') GROUP BY path ORDER BY c DESC LIMIT 50", [$startU, $endU])->fetchAll();
 
     // Kanal-Gruppierung für aktuelle Periode und Vorperiode.
     $chan = function (string $a, string $b) use ($run): array {
@@ -647,8 +648,8 @@ function renderDash(){
   h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
   h+='</div>';
 
-  h+='<div class="sectionlbl">Creator-Seiten</div>';
-  h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Creator-Profile</h2></div><p class="help">Jeder Aufruf einer Seite unter /creator/. Zeigt, ob ein verschickter Creator-Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Hinter dem Doppelpunkt steht der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
+  h+='<div class="sectionlbl">Creator- und Partner-Seiten</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Akquise-Seiten</h2></div><p class="help">Jeder Aufruf einer Creator-Seite (/creator/) und der Partnerseite (/partner). Zeigt, ob ein verschickter Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Bei Creator-Seiten steht hinter dem Doppelpunkt der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
 
   h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
   h+='<div class="twocol">';
@@ -862,6 +863,8 @@ function renderSearchEntries(){
   t.innerHTML=barRows(DATA.entries_search,function(r){return pathLabel(r.path);});
 }
 function creatorLabel(path){
+  var p=String(path||'').replace(/\/$/,'');
+  if(p==='/partner'||p.indexOf('/partner')===0)return 'Partnerseite (/partner)';
   var s=String(path||'').replace(/^\/creator\/?/,'').replace(/\/$/,'');
   return s?('Creator: '+s):'Creator-Übersicht';
 }
