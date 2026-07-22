@@ -16,6 +16,11 @@
 require __DIR__ . '/api/db.php';
 [$pdo, $cfg] = vg_db();
 
+// Eigene Aufrufe im eingeloggten Redaktionsmodus nicht mittracken (wie in der
+// SPA). vg_is_admin() startet nur eine Session, wenn schon ein Session-Cookie
+// da ist, setzt fuer anonyme Besucher also kein Cookie (cookiefreie Linie).
+$vgTrack = !vg_is_admin();
+
 const VG_CR_SECMAP = [
     'characters' => ['prefix' => 'charaktere',   'label' => 'Charaktere', 'fav' => 'Lieblingscharakter'],
     'vehicles'   => ['prefix' => 'fahrzeuge',    'label' => 'Fahrzeuge',  'fav' => 'Lieblingsauto'],
@@ -110,7 +115,7 @@ function vg_cr_header(): string {
       . '</div></div></header>';
 }
 
-function vg_cr_footer(): string {
+function vg_cr_footer(bool $track = false): string {
     return '<footer><div class="foot-in">'
       . '<div class="foot-brand"><b>ViceGuide</b><a href="/">viceguide.de</a></div>'
       . '<p class="disc"><b>ViceGuide ist ein inoffizielles, von Fans erstelltes Portal und steht in keiner Verbindung zu Rockstar Games oder Take-Two Interactive.</b> Alle Marken, Namen und Bezüge gehören ihren jeweiligen Eigentümern. Partner-Creator sind eigenständige Dritte, ihre Inhalte geben ihre eigene Meinung wieder.</p>'
@@ -122,7 +127,12 @@ function vg_cr_footer(): string {
       . 'function vgLoadYt(el){if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.style.margin="0";n.textContent="Im Livebetrieb erscheint hier dein Video, DSGVO-konform auf Klick.";var card=el.parentNode;if(card){card.appendChild(n);}return;}var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
       . 'function vgCopyShare(btn){var t=(document.getElementById("shareTxt")||{}).textContent||"";function ok(){var o=btn.textContent;btn.textContent="Kopiert ✓";setTimeout(function(){btn.textContent=o;},2000);}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){});}else{try{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(e){}}}'
       . 'function vgLoadTwitch(el){var login=el.getAttribute("data-twitch");if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.textContent="Im Livebetrieb läuft hier dein Twitch-Stream. Wir betten ihn erst auf Klick ein, vorher wird keine Verbindung zu Twitch aufgebaut (DSGVO-konform).";el.after(n);return;}var f=document.createElement("iframe");f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:16px";f.allowFullscreen=true;f.src="https://player.twitch.tv/?channel="+encodeURIComponent(login)+"&parent="+location.hostname+"&autoplay=true";el.replaceWith(f);}'
-      . '</script></body></html>';
+      . '</script>'
+      // Cookiefreier Analytics-Treffer fuer Creator-Seiten (siehe api/hits.php),
+      // damit im Dashboard sichtbar wird, ob ein Creator-Link geoeffnet wurde.
+      // Absolute URL, weil diese Seite unter /creator/<slug> laeuft.
+      . ($track ? '<script>(function(){try{var p=new URLSearchParams(location.search);var b=JSON.stringify({path:location.pathname,referrer:document.referrer||"",utm_source:p.get("utm_source")||"",utm_medium:p.get("utm_medium")||"",utm_campaign:p.get("utm_campaign")||""});if(navigator.sendBeacon){navigator.sendBeacon("/api/hits.php",new Blob([b],{type:"application/json"}));}else{fetch("/api/hits.php",{method:"POST",headers:{"Content-Type":"application/json"},body:b,keepalive:true}).catch(function(){});}}catch(e){}})();</script>' : '')
+      . '</body></html>';
 }
 
 function vg_cr_css(): string {
@@ -299,7 +309,7 @@ if ($slug === '') {
         }
         echo '</div>';
     }
-    echo '</div>' . vg_cr_footer();
+    echo '</div>' . vg_cr_footer($vgTrack);
     exit;
 }
 
@@ -479,4 +489,4 @@ echo '</aside>';
 
 echo '</div>'; // cgrid
 echo '<a class="cback" href="/creator/">← Alle Partner-Creator</a>';
-echo '</div>' . vg_cr_footer();
+echo '</div>' . vg_cr_footer($vgTrack);

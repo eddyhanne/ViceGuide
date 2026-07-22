@@ -217,6 +217,11 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     foreach ($topPaths as &$tp) { $tp['prev'] = $prevPathMap[$tp['path']] ?? 0; }
     unset($tp);
 
+    // Aufrufe der Creator-Seiten (/creator/...), damit sichtbar wird, ob ein
+    // verschickter Creator-Link wirklich geoeffnet wurde. Eigene Sektion, weil
+    // creator.php eigenstaendig ist und der Name hinter /creator/ interessiert.
+    $creatorPages = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND path LIKE '/creator%' GROUP BY path ORDER BY c DESC LIMIT 50", [$startU, $endU])->fetchAll();
+
     // Kanal-Gruppierung für aktuelle Periode und Vorperiode.
     $chan = function (string $a, string $b) use ($run): array {
         $rows = $run("SELECT ref_host, LOWER(COALESCE(utm_source,'')) us, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host, LOWER(COALESCE(utm_source,''))", [$a, $b])->fetchAll();
@@ -281,6 +286,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         'series' => $series,
         'prev_series' => $prevSeries,
         'top_paths' => $topPaths,
+        'creator_pages' => $creatorPages,
         'top_referrers' => $topRef,
         'top_utm_sources' => $topSrc,
         'top_utm_campaigns' => $topCmp,
@@ -641,6 +647,9 @@ function renderDash(){
   h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
   h+='</div>';
 
+  h+='<div class="sectionlbl">Creator-Seiten</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Creator-Profile</h2></div><p class="help">Jeder Aufruf einer Seite unter /creator/. Zeigt, ob ein verschickter Creator-Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Hinter dem Doppelpunkt steht der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
+
   h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
   h+='<div class="twocol">';
   h+='<div class="chartcard"><div class="charthead"><h2>Interne Suche</h2></div><p class="help">Wonach auf der Seite gesucht wird. Rot markiert = null Treffer, also ein direkter Hinweis, welchen Artikel du als Nächstes schreiben solltest.</p><table id="intSearchTbl"></table></div>';
@@ -694,6 +703,7 @@ function renderDash(){
   renderMain();
   renderChannels();
   renderSearchEntries();
+  renderCreatorPages();
   renderInternalSearch();
   renderEngagement();
   renderHeatmap();
@@ -850,6 +860,14 @@ function renderChannels(){
 function renderSearchEntries(){
   var t=document.getElementById('searchTbl');if(!t)return;
   t.innerHTML=barRows(DATA.entries_search,function(r){return pathLabel(r.path);});
+}
+function creatorLabel(path){
+  var s=String(path||'').replace(/^\/creator\/?/,'').replace(/\/$/,'');
+  return s?('Creator: '+s):'Creator-Übersicht';
+}
+function renderCreatorPages(){
+  var t=document.getElementById('creatorTbl');if(!t)return;
+  t.innerHTML=barRows(DATA.creator_pages,function(r){return creatorLabel(r.path);});
 }
 function fmtSecs(s){s=+s||0;if(s<60)return s+' s';var m=Math.floor(s/60),r=s%60;return m+':'+pad2(r)+' min';}
 function renderInternalSearch(){
