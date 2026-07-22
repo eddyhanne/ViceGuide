@@ -3173,7 +3173,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Wald & Feld"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=24&v=2026-07-22+07%3A15%3A26",
+        "imgfit": {
+          "x": 0,
+          "y": 100,
+          "zoom": 2.28
+        },
         "name": "Kornnatter",
         "seo": false,
         "slug": "kornnatter",
@@ -3740,11 +3745,11 @@
           "Erstmals": "Poster",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=53&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=53&v=2026-07-22+07%3A15%3A26",
         "imgfit": {
-          "x": 50,
-          "y": 50,
-          "zoom": 0.84
+          "x": 36,
+          "y": 51,
+          "zoom": 1.14
         },
         "name": "Rottweiler",
         "seo": false,
