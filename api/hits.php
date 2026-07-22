@@ -223,6 +223,19 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     // /creator/ interessiert.
     $creatorPages = $run("SELECT path, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? AND (path LIKE '/creator%' OR path LIKE '/partner%') GROUP BY path ORDER BY c DESC LIMIT 50", [$startU, $endU])->fetchAll();
 
+    // Einzelne Aufrufe mit Uhrzeit (Protokoll). created_at liegt in UTC vor,
+    // wird hier nach Europe/Berlin umgerechnet und minutengenau formatiert.
+    $fmtHits = function(array $rows) use ($utc, $berlin) {
+        foreach ($rows as &$r) {
+            $dt = new DateTime($r['created_at'], $utc); $dt->setTimezone($berlin);
+            $r['ts'] = $dt->format('d.m.Y, H:i');
+        }
+        unset($r);
+        return $rows;
+    };
+    $creatorHits = $fmtHits($run("SELECT created_at, path, ref_host, utm_source FROM hits WHERE created_at >= ? AND created_at < ? AND (path LIKE '/creator%' OR path LIKE '/partner%') ORDER BY created_at DESC LIMIT 500", [$startU, $endU])->fetchAll());
+    $recentHits = $fmtHits($run("SELECT created_at, path, ref_host, utm_source FROM hits WHERE created_at >= ? AND created_at < ? ORDER BY created_at DESC LIMIT 300", [$startU, $endU])->fetchAll());
+
     // Kanal-Gruppierung für aktuelle Periode und Vorperiode.
     $chan = function (string $a, string $b) use ($run): array {
         $rows = $run("SELECT ref_host, LOWER(COALESCE(utm_source,'')) us, COUNT(*) c FROM hits WHERE created_at >= ? AND created_at < ? GROUP BY ref_host, LOWER(COALESCE(utm_source,''))", [$a, $b])->fetchAll();
@@ -288,6 +301,8 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
         'prev_series' => $prevSeries,
         'top_paths' => $topPaths,
         'creator_pages' => $creatorPages,
+        'creator_hits' => $creatorHits,
+        'recent_hits' => $recentHits,
         'top_referrers' => $topRef,
         'top_utm_sources' => $topSrc,
         'top_utm_campaigns' => $topCmp,
@@ -475,6 +490,14 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 .mainarea{min-width:0}
 .view{display:none}
 .view.on{display:block}
+/* Zugriffs-Protokoll (einzelne Aufrufe mit Uhrzeit) */
+.logwrap{max-height:540px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table.logtbl{width:100%;border-collapse:collapse}
+table.logtbl td{padding:7px 12px;font-size:.82rem;border-bottom:1px solid var(--line);vertical-align:middle}
+table.logtbl tr:last-child td{border-bottom:none}
+table.logtbl td.t{white-space:nowrap;color:var(--soft);font-variant-numeric:tabular-nums;width:1%}
+table.logtbl td.p{color:var(--text);word-break:break-word;font-weight:600}
+table.logtbl td.s{white-space:nowrap;text-align:right;color:var(--soft);width:1%}
 @media(max-width:820px){
   .shell{grid-template-columns:1fr;gap:14px}
   .sidebar{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
@@ -496,6 +519,7 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
     <button class="navi" data-view="pages"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Seiten</button>
     <button class="navi" data-view="creator"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Creator &amp; Partner</button>
     <button class="navi" data-view="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Interne Suche</button>
+    <button class="navi" data-view="log"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Zugriffe (Uhrzeit)</button>
     <div class="grp">Extern</div>
     <button class="navi" data-view="gsc"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Google Search Console</button>
   </aside>
@@ -730,6 +754,14 @@ function renderDash(){
   h+='<section class="view" data-view="creator" id="v-creator">';
   h+='<div class="sectionlbl">Creator- und Partner-Seiten</div>';
   h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Akquise-Seiten</h2></div><p class="help">Jeder Aufruf einer Creator-Seite (/creator/) und der Partnerseite (/partner). Zeigt, ob ein verschickter Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Bei Creator-Seiten steht hinter dem Doppelpunkt der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
+  h+='<div class="sectionlbl">Einzelne Aufrufe mit Uhrzeit</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Wann wurde geöffnet</h2></div><p class="help">Jeder einzelne Aufruf einer Creator- oder Partnerseite mit genauer Uhrzeit (Europe/Berlin), neueste zuerst. So siehst du, wann genau ein verschickter Link geoeffnet wurde.</p><div class="logwrap"><div id="crHitsTbl"></div></div></div>';
+  h+='</section>';
+
+  // ---- Bereich: Zugriffe (Protokoll aller Aufrufe mit Uhrzeit) ----
+  h+='<section class="view" data-view="log" id="v-log">';
+  h+='<div class="sectionlbl">Zugriffe mit Uhrzeit</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Einzelne Seitenaufrufe</h2></div><p class="help">Jeder einzelne Aufruf mit genauer Uhrzeit (Europe/Berlin) und aufgerufener Seite, neueste zuerst. Zeigt wann welche Seite geoeffnet wurde. Dein eigener Admin-Login zaehlt nicht mit. Die letzten 300 im gewaehlten Zeitraum.</p><div class="logwrap"><div id="logTbl"></div></div></div>';
   h+='</section>';
 
   // ---- Bereich: Interne Suche & Lese-Engagement ----
@@ -779,6 +811,8 @@ function renderDash(){
   renderChannels();
   renderSearchEntries();
   renderCreatorPages();
+  renderCreatorHits();
+  renderLog();
   renderInternalSearch();
   renderEngagement();
   renderHeatmap();
@@ -974,6 +1008,22 @@ function creatorLabel(path){
 function renderCreatorPages(){
   var t=document.getElementById('creatorTbl');if(!t)return;
   t.innerHTML=barRows(DATA.creator_pages,function(r){return creatorLabel(r.path);});
+}
+/* Zugriffs-Protokoll: einzelne Aufrufe mit Uhrzeit (neueste zuerst). */
+function hitSource(r){ if(r.utm_source)return r.utm_source; if(r.ref_host)return r.ref_host; return 'direkt'; }
+function logTableHtml(rows,labelFn){
+  if(!rows||!rows.length)return '<table class="logtbl"><tr><td class="p" style="color:var(--soft);font-style:italic;font-weight:400">Noch keine Aufrufe in diesem Zeitraum.</td></tr></table>';
+  return '<table class="logtbl">'+rows.map(function(r){
+    return '<tr><td class="t">'+esc(r.ts)+'</td><td class="p">'+esc(labelFn(r.path))+'</td><td class="s">'+esc(hitSource(r))+'</td></tr>';
+  }).join('')+'</table>';
+}
+function renderCreatorHits(){
+  var t=document.getElementById('crHitsTbl');if(!t)return;
+  t.innerHTML=logTableHtml(DATA.creator_hits,function(p){return creatorLabel(p);});
+}
+function renderLog(){
+  var t=document.getElementById('logTbl');if(!t)return;
+  t.innerHTML=logTableHtml(DATA.recent_hits,function(p){return pathLabel(p);});
 }
 
 /* ---- Anpassbares Widget-Board (Uebersicht) ----
