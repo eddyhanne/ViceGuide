@@ -228,7 +228,7 @@ function vg_build_stats(PDO $pdo, array $cfg): array {
     $fmtHits = function(array $rows) use ($utc, $berlin) {
         foreach ($rows as &$r) {
             $dt = new DateTime($r['created_at'], $utc); $dt->setTimezone($berlin);
-            $r['ts'] = $dt->format('d.m.Y, H:i');
+            $r['ts'] = $dt->format('d.m.Y, H:i:s');
         }
         unset($r);
         return $rows;
