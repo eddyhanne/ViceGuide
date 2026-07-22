@@ -420,7 +420,7 @@ td.potcell{color:#8a5a00;font-weight:700}
 .tip{position:fixed;z-index:50;display:none;pointer-events:none;background:var(--text);color:#fff;padding:7px 10px;border-radius:8px;font-size:.75rem;line-height:1.35;box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
 .tip b{font-size:.9rem}
 .tip span{opacity:.85}
-#vg-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
+#cards-sources,#cards-pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px 18px 34px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);position:relative;cursor:grab}
 .card.dragging{opacity:.4}
 .card.over{outline:2px dashed var(--accent);outline-offset:2px}
@@ -458,35 +458,74 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 .wg .klbl{font-size:.78rem;color:var(--soft);margin-top:7px}
 .wg table{margin-top:2px}
 @media(max-width:820px){#board{grid-template-columns:repeat(2,1fr)}.wg.l{grid-column:span 2}}
-</style></head><body>
-<div class="topbar"><div><h1>ViceGuide Statistik</h1>
-<p class="sub">Eigenes, cookiefreies Tracking. Zählt echte Seitenaufrufe (jeden Ansichtswechsel in der App), nicht jeden einzelnen Klick. Dein eigener Admin-Login zählt nicht mit. Zeiten in Europe/Berlin.</p></div>
-<div class="topbtns"><button class="expbtn" onclick="vgExportOpen()">Für Claude exportieren</button><button class="resetbtn" onclick="vgResetStats()">Alle Daten zurücksetzen</button></div></div>
 
-<div class="controls">
-  <div class="ctrlgrp"><span class="ctrllbl">Schnellauswahl</span>
-    <div class="tabs" id="quicktabs">
-      <span class="tab" data-days="1">Heute</span>
-      <span class="tab" data-preset="yesterday">Gestern</span>
-      <span class="tab" data-days="7">7 Tage</span>
-      <span class="tab" data-days="30">30 Tage</span>
-      <span class="tab" data-days="90">90 Tage</span>
-    </div>
-  </div>
-  <div class="ctrlgrp"><span class="ctrllbl">Zeitraum vom Kalender</span>
-    <div class="daterow">
-      <input type="date" id="fromDate"><span class="sep">bis</span><input type="date" id="toDate">
-      <button class="applybtn" id="applyRange">Anwenden</button>
-      <button class="applybtn ghost" id="applyDay" title="Nur den Von-Tag als einzelnen Tag anzeigen">Nur dieser Tag</button>
-    </div>
-  </div>
+/* GSC-artige Shell: obere Leiste, linke Navigation, Bereich pro Nav-Punkt */
+.appbar{display:flex;align-items:center;gap:14px;padding:0 2px 14px;border-bottom:1px solid var(--line)}
+.appbar .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:1.05rem}
+.appbar .brand .vi{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.72rem;letter-spacing:.02em}
+.appbar .brand .sub2{color:var(--soft);font-weight:500;font-size:.82rem;border-left:1px solid var(--line);padding-left:12px}
+.appbar .spacer{flex:1}
+.shell{display:grid;grid-template-columns:212px 1fr;gap:24px;align-items:start;margin-top:18px}
+.sidebar{position:sticky;top:16px;display:flex;flex-direction:column;gap:2px}
+.sidebar .grp{font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);font-weight:700;padding:14px 12px 6px}
+.navi{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:var(--soft);font-size:.86rem;font-weight:600;cursor:pointer;border:none;background:none;text-align:left;width:100%;font-family:inherit}
+.navi svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9}
+.navi:hover{background:var(--bg-2)}
+.navi.on{background:var(--accent-soft);color:var(--accent)}
+.mainarea{min-width:0}
+.view{display:none}
+.view.on{display:block}
+@media(max-width:820px){
+  .shell{grid-template-columns:1fr;gap:14px}
+  .sidebar{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .sidebar .grp{display:none}
+  .navi{white-space:nowrap;width:auto;border:1px solid var(--line)}
+}
+</style></head><body>
+<div class="appbar">
+  <div class="brand"><span class="vi">VI</span> ViceGuide <span class="sub2">Statistik</span></div>
+  <div class="spacer"></div>
+  <div class="topbtns"><button class="expbtn" onclick="vgExportOpen()">Für Claude exportieren</button><button class="resetbtn" onclick="vgResetStats()">Alle Daten zurücksetzen</button></div>
 </div>
 
-<div id="dash"><div class="loading">Lade Daten...</div></div>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <button class="navi on" data-view="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Übersicht</button>
+    <button class="navi" data-view="verlauf"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M16 8h5v5"/></svg>Verlauf</button>
+    <button class="navi" data-view="sources"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>Quellen &amp; Kanäle</button>
+    <button class="navi" data-view="pages"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Seiten</button>
+    <button class="navi" data-view="creator"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Creator &amp; Partner</button>
+    <button class="navi" data-view="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Interne Suche</button>
+    <div class="grp">Extern</div>
+    <button class="navi" data-view="gsc"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Google Search Console</button>
+  </aside>
+  <main class="mainarea">
+    <div class="controls">
+      <div class="ctrlgrp"><span class="ctrllbl">Schnellauswahl</span>
+        <div class="tabs" id="quicktabs">
+          <span class="tab" data-days="1">Heute</span>
+          <span class="tab" data-preset="yesterday">Gestern</span>
+          <span class="tab" data-days="7">7 Tage</span>
+          <span class="tab" data-days="30">30 Tage</span>
+          <span class="tab" data-days="90">90 Tage</span>
+        </div>
+      </div>
+      <div class="ctrlgrp"><span class="ctrllbl">Zeitraum vom Kalender</span>
+        <div class="daterow">
+          <input type="date" id="fromDate"><span class="sep">bis</span><input type="date" id="toDate">
+          <button class="applybtn" id="applyRange">Anwenden</button>
+          <button class="applybtn ghost" id="applyDay" title="Nur den Von-Tag als einzelnen Tag anzeigen">Nur dieser Tag</button>
+        </div>
+      </div>
+    </div>
+    <div id="dash"><div class="loading">Lade Daten...</div></div>
+  </main>
+</div>
 
 <script>
 var API=location.pathname;
 var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false, BOARD_WS=[];
+var CUR_VIEW=(function(){try{return localStorage.getItem('vg_stats_view')||'overview';}catch(e){return 'overview';}})();
 var WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -647,23 +686,63 @@ function renderDash(){
   var d=DATA;
   var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
   var h='';
+  // ---- Bereich: Übersicht (anpassbares Widget-Board) ----
+  h+='<section class="view on" data-view="overview" id="v-overview">';
   h+='<div class="sectionlbl">Übersicht ('+esc(rangeLabel())+')</div>';
   h+='<div id="board"></div>';
+  h+='</section>';
 
+  // ---- Bereich: Verlauf (Zeitreihe, Tagesdetail, Heatmap) ----
+  h+='<section class="view" data-view="verlauf" id="v-verlauf">';
   h+='<div class="chartcard">';
   h+='<div class="charthead"><h2>Verlauf</h2>';
   h+='<div class="headctrls"><button id="cmpBtn" class="toggle" title="Vorperiode als Vergleichslinie einblenden">Vorperiode vergleichen</button>';
   h+='<div class="seg" id="gran"><button data-g="hour">Stunde</button><button data-g="6h">6 Std</button><button data-g="day">Tag</button></div></div></div>';
   h+='<p class="help">Balken pro Zeitfenster, saubere Skala rechts abgelesen. Balken anfahren zeigt Fenster und genaue Zahl. Balken anklicken öffnet den 24-Stunden-Verlauf des Tages unten.<span id="cmplegend"></span></p>';
   h+='<div class="chartscroll"><div id="mainchart"></div></div></div>';
+  h+='<div class="chartcard">';
+  h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
+  h+='<div class="daterow"><span class="ctrllbl">Tag</span><input type="date" id="detailDate"></div></div>';
+  h+='<p class="help">Voller 24-Stunden-Verlauf eines einzelnen Tages. Zeigt genau, zu welcher Uhrzeit die Aufrufe reinkamen. Tag frei wählbar, unabhängig vom Zeitraum oben.</p>';
+  h+='<div class="chartscroll"><div id="detailchart"></div></div>';
+  h+='<div class="detailmeta" id="detailmeta"></div></div>';
+  h+='<div class="sectionlbl">Aktivität nach Wochentag und Uhrzeit</div>';
+  h+='<div class="chartcard"><p class="help">Wann kommen die Aufrufe rein (Berlin-Zeit). Dunkler heißt mehr. Zeigt dir den besten Zeitpunkt fürs Veröffentlichen und für Instagram-Posts.</p><div class="chartscroll"><div id="heatmap"></div></div></div>';
+  h+='</section>';
 
+  // ---- Bereich: Quellen & Kanäle ----
+  h+='<section class="view" data-view="sources" id="v-sources">';
+  h+='<div class="sectionlbl">Kanäle</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Kanäle</h2></div><p class="help">Jeder Aufruf einsortiert in Suche, Social, Verweis oder Direkt. Die wichtigste SEO-Kennzahl: wächst der Anteil aus der Suche?</p><table id="chanTbl"></table></div>';
+  h+='<div class="sectionlbl">Quellen im Detail, Reihenfolge per Ziehen anpassbar</div>';
+  h+='<div id="cards-sources"></div>';
+  h+='</section>';
+
+  // ---- Bereich: Seiten ----
+  h+='<section class="view" data-view="pages" id="v-pages">';
+  h+='<div class="sectionlbl">Meistbesuchte Seiten</div>';
+  h+='<div id="cards-pages"></div>';
+  h+='<div class="sectionlbl">Einstiege aus der Suche</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Einstiege aus der Suche</h2></div><p class="help">Welche Seite Besucher aus Suchmaschinen (Google und Co.) direkt reinholt. Das sind deine rankenden Inhalte.</p><table id="searchTbl"></table></div>';
+  h+='</section>';
+
+  // ---- Bereich: Creator & Partner ----
+  h+='<section class="view" data-view="creator" id="v-creator">';
+  h+='<div class="sectionlbl">Creator- und Partner-Seiten</div>';
+  h+='<div class="chartcard"><div class="charthead"><h2>Aufrufe der Akquise-Seiten</h2></div><p class="help">Jeder Aufruf einer Creator-Seite (/creator/) und der Partnerseite (/partner). Zeigt, ob ein verschickter Link (z.B. aus einer Ansprache-Mail) wirklich geoeffnet wurde. Bei Creator-Seiten steht hinter dem Doppelpunkt der Name aus der URL. Leer heisst: in diesem Zeitraum noch kein Aufruf.</p><table id="creatorTbl"></table></div>';
+  h+='</section>';
+
+  // ---- Bereich: Interne Suche & Lese-Engagement ----
+  h+='<section class="view" data-view="search" id="v-search">';
   h+='<div class="sectionlbl">Was Besucher suchen und lesen</div>';
   h+='<div class="twocol">';
   h+='<div class="chartcard"><div class="charthead"><h2>Interne Suche</h2></div><p class="help">Wonach auf der Seite gesucht wird. Rot markiert = null Treffer, also ein direkter Hinweis, welchen Artikel du als Nächstes schreiben solltest.</p><table id="intSearchTbl"></table></div>';
   h+='<div class="chartcard"><div class="charthead"><h2>Lese-Engagement <span id="engAvg" class="cardtag"></span></h2></div><p class="help">Verweildauer und maximale Scrolltiefe pro Artikel. Zeigt, ob Artikel wirklich gelesen oder sofort weggeklickt werden. Verweildauer ist grob, ein offener Tab im Hintergrund kann sie verlängern.</p><table id="engTbl"></table></div>';
   h+='</div>';
+  h+='</section>';
 
-  h+='<div class="sectionlbl">Google Search Console</div>';
+  // ---- Bereich: Google Search Console ----
+  h+='<section class="view" data-view="gsc" id="v-gsc">';
   h+='<div class="chartcard gsc" id="gscCard">';
   h+='<div class="charthead"><h2><button class="caret" id="gscSecCaret" onclick="gscToggle(\'section\')" title="Ein-/ausklappen">&#9662;</button> Suchleistung bei Google <span id="gscMeta" class="cardtag"></span></h2></div>';
   h+='<div id="gscBody">';
@@ -680,21 +759,9 @@ function renderDash(){
   h+='<div class="gsctbl"><h3 class="minih"><button class="caret" id="gscPageCaret" onclick="gscToggle(\'page\')" title="Ein-/ausklappen">&#9662;</button> Top-Seiten (Google)</h3><div class="tblwrap" id="gscPageWrap"><table id="gscPageTbl"></table></div></div>';
   h+='<div class="gsctbl"><h3 class="minih"><button class="caret" id="gscQueryCaret" onclick="gscToggle(\'query\')" title="Ein-/ausklappen">&#9662;</button> Top-Suchanfragen (Google)</h3><div class="tblwrap" id="gscQueryWrap"><table id="gscQueryTbl"></table></div></div>';
   h+='</div></div></div>';
-
-  h+='<div class="chartcard">';
-  h+='<div class="charthead"><h2 id="detailtitle">Tages-Detail</h2>';
-  h+='<div class="daterow"><span class="ctrllbl">Tag</span><input type="date" id="detailDate"></div></div>';
-  h+='<p class="help">Voller 24-Stunden-Verlauf eines einzelnen Tages. Zeigt genau, zu welcher Uhrzeit die Aufrufe reinkamen. Tag frei wählbar, unabhängig vom Zeitraum oben.</p>';
-  h+='<div class="chartscroll"><div id="detailchart"></div></div>';
-  h+='<div class="detailmeta" id="detailmeta"></div></div>';
-
-  h+='<div class="sectionlbl">Aktivität nach Wochentag und Uhrzeit</div>';
-  h+='<div class="chartcard"><p class="help">Wann kommen die Aufrufe rein (Berlin-Zeit). Dunkler heißt mehr. Zeigt dir den besten Zeitpunkt fürs Veröffentlichen und für Instagram-Posts.</p><div class="chartscroll"><div id="heatmap"></div></div></div>';
-
-  h+='<div class="sectionlbl">Akquise &amp; Verhalten, Reihenfolge per Ziehen anpassbar</div>';
-  h+='<div id="vg-cards"></div>';
-  h+='<p class="note">'+esc(d.note)+' Die Kachel-Reihenfolge wird nur in diesem Browser gemerkt.</p>';
+  h+='</section>';
   document.getElementById('dash').innerHTML=h;
+  wireNav();
 
   // Granularität
   if(!GRAN_LOCK)GRAN=defaultGran(d.range.days);
@@ -725,6 +792,35 @@ function renderDash(){
   di.value=lastDay;
   di.addEventListener('change',function(){if(di.value)loadDetail(di.value);});
   loadDetail(lastDay);
+
+  applyView();
+}
+
+/* ---- Bereichs-Navigation (GSC-artig): pro Nav-Punkt nur ein Bereich sichtbar.
+   Breitenabhaengige Diagramme werden erst beim Anzeigen gezeichnet, sonst
+   messen sie im ausgeblendeten Zustand die Breite 0. ---- */
+function wireNav(){
+  document.querySelectorAll('#sidebar .navi').forEach(function(b){
+    if(b._wired)return;b._wired=true;
+    b.addEventListener('click',function(){navTo(b.getAttribute('data-view'));});
+  });
+}
+function navTo(v){
+  CUR_VIEW=v;try{localStorage.setItem('vg_stats_view',v);}catch(e){}
+  applyView();
+}
+function applyView(){
+  document.querySelectorAll('#dash .view').forEach(function(s){s.classList.toggle('on',s.getAttribute('data-view')===CUR_VIEW);});
+  document.querySelectorAll('#sidebar .navi').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-view')===CUR_VIEW);});
+  drawViewCharts(CUR_VIEW);
+}
+function drawViewCharts(v){
+  // Erst beim Sichtbarwerden zeichnen, damit die Breite korrekt gemessen wird.
+  if(v==='verlauf'){
+    renderMain();renderHeatmap();
+    var di=document.getElementById('detailDate');
+    if(di&&di.value)loadDetail(di.value);
+  }
 }
 
 function rangeLabel(){
@@ -894,10 +990,19 @@ function boardWidgets(){
     {id:'ig',size:'s',t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
     {id:'src',size:'s',t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
     {id:'page',size:'s',t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'},
-    {id:'chan',size:'m',t:'Kanäle',body:'<table id="chanTbl"></table>'},
-    {id:'cr',size:'m',t:'Creator & Partner',body:'<table id="creatorTbl"></table>'},
-    {id:'sea',size:'m',t:'Einstiege aus der Suche',body:'<table id="searchTbl"></table>'}
+    {id:'chan',size:'m',t:'Kanäle',body:chanRowsHtml()},
+    {id:'cr',size:'m',t:'Creator & Partner',body:'<table>'+barRows(d.creator_pages,function(r){return creatorLabel(r.path);})+'</table>'},
+    {id:'sea',size:'m',t:'Einstiege aus der Suche',body:'<table>'+barRows(d.entries_search,function(r){return pathLabel(r.path);})+'</table>'}
   ];
+}
+/* Kanaele als fertige Tabellenzeilen fuers Board-Widget (eigenstaendig, keine
+   geteilte ID mit dem Detail-Bereich Quellen & Kanaele). */
+function chanRowsHtml(){
+  var cur=(DATA.channels&&DATA.channels.cur)||{},keys=['search','social','referral','direct'];
+  var max=1;keys.forEach(function(k){if((cur[k]||0)>max)max=cur[k];});
+  return '<table>'+keys.map(function(k){var v=cur[k]||0,pct=Math.round(v/max*100);
+    return '<tr><td class="lbl">'+esc(CHAN_LABELS[k])+'</td><td class="barcell"><div class="bar" style="width:'+pct+'%"></div></td><td class="num">'+v+'</td></tr>';
+  }).join('')+'</table>';
 }
 function renderBoard(){
   var box=document.getElementById('board');if(!box)return;
@@ -923,7 +1028,7 @@ function boardSave(){try{localStorage.setItem(BOARD_KEY,JSON.stringify(BOARD_WS.
 function fillBoardTables(){renderChannels();renderCreatorPages();renderSearchEntries();}
 function wireBoard(box){
   box.querySelectorAll('.wgsz button').forEach(function(btn){
-    btn.addEventListener('click',function(){var id=btn.closest('.wg').getAttribute('data-id'),sz=btn.getAttribute('data-sz');BOARD_WS.forEach(function(w){if(w.id===id)w.size=sz;});boardSave();renderBoard();fillBoardTables();});
+    btn.addEventListener('click',function(){var id=btn.closest('.wg').getAttribute('data-id'),sz=btn.getAttribute('data-sz');BOARD_WS.forEach(function(w){if(w.id===id)w.size=sz;});boardSave();renderBoard();});
   });
   var dragId=null;
   box.querySelectorAll('.wg').forEach(function(el){
@@ -935,7 +1040,7 @@ function wireBoard(box){
       var from=BOARD_WS.findIndex(function(w){return w.id===dragId;});
       var to=BOARD_WS.findIndex(function(w){return w.id===el.getAttribute('data-id');});
       if(from<0||to<0)return;
-      var mv=BOARD_WS.splice(from,1)[0];BOARD_WS.splice(to,0,mv);boardSave();renderBoard();fillBoardTables();});
+      var mv=BOARD_WS.splice(from,1)[0];BOARD_WS.splice(to,0,mv);boardSave();renderBoard();});
   });
 }
 function fmtSecs(s){s=+s||0;if(s<60)return s+' s';var m=Math.floor(s/60),r=s%60;return m+':'+pad2(r)+' min';}
@@ -1011,26 +1116,29 @@ function renderDetail(day){
 }
 function renderCards(){
   var d=DATA;
-  var cards={
-    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsächlich aufgerufen wurden, mit Trend gegen die Vorperiode.',rows:pathTrendRows(d.top_paths)},
+  var pages={
+    top_pages:{tag:'Verhalten',title:'Top-Seiten',help:'Welche Seiten/Artikel tatsächlich aufgerufen wurden, mit Trend gegen die Vorperiode.',rows:pathTrendRows(d.top_paths)}
+  };
+  var sources={
     top_sources:{tag:'Akquise',title:'Top-Quellen (UTM-Source)',help:'Gruppiert nach dem Tag im geklickten Link, unabhängig vom technischen Referrer.',rows:barRows(d.top_utm_sources,function(r){return r.utm_source;})},
     top_campaigns:{tag:'Akquise',title:'Top-Kampagnen',help:'Quelle und Kampagnenname zusammen, zeigt welcher einzelne Post/Link wie viel gebracht hat.',rows:barRows(d.top_utm_campaigns,function(r){return r.utm_source+' / '+r.utm_campaign;})},
     top_referrers:{tag:'Akquise',title:'Top-Referrer',help:'Technische Herkunfts-Domain laut Browser, Google und Instagram jeweils zusammengefasst. Zeigt auch Besuche ohne UTM-Link.',rows:barRows(d.top_referrers,function(r){return r.ref_host;})}
   };
-  var box=document.getElementById('vg-cards');
-  var html='';
-  Object.keys(cards).forEach(function(id){
-    var c=cards[id];
-    html+='<div class="card" draggable="true" data-id="'+id+'"><div class="draghandle" title="Ziehen zum Verschieben">&#10287;</div><h2>'+esc(c.title)+' <span class="cardtag">'+esc(c.tag)+'</span></h2><p class="help">'+esc(c.help)+'</p><table>'+c.rows+'</table></div>';
-  });
-  box.innerHTML=html;
-  applyCardOrder(box);
-  wireDrag(box);
+  function build(box,defs,key){
+    if(!box)return;
+    box.innerHTML=Object.keys(defs).map(function(id){
+      var c=defs[id];
+      return '<div class="card" draggable="true" data-id="'+id+'"><div class="draghandle" title="Ziehen zum Verschieben">&#10287;</div><h2>'+esc(c.title)+' <span class="cardtag">'+esc(c.tag)+'</span></h2><p class="help">'+esc(c.help)+'</p><table>'+c.rows+'</table></div>';
+    }).join('');
+    applyCardOrder(box,key);wireDrag(box,key);
+  }
+  build(document.getElementById('cards-pages'),pages,'vg_cards_pages');
+  build(document.getElementById('cards-sources'),sources,'vg_cards_sources');
 }
 
 /* ---- Kachel-Reihenfolge (nur lokal) ---- */
-function applyCardOrder(box){
-  var KEY='vg_stats_card_order';
+function applyCardOrder(box,key){
+  var KEY=key||'vg_stats_card_order';
   try{
     var saved=JSON.parse(localStorage.getItem(KEY)||'[]');
     saved.slice().reverse().forEach(function(id){
@@ -1039,8 +1147,8 @@ function applyCardOrder(box){
     });
   }catch(e){}
 }
-function wireDrag(box){
-  var KEY='vg_stats_card_order';
+function wireDrag(box,key){
+  var KEY=key||'vg_stats_card_order';
   function saveOrder(){try{localStorage.setItem(KEY,JSON.stringify(Array.prototype.map.call(box.children,function(c){return c.getAttribute('data-id');})));}catch(e){}}
   var dragEl=null;
   box.querySelectorAll('.card').forEach(function(card){
