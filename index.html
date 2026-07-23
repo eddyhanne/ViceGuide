@@ -2718,11 +2718,19 @@ function linkifyChars(text,excludeKey,seen){
    anfasst (kein verschachteltes Link-Markup). */
 function linkifyArticleRefs(text,tokens){
   if(!text) return text||'';
-  return text.replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g,(m,id,label)=>{
+  return text.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g,(m,target,label)=>{
     const clean=esc(label.trim());
-    const exists=(GUIDES||[]).some(g=>g.id===id);
+    const t=target.trim();
     const token='\uE000'+tokens.length+'\uE001';
-    tokens.push(exists?`<a class="ent-link" data-article-id="${id}" href="${articleHref(id)}" onclick="event.stopPropagation();return articleClick(event,(GUIDES||[]).findIndex(g=>g.id==='${id}'))">${clean}</a>`:clean);
+    /* Interner Pfad-Verweis "[[/waffen/|Alle Waffen in der Datenbank]]": echter
+       Link auf eine Rubrik/Hub/Eintrag-URL. Normaler Klick navigiert in der App
+       (kein Reload), Strg/Cmd/Mittelklick oeffnet wie gewohnt einen neuen Tab. */
+    if(t.charAt(0)==='/'){
+      tokens.push(`<a class="ent-link" href="${esc(t)}" onclick="event.stopPropagation();if(event.metaKey||event.ctrlKey||event.shiftKey)return true;event.preventDefault();history.pushState(null,'',this.getAttribute('href'));restoreFromLocation();return false;">${clean}</a>`);
+      return token;
+    }
+    const exists=(GUIDES||[]).some(g=>g.id===t);
+    tokens.push(exists?`<a class="ent-link" data-article-id="${t}" href="${articleHref(t)}" onclick="event.stopPropagation();return articleClick(event,(GUIDES||[]).findIndex(g=>g.id==='${t}'))">${clean}</a>`:clean);
     return token;
   });
 }

@@ -46,6 +46,16 @@ function vg_fmt_date(?string $iso): string {
 
 // Baut eine einfache Lesefassung aus dem content-Array, ohne die Sonder-
 // syntax (###, img:, - , faq:, [[id|text]]), nur reiner lesbarer Text.
+/* Inline-Verweise in einem Absatz: erst alles escapen, dann interne
+   Pfad-Verweise [[/pfad|Label]] zu echten, crawlbaren Links machen, restliche
+   [[id|Label]]-Artikelverweise zu Klartext aufloesen. Deckungsgleich zum
+   Client (linkifyArticleRefs). */
+function vg_inline(string $text): string {
+    $s = vg_esc($text);
+    $s = preg_replace('#\[\[(/[^\]|]*)\|([^\]]+)\]\]#', '<a href="$1">$2</a>', $s);
+    $s = preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', $s);
+    return $s;
+}
 function vg_plain_content(array $content): string {
     $out = '';
     $inSteps = false;
@@ -58,7 +68,7 @@ function vg_plain_content(array $content): string {
         if (!$isStep && $inSteps) { $out .= '</ol>'; $inSteps = false; }
         if ($isStep) {
             if (!$inSteps) { $out .= '<ol class="art-steps">'; $inSteps = true; }
-            $s = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim(substr($text, 5)));
+            $s = preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', trim(substr($text, 5)));
             $out .= '<li>' . vg_esc($s) . '</li>';
             continue;
         }
@@ -72,7 +82,7 @@ function vg_plain_content(array $content): string {
             $out .= '<p><strong>' . vg_esc(trim($parts[0] ?? '')) . '</strong> ' . vg_esc(trim($parts[1] ?? '')) . '</p>';
         } elseif (str_starts_with($text, 'quote:')) {
             $parts = explode('|', substr($text, 6), 3);
-            $q = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($parts[0] ?? ''));
+            $q = preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', trim($parts[0] ?? ''));
             $who = trim($parts[1] ?? '');
             $orig = trim($parts[2] ?? '');
             // Deckungsgleich zum Client (renderContentBlock): dieselbe .art-quote-
@@ -101,7 +111,7 @@ function vg_plain_content(array $content): string {
             // erste Zeile Kopf, Zellen per |, Aufwand-Woerter als Ampel-Pille.
             $rows = array_values(array_filter(array_map('trim', explode("\n", substr($text, 6))), fn($r) => $r !== ''));
             if ($rows) {
-                $strip = fn($s) => preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', trim($s));
+                $strip = fn($s) => preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', trim($s));
                 $cells = array_map(fn($r) => array_map('trim', explode('|', $r)), $rows);
                 $head = $cells[0];
                 $th = '';
@@ -123,8 +133,7 @@ function vg_plain_content(array $content): string {
                 $out .= '<figure class="art-table-wrap"><table class="art-table"><thead><tr>' . $th . '</tr></thead><tbody>' . $tb . '</tbody></table></figure>';
             }
         } else {
-            $plain = preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $text);
-            $out .= '<p>' . vg_esc($plain) . '</p>';
+            $out .= '<p>' . vg_inline($text) . '</p>';
         }
     }
     if ($inSteps) { $out .= '</ol>'; }
@@ -302,7 +311,7 @@ foreach ($content as $block) {
     if (!is_string($block) || !str_starts_with($block, 'faq:')) continue;
     $parts = explode('|', substr($block, 4), 2);
     $q = trim($parts[0] ?? '');
-    $a = trim(preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $parts[1] ?? ''));
+    $a = trim(preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', $parts[1] ?? ''));
     if ($q === '' || $a === '') continue;
     $faqItems[] = [
         '@type' => 'Question',
@@ -340,7 +349,7 @@ if (is_array($tldr) && $tldr) {
     $lis = '';
     foreach ($tldr as $t) {
         if (!is_string($t) || trim($t) === '') continue;
-        $lis .= '<li>' . vg_esc(trim(preg_replace('/\[\[[a-z0-9-]+\|([^\]]+)\]\]/', '$1', $t))) . '</li>';
+        $lis .= '<li>' . vg_esc(trim(preg_replace('/\[\[[^\]|]+\|([^\]]+)\]\]/', '$1', $t))) . '</li>';
     }
     if ($lis !== '') {
         $body['<div class="art-tldr" id="a-tldr" style="display:none"><div class="artbox-h">Auf einen Blick</div><ul id="a-tldr-list"></ul></div>'] =
