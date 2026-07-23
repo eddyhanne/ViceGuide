@@ -460,23 +460,23 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 
 /* Anpassbares Widget-Board (Uebersicht): Kacheln per Griff verschiebbar, Groesse
    ueber S/M/L, Anordnung im Browser gemerkt (wie iOS-Widgets). */
-#board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;margin-bottom:20px}
-.wg{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:13px 15px;grid-column:span 1;min-height:110px;display:flex;flex-direction:column}
-.wg.m{grid-column:span 2}.wg.l{grid-column:span 4}
-.wg.dragging{opacity:.4}.wg.over{outline:2px dashed var(--accent);outline-offset:2px}
+#board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch;margin-bottom:20px}
+.wg{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:13px 15px;min-height:120px;display:flex;flex-direction:column}
+.wg.dragging{opacity:.4}.wg.over{outline:2px dashed var(--accent);outline-offset:2px;background:var(--surface)}
 .wgh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .wgh .t{font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700}
 .wgh .grip{cursor:grab;color:var(--soft);opacity:.55;font-size:.95rem;line-height:1;user-select:none;padding:1px 2px}
 .wgh .grip:active{cursor:grabbing}
-.wgsz{margin-left:auto;display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
-.wgsz button{border:none;background:var(--surface);color:var(--soft);font:inherit;font-size:.62rem;font-weight:700;width:23px;height:20px;cursor:pointer}
-.wgsz button.on{background:var(--accent);color:#fff}
+.wg.empty{border-style:dashed;border-color:var(--line);box-shadow:none;background:transparent;align-items:center;justify-content:center;text-align:center}
+.wg.empty .emptyhint{font-size:.72rem;color:var(--soft);opacity:.7;pointer-events:none}
+.wg.empty.over{background:var(--surface);opacity:1}
 .wg .kbig{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--accent)}
 .wg .kbig.sm{font-size:1.1rem;color:var(--text);word-break:break-word}
 .wg .kcmp{font-size:.82rem;font-weight:600;color:var(--soft);margin-left:7px}
 .wg .klbl{font-size:.78rem;color:var(--soft);margin-top:7px}
 .wg table{margin-top:2px}
-@media(max-width:820px){#board{grid-template-columns:repeat(2,1fr)}.wg.l{grid-column:span 2}}
+@media(max-width:820px){#board{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){#board{grid-template-columns:1fr}.wg.empty{display:none}}
 
 /* GSC-artige Shell: obere Leiste, linke Navigation, Bereich pro Nav-Punkt */
 .appbar{display:flex;align-items:center;gap:14px;padding:0 2px 14px;border-bottom:1px solid var(--line)}
@@ -553,7 +553,7 @@ table.logtbl td.s{white-space:nowrap;text-align:right;color:var(--soft);width:1%
 
 <script>
 var API=location.pathname;
-var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false, BOARD_WS=[];
+var DATA=null, DET=null, GRAN='day', GRAN_LOCK=false, COMPARE=false, BOARD_WS=[], BOARD_SLOTS=null;
 var CUR_VIEW=(function(){try{return localStorage.getItem('vg_stats_view')||'overview';}catch(e){return 'overview';}})();
 var WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 
@@ -1034,22 +1034,22 @@ function renderLog(){
 }
 
 /* ---- Anpassbares Widget-Board (Uebersicht) ----
-   Kacheln per Griff verschiebbar, Groesse ueber S/M/L, Anordnung im Browser
-   gemerkt (vg_board_layout). Die Listen-Widgets enthalten dieselben Tabellen
-   (chanTbl/creatorTbl/searchTbl), die renderChannels/renderCreatorPages/
-   renderSearchEntries danach befuellen. */
+   Feste, gleich grosse Kacheln in einem Raster mit sichtbaren Leer-Slots.
+   Eine Kachel wird per Drag auf einen anderen Slot gezogen: leerer Slot =
+   verschieben, belegter Slot = tauschen. Kein Groessen-Umschalter mehr. Die
+   Slot-Belegung (Widget-id je Rasterplatz) merkt der Browser (vg_board_layout). */
 var BOARD_KEY='vg_board_layout';
 function boardWidgets(){
   var d=DATA;
   var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
   return [
-    {id:'pv',size:'s',t:'Seitenaufrufe',body:'<div class="kbig tnum">'+d.total+'</div>'+(d.prev_total>0?'<div class="klbl tnum">'+cmpLabel()+' '+d.prev_total+'</div>':'')+deltaHtml(d.total,d.prev_total)},
-    {id:'ig',size:'s',t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
-    {id:'src',size:'s',t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
-    {id:'page',size:'s',t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'},
-    {id:'chan',size:'m',t:'Kanäle',body:chanRowsHtml()},
-    {id:'cr',size:'m',t:'Creator & Partner',body:'<table>'+barRows(d.creator_pages,function(r){return creatorLabel(r.path);})+'</table>'},
-    {id:'sea',size:'m',t:'Einstiege aus der Suche',body:'<table>'+barRows(d.entries_search,function(r){return pathLabel(r.path);})+'</table>'}
+    {id:'pv',t:'Seitenaufrufe',body:'<div class="kbig tnum">'+d.total+'</div>'+(d.prev_total>0?'<div class="klbl tnum">'+cmpLabel()+' '+d.prev_total+'</div>':'')+deltaHtml(d.total,d.prev_total)},
+    {id:'ig',t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
+    {id:'src',t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
+    {id:'chan',t:'Kanäle',body:chanRowsHtml()},
+    {id:'cr',t:'Creator & Partner',body:'<table>'+barRows(d.creator_pages,function(r){return creatorLabel(r.path);})+'</table>'},
+    {id:'sea',t:'Einstiege aus der Suche',body:'<table>'+barRows(d.entries_search,function(r){return pathLabel(r.path);})+'</table>'},
+    {id:'page',t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'}
   ];
 }
 /* Kanaele als fertige Tabellenzeilen fuers Board-Widget (eigenstaendig, keine
@@ -1061,43 +1061,58 @@ function chanRowsHtml(){
     return '<tr><td class="lbl">'+esc(CHAN_LABELS[k])+'</td><td class="barcell"><div class="bar chan-'+k+'" style="width:'+pct+'%"></div></td><td class="num">'+v+'</td></tr>';
   }).join('')+'</table>';
 }
+// Anzahl Slots: alle Kacheln plus mindestens ein Leer-Slot, auf volle
+// 3er-Reihen aufgerundet, damit das Raster sauber schliesst und immer freie
+// Zielplaetze zum Reinziehen da sind.
+function boardSlotCount(n){return Math.ceil((n+1)/3)*3;}
+// Slot-Belegung normalisieren: jede Widget-id genau einmal, unbekannte raus,
+// fehlende Widgets in den ersten freien Slot, Laenge auf nSlots bringen.
+function boardNormalize(slots,ids,nSlots){
+  var out=[],placed={},i;
+  for(i=0;i<nSlots;i++)out.push(null);
+  if(Object.prototype.toString.call(slots)==='[object Array]'){
+    for(i=0;i<slots.length&&i<nSlots;i++){
+      var id=slots[i];
+      if(id&&ids.indexOf(id)>=0&&!placed[id]){out[i]=id;placed[id]=1;}
+    }
+  }
+  ids.forEach(function(id){
+    if(placed[id])return;
+    var idx=out.indexOf(null);
+    if(idx<0){out.push(id);}else{out[idx]=id;}
+    placed[id]=1;
+  });
+  return out;
+}
 function renderBoard(){
   var box=document.getElementById('board');if(!box)return;
-  var ws=boardWidgets();
-  try{
-    var saved=JSON.parse(localStorage.getItem(BOARD_KEY)||'[]');
-    if(saved.length){
-      var map={};ws.forEach(function(w){map[w.id]=w;});
-      var out=[];
-      saved.forEach(function(o){if(map[o.id]){if(o.size)map[o.id].size=o.size;out.push(map[o.id]);delete map[o.id];}});
-      ws.forEach(function(w){if(map[w.id])out.push(w);});
-      ws=out;
-    }
-  }catch(e){}
-  BOARD_WS=ws;
-  box.innerHTML=ws.map(function(w){
-    return '<div class="wg '+w.size+'" draggable="true" data-id="'+w.id+'"><div class="wgh"><span class="grip" title="Ziehen zum Verschieben">&#10287;</span><span class="t">'+esc(w.t)+'</span>'+
-      '<span class="wgsz">'+['s','m','l'].map(function(sz){return '<button class="'+(w.size===sz?'on':'')+'" data-sz="'+sz+'">'+sz.toUpperCase()+'</button>';}).join('')+'</span></div><div class="wgbody">'+w.body+'</div></div>';
+  var ws=boardWidgets();BOARD_WS=ws;
+  var ids=ws.map(function(w){return w.id;}),byId={};ws.forEach(function(w){byId[w.id]=w;});
+  var nSlots=boardSlotCount(ids.length);
+  var slots=null;
+  try{var saved=JSON.parse(localStorage.getItem(BOARD_KEY)||'null');if(saved&&saved.slots)slots=saved.slots;}catch(e){}
+  slots=boardNormalize(slots,ids,nSlots);
+  BOARD_SLOTS=slots;
+  box.innerHTML=slots.map(function(id,i){
+    var w=id?byId[id]:null;
+    if(w)return '<div class="wg" draggable="true" data-slot="'+i+'" data-id="'+w.id+'"><div class="wgh"><span class="grip" title="Ziehen zum Verschieben">&#10287;</span><span class="t">'+esc(w.t)+'</span></div><div class="wgbody">'+w.body+'</div></div>';
+    return '<div class="wg empty" data-slot="'+i+'"><span class="emptyhint">Kachel hierher ziehen</span></div>';
   }).join('');
   wireBoard(box);
 }
-function boardSave(){try{localStorage.setItem(BOARD_KEY,JSON.stringify(BOARD_WS.map(function(w){return {id:w.id,size:w.size};})));}catch(e){}}
-function fillBoardTables(){renderChannels();renderCreatorPages();renderSearchEntries();}
+function boardSave(){try{localStorage.setItem(BOARD_KEY,JSON.stringify({slots:BOARD_SLOTS}));}catch(e){}}
 function wireBoard(box){
-  box.querySelectorAll('.wgsz button').forEach(function(btn){
-    btn.addEventListener('click',function(){var id=btn.closest('.wg').getAttribute('data-id'),sz=btn.getAttribute('data-sz');BOARD_WS.forEach(function(w){if(w.id===id)w.size=sz;});boardSave();renderBoard();});
-  });
-  var dragId=null;
+  var dragSlot=null;
   box.querySelectorAll('.wg').forEach(function(el){
-    el.addEventListener('dragstart',function(){dragId=el.getAttribute('data-id');el.classList.add('dragging');});
-    el.addEventListener('dragend',function(){dragId=null;el.classList.remove('dragging');box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});});
-    el.addEventListener('dragover',function(e){e.preventDefault();if(el.getAttribute('data-id')===dragId)return;box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});el.classList.add('over');});
+    var empty=el.classList.contains('empty');
+    if(!empty){
+      el.addEventListener('dragstart',function(e){dragSlot=+el.getAttribute('data-slot');el.classList.add('dragging');if(e.dataTransfer){e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',el.getAttribute('data-id'));}catch(_){}}});
+      el.addEventListener('dragend',function(){dragSlot=null;el.classList.remove('dragging');box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});});
+    }
+    el.addEventListener('dragover',function(e){if(dragSlot===null)return;e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';box.querySelectorAll('.wg').forEach(function(x){x.classList.remove('over');});el.classList.add('over');});
     el.addEventListener('dragleave',function(){el.classList.remove('over');});
-    el.addEventListener('drop',function(e){e.preventDefault();if(!dragId||dragId===el.getAttribute('data-id'))return;
-      var from=BOARD_WS.findIndex(function(w){return w.id===dragId;});
-      var to=BOARD_WS.findIndex(function(w){return w.id===el.getAttribute('data-id');});
-      if(from<0||to<0)return;
-      var mv=BOARD_WS.splice(from,1)[0];BOARD_WS.splice(to,0,mv);boardSave();renderBoard();});
+    el.addEventListener('drop',function(e){e.preventDefault();if(dragSlot===null)return;var to=+el.getAttribute('data-slot');if(to===dragSlot)return;
+      var s=BOARD_SLOTS,mv=s[dragSlot];s[dragSlot]=s[to];s[to]=mv;boardSave();renderBoard();});
   });
 }
 function fmtSecs(s){s=+s||0;if(s<60)return s+' s';var m=Math.floor(s/60),r=s%60;return m+':'+pad2(r)+' min';}
