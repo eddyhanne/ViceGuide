@@ -136,7 +136,7 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
 if ($method === 'POST') {
     vg_require_admin($cfg);
     $b = vg_body3();
-    $validSections = ['characters', 'vehicles', 'weapons', 'wildlife', 'gangs', 'radio', 'activities', 'locations', 'brands'];
+    $validSections = ['characters', 'vehicles', 'weapons', 'wildlife', 'gangs', 'radio', 'activities', 'locations', 'brands', 'soundtrack'];
     $section = trim($b['section'] ?? '');
     $name = trim($b['name'] ?? '');
     if (!in_array($section, $validSections, true)) vg_out3(['error' => 'ungueltige section'], 400);

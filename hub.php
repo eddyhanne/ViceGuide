@@ -58,6 +58,7 @@ $DB_SECTIONS = [
     'activities' => ['prefix' => 'aktivitaeten', 'label' => 'Aktivitäten'],
     'locations'  => ['prefix' => 'orte',         'label' => 'Orte'],
     'brands'     => ['prefix' => 'marken',       'label' => 'Marken & Unternehmen'],
+    'soundtrack' => ['prefix' => 'soundtrack',   'label' => 'Soundtrack'],
 ];
 // Guide-Kategorien (vor Release gesperrt, noch keine eigenen Seiten).
 $GUIDE_CATS = [

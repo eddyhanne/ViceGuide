@@ -25,6 +25,7 @@ const VG_SITEMAP_SECTION_PREFIX = [
     'activities' => 'aktivitaeten',
     'locations'  => 'orte',
     'brands'     => 'marken',
+    'soundtrack' => 'soundtrack',
 ];
 
 function vg_sitemap_date(?string $iso): string {

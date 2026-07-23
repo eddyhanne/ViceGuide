@@ -30,6 +30,7 @@ const VG_CATEGORY_SECTION_MAP = [
     'activities' => ['prefix' => 'aktivitaeten', 'label' => 'Aktivitäten'],
     'locations'  => ['prefix' => 'orte',         'label' => 'Orte'],
     'brands'     => ['prefix' => 'marken',       'label' => 'Marken & Unternehmen'],
+    'soundtrack' => ['prefix' => 'soundtrack',   'label' => 'Soundtrack'],
 ];
 
 $section = $_GET['section'] ?? '';
