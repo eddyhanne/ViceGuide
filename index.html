@@ -2,15 +2,14 @@
 <html lang="de" data-theme="light">
 <head>
 <base href="/">
-<!-- Google AdSense. Sobald AD_CLIENT auf deine Publisher-ID gesetzt ist
-     (Format ca-pub-XXXXXXXXXXXXXXXX), laedt der Loader die Anzeigen. Auto Ads
-     und die DSGVO-Einwilligung (zertifizierte CMP) werden im AdSense-Konto
-     unter "Datenschutz & Messaging" aktiviert, darum hier bewusst kein
-     eigener Consent-Banner. Leer = es laedt nichts, die Seite bleibt
-     unveraendert. Steht in index.html und wird von allen SSR-Fassaden
-     (article.php, entry.php, hub.php ...) mitausgeliefert, Ads erscheinen
-     also auch auf den echten Landing-Pages aus der Google-Suche. -->
-<script>(function(){var AD_CLIENT="";/* <== hier deine AdSense-ID eintragen, z.B. "ca-pub-1234567890123456" */if(!AD_CLIENT)return;var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+AD_CLIENT;s.setAttribute('crossorigin','anonymous');document.head.appendChild(s);window.__vgAds=AD_CLIENT;})();</script>
+<!-- Google AdSense (Publisher ca-pub-1078304937027088). Standard-Snippet, das
+     Googles Verifizierung erwartet. Steht in index.html und wird von allen
+     SSR-Fassaden (article.php, entry.php, hub.php ...) mitausgeliefert, Ads
+     erscheinen also auch auf den Landing-Pages aus der Google-Suche.
+     WICHTIG: Vor der Auslieferung an EU-Besucher im AdSense-Konto unter
+     "Datenschutz & Messaging" die DSGVO-Einwilligungsnachricht (zertifizierte
+     CMP) aktivieren und veroeffentlichen, sie gated die Anzeigen. -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1078304937027088" crossorigin="anonymous"></script>
 <script>(function(){try{var t=localStorage.getItem('vg-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

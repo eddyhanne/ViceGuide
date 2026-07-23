@@ -1,6 +1,1 @@
-# ViceGuide - ads.txt fuer Google AdSense
-# Nach der AdSense-Freigabe die folgende Zeile aktivieren: das fuehrende "# "
-# entfernen und pub-XXXXXXXXXXXXXXXX durch deine eigene Publisher-Nummer
-# ersetzen (die Ziffern aus deiner ca-pub-ID, ohne das "ca-"). Die lange
-# Kennung dahinter ist Googles feste Zertifizierungs-ID und bleibt so stehen.
-# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-1078304937027088, DIRECT, f08c47fec0942fa0
