@@ -16,8 +16,28 @@ require __DIR__ . '/api/db.php';
 
 function vg_esc_hub($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
+/* Status-Verdikt eines Artikels als Wort (Leak-Chronik), deckungsgleich zu
+   artStatusMeta() in index.html. Ein Leak-Artikel ohne Status gilt als
+   unbestaetigt. */
+function vg_art_verdict($status, $cat) {
+    if ($status === 'confirmed') return 'Bestätigt';
+    if ($status === 'mixed') return 'Teils bestätigt';
+    if ($status === 'rumor') return 'Unbestätigt';
+    if ($cat === 'leaks') return 'Unbestätigt';
+    return '';
+}
+function vg_art_verdict_cls($status) {
+    return $status === 'confirmed' ? 'ok' : ($status === 'mixed' ? 'mid' : 'rum');
+}
+function vg_lc_date($d) {
+    $d = substr((string)$d, 0, 10);
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $d)) return '';
+    [$y, $m, $dd] = explode('-', $d);
+    return (int)$dd . '.' . (int)$m . '.' . $y;
+}
+
 $page = $_GET['page'] ?? '';
-if ($page !== 'datenbank' && $page !== 'guides' && $page !== 'ratgeber') {
+if ($page !== 'datenbank' && $page !== 'guides' && $page !== 'ratgeber' && $page !== 'leaks-chronik') {
     http_response_code(404);
     readfile(__DIR__ . '/index.html');
     exit;
@@ -74,6 +94,20 @@ if ($page === 'datenbank') {
     $description = 'Alle immergrünen GTA-6-Ratgeber an einem Ort: Editionen und Preise, Plattformen und Technik, Release-Wissen sowie Features und Modi. Verständlich erklärt.';
     $h1          = 'GTA 6 Ratgeber';
     $intro       = 'Alles Immergrüne rund um GTA 6 an einem Ort: Kaufberatung, Plattformen und Technik, Wissen rund um den Release sowie Features und Modi.';
+} elseif ($page === 'leaks-chronik') {
+    // Alle Geruechte/Leaks: cat=leaks oder Status rumor/mixed, neueste zuerst.
+    $lcRows = [];
+    try {
+        $st = $pdo->query("SELECT id, title, article_date, summary, status, cat FROM articles
+            WHERE cat = 'leaks' OR status = 'rumor'
+            ORDER BY article_date DESC, id DESC");
+        $lcRows = $st->fetchAll();
+    } catch (Throwable $e) {}
+    $canonical   = 'https://viceguide.de/leaks-chronik/';
+    $pageTitle   = 'GTA 6 Leaks & Gerüchte: die Chronik - ViceGuide';
+    $description = 'Alle großen GTA-6-Leaks und Gerüchte chronologisch mit klarem Verdikt: was ist offiziell bestätigt, was teils, was reiner Leak. Der laufende Faktencheck.';
+    $h1          = 'GTA 6 Leaks & Gerüchte: die Chronik';
+    $intro       = 'Jedes große GTA-6-Gerücht mit klarem Verdikt: was ist offiziell bestätigt, was teils, was reiner Leak. Chronologisch sortiert, jeder Eintrag führt zur ausführlichen Einordnung.';
 } else {
     $canonical   = 'https://viceguide.de/guides/';
     $pageTitle   = 'GTA 6 Guides auf Deutsch: Geld, Missionen, Trophäen - ViceGuide';
@@ -158,6 +192,20 @@ if ($page === 'datenbank') {
         'name' => $pageTitle, 'url' => $canonical,
         'mainEntity' => ['@type' => 'ItemList', 'numberOfItems' => count($itemList), 'itemListElement' => $itemList],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+} elseif ($page === 'leaks-chronik') {
+    $itemList = []; $pos = 0;
+    foreach ($lcRows as $r) {
+        $itemList[] = [
+            '@type' => 'ListItem', 'position' => ++$pos,
+            'url' => 'https://viceguide.de/artikel/' . $r['id'],
+            'name' => $r['title'],
+        ];
+    }
+    $lds[] = json_encode([
+        '@context' => 'https://schema.org', '@type' => 'CollectionPage',
+        'name' => $pageTitle, 'url' => $canonical,
+        'mainEntity' => ['@type' => 'ItemList', 'numberOfItems' => count($itemList), 'itemListElement' => $itemList],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 $ldInject = '';
 foreach ($lds as $ld) { $ldInject .= '<script type="application/ld+json">' . $ld . '</script>' . "\n"; }
@@ -187,6 +235,21 @@ if ($page === 'datenbank') {
             $listHtml .= '<h2>' . vg_esc_hub($blk['label']) . '</h2><ul class="cat-ssr-list">' . $lis . '</ul>';
         }
     }
+} elseif ($page === 'leaks-chronik') {
+    // Chronologische Liste mit Verdikt-Label und echten Links (crawlbar).
+    $lis = '';
+    foreach ($lcRows as $r) {
+        $verdict = vg_art_verdict($r['status'], $r['cat']);
+        $vcls = vg_art_verdict_cls($r['status']);
+        $date = vg_lc_date($r['article_date']);
+        $lis .= '<li>'
+            . ($verdict ? '<span class="db-status ' . $vcls . '"><span class="dot"></span>' . $verdict . '</span> ' : '')
+            . '<a href="/artikel/' . vg_esc_hub($r['id']) . '">' . vg_esc_hub($r['title']) . '</a>'
+            . ($date ? ' <span class="cat-ssr-sub">' . vg_esc_hub($date) . '</span>' : '')
+            . ($r['summary'] ? '<br><span class="cat-ssr-sub">' . vg_esc_hub($r['summary']) . '</span>' : '')
+            . '</li>';
+    }
+    $listHtml = '<ul class="cat-ssr-list lc-ssr">' . ($lis ?: '<li>Noch keine Einträge.</li>') . '</ul>';
 } else {
     $itemsHtml = '';
     foreach ($GUIDE_CATS as $name) {

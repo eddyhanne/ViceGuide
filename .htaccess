@@ -65,7 +65,7 @@ RewriteCond %{THE_REQUEST} \s/+((?:artikel|charaktere|fahrzeuge|waffen|wildtiere
 RewriteRule ^ https://viceguide.de/%1 [L,R=301]
 # b) Kanonisch MIT Slash: Hub-Seiten und Kategorie-Uebersichten. Fehlenden Slash
 #    per 301 ergaenzen (die Slug-Eintraege darunter bleiben ohne Slash, siehe a).
-RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)[\s?] [NC]
+RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|leaks-chronik|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)[\s?] [NC]
 RewriteRule ^ https://viceguide.de/%1/ [L,R=301]
 
 # Startseite serverseitig aufbereiten (echtes H1, Portal-Text, crawlbare interne
@@ -105,6 +105,8 @@ RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
 RewriteRule ^datenbank/?$ hub.php?page=datenbank [L,QSA]
 RewriteRule ^guides/?$ hub.php?page=guides [L,QSA]
 RewriteRule ^ratgeber/?$ hub.php?page=ratgeber [L,QSA]
+# Leak-Chronik (/leaks-chronik/): Gerücht-Faktencheck-Zeitleiste, siehe hub.php.
+RewriteRule ^leaks-chronik/?$ hub.php?page=leaks-chronik [L,QSA]
 
 # Impressum/Datenschutz als eigene, crawlbare URLs (Inhalt kommt aus dem
 # LEGAL-Objekt in index.html, siehe legal.php).

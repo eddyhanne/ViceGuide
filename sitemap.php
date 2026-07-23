@@ -64,6 +64,7 @@ try {
 } catch (Throwable $e) {}
 echo "  <url>\n    <loc>https://viceguide.de/datenbank/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n";
 echo "  <url>\n    <loc>https://viceguide.de/ratgeber/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
+echo "  <url>\n    <loc>https://viceguide.de/leaks-chronik/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
 // /guides/ ist bis Release nur ein Platzhalter (noindex, siehe hub.php), daher nicht in der Sitemap.
 foreach (VG_SITEMAP_SECTION_PREFIX as $prefix) {
     echo "  <url>\n    <loc>https://viceguide.de/{$prefix}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n";
