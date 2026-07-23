@@ -38,8 +38,9 @@ function vg_body_s(): array {
     return is_array($data) ? $data : [];
 }
 
-// Nur die acht Datenbank-Rubriken sind gueltige Sektionen fuer Bilder.
-const VG_IMG_SECTIONS = ['characters','vehicles','weapons','wildlife','gangs','radio','activities','locations','money','missions','tips','online','secrets','collect','veh','weap','trophies','beginner','customization','business'];
+// Gueltige Sektionen fuer Rubrik-Bilder: die Datenbank-Rubriken (inkl. der Juli
+// 2026 ergaenzten Rubrik "brands") plus die gesperrten Phase-2-Guide-Kacheln.
+const VG_IMG_SECTIONS = ['characters','vehicles','weapons','wildlife','gangs','radio','activities','locations','brands','money','missions','tips','online','secrets','collect','veh','weap','trophies','beginner','customization','business'];
 
 if ($method === 'GET') {
     $full = !empty($_GET['full']);
