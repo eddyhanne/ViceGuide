@@ -56,6 +56,22 @@ if (!$row) {
 
 function vg_esc2($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES, 'UTF-8'); }
 
+/* Bestaetigungs-Status aus dem src-Feld ableiten, deckungsgleich zu dbStatus()
+   in index.html. Liefert [cls, label] oder null. So sieht auch Google/no-JS
+   auf der Detailseite, was bestaetigt ist und was Leak. */
+function vg_db_status(string $src): ?array {
+    $s = mb_strtolower(trim($src));
+    if ($s === '') return null;
+    $leak = (bool)preg_match('/leak|gerücht|geruecht/u', $s);
+    $official = (bool)preg_match('/trailer|screenshot|offiziell|rockstar|newswire|promo|poster|karte|edition|pack|bio|vintage/u', $s);
+    $expected = (bool)preg_match('/erwartet|hinweis|angedeutet/u', $s);
+    if ($leak && $official) return ['mid', 'Teils bestätigt'];
+    if ($leak) return ['rum', 'Leak'];
+    if ($official) return ['ok', 'Bestätigt'];
+    if ($expected) return ['mid', 'Erwartet'];
+    return null;
+}
+
 /* Meta-Description sauber kuerzen: bevorzugt an einem Satzende, sonst an einer
    Wortgrenze, nie mitten im Wort (fruehere harte 155-Zeichen-Kappung schnitt
    Woerter ab und endete mit … im Wort). Liefert '' zurueck, wenn kein Text da
@@ -190,6 +206,11 @@ foreach (preg_split('/\r?\n+/', $desc) as $para) {
 }
 $chips = '<p>' . vg_esc2($secInfo['label']) . ($row['cat'] ? ' · ' . vg_esc2($row['cat']) : '') . ($row['src'] ? ' · Quelle: ' . vg_esc2($row['src']) : '') . '</p>';
 
+$stStatus = vg_db_status($row['src'] ?? '');
+$statusHtml = $stStatus
+    ? '<div style="margin:2px 0 14px"><span class="db-status ' . $stStatus[0] . '"><span class="dot"></span>' . vg_esc2($stStatus[1]) . '</span></div>'
+    : '';
+
 // Sichtbare Breadcrumb mit echten Links, deckungsgleich zum BreadcrumbList-Markup.
 $crumb = '<nav class="db-crumb"><a href="/">Startseite</a> › <a href="/' . $secInfo['prefix'] . '/">' . vg_esc2($secInfo['label'])
     . '</a> › <span>' . vg_esc2($name) . '</span></nav>';
@@ -235,7 +256,7 @@ try {
 $modalInner =
     ($hasImg ? '<img src="' . vg_esc2($imgUrl) . '" alt="' . vg_esc2($name) . '" style="width:100%;border-radius:16px 16px 0 0">' : '') .
     '<div class="mbody">' . $crumb . '<h1>' . vg_esc2($name) . '</h1><div class="msub">' . vg_esc2($sub) . '</div>' .
-    $favBadge . $chips . $fieldsHtml .
+    $statusHtml . $favBadge . $chips . $fieldsHtml .
     '<div class="mabout">Beschreibung</div>' . $descHtml . $sibHtml .
     '</div>';
 

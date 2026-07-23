@@ -431,6 +431,19 @@
   .vg-status.ok{color:var(--ok-t);background:var(--ok-bg);border-color:var(--ok-bd)} .vg-status.ok .dot{background:var(--ok-t)}
   .vg-status.mid{color:var(--mid-t);background:var(--mid-bg);border-color:var(--mid-bd)} .vg-status.mid .dot{background:var(--mid-t)}
   .vg-status.rum{color:var(--rum-t);background:var(--rum-bg);border-color:var(--rum-bd)} .vg-status.rum .dot{background:var(--rum-t)}
+  /* Bestaetigungs-Status eines DB-Eintrags (abgeleitet aus dem src-Feld):
+     als Badge oben links auf dem Kartenbild (.cv-status, feste satte Farben
+     fuer Lesbarkeit ueber Fotos, themen-unabhaengig) und als Inline-Chip auf
+     Flaeche in Listenzeilen und im Detail-Popup (.db-status, Theme-Tokens wie
+     das Artikel-Status-Label). "Echt oder Fake?" auf einen Blick. */
+  .cv-status{position:absolute;top:8px;left:8px;z-index:2;display:inline-flex;align-items:center;gap:5px;font-family:'Inter';font-size:10.5px;font-weight:700;color:#fff;padding:3px 9px;border-radius:999px;line-height:1.25;letter-spacing:.2px;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+  .cv-status .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.95);flex:0 0 auto}
+  .cv-status.ok{background:rgba(21,128,61,.92)} .cv-status.mid{background:rgba(180,83,12,.92)} .cv-status.rum{background:rgba(192,38,75,.92)}
+  .db-status{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font-family:'Inter';font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid;line-height:1.2}
+  .db-status .dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+  .db-status.ok{color:var(--ok-t);background:var(--ok-bg);border-color:var(--ok-bd)} .db-status.ok .dot{background:var(--ok-t)}
+  .db-status.mid{color:var(--mid-t);background:var(--mid-bg);border-color:var(--mid-bd)} .db-status.mid .dot{background:var(--mid-t)}
+  .db-status.rum{color:var(--rum-t);background:var(--rum-bg);border-color:var(--rum-bd)} .db-status.rum .dot{background:var(--rum-t)}
   .vg-statusbar{display:flex;align-items:flex-start;gap:11px;border-radius:11px;padding:11px 14px;border:1px solid;border-left-width:4px;font-size:13.5px;line-height:1.5;margin-bottom:18px}
   .vg-statusbar strong{font-weight:700}
   .vg-statusbar .dsc{color:var(--text-soft)}
@@ -1257,9 +1270,30 @@ function imgTag(d,altText,lazy,w,h){
   const sizeAttr=(w&&h)?` width="${w}" height="${h}"`:'';
   return `<img src="${d.img}" alt="${esc(altText||'')}"${loadAttr}${sizeAttr} style="${fitImgStyle(d)}" onerror="this.parentElement.classList.add('imgfail')">`;
 }
+/* Bestaetigungs-Status eines DB-Eintrags, abgeleitet aus dem vorhandenen
+   src-Feld (kein eigenes Datenfeld, keine Migration noetig). Offizielle Quellen
+   (Trailer, Screenshot, Rockstar-Bio, Promo, Poster, Karte, Edition) gelten als
+   bestaetigt, "Leak" als unbestaetigt, "erwartet"/"Hinweis" als redaktionell
+   erwartet, Mischquellen (offiziell + Leak) als teils bestaetigt. Liefert
+   {cls,label,rank} oder null (rank fuer die Sortierung nach Bestaetigungsgrad,
+   klein = sicherer). Deckungsgleich zu vg_db_status() in entry.php. */
+function dbStatus(src){
+  const s=(src||'').toLowerCase().trim();
+  if(!s) return null;
+  const leak=/leak|gerücht|geruecht/.test(s);
+  const official=/trailer|screenshot|offiziell|rockstar|newswire|promo|poster|karte|edition|pack|bio|vintage/.test(s);
+  const expected=/erwartet|hinweis|angedeutet/.test(s);
+  if(leak&&official) return {cls:'mid',label:'Teils bestätigt',rank:1};
+  if(leak) return {cls:'rum',label:'Leak',rank:3};
+  if(official) return {cls:'ok',label:'Bestätigt',rank:0};
+  if(expected) return {cls:'mid',label:'Erwartet',rank:2};
+  return null;
+}
+function dbStatusBadge(d){ const st=dbStatus(d&&d.src); return st?`<span class="cv-status ${st.cls}"><span class="dot"></span>${st.label}</span>`:''; }
+function dbStatusChip(d){ const st=dbStatus(d&&d.src); return st?`<span class="db-status ${st.cls}"><span class="dot"></span>${st.label}</span>`:''; }
 function cardVisual(sec,d){
-  if(d.img)return `<div class="cv has-img">${imgTag(d,d.name,true,480,300)}${d.credit?`<span class="credit">${d.credit}</span>`:''}</div>`;
-  return `<div class="cv ph"><span class="ghost">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span></div>`;
+  if(d.img)return `<div class="cv has-img">${imgTag(d,d.name,true,480,300)}${d.credit?`<span class="credit">${d.credit}</span>`:''}${dbStatusBadge(d)}</div>`;
+  return `<div class="cv ph"><span class="ghost">${secIcon(sec.id)}</span><span class="mono">${initial(d.name)}</span>${dbStatusBadge(d)}</div>`;
 }
 function modalHead(sec,d,idx){
   const cl=`<button class="mclose" onclick="event.stopPropagation();closeModal()">×</button>`;
@@ -1801,7 +1835,7 @@ function renderDB(sec){
    ${cats.length>2?`<div class="dbtabs" id="dbtabs"><button class="cp-open" onclick="openDbCatPick('${sec.id}')"><span class="cp-ic">▤</span>Rubrik</button>${cats.map(c=>`<button class="${c===dbCat?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>`:''}
    <div class="filterbar">
      <div class="dbsearchwrap"><input id="dbsearch" type="text" placeholder="In ${sec.label} suchen…" value="${dbQuery}"><button class="clearbtn dbclear" id="dbclear" onclick="clearDbSearch()" aria-label="Leeren" style="${dbQuery?'display:grid':'display:none'}">×</button></div>
-     <select id="dbsort"><option value="grp"${dbSort==='grp'?' selected':''}>Kategorie-Gruppen</option><option value="az"${dbSort==='az'?' selected':''}>Name A bis Z</option><option value="za"${dbSort==='za'?' selected':''}>Name Z bis A</option></select>
+     <select id="dbsort"><option value="grp"${dbSort==='grp'?' selected':''}>Kategorie-Gruppen</option><option value="conf"${dbSort==='conf'?' selected':''}>Bestätigungsgrad</option><option value="az"${dbSort==='az'?' selected':''}>Name A bis Z</option><option value="za"${dbSort==='za'?' selected':''}>Name Z bis A</option></select>
    </div>
    <div class="count" id="dbcount"></div>
    <div class="grid" id="dbgrid"></div>
@@ -1839,6 +1873,13 @@ function dbSortList(secId,list){
   if(dbSort==='az'||dbSort==='za'){
     list.sort((a,b)=>(a.name||'').localeCompare(b.name||'','de'));
     if(dbSort==='za') list.reverse();
+    return;
+  }
+  /* Nach Bestaetigungsgrad: bestaetigt zuerst, dann teils bestaetigt,
+     erwartet, Leak, ohne Status zuletzt. Innerhalb einer Stufe alphabetisch. */
+  if(dbSort==='conf'){
+    const rk=d=>{ const st=dbStatus(d.src); return st?st.rank:4; };
+    list.sort((a,b)=>(rk(a)-rk(b))||(a.name||'').localeCompare(b.name||'','de'));
     return;
   }
   const order=DB_CAT_ORDER[secId]||[];
@@ -1946,7 +1987,7 @@ function drawDB(sec){
       const ct = cross ? (s?s.label:'') : canonCat(sid,d.cat);
       const feat=isEntryFeat(d._id)?' feat':'';
       return `<${tag} class="dbrow ${editMode?'editing':''}${feat}" tabindex="0" role="button" ${hrefAttr} onclick="${clickAttr}"${kd}>
-        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span><span class="dbrow-ct">${ct}</span>${entryStarRow(d)}${editBtn}${delBtn}</${tag}>`;
+        ${thumb}<span class="dbrow-main"><span class="dbrow-nm">${d.name}</span><span class="dbrow-sb">${d.sub||''}</span></span>${dbStatusChip(d)}<span class="dbrow-ct">${ct}</span>${entryStarRow(d)}${editBtn}${delBtn}</${tag}>`;
     }).join('');
   } else {
     grid.innerHTML=items.map(it=>{
@@ -2658,7 +2699,7 @@ function openModal(secId,i){
   const fields=d.fields?Object.entries(d.fields):[];
   const frows=fields.length?`<div class="mfields">${fields.map(([k,v])=>`<div class="mf"><span class="mfk">${k}</span><span class="mfv">${v}</span></div>`).join('')}</div>`:'';
   $('modal').innerHTML=modalHead(sec,d,i)+`<div class="mbody"><h1>${d.name}</h1><div class="msub">${renderText(d.sub||'',null,selfKey)}</div>${creatorFavHtml(secId,d)}
-    <div class="mrow"><a class="chip chip-link" href="${sectionHref(secId)}" onclick="return modalHubClick(event,'${secId}')" title="Zur Rubrik ${sec.label}">‹ Alle ${sec.label}</a><span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
+    <div class="mrow"><a class="chip chip-link" href="${sectionHref(secId)}" onclick="return modalHubClick(event,'${secId}')" title="Zur Rubrik ${sec.label}">‹ Alle ${sec.label}</a>${dbStatusChip(d)}<span class="chip">${d.cat}</span>${d.src?`<span class="chip">Quelle: ${d.src}</span>`:''}</div>
     ${frows}
     <div class="mabout">Beschreibung</div><div class="mdesc">${renderDescHtml(d.desc,selfKey)}</div></div>`;
   $('ov').classList.add('show');
