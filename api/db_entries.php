@@ -136,7 +136,7 @@ if ($method === 'POST' && ($_GET['action'] ?? '') === 'discard') {
 if ($method === 'POST') {
     vg_require_admin($cfg);
     $b = vg_body3();
-    $validSections = ['characters', 'vehicles', 'weapons', 'wildlife', 'gangs', 'radio', 'activities', 'locations'];
+    $validSections = ['characters', 'vehicles', 'weapons', 'wildlife', 'gangs', 'radio', 'activities', 'locations', 'brands'];
     $section = trim($b['section'] ?? '');
     $name = trim($b['name'] ?? '');
     if (!in_array($section, $validSections, true)) vg_out3(['error' => 'ungueltige section'], 400);
@@ -146,8 +146,8 @@ if ($method === 'POST') {
     $maxOrder->execute([$section]);
     $sortOrder = (int)$maxOrder->fetch()['m'] + 1;
 
-    $stmt = $pdo->prepare('INSERT INTO db_entries (section, sort_order, name, sub, cat, src, description, fields_json, img, imgfit_json, credit)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO db_entries (section, sort_order, name, sub, cat, src, description, fields_json, img, imgfit_json, credit, seo_index)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute([
         $section,
         $sortOrder,
@@ -160,6 +160,7 @@ if ($method === 'POST') {
         $b['img'] ?? null,
         isset($b['imgfit']) ? json_encode($b['imgfit'], JSON_UNESCAPED_UNICODE) : null,
         $b['credit'] ?? null,
+        array_key_exists('seo', $b) ? (!empty($b['seo']) ? 1 : 0) : 0,
     ]);
     $id = (int)$pdo->lastInsertId();
     vg_ensure_entry_slugs($pdo);
