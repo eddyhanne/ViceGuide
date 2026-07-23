@@ -57,6 +57,7 @@ $DB_SECTIONS = [
     'radio'      => ['prefix' => 'radio',        'label' => 'Radio'],
     'activities' => ['prefix' => 'aktivitaeten', 'label' => 'Aktivitäten'],
     'locations'  => ['prefix' => 'orte',         'label' => 'Orte'],
+    'brands'     => ['prefix' => 'marken',       'label' => 'Marken & Unternehmen'],
 ];
 // Guide-Kategorien (vor Release gesperrt, noch keine eigenen Seiten).
 $GUIDE_CATS = [

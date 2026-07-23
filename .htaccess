@@ -61,11 +61,11 @@ RewriteRule ^c/([a-z0-9-]+)/?$ https://viceguide.de/?utm_source=$1&utm_medium=pa
 # bleiben unberuehrt, daher keine Endlosschleife.
 # a) Kanonisch OHNE Slash: Artikel, Datenbank-Eintraege, News/News-Rubriken,
 #    Videos/Community/Karte, Rechtsseiten. Vorhandenen Slash per 301 entfernen.
-RewriteCond %{THE_REQUEST} \s/+((?:artikel|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)/[a-z0-9-]+|news(?:/[a-z]+)?|videos|community|karte|impressum|datenschutz|ueber-uns)/+[\s?] [NC]
+RewriteCond %{THE_REQUEST} \s/+((?:artikel|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte|marken)/[a-z0-9-]+|news(?:/[a-z]+)?|videos|community|karte|impressum|datenschutz|ueber-uns)/+[\s?] [NC]
 RewriteRule ^ https://viceguide.de/%1 [L,R=301]
 # b) Kanonisch MIT Slash: Hub-Seiten und Kategorie-Uebersichten. Fehlenden Slash
 #    per 301 ergaenzen (die Slug-Eintraege darunter bleiben ohne Slash, siehe a).
-RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|leaks-chronik|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte)[\s?] [NC]
+RewriteCond %{THE_REQUEST} \s/+(datenbank|guides|ratgeber|leaks-chronik|charaktere|fahrzeuge|waffen|wildtiere|gangs|radio|aktivitaeten|orte|marken)[\s?] [NC]
 RewriteRule ^ https://viceguide.de/%1/ [L,R=301]
 
 # Startseite serverseitig aufbereiten (echtes H1, Portal-Text, crawlbare interne
@@ -86,6 +86,7 @@ RewriteRule ^gangs/([a-z0-9-]+)/?$ entry.php?section=gangs&slug=$1 [L,QSA]
 RewriteRule ^radio/([a-z0-9-]+)/?$ entry.php?section=radio&slug=$1 [L,QSA]
 RewriteRule ^aktivitaeten/([a-z0-9-]+)/?$ entry.php?section=activities&slug=$1 [L,QSA]
 RewriteRule ^orte/([a-z0-9-]+)/?$ entry.php?section=locations&slug=$1 [L,QSA]
+RewriteRule ^marken/([a-z0-9-]+)/?$ entry.php?section=brands&slug=$1 [L,QSA]
 
 # Kategorie-Uebersichten ohne Slug (z.B. /charaktere/), listen alle Eintraege
 # der Sektion als echte, crawlbare Links auf. Muss vor den generischen
@@ -99,6 +100,7 @@ RewriteRule ^gangs/?$ category.php?section=gangs [L,QSA]
 RewriteRule ^radio/?$ category.php?section=radio [L,QSA]
 RewriteRule ^aktivitaeten/?$ category.php?section=activities [L,QSA]
 RewriteRule ^orte/?$ category.php?section=locations [L,QSA]
+RewriteRule ^marken/?$ category.php?section=brands [L,QSA]
 
 # Sammelseiten ueber den Rubriken: /datenbank/ (alle DB-Rubriken) und
 # /guides/ (geplante Guide-Kategorien, vor Release gesperrt), siehe hub.php.

@@ -27,6 +27,7 @@ const VG_SECTION_MAP = [
     'radio'      => ['prefix' => 'radio',        'label' => 'Radio'],
     'activities' => ['prefix' => 'aktivitaeten', 'label' => 'Aktivitäten'],
     'locations'  => ['prefix' => 'orte',         'label' => 'Orte'],
+    'brands'     => ['prefix' => 'marken',       'label' => 'Marken & Unternehmen'],
 ];
 
 $section = $_GET['section'] ?? '';
@@ -161,7 +162,7 @@ foreach ($head as $search => $replace) {
 // er ohne Fehlmodellierung passt: Charaktere als Person, Orte als Place, der
 // Rest bleibt beim generischen Thing (Fahrzeuge/Waffen/Wildtiere/Radio etc.
 // haben keinen sauber passenden, breit unterstuetzten Typ).
-$schemaType = $section === 'characters' ? 'Person' : ($section === 'locations' ? 'Place' : 'Thing');
+$schemaType = $section === 'characters' ? 'Person' : ($section === 'locations' ? 'Place' : ($section === 'brands' ? 'Organization' : 'Thing'));
 $entryLd = json_encode([
     '@context' => 'https://schema.org',
     '@type' => $schemaType,
