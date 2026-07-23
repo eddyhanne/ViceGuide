@@ -460,20 +460,29 @@ td.empty{color:var(--soft);font-style:italic;padding:10px 4px;border-bottom:none
 
 /* Anpassbares Widget-Board (Uebersicht): Kacheln per Griff verschiebbar, Groesse
    ueber S/M/L, Anordnung im Browser gemerkt (wie iOS-Widgets). */
-#board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch;margin-bottom:20px}
-.wg{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:13px 15px;min-height:120px;display:flex;flex-direction:column}
-.wg.dragging{opacity:.4}.wg.over{outline:2px dashed var(--accent);outline-offset:2px;background:var(--surface)}
-.wgh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+/* Kompakte KPI-Zeile (feste Kennzahlen, nicht verschiebbar). */
+#kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:11px 14px}
+.kpi .kpil{font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700;margin-bottom:5px}
+.kpi .kbig{font-size:1.55rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--accent)}
+.kpi .kbig.sm{font-size:.98rem;color:var(--text);word-break:break-word;line-height:1.2}
+.kpi .klbl{font-size:.72rem;color:var(--soft);margin-top:4px}
+.kpi .trend,.kpi .delta{margin-top:5px}
+@media(max-width:820px){#kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){#kpis{grid-template-columns:1fr}}
+/* Verschiebbares Slot-Board (nur die Listen-Widgets). */
+.boardlbl{font-size:.7rem;color:var(--soft);margin-bottom:9px}
+.boardlbl span{opacity:.75}
+#board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;margin-bottom:20px}
+.wg{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px -14px rgba(34,16,65,.25);padding:12px 15px;display:flex;flex-direction:column}
+.wg.dragging{opacity:.4}.wg.over{outline:2px dashed var(--accent);outline-offset:2px}
+.wgh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .wgh .t{font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700}
 .wgh .grip{cursor:grab;color:var(--soft);opacity:.55;font-size:.95rem;line-height:1;user-select:none;padding:1px 2px}
 .wgh .grip:active{cursor:grabbing}
-.wg.empty{border-style:dashed;border-color:var(--line);box-shadow:none;background:transparent;align-items:center;justify-content:center;text-align:center}
+.wg.empty{border-style:dashed;border-color:var(--line);box-shadow:none;background:transparent;align-items:center;justify-content:center;text-align:center;min-height:78px}
 .wg.empty .emptyhint{font-size:.72rem;color:var(--soft);opacity:.7;pointer-events:none}
 .wg.empty.over{background:var(--surface);opacity:1}
-.wg .kbig{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--accent)}
-.wg .kbig.sm{font-size:1.1rem;color:var(--text);word-break:break-word}
-.wg .kcmp{font-size:.82rem;font-weight:600;color:var(--soft);margin-left:7px}
-.wg .klbl{font-size:.78rem;color:var(--soft);margin-top:7px}
 .wg table{margin-top:2px}
 @media(max-width:820px){#board{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){#board{grid-template-columns:1fr}.wg.empty{display:none}}
@@ -718,6 +727,8 @@ function renderDash(){
   // ---- Bereich: Übersicht (anpassbares Widget-Board) ----
   h+='<section class="view on" data-view="overview" id="v-overview">';
   h+='<div class="sectionlbl">Übersicht ('+esc(rangeLabel())+')</div>';
+  h+='<div id="kpis"></div>';
+  h+='<div class="boardlbl">Kacheln <span>frei anordnen: auf einen leeren Slot ziehen zum Verschieben, auf eine Kachel zum Tauschen</span></div>';
   h+='<div id="board"></div>';
   h+='</section>';
 
@@ -811,6 +822,7 @@ function renderDash(){
   cb.classList.toggle('on',COMPARE);
   cb.addEventListener('click',function(){COMPARE=!COMPARE;cb.classList.toggle('on',COMPARE);renderMain();});
 
+  renderKpis();
   renderBoard();
   renderMain();
   renderChannels();
@@ -1033,23 +1045,33 @@ function renderLog(){
   t.innerHTML=logTableHtml(DATA.recent_hits,function(p){return pathLabel(p);});
 }
 
+/* Kompakte KPI-Zeile (feste Kennzahlen, nicht verschiebbar). */
+function kpiCards(){
+  var d=DATA;var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
+  return [
+    {t:'Seitenaufrufe',body:'<div class="kbig tnum">'+d.total+'</div>'+(d.prev_total>0?'<div class="klbl tnum">'+cmpLabel()+' '+d.prev_total+'</div>':'')+deltaHtml(d.total,d.prev_total)},
+    {t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
+    {t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
+    {t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'}
+  ];
+}
+function renderKpis(){
+  var box=document.getElementById('kpis');if(!box)return;
+  box.innerHTML=kpiCards().map(function(k){return '<div class="kpi"><div class="kpil">'+esc(k.t)+'</div>'+k.body+'</div>';}).join('');
+}
+
 /* ---- Anpassbares Widget-Board (Uebersicht) ----
-   Feste, gleich grosse Kacheln in einem Raster mit sichtbaren Leer-Slots.
-   Eine Kachel wird per Drag auf einen anderen Slot gezogen: leerer Slot =
-   verschieben, belegter Slot = tauschen. Kein Groessen-Umschalter mehr. Die
-   Slot-Belegung (Widget-id je Rasterplatz) merkt der Browser (vg_board_layout). */
+   Nur die Listen-Widgets, in gleich grossen Slots mit sichtbaren Leer-Slots.
+   Eine Kachel auf einen leeren Slot ziehen verschiebt sie, auf eine belegte
+   Kachel tauscht beide. Listen auf 5 Zeilen gekuerzt (Vollansicht in den
+   jeweiligen Detailbereichen). Slot-Belegung im Browser gemerkt. */
 var BOARD_KEY='vg_board_layout';
 function boardWidgets(){
   var d=DATA;
-  var topSrc=(d.top_utm_sources[0]||{}),topPath=(d.top_paths[0]||{});
   return [
-    {id:'pv',t:'Seitenaufrufe',body:'<div class="kbig tnum">'+d.total+'</div>'+(d.prev_total>0?'<div class="klbl tnum">'+cmpLabel()+' '+d.prev_total+'</div>':'')+deltaHtml(d.total,d.prev_total)},
-    {id:'ig',t:'Instagram (UTM)',body:'<div class="kbig tnum">'+d.instagram.by_utm+'</div>'+deltaHtml(d.instagram.by_utm,d.instagram.prev_by_utm)},
-    {id:'src',t:'Top-Quelle',body:'<div class="kbig sm">'+esc(topSrc.utm_source||'noch keine')+'</div><div class="klbl">'+(topSrc.c||0)+' Aufrufe mit UTM-Tag</div>'},
     {id:'chan',t:'Kanäle',body:chanRowsHtml()},
-    {id:'cr',t:'Creator & Partner',body:'<table>'+barRows(d.creator_pages,function(r){return creatorLabel(r.path);})+'</table>'},
-    {id:'sea',t:'Einstiege aus der Suche',body:'<table>'+barRows(d.entries_search,function(r){return pathLabel(r.path);})+'</table>'},
-    {id:'page',t:'Top-Seite',body:'<div class="kbig sm">'+esc(topPath.path?pathLabel(topPath.path):'noch keine')+'</div><div class="klbl">'+(topPath.c||0)+' Aufrufe</div>'}
+    {id:'sea',t:'Einstiege aus der Suche',body:'<table>'+barRows((d.entries_search||[]).slice(0,5),function(r){return pathLabel(r.path);})+'</table>'},
+    {id:'cr',t:'Creator & Partner',body:'<table>'+barRows((d.creator_pages||[]).slice(0,5),function(r){return creatorLabel(r.path);})+'</table>'}
   ];
 }
 /* Kanaele als fertige Tabellenzeilen fuers Board-Widget (eigenstaendig, keine
