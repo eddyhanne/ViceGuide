@@ -149,6 +149,7 @@
   .navfly-ic{color:var(--accent);display:inline-flex}
   .navfly-ic svg{width:17px;height:17px}
   .navfly-ct{margin-left:auto;font-family:'Space Mono';font-size:10.5px;color:var(--text-soft)}
+  .navfly-sep{height:1px;background:var(--line);margin:7px 8px 5px}
   @media(max-width:700px){ .navfly{display:none!important} }
   .side-sep{font-family:'Space Mono';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft);margin:16px 6px 8px;padding-top:12px;border-top:1px dashed var(--line)}
   .content{flex:1;min-width:0;padding:0 22px 70px}
@@ -455,9 +456,14 @@
   .lc-fchip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .lc-fct{font-family:'Space Mono';font-size:11px;opacity:.75}
   .lc-timeline{position:relative;display:flex;flex-direction:column;gap:2px;margin-left:6px;border-left:2px solid var(--line)}
-  .lc-item{position:relative;display:block;text-decoration:none;color:inherit;padding:13px 16px 15px 28px;border-radius:0 12px 12px 0;transition:background .15s}
+  .lc-item{position:relative;display:flex;gap:16px;align-items:center;text-decoration:none;color:inherit;padding:13px 16px 13px 28px;border-radius:0 12px 12px 0;transition:background .15s}
   .lc-item:hover{background:var(--surface-2)}
-  .lc-item .lc-dot{position:absolute;left:-8px;top:18px;width:13px;height:13px;border:3px solid var(--bg)}
+  .lc-item .lc-dot{position:absolute;left:-8px;top:20px;width:13px;height:13px;border:3px solid var(--bg)}
+  .lc-body{flex:1;min-width:0}
+  .lc-thumb{flex:0 0 auto;width:132px;height:80px;border-radius:10px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center}
+  .lc-thumb img{width:100%;height:100%;object-fit:cover}
+  .lc-thumb.ph .mono{font-family:'Oswald';font-size:26px;color:var(--text-soft);opacity:.5}
+  @media(max-width:600px){.lc-thumb{width:92px;height:62px}}
   .lc-meta{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
   .lc-date{font-family:'Space Mono';font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-soft)}
   .lc-title{display:block;font-family:'Oswald';font-weight:600;font-size:18px;color:var(--heading);line-height:1.25;margin-bottom:4px}
@@ -1363,10 +1369,11 @@ let navFlyEl=null, navFlyTimer=null, navFlyFor=null;
 function navFlyEnabled(){ try{ return window.matchMedia('(hover:hover) and (min-width:701px)').matches; }catch(e){ return false; } }
 function navFlyGoRg(e,key){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); navFlyHide(); go('ratgeber'); setRgCat(key); return false; }
 function navFlyGoNews(e,cat){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); navFlyHide(); goNewsCat(cat); return false; }
+function navFlyGoLc(e){ if(e&&(e.metaKey||e.ctrlKey||e.shiftKey)) return true; if(e)e.preventDefault(); navFlyHide(); go('leaks-chronik'); return false; }
 function navFlyItems(id){
   if(id==='datenbank') return '<div class="navfly-h">Rubriken</div>'+SECTIONS.filter(s=>s.type==='db').map(s=>`<a class="navfly-it" href="${sectionHref(s.id)}" onclick="navFlyHide();return goClick(event,'${s.id}')"><span class="navfly-ic">${secIcon(s.id)}</span>${esc(s.label)}<span class="navfly-ct">${(DB[s.id]||[]).length}</span></a>`).join('');
   if(id==='ratgeber') return '<div class="navfly-h">Themen</div>'+RATGEBER.filter(b=>b.ids.some(x=>GUIDES.some(g=>g.id===x))).map(b=>`<a class="navfly-it" href="/ratgeber/#rg-${b.key}" onclick="return navFlyGoRg(event,'${b.key}')"><span class="navfly-ic">${rgIcon(b.key)}</span>${esc(b.label)}<span class="navfly-ct">${b.ids.filter(x=>GUIDES.some(g=>g.id===x)).length}</span></a>`).join('');
-  if(id==='news'){ const cats=(GROUPS[0]&&GROUPS[0].cats)||[]; return '<div class="navfly-h">Kategorien</div>'+cats.map(c=>{const n=GUIDES.filter(g=>g.cat===c.id&&!RATGEBER_IDS.has(g.id)).length; const slug=NEWS_CAT_SLUG[c.id]; const href=slug?('/news/'+slug):'/news'; return `<a class="navfly-it" href="${href}" onclick="return navFlyGoNews(event,'${c.id}')"><span class="navfly-ic">${catIcon(c.id)}</span>${esc(c.name)}<span class="navfly-ct">${n}</span></a>`;}).join(''); }
+  if(id==='news'){ const cats=(GROUPS[0]&&GROUPS[0].cats)||[]; const catHtml=cats.map(c=>{const n=GUIDES.filter(g=>g.cat===c.id&&!RATGEBER_IDS.has(g.id)).length; const slug=NEWS_CAT_SLUG[c.id]; const href=slug?('/news/'+slug):'/news'; return `<a class="navfly-it" href="${href}" onclick="return navFlyGoNews(event,'${c.id}')"><span class="navfly-ic">${catIcon(c.id)}</span>${esc(c.name)}<span class="navfly-ct">${n}</span></a>`;}).join(''); const lc=`<div class="navfly-sep"></div><a class="navfly-it" href="/leaks-chronik/" onclick="return navFlyGoLc(event)"><span class="navfly-ic">🕵️</span>Leak-Chronik<span class="navfly-ct">${leaksChronikItems().length}</span></a>`; return '<div class="navfly-h">Kategorien</div>'+catHtml+lc; }
   return '';
 }
 function navFlyShow(btn,id){
@@ -1674,10 +1681,12 @@ function renderLeaksChronik(){
   const rows=shown.map(o=>{
     const g=o.g, m=artStatusMeta(o.g)||['rum','Unbestätigt'];
     const pill=`<span class="vg-status ${m[0]}" style="margin:0"><span class="dot"></span>${m[1]}</span>`;
+    const thumb=g.img?`<span class="lc-thumb"><img src="${g.img}" alt="${esc(g.title)}" loading="lazy"></span>`:`<span class="lc-thumb ph"><span class="mono">${initial(g.title)}</span></span>`;
     return `<a class="lc-item" href="${articleHref(g.id)}" onclick="return articleClick(event,${o.idx})">
       <span class="lc-dot ${m[0]}"></span>
       <span class="lc-body"><span class="lc-meta"><span class="lc-date">${g.date?fmtDShort(g.date):''}</span>${pill}</span>
-      <span class="lc-title">${esc(g.title)}</span><span class="lc-sum">${esc(g.summary||g.lead||'')}</span></span></a>`;
+      <span class="lc-title">${esc(g.title)}</span><span class="lc-sum">${esc(g.summary||g.lead||'')}</span></span>
+      ${thumb}</a>`;
   }).join('');
   $('view').innerHTML=`<div class="hub-head"><h1>GTA 6 Leaks &amp; Gerüchte: die Chronik</h1>
     <p>Jedes große GTA-6-Gerücht mit klarem Verdikt: was ist offiziell bestätigt, was teils, was reiner Leak. Chronologisch sortiert, jeder Eintrag führt zur ausführlichen Einordnung.</p></div>
