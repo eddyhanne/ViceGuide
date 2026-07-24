@@ -244,6 +244,30 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .tw-play svg{width:32px;height:32px;fill:#fff;margin-left:4px}
 .tw-name{position:absolute;bottom:14px;left:16px;z-index:2;font-family:'Space Mono';font-size:13px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.7)}
 .tw-note{margin-top:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;font-size:13.5px;color:var(--text-soft);line-height:1.55}
+/* Funnel: frisch aus der Zentrale */
+.crfunnel{margin:32px 0 0;padding-top:28px;border-top:1px solid var(--line)}
+.crf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+@media(max-width:800px){.crf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.crf-grid{grid-template-columns:1fr}}
+.crf-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.crf-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.crf-th{aspect-ratio:16/9;background:var(--surface-2);overflow:hidden}
+.crf-th img{width:100%;height:100%;object-fit:cover;display:block}
+.crf-th.ph{display:grid;place-items:center;color:var(--accent);font-family:'Oswald';font-size:24px;opacity:.5}
+.crf-b{padding:10px 12px 12px}
+.crf-c{font-family:'Space Mono';font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.crf-t{font-family:'Oswald';font-weight:600;font-size:14.5px;color:var(--heading);line-height:1.2;margin-top:3px}
+.crf-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.crf-links a{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:13.5px;text-decoration:none;color:var(--text);background:var(--pill-bg);border:1px solid var(--pill-ln);border-radius:999px;padding:8px 15px;transition:border-color .15s,color .15s}
+.crf-links a:hover{border-color:var(--accent);color:var(--accent)}
+/* Admin-Ministatistik (nur eingeloggt sichtbar) */
+.cstats{display:flex;gap:10px}
+.cstat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.cstat b{display:block;font-family:'Oswald';font-weight:700;font-size:24px;color:var(--heading);line-height:1;margin-bottom:3px}
+.cstat span{font-size:11.5px;color:var(--text-soft)}
+/* Partner-CTA fuer andere Creator */
+.crcta{margin:22px 0 0;text-align:center;font-size:13.5px;color:var(--text-soft)}
+.crcta a{color:var(--accent);font-weight:600;text-decoration:none}
 /* Zurueck-Link */
 .cback{display:inline-flex;align-items:center;gap:6px;margin:20px 0 0;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none}
 /* Uebersicht */
@@ -496,8 +520,56 @@ if ($preview || $isAdmin) {
        . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
        . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
 }
+// Ministatistik, nur fuer den eingeloggten Admin: Aufrufe dieser Profilseite
+// und Besucher, die ueber den geteilten Link (/c/<slug>, utm_source=<slug>)
+// gekommen sind. Zeigt schwarz auf weiss, ob ein Partner Traffic liefert.
+if ($isAdmin) {
+    $viewsStmt = $pdo->prepare('SELECT COUNT(*) FROM hits WHERE path = ?');
+    $viewsStmt->execute(['/creator/' . $c['slug']]);
+    $views = (int)$viewsStmt->fetchColumn();
+    $refStmt = $pdo->prepare('SELECT COUNT(*) FROM hits WHERE utm_source = ?');
+    $refStmt->execute([$c['slug']]);
+    $refs = (int)$refStmt->fetchColumn();
+    echo '<section class="sbox"><h2 class="sbox-h">Statistik (nur für dich)</h2>'
+       . '<div class="cstats">'
+       . '<div class="cstat"><b>' . $views . '</b><span>Aufrufe dieses Profils</span></div>'
+       . '<div class="cstat"><b>' . $refs . '</b><span>Besucher über deinen Link</span></div>'
+       . '</div></section>';
+}
 echo '</aside>';
 
 echo '</div>'; // cgrid
+
+// ---- Funnel: frisch aus der GTA-6-Zentrale ----
+// Haelt den vom Creator geliehenen Traffic auf ViceGuide, statt die Seite als
+// Sackgasse enden zu lassen, und staerkt die interne Verlinkung (SEO). Die
+// neuesten Artikel als echte Links plus die Wege in Datenbank und News.
+$latest = [];
+try {
+    $latest = $pdo->query('SELECT id, title, cat, img, updated_at FROM articles ORDER BY article_date DESC, created_at DESC LIMIT 4')->fetchAll();
+} catch (Throwable $e) {}
+if ($latest) {
+    $catLbl = ['news' => 'News', 'leaks' => 'Gerüchte & Leaks', 'trailer' => 'Trailer', 'story' => 'Story', 'map' => 'Map', 'community' => 'Community'];
+    echo '<section class="crfunnel"><h2 class="sec-h">Frisch aus der GTA-6-Zentrale</h2>'
+       . '<p class="sec-lead">Alles rund um GTA 6 auf Deutsch: aktuelle News, eingeordnete Gerüchte und eine wachsende Datenbank.</p>'
+       . '<div class="crf-grid">';
+    foreach ($latest as $a) {
+        $aHref = '/artikel/' . vg_cr_esc($a['id']);
+        $aImg = !empty($a['img']) ? ('/api/article_image.php?id=' . vg_cr_esc($a['id']) . '&v=' . urlencode((string)($a['updated_at'] ?? ''))) : '';
+        echo '<a class="crf-card" href="' . $aHref . '">'
+           . ($aImg
+                ? '<span class="crf-th"><img src="' . $aImg . '" alt="' . vg_cr_esc($a['title']) . '" loading="lazy"></span>'
+                : '<span class="crf-th ph">VI</span>')
+           . '<span class="crf-b"><span class="crf-c">' . vg_cr_esc($catLbl[$a['cat']] ?? 'Artikel') . '</span>'
+           . '<span class="crf-t">' . vg_cr_esc($a['title']) . '</span></span></a>';
+    }
+    echo '</div>'
+       . '<div class="crf-links"><a href="/">Zur GTA-6-Zentrale</a><a href="/datenbank/">Die GTA-6-Datenbank</a><a href="/news">Alle News</a></div>'
+       . '</section>';
+}
+
+// Dezenter Aufruf an andere Creator im Publikum (fuehrt auf die Partner-Seite).
+echo '<p class="crcta">Du bist selbst GTA-6-Creator? <a href="/partner">Werde ViceGuide-Partner.</a></p>';
+
 echo '<a class="cback" href="/creator/">← Alle Partner-Creator</a>';
 echo '</div>' . vg_cr_footer($vgTrack);
