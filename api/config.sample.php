@@ -53,4 +53,23 @@ return [
     'newsletter_from'       => 'ViceGuide <newsletter@viceguide.de>',
     'newsletter_smtp_user'  => 'newsletter@viceguide.de',
     'newsletter_smtp_pass'  => '',           // Passwort des newsletter-Postfachs
+
+    // Twitch-Live-Status auf den Creator-Profilen (optional). Sobald beide
+    // Werte gesetzt sind, zeigt eine Creator-Seite ein echtes "LIVE" mit
+    // Zuschauerzahl, wenn der hinterlegte Twitch-Kanal wirklich sendet.
+    // So kommst du dran: auf dev.twitch.tv einloggen, unter "Your Console",
+    // "Applications" eine neue App registrieren (OAuth-Redirect z.B.
+    // https://viceguide.de, Kategorie Website Integration), dann Client-ID
+    // und ein erzeugtes Client-Secret hier eintragen. Leer lassen schaltet
+    // die Live-Anzeige ab (die Seite bleibt beim neutralen Twitch-Badge).
+    'twitch_client_id'     => '',
+    'twitch_client_secret' => '',
+
+    // Automatische neueste YouTube-Videos auf den Creator-Profilen (optional).
+    // Ein API-Key aus der Google Cloud Console (Projekt anlegen, "YouTube Data
+    // API v3" aktivieren, unter "Anmeldedaten" einen API-Schluessel erstellen,
+    // am besten auf die YouTube-API und deine Domain einschraenken). Pro
+    // Creator wird im Redaktions-Panel die Kanal-ID (UC...) oder der @handle
+    // hinterlegt. Leer lassen, dann bleiben die manuell gepflegten Videos.
+    'youtube_api_key'      => '',
 ];

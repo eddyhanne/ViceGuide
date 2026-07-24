@@ -126,7 +126,29 @@ function vg_cr_footer(bool $track = false): string {
       . 'function vgSyncTheme(){var d=document.documentElement.getAttribute("data-theme")==="dark";document.getElementById("tico").textContent=d?"☾":"☀";document.getElementById("tlbl").textContent=d?"Dunkel":"Hell";}vgSyncTheme();'
       . 'function vgLoadYt(el){if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.style.margin="0";n.textContent="Im Livebetrieb erscheint hier dein Video, DSGVO-konform auf Klick.";var card=el.parentNode;if(card){card.appendChild(n);}return;}var id=el.getAttribute("data-yt");var f=document.createElement("iframe");f.width="560";f.height="315";f.style.cssText="width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:14px";f.allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture";f.allowFullscreen=true;f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1";el.replaceWith(f);}'
       . 'function vgCopyShare(btn){var t=(document.getElementById("shareTxt")||{}).textContent||"";function ok(){var o=btn.textContent;btn.textContent="Kopiert ✓";setTimeout(function(){btn.textContent=o;},2000);}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){});}else{try{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(e){}}}'
+      . 'function vgShareOpen(){var m=document.getElementById("shareModal");if(m)m.classList.add("open");}'
+      . 'function vgShareClose(){var m=document.getElementById("shareModal");if(m)m.classList.remove("open");}'
+      . 'document.addEventListener("keydown",function(e){if(e.key==="Escape")vgShareClose();});'
       . 'function vgLoadTwitch(el){var login=el.getAttribute("data-twitch");if(el.getAttribute("data-demo")==="1"){el.style.opacity=".55";el.style.pointerEvents="none";var n=document.createElement("div");n.className="tw-note";n.textContent="Im Livebetrieb läuft hier dein Twitch-Stream. Wir betten ihn erst auf Klick ein, vorher wird keine Verbindung zu Twitch aufgebaut (DSGVO-konform).";el.after(n);return;}var f=document.createElement("iframe");f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:16px";f.allowFullscreen=true;f.src="https://player.twitch.tv/?channel="+encodeURIComponent(login)+"&parent="+location.hostname+"&autoplay=true";el.replaceWith(f);}'
+      // Progressive Enhancement: echten Twitch-Live-Status und neueste YouTube-
+      // Videos ueber die eigenen Endpunkte nachladen. Kein Drittanbieter-Kontakt
+      // im Browser, alles laeuft ueber api/twitch.php bzw. api/youtube.php.
+      . '(function(){'
+      . 'var tb=document.querySelector("[data-twitch-check]");'
+      . 'if(tb){fetch("/api/twitch.php?login="+encodeURIComponent(tb.getAttribute("data-twitch-check"))).then(function(r){return r.json();}).then(function(d){'
+      . 'if(d&&d.live){var b=document.getElementById("crTwBadge");if(b)b.outerHTML="<span class=\\"tw-live\\">● LIVE</span>";var n=document.getElementById("crTwNote");if(n)n.textContent="Jetzt live"+(d.viewers?" mit "+d.viewers+" Zuschauern":"")+". Klick lädt den Stream, DSGVO-konform.";}'
+      . '}).catch(function(){});}'
+      . 'var g=document.getElementById("crVids");'
+      . 'function hideVids(){if(g&&!g.children.length){g.style.display="none";var mh=g.previousElementSibling;if(mh&&mh.className==="mini-h")mh.style.display="none";}}'
+      . 'if(g&&g.getAttribute("data-yt-channel")){fetch("/api/youtube.php?channel="+encodeURIComponent(g.getAttribute("data-yt-channel"))).then(function(r){return r.json();}).then(function(d){'
+      . 'if(d&&d.videos&&d.videos.length){g.innerHTML="";d.videos.forEach(function(v){'
+      . 'var card=document.createElement("div");card.className="vidcard";'
+      . 'var btn=document.createElement("button");btn.className="ytph";btn.setAttribute("data-yt",v.id);btn.setAttribute("aria-label","Video abspielen");btn.onclick=function(){vgLoadYt(btn);};'
+      . 'btn.innerHTML="<span class=\\"ytplay\\"><svg viewBox=\\"0 0 24 24\\"><path d=\\"M8 5v14l11-7z\\"></path></svg></span>";'
+      . 'var t=document.createElement("div");t.className="vid-t";t.textContent=v.title||"Video";'
+      . 'card.appendChild(btn);card.appendChild(t);g.appendChild(card);});}else{hideVids();}'
+      . '}).catch(hideVids);}'
+      . '})();'
       . '</script>'
       // Cookiefreier Analytics-Treffer fuer Creator-Seiten (siehe api/hits.php),
       // damit im Dashboard sichtbar wird, ob ein Creator-Link geoeffnet wurde.
@@ -265,6 +287,18 @@ header.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-fi
 .cstat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .cstat b{display:block;font-family:'Oswald';font-weight:700;font-size:24px;color:var(--heading);line-height:1;margin-bottom:3px}
 .cstat span{font-size:11.5px;color:var(--text-soft)}
+.cstat-btn{cursor:pointer;text-align:left;font:inherit;transition:border-color .15s}
+.cstat-btn:hover{border-color:var(--accent)}
+.cstat-btn span em{display:block;font-style:normal;font-size:10.5px;font-weight:600;color:var(--accent);margin-top:4px}
+.shmodal{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,5,25,.6);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px}
+.shmodal.open{display:flex}
+.shmodal-box{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;max-width:460px;width:100%;box-shadow:var(--shadow)}
+.shmodal-box h3{font-family:'Oswald';font-weight:700;font-size:19px;color:var(--heading);margin:0 0 8px;padding-right:26px}
+.shmodal-box p{font-size:13.5px;color:var(--text-soft);line-height:1.55;margin:0 0 14px}
+.shmodal-x{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--text-soft);cursor:pointer;font-size:14px;line-height:1}
+.shmodal-x:hover{color:var(--accent);border-color:var(--accent)}
+.shmodal .sharebox{flex-direction:column}
+.shmodal .sharebox button{padding:11px}
 /* Partner-CTA fuer andere Creator */
 .crcta{margin:22px 0 0;text-align:center;font-size:13.5px;color:var(--text-soft)}
 .crcta a{color:var(--accent);font-weight:600;text-decoration:none}
@@ -372,6 +406,7 @@ $twitch = trim((string)($c['twitch_login'] ?? ''));
 // echte Inhalte ein.
 $preview = $isDemo;
 $isAdmin = !$vgTrack;   // vg_is_admin() ist oben schon ausgewertet ($vgTrack = !admin)
+$ytChannel = trim((string)($c['youtube_channel_id'] ?? ''));
 
 $title = $name . ($tagline !== '' ? ' - ' . $tagline : ' - Partner-Creator') ;
 if (mb_strlen($title . ' - ViceGuide') <= 60) $title .= ' - ViceGuide';
@@ -439,7 +474,7 @@ echo '</div></section>';
 // Zweispaltiger Hub: links Medien (Live & Videos), rechts Bio, Lieblinge, Teilen.
 // Mobil stapelt es untereinander, Medien zuerst.
 $showStream = $preview || $twitch !== '';
-$hasVideos  = $preview || !empty($videos);
+$hasVideos  = $preview || !empty($videos) || $ytChannel !== '';
 
 echo '<div class="cgrid">';
 
@@ -449,17 +484,28 @@ if ($showStream || $hasVideos) {
     echo '<section class="sec"><h2 class="sec-h">Live &amp; Videos</h2>';
     if ($showStream) {
         $handle = $twitch !== '' ? $twitch : ($c['slug'] ?: 'deinkanal');
-        $liveTag = $preview ? '<span class="tw-live">● LIVE</span>' : '<span class="tw-badge">Twitch</span>';
-        echo '<button class="twph" data-twitch="' . vg_cr_esc($handle) . '"' . ($preview ? ' data-demo="1"' : '') . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
+        // Vorschau: illustrative LIVE-Optik. Live-Seite: neutrales Twitch-Badge,
+        // das der Client per api/twitch.php auf echtes "● LIVE" (mit Zuschauer-
+        // zahl) umschaltet, sobald der Kanal wirklich sendet (data-twitch-check).
+        $liveTag = $preview
+            ? '<span class="tw-live">● LIVE</span>'
+            : '<span class="tw-badge" id="crTwBadge">Twitch</span>';
+        $checkAttr = (!$preview && $twitch !== '') ? (' data-twitch-check="' . vg_cr_esc($twitch) . '"') : '';
+        echo '<button class="twph" data-twitch="' . vg_cr_esc($handle) . '"' . ($preview ? ' data-demo="1"' : '') . $checkAttr . ' onclick="vgLoadTwitch(this)" aria-label="Stream laden">'
            . '<span class="tw-veil"></span>' . $liveTag
            . '<span class="tw-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
            . '<span class="tw-name">twitch.tv/' . vg_cr_esc($handle) . '</span></button>';
-        echo '<p class="sec-lead" style="margin-top:8px">' . ($preview
+        echo '<p class="sec-lead" style="margin-top:8px" id="crTwNote">' . ($preview
             ? 'Auf der echten Seite läuft hier dein Twitch-Stream, DSGVO-konform erst auf Klick.'
             : 'Lädt erst auf Klick, vorher keine Verbindung zu Twitch.') . '</p>';
     }
     if ($hasVideos) {
-        echo '<div class="mini-h">Neueste Videos</div><div class="cvids">';
+        // Live-Seite mit hinterlegtem YouTube-Kanal: der Client holt die echten
+        // neuesten Uploads (api/youtube.php) und ersetzt damit die manuell
+        // gepflegten Videos. Ohne Kanal oder bei API-Fehler bleiben die
+        // manuellen Videos stehen (data-yt-channel steuert das clientseitig).
+        $ytAttr = ($ytChannel !== '' && !$preview) ? (' data-yt-channel="' . vg_cr_esc($ytChannel) . '"') : '';
+        echo '<div class="mini-h">Neueste Videos</div><div class="cvids" id="crVids"' . $ytAttr . '>';
         if ($preview) {
             foreach (['Dein neuestes Video', 'Dein GTA-6-Content'] as $t) {
                 echo '<div class="vidcard"><button class="ytph" data-demo="1" onclick="vgLoadYt(this)" aria-label="Beispiel-Video"><span class="ytplay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>'
@@ -503,24 +549,14 @@ if ($favs) {
     }
     echo '</div></section>';
 }
-// Für-deine-Videobeschreibung: kurzer, messbarer Link (utm ueber /c/<slug>).
-// NUR fuer den eingeloggten Admin, auf JEDER Seite (auch Demo/Vorschau). Der
-// Block ist eine an den Creator gerichtete Ansprache samt Kopier-Knopf, ein
-// normaler Besucher wuerde eine Aufforderung lesen, die nicht an ihn geht. Da
-// auch die Demo-/Vorschauseite (seo=0) oeffentlich per Link erreichbar ist,
-// reicht ein Preview-Gate nicht, es muss admin-only sein. Den fertigen Link
-// fuer einen Creator kopierst du dir hier heraus und schickst ihn per Mail.
-if ($isAdmin) {
-    $shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
-    $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
-    echo '<section class="sbox"><h2 class="sbox-h">Für deine Videobeschreibung</h2>'
-       . '<p class="sec-lead" style="margin-bottom:10px">Nur für dich als Redaktion sichtbar, Besucher sehen diesen Block nicht. Der fertige Link für den Creator.</p>'
-       . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
-       . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
-}
-// Ministatistik, nur fuer den eingeloggten Admin: Aufrufe dieser Profilseite
-// und Besucher, die ueber den geteilten Link (/c/<slug>, utm_source=<slug>)
-// gekommen sind. Zeigt schwarz auf weiss, ob ein Partner Traffic liefert.
+// Ministatistik UND Teilen-Link, ausschliesslich fuer den eingeloggten Admin.
+// Aufrufe dieser Profilseite und Besucher ueber den geteilten Link (/c/<slug>,
+// utm_source=<slug>). Der an den Creator gerichtete Videobeschreibungs-Link
+// liegt bewusst nicht mehr offen in der Sidebar (ein normaler Besucher wuerde
+// eine Aufforderung lesen, die nicht an ihn geht, und die Demo-/Vorschauseite
+// ist oeffentlich erreichbar), sondern hinter einem Klick auf die Kachel
+// "Besucher ueber deinen Link", die ein Popup mit Erklaerung und Kopier-Knopf
+// oeffnet. So sieht ihn kein Besucher und der Block bleibt aufgeraeumt.
 if ($isAdmin) {
     $viewsStmt = $pdo->prepare('SELECT COUNT(*) FROM hits WHERE path = ?');
     $viewsStmt->execute(['/creator/' . $c['slug']]);
@@ -528,11 +564,20 @@ if ($isAdmin) {
     $refStmt = $pdo->prepare('SELECT COUNT(*) FROM hits WHERE utm_source = ?');
     $refStmt->execute([$c['slug']]);
     $refs = (int)$refStmt->fetchColumn();
+    $shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
+    $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
     echo '<section class="sbox"><h2 class="sbox-h">Statistik (nur für dich)</h2>'
        . '<div class="cstats">'
        . '<div class="cstat"><b>' . $views . '</b><span>Aufrufe dieses Profils</span></div>'
-       . '<div class="cstat"><b>' . $refs . '</b><span>Besucher über deinen Link</span></div>'
+       . '<button type="button" class="cstat cstat-btn" onclick="vgShareOpen()"><b>' . $refs . '</b><span>Besucher über deinen Link<em>Teilen-Link öffnen ↗</em></span></button>'
        . '</div></section>';
+    // Popup mit dem fertigen Videobeschreibungs-Link (admin-only, per Klick).
+    echo '<div id="shareModal" class="shmodal" onclick="if(event.target===this)vgShareClose()">'
+       . '<div class="shmodal-box"><button class="shmodal-x" type="button" onclick="vgShareClose()" aria-label="Schließen">✕</button>'
+       . '<h3>Link für die Videobeschreibung</h3>'
+       . '<p>Nur für dich. Schick diesen Satz dem Creator für seine Videobeschreibung, dann sehen wir hier, wie viele Besucher über ihn kommen.</p>'
+       . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
+       . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></div></div>';
 }
 echo '</aside>';
 

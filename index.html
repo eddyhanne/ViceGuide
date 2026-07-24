@@ -4520,7 +4520,7 @@ function crFavSecChange(sel){ const row=sel.closest('.cr-row'); row.querySelecto
 function crAddFav(section,slug,label,quote){ if($('cr-favs'))$('cr-favs').appendChild(crFavRow(section,slug,quote)); }
 function crNew(){
   crState={editId:null, avatar:undefined, cover:undefined};
-  ['cr-name','cr-slug','cr-tagline','cr-bio','cr-twitch','cr-accent-hex'].forEach(id=>{ if($(id))$(id).value=''; });
+  ['cr-name','cr-slug','cr-tagline','cr-bio','cr-twitch','cr-youtube','cr-accent-hex'].forEach(id=>{ if($(id))$(id).value=''; });
   if($('cr-accent'))$('cr-accent').value='#D00059';
   if($('cr-avatar-prev')){ $('cr-avatar-prev').style.display='none'; $('cr-avatar-prev').src=''; }
   if($('cr-avatar-file'))$('cr-avatar-file').value='';
@@ -4538,7 +4538,7 @@ function crEdit(slug){
   const c=(window.CREATORS||[]).find(x=>x.slug===slug); if(!c){ toast('Creator nicht gefunden, Seite neu laden.'); return; }
   crState={editId:c.id, avatar:undefined, cover:undefined};
   $('cr-name').value=c.name||''; $('cr-slug').value=c.slug||''; $('cr-slug').setAttribute('readonly','readonly');
-  $('cr-tagline').value=c.tagline||''; $('cr-bio').value=c.bio||''; $('cr-twitch').value=c.twitch||'';
+  $('cr-tagline').value=c.tagline||''; $('cr-bio').value=c.bio||''; $('cr-twitch').value=c.twitch||''; if($('cr-youtube'))$('cr-youtube').value=c.youtube||'';
   $('cr-accent-hex').value=c.accent||''; if(c.accent)crAccentSync(c.accent); else $('cr-accent').value='#D00059';
   $('cr-slug-view').textContent='Seite: /creator/'+c.slug;
   $('cr-vis').value=c.seo?'public':'preview';
@@ -4554,7 +4554,7 @@ function crCollect(){
   const name=($('cr-name').value||'').trim();
   const obj={ name, slug:($('cr-slug').value||'').trim()||slugify(name),
     tagline:($('cr-tagline').value||'').trim(), bio:($('cr-bio').value||'').trim(),
-    twitch:($('cr-twitch').value||'').trim(), accent:($('cr-accent-hex').value||'').trim(),
+    twitch:($('cr-twitch').value||'').trim(), youtube:($('cr-youtube').value||'').trim(), accent:($('cr-accent-hex').value||'').trim(),
     active:1, seo:$('cr-vis').value==='public', platforms:[], favorites:[] };
   document.querySelectorAll('#cr-plats .cr-row').forEach(r=>{ const l=r.querySelector('.cr-p-label').value; const u=(r.querySelector('.cr-p-url').value||'').trim(); if(u)obj.platforms.push({label:l,url:u}); });
   document.querySelectorAll('#cr-favs .cr-row').forEach(r=>{ const sec=r.querySelector('.cr-f-sec').value; const sl=r.querySelector('.cr-f-slug').value; if(!sl)return; const f=CR_SECTIONS.find(s=>s[0]===sec); obj.favorites.push({section:sec,slug:sl,label:f?f[2]:'',quote:(r.querySelector('.cr-f-quote').value||'').trim()}); });
@@ -4699,6 +4699,9 @@ const ADM_HTML=`  <div style="font-family:'Space Mono';font-size:11px;font-weigh
     <textarea id="cr-bio" class="nl-fld" rows="3" placeholder="Kurzer Vorstellungstext"></textarea>
     <div class="nl-lbl">Twitch-Name für den Live-Stream (optional)</div>
     <input id="cr-twitch" class="nl-fld" type="text" placeholder="z.B. flensburgrp">
+    <div class="nl-lbl">YouTube-Kanal für automatische Videos (optional)</div>
+    <input id="cr-youtube" class="nl-fld" type="text" placeholder="Kanal-ID (UC...) oder @handle">
+    <div style="font-size:11px;color:var(--text-soft);margin-top:3px">Zeigt automatisch die neuesten Uploads. Leer lassen, dann bleiben die manuell gepflegten Videos.</div>
     <div class="nl-lbl">Markenfarbe (optional)</div>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="cr-accent" type="color" value="#D00059" oninput="$('cr-accent-hex').value=this.value" style="width:46px;height:38px;border:1.5px solid var(--line);border-radius:9px;background:none;cursor:pointer;flex:0 0 auto">

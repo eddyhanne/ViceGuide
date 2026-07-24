@@ -124,6 +124,7 @@ function vg_creatorRow(PDO $pdo, array $r, bool $full = false): array {
         'videos'   => $r['videos_json'] ? (json_decode($r['videos_json'], true) ?: []) : [],
         'avatar'   => $hasAvatar ? ($full ? $r['avatar'] : ('api/creator_image.php?id=' . (int)$r['id'] . '&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'twitch'   => $r['twitch_login'] ?: null,
+        'youtube'  => $r['youtube_channel_id'] ?: null,
         'accent'   => $r['accent'] ?: null,
         'cover'    => !empty($r['cover']) ? ($full ? $r['cover'] : ('api/creator_image.php?id=' . (int)$r['id'] . '&field=cover&v=' . urlencode((string)($r['updated_at'] ?? '')))) : null,
         'active'   => !empty($r['active']),
@@ -138,7 +139,7 @@ function vg_creatorRow(PDO $pdo, array $r, bool $full = false): array {
    Genutzt beim Anlegen (POST) und beim Veroeffentlichen eines Entwurfs. */
 function vg_writeCreatorFields(PDO $pdo, int $id, array $d, bool $clearDraft): void {
     $map = [
-        'name' => 'name', 'tagline' => 'tagline', 'bio' => 'bio', 'twitch' => 'twitch_login', 'accent' => 'accent',
+        'name' => 'name', 'tagline' => 'tagline', 'bio' => 'bio', 'twitch' => 'twitch_login', 'youtube' => 'youtube_channel_id', 'accent' => 'accent',
     ];
     $sets = []; $vals = [];
     foreach ($map as $jsonKey => $col) {
@@ -219,8 +220,8 @@ if ($method === 'POST') {
     $slug = vg_creator_slug($pdo, trim((string)($b['slug'] ?? '')) ?: $name);
     $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) m FROM creators')->fetch()['m'] + 1;
 
-    $stmt = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, videos_json, avatar, avatarfit_json, twitch_login, accent, cover, active, seo_index, sort_order)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO creators (slug, name, tagline, bio, platforms_json, videos_json, avatar, avatarfit_json, twitch_login, youtube_channel_id, accent, cover, active, seo_index, sort_order)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute([
         $slug,
         $name,
@@ -231,6 +232,7 @@ if ($method === 'POST') {
         $b['avatar'] ?? null,
         isset($b['avatarfit']) ? json_encode($b['avatarfit'], JSON_UNESCAPED_UNICODE) : null,
         $b['twitch'] ?? null,
+        $b['youtube'] ?? null,
         $b['accent'] ?? null,
         $b['cover'] ?? null,
         array_key_exists('active', $b) ? (!empty($b['active']) ? 1 : 0) : 1,
@@ -260,7 +262,7 @@ if ($method === 'PUT') {
     if (!$row) vg_c_out(['error' => 'Creator nicht gefunden'], 404);
 
     $draft = $row['draft_json'] ? (json_decode($row['draft_json'], true) ?: []) : [];
-    $allowed = ['name','tagline','bio','platforms','videos','avatar','avatarfit','twitch','accent','cover','active','seo','favorites'];
+    $allowed = ['name','tagline','bio','platforms','videos','avatar','avatarfit','twitch','youtube','accent','cover','active','seo','favorites'];
     foreach ($allowed as $key) {
         if (array_key_exists($key, $b)) { $draft[$key] = $b[$key]; }
     }

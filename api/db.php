@@ -122,7 +122,7 @@ function vg_db(): array {
         $pdo->query('SELECT id FROM hits LIMIT 1');
         $pdo->query('SELECT id FROM events LIMIT 1');
         $pdo->query('SELECT id FROM gsc_rows LIMIT 1');
-        $pdo->query('SELECT id, accent, cover FROM creators LIMIT 1');
+        $pdo->query('SELECT id, accent, cover, youtube_channel_id FROM creators LIMIT 1');
         $pdo->query('SELECT id FROM creator_favorites LIMIT 1');
         $schemaReady = true;
     } catch (Throwable $e) {
@@ -257,6 +257,7 @@ function vg_db(): array {
             twitch_login TEXT,
             accent TEXT,
             cover TEXT,
+            youtube_channel_id TEXT,
             active INTEGER NOT NULL DEFAULT 1,
             seo_index INTEGER NOT NULL DEFAULT 1,
             sort_order INTEGER NOT NULL DEFAULT 0,
@@ -277,6 +278,7 @@ function vg_db(): array {
             $ccols = array_column($pdo->query("PRAGMA table_info(creators)")->fetchAll(), 'name');
             if (!in_array('accent', $ccols, true)) { $pdo->exec('ALTER TABLE creators ADD COLUMN accent TEXT'); }
             if (!in_array('cover', $ccols, true)) { $pdo->exec('ALTER TABLE creators ADD COLUMN cover TEXT'); }
+            if (!in_array('youtube_channel_id', $ccols, true)) { $pdo->exec('ALTER TABLE creators ADD COLUMN youtube_channel_id TEXT'); }
         } catch (Throwable $e) {}
         vg_seed_demo_creator($pdo);
         try {
@@ -471,6 +473,7 @@ function vg_db(): array {
             twitch_login VARCHAR(100) NULL,
             accent VARCHAR(20) NULL,
             cover MEDIUMTEXT NULL,
+            youtube_channel_id VARCHAR(120) NULL,
             active TINYINT NOT NULL DEFAULT 1,
             seo_index TINYINT NOT NULL DEFAULT 1,
             sort_order INT NOT NULL DEFAULT 0,
@@ -495,6 +498,8 @@ function vg_db(): array {
             if (!$cc) { $pdo->exec('ALTER TABLE creators ADD COLUMN accent VARCHAR(20) NULL'); }
             $cc = $pdo->query("SHOW COLUMNS FROM creators LIKE 'cover'")->fetchAll();
             if (!$cc) { $pdo->exec('ALTER TABLE creators ADD COLUMN cover MEDIUMTEXT NULL'); }
+            $cc = $pdo->query("SHOW COLUMNS FROM creators LIKE 'youtube_channel_id'")->fetchAll();
+            if (!$cc) { $pdo->exec('ALTER TABLE creators ADD COLUMN youtube_channel_id VARCHAR(120) NULL'); }
         } catch (Throwable $e) {}
         vg_seed_demo_creator($pdo);
         try {
