@@ -10,7 +10,7 @@
           "Art": "Kriminell",
           "Erstmals": "Trailer 2"
         },
-        "img": "api/entry_image.php?id=191&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=191&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 46,
           "y": 44,
@@ -31,7 +31,7 @@
           "Art": "Freizeit",
           "Erstmals": "Trailer"
         },
-        "img": "api/entry_image.php?id=192&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=192&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -52,7 +52,7 @@
           "Art": "Fortbewegung",
           "Erstmals": "Trailer"
         },
-        "img": "api/entry_image.php?id=193&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=193&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 64,
           "y": 52,
@@ -71,10 +71,9 @@
         "desc": "Die reiche Fischwelt Leonidas legt ein Angel-System stark nahe, von Süßwasserseen bis zur Golfküste. Offiziell bestätigt ist es noch nicht. Die vielen Fischarten in der Datenbank sind ein deutlicher Fingerzeig.",
         "fields": {
           "Art": "Freizeit",
-          "Quelle": "Hinweis",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=194&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=194&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 83,
           "y": 53,
@@ -93,10 +92,9 @@
         "desc": "Wildtiere in Sümpfen und Wäldern sowie sichtbare Jagdwaffen deuten auf ein Jagd-System im Stil von Red Dead Redemption 2 hin. Bestätigt ist es bisher nicht. Weißwedelhirsch und Wildschwein wären naheliegende Ziele.",
         "fields": {
           "Art": "Freizeit",
-          "Quelle": "Hinweis",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=195&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=195&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -115,10 +113,9 @@
         "desc": "Jasons wechselndes Aussehen deutet auf Körper- und Fitness-Systeme im Stil von San Andreas hin. Bestätigt ist das noch nicht. Ein Werte-System für Statur und Kondition wäre ein Comeback, das viele Fans erwarten.",
         "fields": {
           "Art": "Freizeit",
-          "Quelle": "Hinweis",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=196&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=196&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -137,9 +134,9 @@
         "desc": "Schwimmen und Tauchen kehren zurück, inklusive Unterwasser-Bereichen mit eigener Tierwelt. Dazu gehören auch Gefahren wie Haie in den tieferen Zonen. Die Wasserwelt ist damit begeh- und erkundbar, nicht nur Deko.",
         "fields": {
           "Art": "Wassersport",
-          "Erstmals": "Trailer / Leak"
+          "Erstmals": "Trailer"
         },
-        "img": "api/entry_image.php?id=197&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=197&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -160,7 +157,7 @@
           "Art": "Anpassung",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=198&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=198&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 55,
@@ -181,7 +178,7 @@
           "Art": "Wettbewerb",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=199&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=199&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 53,
           "y": 100,
@@ -199,10 +196,9 @@
         "credit": "Rockstar",
         "desc": "Ein Minigolfschläger tauchte im Material auf, ein Hinweis auf spielbare Freizeitaktivitäten wie schon in GTA 5. Golf gehört zu den entspannteren Nebenbeschäftigungen der Reihe. Konkrete Details stehen noch aus.",
         "fields": {
-          "Art": "Freizeit",
-          "Quelle": "Screenshot"
+          "Art": "Freizeit"
         },
-        "img": "api/entry_image.php?id=200&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=200&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -223,7 +219,7 @@
           "Art": "System",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=201&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=201&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 61,
           "y": 99,
@@ -244,7 +240,7 @@
           "Art": "Wirtschaft",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=202&v=2026-07-13+12%3A04%3A04",
+        "img": "api/entry_image.php?id=202&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -257,6 +253,406 @@
         "sub": "Besitz"
       }
     ],
+    "brands": [
+      {
+        "_id": 211,
+        "cat": "Musik & Nightlife",
+        "credit": "Rockstar",
+        "desc": "Only Raw Records ist das Hip-Hop-Label im Zentrum der Musikwelt von Leonida. Geführt wird es von Dre'Quan Priest und seinem Geschäftspartner Boobie Ike, unter Vertrag stehen das Rap-Duo Real Dimez und der Rapper DWNPLY. Laut den offiziellen Rockstar-Bios wird das Label über Ikes Stripclub und dessen Nebengeschäfte mitfinanziert. Damit ist es keine reine Kulisse, sondern direkt mit mehreren Hauptfiguren verzahnt.",
+        "fields": {
+          "Erstmals": "Offizielle Website",
+          "Region": "Vice City",
+          "Typ": "Plattenlabel"
+        },
+        "img": "api/entry_image.php?id=211&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.2
+        },
+        "name": "Only Raw Records",
+        "seo": false,
+        "slug": "only-raw-records",
+        "src": "Offizielle Rockstar-Bio",
+        "sub": "Plattenlabel"
+      },
+      {
+        "_id": 212,
+        "cat": "Musik & Nightlife",
+        "credit": "Rockstar",
+        "desc": "Der Jack of Hearts ist ein Stripclub in Vice City und gehört Boobie Ike. Der Club taucht in beiden Trailern auf, unter anderem in der vielzitierten Szene mit bewaffneten Tänzerinnen. Als reales Vorbild gilt der Miami-Club King of Diamonds. Seine Einnahmen fließen laut Rockstars Charakter-Bio in Ikes Label Only Raw Records.",
+        "fields": {
+          "Erstmals": "Trailer 1",
+          "Region": "Vice City",
+          "Typ": "Stripclub",
+          "Vorbild": "King of Diamonds (Miami)"
+        },
+        "img": "api/entry_image.php?id=212&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 96,
+          "y": 18,
+          "zoom": 1.38
+        },
+        "name": "Jack of Hearts",
+        "seo": false,
+        "slug": "jack-of-hearts",
+        "src": "Trailer 1",
+        "sub": "Stripclub"
+      },
+      {
+        "_id": 213,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Cluckin' Bell ist die Hähnchen-Fast-Food-Kette der GTA-Reihe, seit GTA San Andreas ein fester Teil der Serie. Eine Rückkehr in GTA 6 gilt als sehr wahrscheinlich, ein bestätigter Auftritt im bisherigen Material steht aber noch aus. Take-Two-Chef Strauss Zelnick betonte, dass GTA 6 ausschließlich solche fiktiven Marken statt echter Produktplatzierung nutzt. Der Name spielt auf Ketten wie KFC und Taco Bell an.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Fast-Food-Kette",
+          "Vorbild": "KFC / Popeyes"
+        },
+        "img": "api/entry_image.php?id=213&v=2026-07-23+19%3A49%3A23",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.13
+        },
+        "name": "Cluckin' Bell",
+        "seo": false,
+        "slug": "cluckin-bell",
+        "src": "erwartet",
+        "sub": "Fast-Food-Kette"
+      },
+      {
+        "_id": 214,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Burger Shot ist die Burger-Kette der GTA-Reihe und tritt seit Jahren als Gegenpol zu Cluckin' Bell auf. Eine Rückkehr in Leonida liegt nahe, ein bestätigter Auftritt im GTA-6-Material fehlt bislang. Die Kette parodiert generische US-Burger-Riesen.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Fast-Food-Kette",
+          "Vorbild": "Burger King"
+        },
+        "img": "api/entry_image.php?id=214&v=2026-07-23+19%3A49%3A23",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.14
+        },
+        "name": "Burger Shot",
+        "seo": false,
+        "slug": "burger-shot",
+        "src": "erwartet",
+        "sub": "Fast-Food-Kette"
+      },
+      {
+        "_id": 215,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "eCola ist die Cola-Marke der GTA-Reihe und im Material zu GTA 6 auf Werbeflächen und in Läden zu sehen. Zusammen mit Sprunk bildet sie den seit GTA Vice City laufenden In-Game-Cola-Krieg, das Pendant zu Coca-Cola gegen Pepsi. Der Slogan bleibt das ironische deliciously infectious.",
+        "fields": {
+          "Erstmals": "Trailer 2",
+          "Region": "Leonida",
+          "Typ": "Getränkemarke",
+          "Vorbild": "Coca-Cola"
+        },
+        "img": "api/entry_image.php?id=215&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.11
+        },
+        "name": "eCola",
+        "seo": false,
+        "slug": "ecola",
+        "src": "Trailer 2",
+        "sub": "Getränkemarke"
+      },
+      {
+        "_id": 216,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Sprunk ist die Zitronenlimonade der GTA-Reihe und seit GTA Vice City der Dauerrivale von eCola. Eine Rückkehr in GTA 6 liegt nahe, die Sichtung im bisherigen Material ist aber Auslegungssache der Community. Das Vorbild ist klar Sprite.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Getränkemarke",
+          "Vorbild": "Sprite"
+        },
+        "img": "api/entry_image.php?id=216&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
+        "name": "Sprunk",
+        "seo": false,
+        "slug": "sprunk",
+        "src": "erwartet",
+        "sub": "Getränkemarke"
+      },
+      {
+        "_id": 217,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Fizz ist eine Orangenlimonade, die neu im Marken-Kosmos von GTA 6 auftaucht. Sie parodiert Fanta und reiht sich in die frische Getränke-Riege ein, die Rockstar für Leonida ergänzt hat.",
+        "fields": {
+          "Erstmals": "Trailer 2",
+          "Region": "Leonida",
+          "Typ": "Getränkemarke",
+          "Vorbild": "Fanta"
+        },
+        "img": "api/entry_image.php?id=217&v=2026-07-23+20%3A05%3A49",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.1
+        },
+        "name": "Fizz",
+        "seo": false,
+        "slug": "fizz",
+        "src": "Trailer 2",
+        "sub": "Getränkemarke"
+      },
+      {
+        "_id": 218,
+        "cat": "Gastronomie",
+        "desc": "Jesters ist eine neue Snack-Marke aus dem GTA-6-Material, erkennbar an der zylindrischen Dose. Sie parodiert Pringles bis hin zur charakteristischen Verpackungsform und taucht in Läden und auf Regalen auf.",
+        "fields": {
+          "Erstmals": "Trailer 2",
+          "Region": "Leonida",
+          "Typ": "Snackmarke",
+          "Vorbild": "Pringles"
+        },
+        "img": "api/entry_image.php?id=218&v=2026-07-23+21%3A33%3A55",
+        "imgfit": {
+          "x": 23,
+          "y": 0,
+          "zoom": 1
+        },
+        "name": "Jesters",
+        "seo": false,
+        "slug": "jesters",
+        "src": "Trailer 2",
+        "sub": "Snackmarke"
+      },
+      {
+        "_id": 219,
+        "cat": "Gastronomie",
+        "desc": "Zester soll eine Softdrink-Marke aus dem GTA-6-Material sein und als Parodie auf die US-Discountlimonade Shasta gelten. Bestätigt ist der Eintrag nicht, selbst die Schreibweise schwankt zwischen Zester und Zesta. Wir führen ihn daher vorerst als unbestätigt.",
+        "fields": {
+          "Region": "Leonida",
+          "Typ": "Getränkemarke",
+          "Vorbild": "Shasta"
+        },
+        "img": null,
+        "name": "Zester",
+        "seo": false,
+        "slug": "zester",
+        "src": "Gerücht",
+        "sub": "Getränkemarke"
+      },
+      {
+        "_id": 220,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Pißwasser ist die Billigbier-Marke der GTA-Reihe, ein Running Gag über amerikanisches Massenbier. Eine Rückkehr in GTA 6 gilt als wahrscheinlich, ein bestätigter Auftritt steht noch aus. Vorbild ist vor allem Budweiser.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Biermarke",
+          "Vorbild": "Budweiser"
+        },
+        "img": "api/entry_image.php?id=220&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
+        "name": "Pißwasser",
+        "seo": false,
+        "slug": "pisswasser",
+        "src": "erwartet",
+        "sub": "Biermarke"
+      },
+      {
+        "_id": 221,
+        "cat": "Gastronomie",
+        "credit": "Rockstar",
+        "desc": "Patriot Beer soll im Trailer-Material zu sehen sein und passt zur rauen Malt-Liquor-Ästhetik, die Rockstar für Leonida beschreibt. Ein konkretes reales Vorbild und ein sicherer Beleg fehlen bislang, daher unbestätigt.",
+        "fields": {
+          "Region": "Leonida",
+          "Typ": "Biermarke"
+        },
+        "img": "api/entry_image.php?id=221&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.14
+        },
+        "name": "Patriot Beer",
+        "seo": false,
+        "slug": "patriot-beer",
+        "src": "Gerücht",
+        "sub": "Biermarke"
+      },
+      {
+        "_id": 222,
+        "cat": "Medien",
+        "credit": "Rockstar",
+        "desc": "V-Rock ist der legendäre Rock-Radiosender aus GTA Vice City. In GTA 6 ist eine Rückkehr bisher nur über ein Detail angedeutet, ein T-Shirt mit dem V-Rock-Logo, das Jason im Material trägt. Ein offiziell bestätigter Sender ist es damit noch nicht.",
+        "fields": {
+          "Erstmals": "Trailer-Detail",
+          "Region": "Vice City",
+          "Typ": "Radiosender"
+        },
+        "img": "api/entry_image.php?id=222&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 50,
+          "y": 44,
+          "zoom": 1.07
+        },
+        "name": "V-Rock",
+        "seo": false,
+        "slug": "v-rock",
+        "src": "angedeutet",
+        "sub": "Radiosender"
+      },
+      {
+        "_id": 223,
+        "cat": "Handel",
+        "credit": "Rockstar",
+        "desc": "Ammu-Nation ist die Waffenladen-Kette der GTA-Reihe und in beiden GTA-6-Trailern bestätigt. Im Material läuft sogar ein Werbespot für den Laden. Die Kette ist eine überzeichnete Parodie auf die amerikanische Waffenhandels- und Pro-Gun-Kultur. Einzelne Filialnamen wie Phil's Ammu-Nation kursieren, sind aber noch nicht sauber bestätigt.",
+        "fields": {
+          "Erstmals": "Trailer 2",
+          "Region": "Leonida",
+          "Typ": "Waffenladen-Kette"
+        },
+        "img": "api/entry_image.php?id=223&v=2026-07-23+20%3A00%3A25",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.5
+        },
+        "name": "Ammu-Nation",
+        "seo": false,
+        "slug": "ammu-nation",
+        "src": "Trailer 2",
+        "sub": "Waffenladen-Kette"
+      },
+      {
+        "_id": 224,
+        "cat": "Handel",
+        "credit": "Rockstar",
+        "desc": "Redwood ist die Zigarettenmarke der GTA-Reihe und fester Teil der Werbeflächen-Satire. Eine Rückkehr in GTA 6 gilt als wahrscheinlich, ein bestätigter Auftritt steht noch aus. Vorbild sind Marken wie Marlboro.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Zigarettenmarke",
+          "Vorbild": "Marlboro"
+        },
+        "img": "api/entry_image.php?id=224&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.14
+        },
+        "name": "Redwood",
+        "seo": false,
+        "slug": "redwood",
+        "src": "erwartet",
+        "sub": "Zigarettenmarke"
+      },
+      {
+        "_id": 225,
+        "cat": "Handel",
+        "credit": "Rockstar",
+        "desc": "iFruit ist die Apple-Parodie der GTA-Reihe und liefert die Smartphones, über die im Spiel telefoniert, fotografiert und bezahlt wird. Für GTA 6 wird sie um Fruit Pay ergänzt, eine Anspielung auf Apple Pay. Ein bestätigter Auftritt im Material steht noch aus, das In-Game-Handy selbst ist aber gesetzt.",
+        "fields": {
+          "Erstmals": "Serie",
+          "Region": "Leonida",
+          "Typ": "Elektronikmarke",
+          "Vorbild": "Apple"
+        },
+        "img": "api/entry_image.php?id=225&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 78,
+          "y": 11,
+          "zoom": 3
+        },
+        "name": "iFruit",
+        "seo": false,
+        "slug": "ifruit",
+        "src": "erwartet",
+        "sub": "Elektronikmarke"
+      },
+      {
+        "_id": 226,
+        "cat": "Handel",
+        "credit": "Rockstar",
+        "desc": "Arrow soll eine Tankstellenmarke sein, die im Trailer-Material gesichtet wurde und zur Highway-Kulisse von Leonida passt. Ein sicherer Beleg und ein konkretes Vorbild fehlen, daher führen wir den Eintrag vorerst als unbestätigt.",
+        "fields": {
+          "Region": "Leonida",
+          "Typ": "Tankstellenmarke"
+        },
+        "img": "api/entry_image.php?id=226&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
+        "name": "Arrow",
+        "seo": false,
+        "slug": "arrow",
+        "src": "Gerücht",
+        "sub": "Tankstellenmarke"
+      },
+      {
+        "_id": 227,
+        "cat": "Medien",
+        "credit": "Rockstar",
+        "desc": "Weazel News ist der Nachrichtenkonzern der GTA-Reihe, laut eigener Darstellung Leonidas vertrauenswürdigster und meistverspotteter Sender. Zentrale, Übertragungswagen und Helikopter sind in Trailern und offiziellen Screenshots zu sehen. Der Sender parodiert reißerische US-Kabelnachrichten im Fox-News-Stil.",
+        "fields": {
+          "Erstmals": "Trailer 2",
+          "Region": "Leonida",
+          "Typ": "Nachrichtensender",
+          "Vorbild": "Fox News"
+        },
+        "img": "api/entry_image.php?id=227&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.34
+        },
+        "name": "Weazel News",
+        "seo": false,
+        "slug": "weazel-news",
+        "src": "Trailer 2",
+        "sub": "Nachrichtensender"
+      },
+      {
+        "_id": 228,
+        "cat": "Institutionen",
+        "credit": "Rockstar",
+        "desc": "Die Sinfrontera National Bank ist die Bank, die Jason und Lucia im ersten Trailer überfallen. Damit verankert sie die zentrale Raub-Szene als konkreten Ort in Leonida. Die Marke ist bereits aus früheren GTA-Teilen bekannt.",
+        "fields": {
+          "Erstmals": "Trailer 1",
+          "Region": "Leonida",
+          "Typ": "Bank"
+        },
+        "img": "api/entry_image.php?id=228&v=2026-07-23+20%3A03%3A54",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.06
+        },
+        "name": "Sinfrontera National Bank",
+        "seo": false,
+        "slug": "sinfrontera-national-bank",
+        "src": "Trailer 1",
+        "sub": "Bank"
+      }
+    ],
     "characters": [
       {
         "_id": 203,
@@ -264,14 +660,12 @@
         "credit": "Rockstar",
         "desc": "Jason Duval ist eine der beiden spielbaren Hauptfiguren von GTA 6 und bildet zusammen mit Lucia Caminos das erste spielbare Duo der Serie. Rockstar beschreibt ihn als jemanden, der eigentlich nur ein ruhiges Leben will, aber zwischen Gaunern und Kleinkriminellen groß geworden ist. Über die US-Army versuchte er seiner unruhigen Jugend zu entkommen. Gelandet ist er trotzdem in den Leonida Keys, wo er tut, was er am besten kann: Schmuggelware verticken und Schulden eintreiben.\n\nSein Zuhause ist ein Stelzenhaus auf Key Lento. Der alternde Schmuggler Brian Heder lässt ihn dort mietfrei wohnen, solange Jason für ihn die lokalen Geschäfte am Laufen hält. Als persönlichen Wagen fährt er den Vapid Ganado, einen in die Jahre gekommenen Muscle-Pickup. Die Begegnung mit Lucia kann laut Rockstar das Beste oder das Schlimmste sein, was ihm je passiert ist, das kriminelle Paar erinnert nicht zufällig an Bonnie und Clyde. Der Nachname Duval spielt auf die Duval Street in Key West an. Zu sehen war Jason erstmals in Trailer 1 vom Dezember 2023, seine ausführliche Biografie folgte mit Trailer 2 im Mai 2025.",
         "fields": {
-          "Auftraggeber": "Brian Heder",
-          "Erstmals": "Trailer 1 (Dez 2023)",
-          "Hintergrund": "Ex-US-Army",
+          "Erstmals": "Trailer 1",
+          "Herkunft": "Key Lento, Leonida Keys",
           "Rolle": "Protagonist",
-          "Wagen": "Vapid Ganado",
-          "Wohnort": "Key Lento, Leonida Keys"
+          "Zugehörigkeit": "Läuft für Schmuggler Brian Heder"
         },
-        "img": "api/entry_image.php?id=203&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=203&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 20,
@@ -289,14 +683,13 @@
         "credit": "Rockstar",
         "desc": "Lucia Caminos ist die weibliche Hauptfigur von GTA 6 und die erste weibliche Protagonistin der GTA-Hauptreihe. Ihr Vater brachte ihr das Kämpfen bei, kaum dass sie laufen konnte, und danach kam ihr das Leben immer wieder mit Fäusten entgegen. Aufgewachsen ist sie in Liberty City, dem GTA-Pendant zu New York. Laut Rockstars offizieller Beschreibung will sie das gute Leben, von dem ihre Mutter seit den Tagen in Liberty City träumt. Anders als deren Wunschträume nimmt Lucia die Sache aber selbst in die Hand.\n\nDer Kampf für ihre Familie brachte sie ins Leonida Penitentiary in Vice-Dale County, wo sie zu Beginn von Trailer 1 einsitzt. Aus dem Gefängnis kommt sie nach eigener Aussage durch reines Glück. Ihr Vorsatz danach: ab jetzt nur noch kluge Schritte. Zusammen mit Jason Duval zieht sie eine Reihe hochriskanter Überfälle durch, vom Duo mit Bonnie-und-Clyde-Dynamik spricht Rockstar selbst. Ihren vollen Namen und ihre Biografie veröffentlichte Rockstar zum zweiten Trailer im Mai 2025.",
         "fields": {
-          "Besonderheit": "Erste weibliche Hauptfigur der Reihe",
-          "Erstmals": "Trailer 1 (Dez 2023)",
-          "Haft": "Leonida Penitentiary",
+          "Erstmals": "Trailer 1",
           "Herkunft": "Liberty City",
-          "Partner": "Jason Duval",
-          "Rolle": "Protagonistin"
+          "Rolle": "Protagonistin",
+          "Status": "Auf Bewährung (zuvor Leonida Penitentiary)",
+          "Zugehörigkeit": "Partnerin von Jason Duval"
         },
-        "img": "api/entry_image.php?id=2&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=2&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -314,11 +707,11 @@
         "credit": "Rockstar",
         "desc": "Cal Hampton ist Jasons treuer Kumpel und ein Bekannter des Schmugglers Brian Heder. Rockstar beschreibt ihn als jemanden, der die Verschwörungstheorie zum Beruf machen könnte. Er beäugt misstrauisch Vogelschwärme, die in Formation fliegen, und hört den Funk der Küstenwache ab. Das Zweite ist praktisch, wenn mal wieder eine Lieferung reinkommt. Am wohlsten fühlt Cal sich zu Hause, weit weg vom Trubel. Vorgestellt wurde er mit Trailer 2.",
         "fields": {
-          "Beziehung": "Freund von Jason",
           "Erstmals": "Trailer 2",
-          "Rolle": "Nebenfigur"
+          "Rolle": "Nebenfigur",
+          "Zugehörigkeit": "Freund von Jason, Bekannter von Brian Heder"
         },
-        "img": "api/entry_image.php?id=3&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=3&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 28,
           "y": 6,
@@ -336,12 +729,12 @@
         "credit": "Rockstar",
         "desc": "Brian Heder ist ein Schmuggler der alten Schule, ein Relikt aus der goldenen Ära des Drogenschmuggels in den Keys. Sein Geschäft läuft über eine Bootswerft, auf der er zusammen mit seiner dritten Frau Lori weiter Ware bewegt. Brian ist lange genug dabei, um die Drecksarbeit andere erledigen zu lassen. Genau da kommt Jason ins Spiel: Er wohnt mietfrei in einem von Brians Häusern auf Key Lento und treibt dafür bei den lokalen Geschäften Geld ein. Erstmals zu sehen war Brian in Trailer 2.",
         "fields": {
-          "Beziehung": "Jasons Auftraggeber",
           "Erstmals": "Trailer 2",
+          "Herkunft": "Leonida Keys",
           "Rolle": "Schmuggler",
-          "Umfeld": "Bootswerft, Keys"
+          "Zugehörigkeit": "Jasons Auftraggeber, Bootswerft in den Keys"
         },
-        "img": "api/entry_image.php?id=4&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=4&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 68,
           "y": 0,
@@ -359,11 +752,11 @@
         "credit": "Rockstar",
         "desc": "Lori Heder ist Brian Heders dritte Frau und arbeitet an seiner Seite auf der Bootswerft, dem Dreh- und Angelpunkt seiner Schmuggelgeschäfte. Im Hintergrund bleibt sie dabei nicht. In Trailer 2 ist sie im Umgang mit Sturmgewehr und Pistole zu sehen, eine Frau, die im Familiengeschäft handfest mit anpackt.",
         "fields": {
-          "Beziehung": "Brian Heders Frau",
           "Erstmals": "Trailer 2",
-          "Rolle": "Nebenfigur"
+          "Rolle": "Nebenfigur",
+          "Zugehörigkeit": "Frau von Brian Heder, Bootswerft"
         },
-        "img": "api/entry_image.php?id=5&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=5&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 52,
           "y": 22,
@@ -382,10 +775,11 @@
         "desc": "Boobie Ike ist eine echte Vice-City-Legende. Er hat das Straßengeschäft in ein legitimes Imperium verwandelt: Immobilien, den Stripclub Jack of Hearts und das Plattenlabel Only Raw Records, das er zusammen mit Dre'Quan Priest gegründet hat. Ike steht für den Aufstieg vom Hustler zum Unternehmer, eine Figur mit echtem Standing in der Stadt. Vorgestellt wurde er mit Trailer 2.",
         "fields": {
           "Erstmals": "Trailer 2",
+          "Herkunft": "Vice City",
           "Rolle": "Unternehmer",
-          "Umfeld": "Only Raw Records, Jack of Hearts"
+          "Zugehörigkeit": "Only Raw Records, Jack of Hearts"
         },
-        "img": "api/entry_image.php?id=6&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=6&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 48,
           "y": 44,
@@ -404,11 +798,10 @@
         "desc": "Dre'Quan Priest war laut Rockstar immer mehr Hustler als Gangster. Schon während er auf der Straße dealte, hatte er ein Ziel vor Augen: rein ins Musikgeschäft. Heute führt er zusammen mit Boobie Ike das Label Only Raw Records und hat das virale Rap-Duo Real Dimez unter Vertrag. Er steht für die Musikszene von Vice City, in der Straße und Business ineinandergreifen.",
         "fields": {
           "Erstmals": "Trailer 2",
-          "Label": "Only Raw Records",
-          "Managt": "Real Dimez",
-          "Rolle": "Label-Manager"
+          "Rolle": "Label-Manager",
+          "Zugehörigkeit": "Only Raw Records, managt Real Dimez"
         },
-        "img": "api/entry_image.php?id=7&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=7&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 100,
           "y": 0,
@@ -427,11 +820,11 @@
         "desc": "Bae-Luxe ist eine Hälfte des Rap-Duos Real Dimez. Zusammen mit Roxy ist sie in Leonida aufgewachsen. Seit der Highschool sind die beiden unzertrennlich und haben früh ein Talent fürs Hustlen bewiesen. Ihr viraler Hit DWNPLY liegt fünf Jahre zurück, auf den zweiten großen Durchbruch warten sie noch. Inzwischen stehen sie bei Dre'Quan Priests Label Only Raw Records unter Vertrag.",
         "fields": {
           "Erstmals": "Trailer 2",
-          "Gruppe": "Real Dimez",
-          "Label": "Only Raw Records",
-          "Rolle": "Rapperin"
+          "Herkunft": "Leonida",
+          "Rolle": "Rapperin",
+          "Zugehörigkeit": "Real Dimez (Only Raw Records)"
         },
-        "img": "api/entry_image.php?id=8&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=8&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 55,
           "y": 0,
@@ -450,11 +843,11 @@
         "desc": "Roxy ist die zweite Hälfte des Rap-Duos Real Dimez. Mit Bae-Luxe verbindet sie eine Freundschaft seit Highschool-Tagen und ein früh entdecktes Gespür fürs Geschäft. Der Hit DWNPLY machte die beiden vor fünf Jahren viral, seitdem warten sie auf den nächsten großen Coup. Heute laufen sie bei Only Raw Records unter Dre'Quan Priest.",
         "fields": {
           "Erstmals": "Trailer 2",
-          "Gruppe": "Real Dimez",
-          "Label": "Only Raw Records",
-          "Rolle": "Rapperin"
+          "Herkunft": "Leonida",
+          "Rolle": "Rapperin",
+          "Zugehörigkeit": "Real Dimez (Only Raw Records)"
         },
-        "img": "api/entry_image.php?id=9&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=9&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 26,
           "y": 10,
@@ -472,11 +865,11 @@
         "credit": "Rockstar",
         "desc": "Raul Bautista ist ein abgebrühter Bankräuber, ständig auf der Suche nach Leuten, die für den großen Gewinn das große Risiko gehen. Genau deshalb zieht er Jason und Lucia in seine Raubzüge, auf seiner Liste soll unter anderem die Sinfrontera National Bank stehen. Raul gilt als unberechenbar und schraubt mit jedem Coup den Einsatz höher. Einer, der den nächsten Bruch schon eine Nummer größer plant.",
         "fields": {
-          "Beziehung": "zieht Jason & Lucia in Überfälle",
           "Erstmals": "Trailer 2",
-          "Rolle": "Bankräuber"
+          "Rolle": "Bankräuber",
+          "Zugehörigkeit": "Zieht Jason und Lucia in Raubzüge"
         },
-        "img": "api/entry_image.php?id=10&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=10&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 60,
           "y": 0,
@@ -495,10 +888,10 @@
         "desc": "Phil betreibt Phil's Ammu-Nation und taucht in Trailer 2 in einem Werbespot für den Laden auf. Damit kehrt die Waffenladen-Kette Ammu-Nation aus den früheren GTA-Teilen zurück. Vieles deutet darauf hin, dass Phil eine Neuauflage von Phil Cassidy aus der 3D-Ära ist, diesmal jünger und mit beiden Armen. Ein Wiedersehen mit einem alten Bekannten, neu interpretiert.",
         "fields": {
           "Erstmals": "Trailer 2",
-          "Laden": "Ammu-Nation",
-          "Rolle": "Ladenbesitzer"
+          "Rolle": "Ladenbesitzer",
+          "Zugehörigkeit": "Phil's Ammu-Nation"
         },
-        "img": "api/entry_image.php?id=11&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=11&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 35,
           "y": 47,
@@ -518,9 +911,9 @@
         "fields": {
           "Erstmals": "Trailer 2",
           "Rolle": "Ermittler",
-          "Umfeld": "Polizei Leonida"
+          "Zugehörigkeit": "Polizei Leonida"
         },
-        "img": "api/entry_image.php?id=12&v=2026-07-13+11%3A33%3A10",
+        "img": "api/entry_image.php?id=12&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 46,
           "y": 0,
@@ -538,11 +931,11 @@
         "credit": "Rockstar",
         "desc": "Der Gold Chain Guy ist einer der ersten Meme-Stars aus dem GTA-6-Material: braungebrannt, oben ohne, mit dicker Goldkette am Strand von Vice Beach. In der Community wurde er im Nu zum Sinnbild des Florida Man. Eine Rolle in der Story ist nicht bekannt, er steht für den Look und die Stimmung, die Rockstar in Trailer 1 gesetzt hat. Sobald Trailer 3 oder Gameplay-Material mehr zeigt, ergänzen wir die Infos hier.",
         "fields": {
-          "Bekannt für": "Florida-Man-Meme",
+          "Bezug": "Florida-Man-Meme",
           "Erstmals": "Trailer 1",
           "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=13&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=13&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 51,
           "y": 15,
@@ -563,7 +956,7 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=14&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=14&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 48,
           "y": 36,
@@ -581,11 +974,11 @@
         "credit": "Rockstar",
         "desc": "Der Selfie Guy steht für die allgegenwärtige Selfie- und Social-Media-Kultur, die GTA 6 durch sein Leonida trägt. Als von Fans getaufter Trailer-NPC hat er keine belegte Hintergrundgeschichte. Kommende Trailer oder Gameplay-Material könnten das ändern, dann aktualisieren wir den Eintrag.",
         "fields": {
+          "Bezug": "Social-Media-Kultur",
           "Erstmals": "Trailer 2",
-          "Rolle": "Hintergrund-NPC",
-          "Steht für": "Social-Media-Kultur"
+          "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=15&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=15&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 46,
@@ -606,7 +999,7 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=16&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=16&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 47,
           "y": 43,
@@ -626,9 +1019,9 @@
         "fields": {
           "Erstmals": "Trailer 2",
           "Rolle": "Hintergrund-NPC",
-          "Umfeld": "Vice Beach"
+          "Zugehörigkeit": "Vice Beach"
         },
-        "img": "api/entry_image.php?id=17&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=17&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 39,
           "y": 51,
@@ -646,11 +1039,11 @@
         "credit": "Rockstar",
         "desc": "Der High Rollerz Mag Guy fällt durch seinen Bezug zur Auto- und Streetculture-Szene auf, benannt nach dem Magazin-Look aus dem Trailer. Belegte Fakten zu seiner Person liegen nicht vor. Sobald Gameplay-Material oder Trailer 3 mehr verraten, bauen wir den Eintrag aus.",
         "fields": {
+          "Bezug": "Auto- und Streetculture",
           "Erstmals": "Trailer 2",
-          "Rolle": "Hintergrund-NPC",
-          "Umfeld": "Auto- & Streetculture"
+          "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=18&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=18&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 47,
           "y": 58,
@@ -670,9 +1063,9 @@
         "fields": {
           "Erstmals": "Trailer 2",
           "Rolle": "Nebenfigur",
-          "Umfeld": "Nachtleben"
+          "Zugehörigkeit": "Nachtleben Vice City"
         },
-        "img": "api/entry_image.php?id=19&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=19&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 48,
           "y": 34,
@@ -693,7 +1086,7 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=20&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=20&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 53,
           "y": 21,
@@ -714,7 +1107,7 @@
           "Erstmals": "Trailer 2",
           "Rolle": "Nebenfigur"
         },
-        "img": "api/entry_image.php?id=21&v=2026-07-13+11%3A33%3A46",
+        "img": "api/entry_image.php?id=21&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 67,
@@ -732,12 +1125,11 @@
         "credit": "Rockstar",
         "desc": "Stefanie ist Sozialarbeiterin bei der Strafvollzugsbehörde von Leonida und für Lucias Bewährung zuständig. Ihr Satz „Lucia, weißt du, warum du hier bist?\" ist der allererste gesprochene Satz im gesamten GTA-6-Marketing, gleich zu Beginn von Trailer 1. Sie glaubt an zweite Chancen, genau die, die Lucia gerade bekommt.",
         "fields": {
-          "Bezug": "Lucias Bewährung",
           "Erstmals": "Trailer 1",
           "Rolle": "Bewährungshelferin",
-          "Umfeld": "Strafvollzug Leonida"
+          "Zugehörigkeit": "Strafvollzugsbehörde Leonida, zuständig für Lucias Bewährung"
         },
-        "img": "api/entry_image.php?id=206&v=2026-07-13+12%3A31%3A56",
+        "img": "api/entry_image.php?id=206&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 51,
           "y": 3,
@@ -755,10 +1147,11 @@
         "credit": "Rockstar",
         "desc": "Die Thrillbilly Mud Girl ist eine von Fans getaufte Figur aus dem Trailer-Material, angesiedelt in der schlammigen Offroad- und Redneck-Szene Leonidas. Offizielle Infos zu ihr gibt es nicht, sie steht für die überdrehte Hinterland-Kultur des Bundesstaats. Sobald Trailer 3 oder Gameplay mehr zeigt, ergänzen wir den Eintrag.",
         "fields": {
+          "Bezug": "Offroad- und Hinterland-Kultur",
           "Erstmals": "Trailer 2",
           "Rolle": "Hintergrund-NPC"
         },
-        "img": "api/entry_image.php?id=207&v=2026-07-13+12%3A31%3A56",
+        "img": "api/entry_image.php?id=207&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 20,
           "y": 66,
@@ -779,11 +1172,10 @@
         "desc": "Der Final Chapter MC ist ein Outlaw-Motorradclub aus Leonida, aktiv rund um die Region Ambrosia. Laut Kutten wurde er 1982 gegründet und hat eine klare interne Rangordnung bis hin zum Enforcer. Im Trailer taucht der Club in einer Szene mit seinen Bikes auf.",
         "fields": {
           "Erstmals": "Trailer 1",
-          "Gegründet": "1982",
           "Revier": "Ambrosia",
           "Typ": "Outlaw-MC"
         },
-        "img": "api/entry_image.php?id=180&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=180&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -802,10 +1194,9 @@
         "desc": "San4San ist eine haitianisch geprägte Straßengang. Der Name stammt aus dem haitianischen Kreol und steht für „Blut für Blut\". Emblem und Graffiti der Gang sind in beiden Trailern zu sehen.",
         "fields": {
           "Erstmals": "Trailer 1",
-          "Hintergrund": "haitianisch",
           "Typ": "Straßengang"
         },
-        "img": "api/entry_image.php?id=181&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=181&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -823,11 +1214,11 @@
         "credit": "Rockstar",
         "desc": "Die PTT Youngin$ sind eine laute, stark in Social Media aktive Gang aus Southside Vice City. Ihr Waffen- und Schmuggellager lässt sich in der Ultimate Edition überfallen. Sie stehen für die junge, vernetzte Straßenszene der Stadt.",
         "fields": {
-          "Erstmals": "Ultimate Edition",
+          "Bezug": "Ultimate-Edition-Bonus",
           "Revier": "Southside Vice City",
           "Typ": "Straßengang"
         },
-        "img": "api/entry_image.php?id=182&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=182&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -845,11 +1236,11 @@
         "credit": "Rockstar",
         "desc": "POACH steht für Protection of Animals and Controlled Hunting, eine Sumpf-Behörde der Grassrivers mit eigenen Fahrzeugen, Hovercrafts und Luftunterstützung. Sie ist eine Parodie realer Wildhüter- und Umweltschutzbehörden. In GTA-Manier wird die Institution dabei kräftig überzeichnet.",
         "fields": {
-          "Erstmals": "Trailer / offiziell",
+          "Erstmals": "Trailer",
           "Revier": "Grassrivers",
           "Typ": "Wildhüter-Behörde"
         },
-        "img": "api/entry_image.php?id=183&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=183&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -871,7 +1262,7 @@
           "Revier": "Vice City",
           "Typ": "Polizei"
         },
-        "img": "api/entry_image.php?id=184&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=184&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -889,11 +1280,11 @@
         "credit": "Rockstar",
         "desc": "Die Guardia Brothers sind eine in Leaks genannte kriminelle Fraktion Leonidas. Bestätigte Details gibt es bisher nicht. Wir ergänzen den Eintrag, sobald Offizielles vorliegt.",
         "fields": {
-          "Erstmals": "Leaks",
+          "Erstmals": "Leak",
           "Status": "unbestätigt",
           "Typ": "Kriminelle Fraktion"
         },
-        "img": "api/entry_image.php?id=185&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=185&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -911,11 +1302,11 @@
         "credit": "Rockstar",
         "desc": "Brian's Boat Works ist die Schmuggel-Operation rund um Brian Heders Bootswerft. In sie sind Jason und Cal Hampton verwickelt, sie bildet einen der frühen kriminellen Stränge der Kampagne. Die Werft ist Umschlagplatz und Tarnung zugleich.",
         "fields": {
+          "Anführer": "Brian Heder",
           "Erstmals": "Trailer 2",
-          "Kopf": "Brian Heder",
           "Typ": "Schmuggel-Umfeld"
         },
-        "img": "api/entry_image.php?id=186&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=186&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -937,7 +1328,7 @@
           "Erstmals": "Trailer 1",
           "Typ": "Prison Gangs"
         },
-        "img": "api/entry_image.php?id=187&v=2026-07-13+12%3A03%3A32",
+        "img": "api/entry_image.php?id=187&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -958,10 +1349,11 @@
         "desc": "Vice City ist die neonbeleuchtete Großstadt nach Vorbild Miamis und das Herzstück der Karte. Sie ist die zentrale Bühne von GTA 6, von den Art-Deco-Stränden bis zu den Wolkenkratzern der Innenstadt. Namensgeber und Sehnsuchtsort der Reihe seit dem Original von 2002.",
         "fields": {
           "Erstmals": "Trailer 1",
+          "Region": "Vice City",
           "Typ": "Metropole",
           "Vorbild": "Miami"
         },
-        "img": "api/entry_image.php?id=76&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=76&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -980,10 +1372,11 @@
         "desc": "Ocean Beach ist das Strandviertel von Vice City mit ausgeprägtem Art-Deco-Flair. Pastellfassaden, Palmen und Promenade prägen das Bild, angelehnt an Miamis South Beach.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Vice City",
           "Typ": "Stadtviertel",
           "Vorbild": "South Beach"
         },
-        "img": "api/entry_image.php?id=77&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=77&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 97,
           "y": 62,
@@ -1002,9 +1395,10 @@
         "desc": "Vice Beach ist der belebte Strand- und Promenadenabschnitt der Stadt. Hier tummeln sich die schrillen Strandtypen aus den Trailern, vom Gold Chain Guy bis zum Selfie-Publikum.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Vice City",
           "Typ": "Küstenstreifen"
         },
-        "img": "api/entry_image.php?id=78&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=78&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1022,11 +1416,12 @@
         "credit": "Rockstar",
         "desc": "Star Island ist eine exklusive Villen-Insel vor der Küste von Vice City. Hier wohnt das große Geld, abgeschirmt hinter Toren und Palmen. Vorbild ist die gleichnamige Promi-Insel in Miami.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Insel (Wohngegend)",
           "Vorbild": "Star Island (Miami)"
         },
-        "img": "api/entry_image.php?id=79&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=79&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 45,
           "y": 0,
@@ -1045,10 +1440,11 @@
         "desc": "Little Cuba ist ein von Miamis Little Havana inspiriertes Viertel, das kubanische Kultur, Musik und Gastronomie ins Straßenbild bringt. Es steht für die vielfältige, migrantisch geprägte Seite von Vice City.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Vice City",
           "Typ": "Stadtviertel",
           "Vorbild": "Little Havana (Miami)"
         },
-        "img": "api/entry_image.php?id=80&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=80&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 47,
           "y": 73,
@@ -1065,11 +1461,12 @@
         "cat": "Vice City",
         "desc": "Die Venetian Islands sind eine Wohn-Inselgruppe im Stadtgebiet, über Brücken verbunden. Sie orientieren sich an den realen Venetian Islands zwischen Miami und Miami Beach.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Inselgruppe",
           "Vorbild": "Venetian Islands (Miami)"
         },
-        "img": "api/entry_image.php?id=81&v=2026-07-20+15%3A44%3A08",
+        "img": "api/entry_image.php?id=81&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1088,10 +1485,11 @@
         "desc": "Die Leonida Keys sind eine Inselkette nach Vorbild der Florida Keys, verbunden durch lange Brücken über türkisfarbenes Wasser. Hier spielt ein Teil der frühen Kampagne, gereist wird viel über das Wasser. Es ist eine der sechs offiziell bestätigten Regionen Leonidas.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Leonida Keys",
           "Typ": "Inselkette",
           "Vorbild": "Florida Keys"
         },
-        "img": "api/entry_image.php?id=82&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=82&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1111,9 +1509,10 @@
         "fields": {
           "Bezug": "Jasons Zuhause",
           "Erstmals": "Trailer",
+          "Region": "Leonida Keys",
           "Typ": "Insel"
         },
-        "img": "api/entry_image.php?id=83&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=83&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1132,10 +1531,11 @@
         "desc": "Grassrivers ist das Everglades-artige Feuchtgebiet Leonidas, ein weites Sumpf- und Marschland mit dichter Vegetation. Airboats, Alligatoren und die Wildhüter-Behörde POACH prägen die Region. Sie ist eine der sechs bestätigten Regionen des Bundesstaats.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Grassrivers",
           "Typ": "Sumpfgebiet",
           "Vorbild": "Everglades"
         },
-        "img": "api/entry_image.php?id=84&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=84&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1153,10 +1553,11 @@
         "credit": "Rockstar",
         "desc": "Port Gellhorn ist eine industriell geprägte Hafenstadt im Westen von Leonida. Docks, Lagerhallen und Schwerindustrie geben ihr einen raueren Charakter als dem glänzenden Vice City. Eine der sechs offiziellen Regionen.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Port Gellhorn",
           "Typ": "Hafenstadt"
         },
-        "img": "api/entry_image.php?id=85&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=85&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1174,10 +1575,11 @@
         "credit": "Rockstar",
         "desc": "Gellhorn International ist der Flughafen bei Port Gellhorn. Als zweiter großer Luftfahrt-Knoten neben Vice City erweitert er die Reise- und Missionsmöglichkeiten im Westen.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Port Gellhorn",
           "Typ": "Flughafen"
         },
-        "img": "api/entry_image.php?id=86&v=2026-07-20+15%3A44%3A08",
+        "img": "api/entry_image.php?id=86&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1196,9 +1598,10 @@
         "desc": "Ambrosia ist eine landwirtschaftlich geprägte Region Leonidas, in der ein Wahlkampf läuft und eine Zuckerraffinerie steht. Sie zeigt die politische und ländliche Seite des Bundesstaats. Eine der sechs offiziellen Regionen.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Ambrosia",
           "Typ": "Region (ländlich)"
         },
-        "img": "api/entry_image.php?id=87&v=2026-07-15+23%3A05%3A49",
+        "img": "api/entry_image.php?id=87&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 55,
@@ -1216,10 +1619,11 @@
         "credit": "Rockstar",
         "desc": "Lake Leonida ist ein großer Binnensee im Landesinneren. Er dürfte ein Zentrum für Wassersport, Angeln und ruhige Erkundung abseits der Küste werden.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Natur & Hinterland",
           "Typ": "See"
         },
-        "img": "api/entry_image.php?id=89&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=89&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1237,10 +1641,11 @@
         "credit": "Rockstar",
         "desc": "Waning Sands ist eine trockene, sandige Landschaft im Landesinneren. Sie setzt einen kargen Kontrast zu den grünen Sümpfen und der tropischen Küste.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Natur & Hinterland",
           "Typ": "Trockenlandschaft"
         },
-        "img": "api/entry_image.php?id=90&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=90&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1257,7 +1662,8 @@
         "cat": "Natur & Hinterland",
         "desc": "Rockridge ist eine ländliche Ortschaft abseits der Großstadt. Solche Kleinstädte geben Leonida die bodenständige, oft schräge Hinterland-Atmosphäre.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Natur & Hinterland",
           "Typ": "Ortschaft"
         },
         "img": null,
@@ -1272,10 +1678,11 @@
         "cat": "Natur & Hinterland",
         "desc": "Hamlet ist eine kleine Siedlung im Hinterland Leonidas. Wie die anderen Dörfer steht sie für das Leben fernab der Neonlichter von Vice City.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Natur & Hinterland",
           "Typ": "Siedlung"
         },
-        "img": "api/entry_image.php?id=92&v=2026-07-20+15%3A44%3A08",
+        "img": "api/entry_image.php?id=92&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1293,10 +1700,11 @@
         "credit": "Rockstar",
         "desc": "Der VC International Airport ist der internationale Flughafen von Vice City. Als Luftdrehkreuz der Metropole ist er ein zentraler Punkt für Reisen und größere Missionen.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Flughafen"
         },
-        "img": "api/entry_image.php?id=93&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=93&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 63,
           "y": 5,
@@ -1314,7 +1722,8 @@
         "credit": "Rockstar",
         "desc": "Der VC Port ist der Seehafen von Vice City, Umschlagplatz für Fracht und ein naheliegender Schauplatz für Schmuggel und Überfälle. Ein industrielles Gegengewicht zu den Stränden.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Hafen"
         },
         "img": null,
@@ -1330,11 +1739,11 @@
         "credit": "Rockstar",
         "desc": "Der Stock Golf Club liegt in der Region um Ambrosia. Er passt zu möglichen Freizeitaktivitäten wie Golf und ist ein typischer Schauplatz für die gehobene, spießige Seite Leonidas.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
           "Region": "Ambrosia",
           "Typ": "Golfclub"
         },
-        "img": "api/entry_image.php?id=95&v=2026-07-20+15%3A44%3A08",
+        "img": "api/entry_image.php?id=95&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 69,
           "y": 56,
@@ -1353,9 +1762,10 @@
         "desc": "Downtown Vice City ist das Hochhaus-Zentrum der Stadt, mit Neon, Nachtleben und Wolkenkratzern. Hier schlägt das pulsierende Herz von Vice City, tagsüber Business, nachts Party. Das dichteste, vertikalste Stück der Karte.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Vice City",
           "Typ": "Innenstadt"
         },
-        "img": "api/entry_image.php?id=96&v=2026-07-13+12%3A08%3A20",
+        "img": "api/entry_image.php?id=96&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1377,7 +1787,7 @@
           "Region": "Mount Kalaga",
           "Typ": "Naturpark / Bergregion"
         },
-        "img": "api/entry_image.php?id=98&v=2026-07-13+12%3A11%3A22",
+        "img": "api/entry_image.php?id=98&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 51,
           "y": 68,
@@ -1395,11 +1805,12 @@
         "credit": "Rockstar",
         "desc": "La Perle ist das haitianisch geprägte Viertel von Vice City, angelehnt an Miamis Little Haiti. Der Name ist kreolisch für „die Perle\". Hier ist unter anderem die Straßengang San4San zu Hause, das Viertel bringt die haitianische Kultur ins Stadtbild.",
         "fields": {
-          "Erstmals": "Karte",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Stadtviertel",
           "Vorbild": "Little Haiti (Miami)"
         },
-        "img": "api/entry_image.php?id=208&v=2026-07-20+15%3A37%3A52",
+        "img": "api/entry_image.php?id=208&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1418,9 +1829,10 @@
         "desc": "Crosstown ist eines der Stadtviertel von Vice City, das in den Trailern auftaucht. Es steht für die dichteren, alltäglichen Wohn- und Geschäftsstraßen jenseits der Glamour-Strände. Nähere Details folgen mit mehr Material.",
         "fields": {
           "Erstmals": "Trailer",
+          "Region": "Vice City",
           "Typ": "Stadtviertel"
         },
-        "img": "api/entry_image.php?id=209&v=2026-07-20+15%3A37%3A52",
+        "img": "api/entry_image.php?id=209&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1437,8 +1849,9 @@
         "cat": "Vice City",
         "desc": "Tisha-Wocka ist ein Viertel von Vice City im Vice-Dale County. Bekannt ist es für den Tisha-Wocka-Flohmarkt mit seinen dreisten Marken-Fälschungen, ein typischer Seitenhieb auf die Konsumkultur. Es zeigt die schrille, wuselige Seite der Stadt.",
         "fields": {
-          "Bekannt für": "Flohmarkt",
-          "Erstmals": "Karte",
+          "Bezug": "Flohmarkt",
+          "Erstmals": "Offizielle Karte",
+          "Region": "Vice City",
           "Typ": "Stadtviertel"
         },
         "img": null,
@@ -1453,13 +1866,19 @@
       {
         "_id": 188,
         "cat": "Info",
+        "credit": "KI-generiert / ViceGuide / Rockstar",
         "desc": "Die offizielle Senderliste von GTA 6 ist noch nicht bekannt und wird bis zum Release ergänzt. Bestätigt sind bisher einzelne Songs aus den Trailern, etwa „Hot Together\" der Pointer Sisters von 1986. Sobald Rockstar die Radiosender und ihre Playlists enthüllt, bauen wir diese Rubrik aus.",
         "fields": {
           "Quelle": "Trailer 2",
           "Status": "Senderliste folgt",
           "Typ": "Übersicht"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=188&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.15
+        },
         "name": "Soundtrack-Hinweis",
         "seo": false,
         "slug": "soundtrack-hinweis",
@@ -1474,10 +1893,9 @@
         "fields": {
           "Genre": "Rock",
           "Interpret": "Tom Petty",
-          "Jahr": "1989",
-          "Quelle": "Trailer 1"
+          "Jahr": "1989"
         },
-        "img": "api/entry_image.php?id=189&v=2026-07-13+12%3A03%3A50",
+        "img": "api/entry_image.php?id=189&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1492,19 +1910,220 @@
       {
         "_id": 190,
         "cat": "Bestätigter Song",
+        "credit": "Reddit",
         "desc": "„Hot Together\" von den Pointer Sisters aus dem Jahr 1986 untermalte den zweiten Trailer von 2025. Der Song passt zur 80er-lastigen Vice-City-Stimmung. Er unterstreicht den Retro-Pop-Einschlag, den der Soundtrack neben dem Rock haben dürfte.",
         "fields": {
           "Genre": "Pop",
           "Interpret": "The Pointer Sisters",
-          "Jahr": "1986",
-          "Quelle": "Trailer 2"
+          "Jahr": "1986"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=190&v=2026-07-23+21%3A52%3A23",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.11
+        },
         "name": "Hot Together",
         "seo": false,
         "slug": "hot-together",
         "src": "Trailer 2",
         "sub": "The Pointer Sisters (1986)"
+      }
+    ],
+    "soundtrack": [
+      {
+        "_id": 229,
+        "cat": "Bestätigt",
+        "credit": "SoundCloud",
+        "desc": "Der Song aus dem ersten GTA-6-Trailer und damit der erste offiziell bestätigte Titel des Soundtracks. Tom Pettys Nummer von 1989 setzt den nostalgischen, sonnigen Ton, für den GTA 6 steht.",
+        "fields": {
+          "Interpret": "Tom Petty",
+          "Jahr": "1989",
+          "Status": "Bestätigt"
+        },
+        "img": "api/entry_image.php?id=229&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 44,
+          "y": 0,
+          "zoom": 1.07
+        },
+        "name": "Love is a Long Road",
+        "seo": false,
+        "slug": "love-is-a-long-road",
+        "src": "Trailer 1",
+        "sub": "Tom Petty"
+      },
+      {
+        "_id": 230,
+        "cat": "Bestätigt",
+        "credit": "Spotify",
+        "desc": "Von Rockstar für GTA 6 bestätigt. Der Pointer-Sisters-Track von 1986 passt in die 80er-Vice-City-Stimmung, die die Reihe seit dem Original prägt.",
+        "fields": {
+          "Interpret": "The Pointer Sisters",
+          "Jahr": "1986",
+          "Status": "Bestätigt"
+        },
+        "img": "api/entry_image.php?id=230&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.42
+        },
+        "name": "Hot Together",
+        "seo": false,
+        "slug": "hot-together",
+        "src": "Trailer 2",
+        "sub": "The Pointer Sisters"
+      },
+      {
+        "_id": 231,
+        "cat": "Bestätigt",
+        "credit": "YouTube",
+        "desc": "Jay Fergusons Klassiker aus den späten 70ern gehört zu den von Rockstar bestätigten Songs im GTA-6-Material.",
+        "fields": {
+          "Interpret": "Jay Ferguson",
+          "Jahr": "1977",
+          "Status": "Bestätigt"
+        },
+        "img": "api/entry_image.php?id=231&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 43,
+          "y": 52,
+          "zoom": 1.06
+        },
+        "name": "Thunder Island",
+        "seo": false,
+        "slug": "thunder-island",
+        "src": "Trailer",
+        "sub": "Jay Ferguson"
+      },
+      {
+        "_id": 232,
+        "cat": "Bestätigt",
+        "credit": "Spotify",
+        "desc": "Ein Kompa-Titel der haitianischen Band Zenglen, bestätigt für GTA 6. Er unterstreicht den karibischen Einschlag von Leonida und Vierteln wie Little Haiti.",
+        "fields": {
+          "Genre": "Kompa",
+          "Interpret": "Zenglen",
+          "Status": "Bestätigt"
+        },
+        "img": "api/entry_image.php?id=232&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
+        "name": "Child Support",
+        "seo": false,
+        "slug": "child-support",
+        "src": "Trailer",
+        "sub": "Zenglen"
+      },
+      {
+        "_id": 233,
+        "cat": "Bestätigt",
+        "credit": "Amazon",
+        "desc": "Wang Chungs 80er-Hit ist einer der bestätigten Songs. Wie ihn GTABoom listet, gehört er zur bislang gesicherten Auswahl des GTA-6-Soundtracks.",
+        "fields": {
+          "Interpret": "Wang Chung",
+          "Jahr": "1986",
+          "Status": "Bestätigt"
+        },
+        "img": "api/entry_image.php?id=233&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 0.59
+        },
+        "name": "Everybody Have Fun Tonight",
+        "seo": false,
+        "slug": "everybody-have-fun-tonight",
+        "src": "Trailer",
+        "sub": "Wang Chung"
+      },
+      {
+        "_id": 234,
+        "cat": "Angekündigt",
+        "credit": "HipHop.de",
+        "desc": "T-Pain hat selbst erklärt, mit Rockstar an GTA 6 gearbeitet zu haben. Ein konkreter Titel ist damit noch nicht bestätigt, die Beteiligung aber angekündigt.",
+        "fields": {
+          "Rolle": "Künstler",
+          "Status": "Angekündigt"
+        },
+        "img": "api/entry_image.php?id=234&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 45,
+          "y": 49,
+          "zoom": 1.26
+        },
+        "name": "T-Pain",
+        "seo": false,
+        "slug": "t-pain",
+        "src": "eigene Ankündigung",
+        "sub": "Beteiligung angekündigt"
+      },
+      {
+        "_id": 235,
+        "cat": "Angekündigt",
+        "credit": "Hindustian Times",
+        "desc": "Der Rapper ScHoolboy Q hat angekündigt, dass Musik von ihm in GTA 6 zu hören sein wird. Details zu Songs oder Sender stehen noch aus.",
+        "fields": {
+          "Rolle": "Künstler",
+          "Status": "Angekündigt"
+        },
+        "img": "api/entry_image.php?id=235&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.15
+        },
+        "name": "ScHoolboy Q",
+        "seo": false,
+        "slug": "schoolboy-q",
+        "src": "eigene Ankündigung",
+        "sub": "Beteiligung angekündigt"
+      },
+      {
+        "_id": 236,
+        "cat": "Angekündigt",
+        "credit": "Spotify",
+        "desc": "Neon Indian soll laut Berichten für die Radio-Songliste von GTA 6 mit Rockstar zusammengearbeitet haben. Bestätigt ist die Beteiligung, nicht der genaue Umfang.",
+        "fields": {
+          "Rolle": "Künstler",
+          "Status": "Angekündigt"
+        },
+        "img": "api/entry_image.php?id=236&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
+        "name": "Neon Indian",
+        "seo": false,
+        "slug": "neon-indian",
+        "src": "Bericht",
+        "sub": "Beteiligung angekündigt"
+      },
+      {
+        "_id": 237,
+        "cat": "Angekündigt",
+        "credit": "Spotify",
+        "desc": "Auch der Act Panama wird als Mitwirkender an der GTA-6-Musik genannt. Ein fertiger Titel ist noch nicht offiziell.",
+        "fields": {
+          "Rolle": "Künstler",
+          "Status": "Angekündigt"
+        },
+        "img": "api/entry_image.php?id=237&v=2026-07-23+22%3A55%3A50",
+        "imgfit": {
+          "x": 52,
+          "y": 40,
+          "zoom": 1
+        },
+        "name": "Panama",
+        "seo": false,
+        "slug": "panama",
+        "src": "Bericht",
+        "sub": "Beteiligung angekündigt"
       }
     ],
     "vehicles": [
@@ -1519,7 +2138,7 @@
           "Klasse": "Sportwagen",
           "Vorbild": "Chevrolet Malibu (späte 70er/frühe 80er)"
         },
-        "img": "api/entry_image.php?id=101&v=2026-07-13+11%3A52%3A52",
+        "img": "api/entry_image.php?id=101&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1538,11 +2157,10 @@
         "desc": "Der '95 Grotti Cheetah ist ein Supersportwagen im Ferrari-Stil, konkret im Geist der frühen 90er. Er ist als Bonus der Ultimate Edition dabei. Der Cheetah ist ein Dauergast der Reihe und steht hier in einer betont retro angehauchten Variante.",
         "fields": {
           "Bezug": "Ultimate-Edition-Bonus",
-          "Erstmals": "Ultimate Edition",
           "Klasse": "Supersportwagen",
           "Vorbild": "Ferrari (frühe 90er)"
         },
-        "img": "api/entry_image.php?id=102&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=102&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1565,7 +2183,7 @@
           "Klasse": "Sportwagen",
           "Vorbild": "Dodge Viper"
         },
-        "img": "api/entry_image.php?id=103&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=103&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1587,7 +2205,7 @@
           "Klasse": "Sportwagen",
           "Vorbild": "Chevrolet Corvette C7"
         },
-        "img": "api/entry_image.php?id=104&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=104&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1610,7 +2228,7 @@
           "Klasse": "Supersportwagen",
           "Vorbild": "Lamborghini"
         },
-        "img": "api/entry_image.php?id=105&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=105&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1632,7 +2250,7 @@
           "Klasse": "Luxus-SUV",
           "Vorbild": "Range Rover"
         },
-        "img": "api/entry_image.php?id=106&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=106&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1654,7 +2272,7 @@
           "Klasse": "Pickup",
           "Vorbild": "Ford F-150"
         },
-        "img": "api/entry_image.php?id=107&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=107&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1676,7 +2294,7 @@
           "Klasse": "SUV",
           "Vorbild": "Chevrolet Suburban"
         },
-        "img": "api/entry_image.php?id=108&v=2026-07-15+07%3A19%3A19",
+        "img": "api/entry_image.php?id=108&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1698,7 +2316,7 @@
           "Klasse": "Sportwagen",
           "Vorbild": "Mitsubishi Eclipse"
         },
-        "img": "api/entry_image.php?id=109&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=109&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1716,10 +2334,10 @@
         "credit": "Rockstar",
         "desc": "Das Enduro ist ein Geländemotorrad, das in Screenshots an Jasons Unterschlupf gesichtet wurde. Es passt zum Mix aus Sumpf, Küste und Hinterland, den Leonida bietet. Genauere Angaben stehen noch aus und folgen mit weiterem Material.",
         "fields": {
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Klasse": "Dirtbike"
         },
-        "img": "api/entry_image.php?id=110&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=110&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1740,7 +2358,7 @@
           "Erstmals": "Trailer",
           "Klasse": "Sportbike"
         },
-        "img": "api/entry_image.php?id=111&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=111&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1759,10 +2377,9 @@
         "desc": "Der Shitzu Squalo ist ein schnelles Motorboot und Teil der Ultimate Edition, laut Beschreibung sogar mit einer Waffenkiste an Bord. In einem Setting voller Wasserwege ist ein flottes Boot Gold wert.",
         "fields": {
           "Bezug": "Ultimate-Edition-Bonus",
-          "Erstmals": "Ultimate Edition",
           "Klasse": "Schnellboot"
         },
-        "img": "api/entry_image.php?id=112&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=112&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1781,10 +2398,9 @@
         "desc": "Das Crest Kayak ist ein kleines Paddelboot für die leise Fortbewegung übers Wasser, Teil des Ultimate-Sets. In den Sümpfen und Kanälen von Leonida bietet es sich für unauffällige Wege an.",
         "fields": {
           "Bezug": "Ultimate-Edition-Bonus",
-          "Erstmals": "Ultimate Edition",
           "Klasse": "Kajak"
         },
-        "img": "api/entry_image.php?id=113&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=113&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1803,11 +2419,10 @@
         "desc": "Der '67 Vapid Dominator Buggy ist ein umgebautes Muscle-Car im Buggy-Format, gemacht für sumpfiges Gelände. Er ist an die Paradise Garage gebunden und Teil der Ultimate Edition. Eine ungewöhnliche Mischung aus Klassiker und Sumpf-Werkzeug.",
         "fields": {
           "Bezug": "Paradise Garage",
-          "Erstmals": "Ultimate Edition",
           "Klasse": "Gelände-Buggy",
           "Vorbild": "Vapid Dominator (Muscle)"
         },
-        "img": "api/entry_image.php?id=114&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=114&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1829,7 +2444,7 @@
           "Klasse": "Geländewagen",
           "Vorbild": "Ford F-150 Raptor"
         },
-        "img": "api/entry_image.php?id=115&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=115&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1852,7 +2467,7 @@
           "Klasse": "Einsatzfahrzeug",
           "Vorbild": "Ford Taurus (Police Interceptor)"
         },
-        "img": "api/entry_image.php?id=116&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=116&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1874,7 +2489,7 @@
           "Erstmals": "Trailer 2",
           "Klasse": "Gepanzertes Einsatzfahrzeug"
         },
-        "img": "api/entry_image.php?id=117&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=117&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1893,10 +2508,9 @@
         "desc": "Die Tram ist eine öffentliche Straßenbahn, in die Spieler direkt einsteigen können. Sie gehört zum Nahverkehr, den Rockstar für Vice City bestätigt hat. Ein Detail, das die Stadt lebendig und benutzbar macht.",
         "fields": {
           "Bezug": "Nahverkehr",
-          "Erstmals": "offiziell",
           "Klasse": "ÖPNV"
         },
-        "img": "api/entry_image.php?id=118&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=118&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 100,
           "y": 62,
@@ -1917,7 +2531,7 @@
           "Erstmals": "Trailer 2",
           "Klasse": "Flugzeug"
         },
-        "img": "api/entry_image.php?id=119&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=119&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 51,
           "y": 6,
@@ -1936,10 +2550,10 @@
         "desc": "Das Airboat ist ein flaches Propellerboot für die Sümpfe der Grassrivers. In Screenshots ist es zusammen mit Alligatoren-Jägern zu sehen, ein klarer Fingerzeig auf die Everglades-artige Region von Leonida.",
         "fields": {
           "Bezug": "Grassrivers",
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Klasse": "Propellerboot"
         },
-        "img": "api/entry_image.php?id=120&v=2026-07-15+07%3A19%3A19",
+        "img": "api/entry_image.php?id=120&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1958,11 +2572,10 @@
         "desc": "Der Vapid Creado ist Jasons persönlicher Wagen und das Held-Fahrzeug von GTA 6, von Rockstar offiziell in-universe benannt. Optisch orientiert er sich an einem Ford Ranchero, also dem Coupé-Pickup-Zwitter mit Muscle-Charakter. Als Jasons Alltagswagen dürfte er über die Kampagne hinweg eine feste Rolle spielen.",
         "fields": {
           "Bezug": "Jasons Wagen",
-          "Erstmals": "offiziell",
           "Klasse": "Muscle / Coupé-Pickup",
           "Vorbild": "Ford Ranchero"
         },
-        "img": "api/entry_image.php?id=121&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=121&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -1980,11 +2593,11 @@
         "credit": "Rockstar",
         "desc": "Der Declasse Vigero ZX Cabrio ist ein modernes Muscle-Cabrio, angelehnt an den aktuellen Chevrolet Camaro. Es verbindet klassischen Muscle-Look mit offenem Fahren. Zu sehen war es in Promo-Material.",
         "fields": {
-          "Erstmals": "Promo",
+          "Erstmals": "Promo-Material",
           "Klasse": "Muscle-Cabrio",
           "Vorbild": "Chevrolet Camaro (aktuell)"
         },
-        "img": "api/entry_image.php?id=123&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=123&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2006,7 +2619,7 @@
           "Klasse": "Luxuslimousine",
           "Vorbild": "Cadillac Eldorado (1959)"
         },
-        "img": "api/entry_image.php?id=124&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=124&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2028,7 +2641,7 @@
           "Klasse": "Lowrider-Limousine",
           "Vorbild": "Buick Regal"
         },
-        "img": "api/entry_image.php?id=125&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=125&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 57,
@@ -2051,7 +2664,7 @@
           "Klasse": "Alltagslimousine",
           "Vorbild": "Ford Crown Victoria"
         },
-        "img": "api/entry_image.php?id=126&v=2026-07-15+07%3A19%3A19",
+        "img": "api/entry_image.php?id=126&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2069,11 +2682,11 @@
         "credit": "Rockstar",
         "desc": "Der Karin Asterope GZ ist eine fünftürige Sportlimousine, angelehnt an ein Nissan-Altima-Coupé. Sie taucht im Material der Ultimate Edition auf. Eine alltagstaugliche Limousine mit sportlichem Einschlag.",
         "fields": {
-          "Erstmals": "Ultimate Edition",
+          "Bezug": "Ultimate-Edition-Bonus",
           "Klasse": "Sportlimousine",
           "Vorbild": "Nissan Altima"
         },
-        "img": "api/entry_image.php?id=127&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=127&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 100,
           "y": 92,
@@ -2091,11 +2704,11 @@
         "credit": "Rockstar",
         "desc": "Der Pfister Astron ist ein kompakter Luxus-SUV im Stil eines Porsche Cayenne. Er steht für die gehobene, alltagstaugliche SUV-Ecke. Zu sehen war er in Promo-Material.",
         "fields": {
-          "Erstmals": "Promo",
+          "Erstmals": "Promo-Material",
           "Klasse": "Luxus-SUV",
           "Vorbild": "Porsche Cayenne"
         },
-        "img": "api/entry_image.php?id=128&v=2026-07-15+07%3A19%3A19",
+        "img": "api/entry_image.php?id=128&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2117,7 +2730,7 @@
           "Klasse": "Luxus-SUV",
           "Vorbild": "Lincoln Navigator"
         },
-        "img": "api/entry_image.php?id=129&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=129&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 57,
@@ -2139,7 +2752,7 @@
           "Klasse": "Gelände-SUV",
           "Vorbild": "Mercedes G-Klasse"
         },
-        "img": "api/entry_image.php?id=130&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=130&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2160,7 +2773,7 @@
           "Erstmals": "Trailer 1",
           "Klasse": "Motocross"
         },
-        "img": "api/entry_image.php?id=131&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=131&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2182,7 +2795,7 @@
           "Klasse": "Custom-Chopper",
           "Vorbild": "Harley-Davidson Softail"
         },
-        "img": "api/entry_image.php?id=132&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=132&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 48,
           "y": 26,
@@ -2204,7 +2817,7 @@
           "Klasse": "Jetski",
           "Vorbild": "Sea-Doo GTX"
         },
-        "img": "api/entry_image.php?id=133&v=2026-07-13+11%3A37%3A55",
+        "img": "api/entry_image.php?id=133&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2226,7 +2839,7 @@
           "Klasse": "Freizeitboot",
           "Vorbild": "Bayliner Trophy"
         },
-        "img": "api/entry_image.php?id=134&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=134&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2248,7 +2861,7 @@
           "Klasse": "Wasserflugzeug",
           "Vorbild": "DHC-2 Beaver"
         },
-        "img": "api/entry_image.php?id=135&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=135&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2271,7 +2884,7 @@
           "Marke": "Xero",
           "Vorbild": "Werbe-Blimp"
         },
-        "img": "api/entry_image.php?id=136&v=2026-07-15+07%3A19%3A19",
+        "img": "api/entry_image.php?id=136&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 51,
           "y": 36,
@@ -2289,11 +2902,11 @@
         "credit": "Rockstar",
         "desc": "Der Buckingham Shamal ist ein kleiner Geschäftsjet im Stil eines Learjet 60. Er steht für die vermögende, mobile Oberschicht von Vice City. Zu sehen war er in Promo-Bildern.",
         "fields": {
-          "Erstmals": "Promo",
+          "Erstmals": "Promo-Material",
           "Klasse": "Privatjet",
           "Vorbild": "Learjet 60"
         },
-        "img": "api/entry_image.php?id=137&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=137&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 49,
           "y": 47,
@@ -2312,10 +2925,9 @@
         "desc": "Metromule und Metrorail bilden Leonidas Schienennetz: ein landesweites Bahnsystem plus eine urbane Metro nach Vorbild des Miami-Nahverkehrs. Spieler können zusteigen und mitfahren. Das öffentliche Verkehrsnetz unterstreicht, wie sehr Rockstar die Welt als echten, benutzbaren Ort anlegt.",
         "fields": {
           "Bezug": "Nahverkehr Leonida",
-          "Erstmals": "offiziell",
           "Klasse": "Bahnnetz"
         },
-        "img": "api/entry_image.php?id=138&v=2026-07-13+11%3A49%3A26",
+        "img": "api/entry_image.php?id=138&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2335,12 +2947,11 @@
         "credit": "Rockstar",
         "desc": "Der Girardi ES9 ist Jasons Signaturpistole, graviert mit dem Schriftzug Sua Sponte, dem Motto der US Army Ranger. Das passt zu seiner Militärvergangenheit. Optisch orientiert sich die Waffe an einer Beretta 92FS, in der Ultimate Edition gibt es eine personalisierte Variante.",
         "fields": {
-          "Erstmals": "offiziell",
           "Nutzer": "Jason",
           "Typ": "Pistole",
           "Vorbild": "Beretta 92FS"
         },
-        "img": "api/entry_image.php?id=139&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=139&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 59,
@@ -2358,12 +2969,11 @@
         "credit": "Rockstar",
         "desc": "Der Klose K17 ist Lucias bevorzugte Pistole, verziert mit Rosen und ihrer Signatur. Sie ist im Stil einer Bersa Thunder 380 gehalten, also einer kompakten Selbstladepistole. Eine personalisierte Variante liegt der Ultimate Edition bei.",
         "fields": {
-          "Erstmals": "offiziell",
           "Nutzer": "Lucia",
           "Typ": "Pistole",
           "Vorbild": "Bersa Thunder 380"
         },
-        "img": "api/entry_image.php?id=140&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=140&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 90,
           "y": 51,
@@ -2385,7 +2995,7 @@
           "Typ": "Pistole",
           "Vorbild": "Colt M1911"
         },
-        "img": "api/entry_image.php?id=141&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=141&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2403,11 +3013,11 @@
         "credit": "Rockstar",
         "desc": "Der Morgan Revolver ist ein kräftiger Revolver im Stil eines Smith & Wesson 629. In der Ultimate Edition kommt er als His-and-Hers-Set für Jason und Lucia, also in zwei aufeinander abgestimmten Varianten. Ein Waffentyp mit Wucht statt Kadenz.",
         "fields": {
-          "Erstmals": "Ultimate Edition",
+          "Bezug": "Ultimate-Edition-Bonus",
           "Typ": "Revolver",
           "Vorbild": "Smith & Wesson 629"
         },
-        "img": "api/entry_image.php?id=142&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=142&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2430,7 +3040,7 @@
           "Typ": "Maschinenpistole",
           "Vorbild": "Heckler & Koch MP5"
         },
-        "img": "api/entry_image.php?id=143&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=143&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2445,12 +3055,18 @@
       {
         "_id": 144,
         "cat": "Maschinenpistolen",
+        "credit": "Rockstar",
         "desc": "Die Micro SMG ist eine besonders kompakte Maschinenpistole, gezeigt zur Bewerbung des tropischen Vice-City-Skins. Klein, handlich und typisch für die Reihe. Weitere Details folgen mit mehr Material.",
         "fields": {
-          "Erstmals": "Vintage-Pack",
+          "Bezug": "Vintage-Pack-Bonus",
           "Typ": "Kompakt-MP"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=144&v=2026-07-23+21%3A41%3A07",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.42
+        },
         "name": "Micro SMG",
         "seo": false,
         "slug": "micro-smg",
@@ -2463,11 +3079,11 @@
         "credit": "Rockstar",
         "desc": "Die Duke Arms Carbine ist ein Karabiner im M4-Stil, graviert mit dem Namen der Duke Arms Company, einem Hersteller, den Kenner aus Red Dead Redemption kennen. Es gibt zwei Varianten mit unterschiedlichen Aufsätzen. Ein netter Querverweis ins Rockstar-Universum.",
         "fields": {
-          "Erstmals": "Trailer / Screenshots",
+          "Erstmals": "Trailer",
           "Typ": "Sturmgewehr",
           "Vorbild": "M4-Karabiner"
         },
-        "img": "api/entry_image.php?id=145&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=145&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 72,
           "y": 50,
@@ -2489,7 +3105,7 @@
           "Typ": "Sturmgewehr",
           "Vorbild": "AK-47"
         },
-        "img": "api/entry_image.php?id=146&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=146&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2507,10 +3123,10 @@
         "credit": "Rockstar",
         "desc": "Das Bolt-Action Sniper ist ein Repetiergewehr mit großem Zielfernrohr, in Screenshots bei Jägern in den Wäldern zu sehen. Es zielt auf präzise Einzelschüsse über große Distanz. Passt zum bestätigten Jagd-System von Leonida.",
         "fields": {
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Typ": "Scharfschützengewehr"
         },
-        "img": "api/entry_image.php?id=147&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=147&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2528,10 +3144,10 @@
         "credit": "Rockstar",
         "desc": "Das Assault Sniper ist ein halbautomatisches Präzisionsgewehr, angesiedelt zwischen Battle Rifle und klassischem Scharfschützengewehr. Es verbindet Reichweite mit höherer Feuerrate. Für Spieler, die Präzision und Tempo zusammenbringen wollen.",
         "fields": {
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Typ": "Scharfschützengewehr"
         },
-        "img": "api/entry_image.php?id=148&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=148&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2553,7 +3169,7 @@
           "Typ": "Schrotflinte",
           "Vorbild": "Mossberg 590"
         },
-        "img": "api/entry_image.php?id=149&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=149&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2571,10 +3187,10 @@
         "credit": "Rockstar",
         "desc": "Die Double-Barreled Shotgun ist eine doppelläufige Flinte mit Holzfinish, das gut zum ländlichen Leonida passt. In einer Szene kommt sie sogar gegen einen Alligator zum Einsatz. Zwei Schuss, maximale Wucht.",
         "fields": {
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Typ": "Doppelflinte"
         },
-        "img": "api/entry_image.php?id=150&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=150&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 8,
           "y": 57,
@@ -2595,7 +3211,7 @@
           "Erstmals": "Trailer 2",
           "Typ": "Leichtes MG"
         },
-        "img": "api/entry_image.php?id=152&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=152&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2610,13 +3226,19 @@
       {
         "_id": 153,
         "cat": "Maschinenpistolen",
+        "credit": "Rockstar",
         "desc": "Die ERIS SMG ist eine grell lackierte, stark individualisierte Maschinenpistole aus dem Besitz eines Mitglieds der Gang PTT Youngin$. Sie zeigt, wie sehr Waffen in GTA 6 zum Ausdruck der jeweiligen Szene werden. In Screenshots war sie zu sehen.",
         "fields": {
           "Bezug": "PTT Youngin$",
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Typ": "Maschinenpistole"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=153&v=2026-07-23+21%3A46%3A04",
+        "imgfit": {
+          "x": 47,
+          "y": 21,
+          "zoom": 1
+        },
         "name": "ERIS SMG",
         "seo": false,
         "slug": "eris-smg",
@@ -2626,12 +3248,18 @@
       {
         "_id": 155,
         "cat": "Ausrüstung",
+        "credit": "Rockstar",
         "desc": "Das Ausrüstungsrad bündelt die Hilfsmittel jenseits der Waffen, von Kabelbindern über einen Immobilizer-Bypass bis zum Tracker-Störsender. Es ist ein deutlicher Hinweis auf tiefere Heist- und Stealth-Mechaniken im Stil von Red Dead Redemption 2. Die einzelnen Gadgets sind separat in dieser Rubrik gelistet.",
         "fields": {
-          "Erstmals": "Screenshots",
+          "Erstmals": "Screenshot",
           "Typ": "Ausrüstungssystem"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=155&v=2026-07-23+21%3A41%3A58",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
         "name": "Ausrüstung & Gadgets",
         "seo": false,
         "slug": "ausruestung-gadgets",
@@ -2648,7 +3276,7 @@
           "Typ": "Revolver",
           "Vorbild": "Colt Python"
         },
-        "img": "api/entry_image.php?id=156&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=156&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2663,13 +3291,19 @@
       {
         "_id": 157,
         "cat": "Maschinenpistolen",
+        "credit": "Rockstar",
         "desc": "Die Tactical SMG ist eine kompakte Maschinenpistole im Stil einer Steyr SPP und der Nachfolger der gleichnamigen Waffe aus GTA Online. In Promo-Material war sie zu sehen. Handlich und auf enge Räume ausgelegt.",
         "fields": {
-          "Erstmals": "Promo",
+          "Erstmals": "Promo-Material",
           "Typ": "Taktische MP",
           "Vorbild": "Steyr SPP"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=157&v=2026-07-23+21%3A41%3A07",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.98
+        },
         "name": "Tactical SMG",
         "seo": false,
         "slug": "tactical-smg",
@@ -2686,11 +3320,11 @@
           "Typ": "Halbautomatik-Büchse",
           "Vorbild": "Springfield M1A"
         },
-        "img": "api/entry_image.php?id=158&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=158&v=2026-07-23+21%3A46%3A46",
         "imgfit": {
-          "x": 50,
+          "x": 34,
           "y": 50,
-          "zoom": 1
+          "zoom": 1.11
         },
         "name": "Jagdgewehr (M1A-Stil)",
         "seo": false,
@@ -2709,7 +3343,7 @@
           "Typ": "Mehrschuss-Granatwerfer",
           "Vorbild": "Milkor MGL"
         },
-        "img": "api/entry_image.php?id=159&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=159&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2724,12 +3358,18 @@
       {
         "_id": 160,
         "cat": "Ausrüstung",
+        "credit": "Google",
         "desc": "Kabelbinder sind ein taktisches Werkzeug für Stealth-Situationen und Geiselnahmen, Teil des erweiterten Ausrüstungsrads. Sie deuten darauf hin, dass Überfälle in GTA 6 planbarer und vielschichtiger werden.",
         "fields": {
-          "Erstmals": "Trailer / Leak",
+          "Erstmals": "Trailer",
           "Typ": "Ausrüstung"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=160&v=2026-07-23+21%3A41%3A58",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.01
+        },
         "name": "Kabelbinder",
         "seo": false,
         "slug": "kabelbinder",
@@ -2739,12 +3379,18 @@
       {
         "_id": 161,
         "cat": "Ausrüstung",
+        "credit": "Invoxia",
         "desc": "Der Tracker-Störsender blockiert die Ortung und ist damit vor allem auf der Flucht bei hoher Fahndungsstufe nützlich. Er ist ein weiteres Indiz für eine tiefere Heist-Planung. Bislang stammt die Info aus Leak-Material.",
         "fields": {
           "Erstmals": "Leak",
           "Typ": "Ausrüstung"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=161&v=2026-07-23+21%3A46%3A04",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.01
+        },
         "name": "Tracker-Störsender",
         "seo": false,
         "slug": "tracker-stoersender",
@@ -2759,7 +3405,12 @@
           "Erstmals": "Leak",
           "Typ": "Ausrüstung"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=162&v=2026-07-23+21%3A46%3A04",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Dietrich-Set",
         "seo": false,
         "slug": "dietrich-set",
@@ -2773,11 +3424,11 @@
         "desc": "Die Service-Pistole ist eine klassische .45er im M1911-Stil, unter anderem von der Polizei bei einer Razzia getragen. Jason führt in Trailer 1 eine ähnliche Variante. Ein bodenständiger Dauerbrenner unter den Handfeuerwaffen.",
         "fields": {
           "Bezug": "Polizei",
-          "Erstmals": "Trailer / Screenshot",
+          "Erstmals": "Trailer",
           "Typ": "Pistole",
           "Vorbild": "Colt M1911"
         },
-        "img": "api/entry_image.php?id=163&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=163&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2795,11 +3446,11 @@
         "credit": "Rockstar",
         "desc": "Die Vintage-Pistole ist eine Handfeuerwaffe im Stil einer Taurus PT92, wie man sie schon aus GTA V kennt. In Promo-Artworks hält Jason genau dieses Modell. Ein optischer Rückgriff auf die jüngere Serienvergangenheit.",
         "fields": {
-          "Erstmals": "Promo-Art",
+          "Erstmals": "Promo-Material",
           "Typ": "Pistole",
           "Vorbild": "Taurus PT92"
         },
-        "img": "api/entry_image.php?id=164&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=164&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2814,13 +3465,19 @@
       {
         "_id": 165,
         "cat": "Gewehre",
+        "credit": "Rockstar",
         "desc": "Der SWAT-Karabiner ist ein rot-weiß-blaues Behördengewehr aus der Sequenz mit Phil's Ammu-Nation, angelehnt an eine SIG-Plattform. Es steht für die schwer bewaffnete Seite der Strafverfolgung. In Trailer-Material war es zu sehen.",
         "fields": {
           "Erstmals": "Trailer",
           "Typ": "Behörden-Gewehr",
           "Vorbild": "SIG-Plattform"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=165&v=2026-07-23+21%3A41%3A07",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.19
+        },
         "name": "SWAT-Karabiner (SIG-Stil)",
         "seo": false,
         "slug": "swat-karabiner-sig-stil",
@@ -2837,7 +3494,7 @@
           "Typ": "Militärgewehr",
           "Vorbild": "M16/AR-Familie"
         },
-        "img": "api/entry_image.php?id=166&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=166&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2859,7 +3516,7 @@
           "Typ": "Panzerabwehr",
           "Vorbild": "RPG-7"
         },
-        "img": "api/entry_image.php?id=167&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=167&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2877,10 +3534,9 @@
         "credit": "Rockstar",
         "desc": "Die Handgranate ist die Standard-Splittergranate, seit jeher Teil des GTA-Arsenals. Offiziell gezeigt wurde sie noch nicht, ihre Rückkehr gilt aber als sehr wahrscheinlich. Details reichen wir nach, sobald sie bestätigt ist.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Splittergranate"
         },
-        "img": "api/entry_image.php?id=168&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=168&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2898,10 +3554,9 @@
         "credit": "Rockstar",
         "desc": "Der Molotow-Cocktail ist ein improvisierter Brandsatz und ein Dauerbrenner der Serie. Er passt bestens zum chaotischen Straßenkampf von Vice City. Bestätigt ist er noch nicht, dürfte aber kaum fehlen.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Brandsatz"
         },
-        "img": "api/entry_image.php?id=169&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=169&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2922,7 +3577,7 @@
           "Erstmals": "Trailer",
           "Typ": "Nahkampf"
         },
-        "img": "api/entry_image.php?id=170&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=170&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2940,10 +3595,9 @@
         "credit": "Rockstar",
         "desc": "Die Machete ist eine schwere Klingenwaffe, die gut zu Sumpf und Straße von Leonida passt. Als GTA-Klassiker ist ihre Rückkehr naheliegend. Offiziell bestätigt ist sie noch nicht.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Nahkampf"
         },
-        "img": "api/entry_image.php?id=171&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=171&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2961,10 +3615,9 @@
         "credit": "Rockstar",
         "desc": "Das Kampfmesser ist eine kompakte Klinge für schnelle, leise Angriffe. Es passt zur Stealth-Seite, die GTA 6 stärker betont. Konkrete Angaben folgen, sobald es offiziell auftaucht.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Nahkampf"
         },
-        "img": "api/entry_image.php?id=172&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=172&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -2985,7 +3638,7 @@
           "Erstmals": "Trailer",
           "Typ": "Werkzeug / Nahkampf"
         },
-        "img": "api/entry_image.php?id=173&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=173&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 52,
           "y": 100,
@@ -3006,7 +3659,7 @@
           "Erstmals": "Screenshot",
           "Typ": "Nahkampf"
         },
-        "img": "api/entry_image.php?id=174&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=174&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3027,7 +3680,7 @@
           "Erstmals": "Screenshot",
           "Typ": "Nahkampf"
         },
-        "img": "api/entry_image.php?id=175&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=175&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 39,
           "y": 51,
@@ -3048,7 +3701,7 @@
           "Erstmals": "Leak",
           "Typ": "Ausrüstung"
         },
-        "img": "api/entry_image.php?id=176&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=176&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3063,12 +3716,18 @@
       {
         "_id": 177,
         "cat": "Ausrüstung",
+        "credit": "KI-generiert / ViceGuide",
         "desc": "Der Wegfahrsperren-Bypass umgeht die Wegfahrsperre und ermöglicht schnellen Fahrzeugdiebstahl. Er deutet auf detailliertere Diebstahl-Mechaniken hin. Die Info stammt bislang aus Leak-Material.",
         "fields": {
           "Erstmals": "Leak",
           "Typ": "Ausrüstung"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=177&v=2026-07-23+21%3A46%3A04",
+        "imgfit": {
+          "x": 50,
+          "y": 41,
+          "zoom": 1.12
+        },
         "name": "Wegfahrsperren-Bypass",
         "seo": false,
         "slug": "wegfahrsperren-bypass",
@@ -3081,14 +3740,13 @@
         "credit": "Rockstar",
         "desc": "Der Fallschirm dient für Sprünge aus großer Höhe und ist seit GTA V fester Bestandteil des Arsenals. Seine Rückkehr gilt als gesetzt. Details folgen, sobald er offiziell auftaucht.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Ausrüstung"
         },
-        "img": "api/entry_image.php?id=178&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=178&v=2026-07-23+21%3A46%3A46",
         "imgfit": {
-          "x": 50,
+          "x": 0,
           "y": 50,
-          "zoom": 1
+          "zoom": 1.28
         },
         "name": "Fallschirm",
         "seo": false,
@@ -3102,10 +3760,9 @@
         "credit": "Rockstar",
         "desc": "Das Fernglas dient zum Auskundschaften aus der Ferne und ist besonders vor Raubüberfällen nützlich. Es passt zur stärkeren Planungs- und Stealth-Ausrichtung von GTA 6. Bestätigt ist es noch nicht.",
         "fields": {
-          "Erstmals": "erwartet",
           "Typ": "Ausrüstung"
         },
-        "img": "api/entry_image.php?id=179&v=2026-07-13+11%3A55%3A31",
+        "img": "api/entry_image.php?id=179&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3129,7 +3786,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Sümpfe (Grassrivers)"
         },
-        "img": "api/entry_image.php?id=22&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=22&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3152,7 +3809,7 @@
           "Lebensraum": "Feuchtgebiete",
           "Status": "invasiv"
         },
-        "img": "api/entry_image.php?id=23&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=23&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3173,7 +3830,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Wald & Feld"
         },
-        "img": "api/entry_image.php?id=24&v=2026-07-22+07%3A15%3A26",
+        "img": "api/entry_image.php?id=24&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 0,
           "y": 100,
@@ -3196,7 +3853,7 @@
           "Lebensraum": "Küste & Stadt",
           "Status": "invasiv"
         },
-        "img": "api/entry_image.php?id=25&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=25&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3218,7 +3875,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Flüsse & Brackwasser"
         },
-        "img": "api/entry_image.php?id=26&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=26&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3239,7 +3896,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "offene Küstengewässer"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=27&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 0.91
+        },
         "name": "Blauflossen-Thun",
         "seo": false,
         "slug": "blauflossen-thun",
@@ -3256,7 +3918,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Küste (Keys)"
         },
-        "img": "api/entry_image.php?id=28&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=28&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 68,
           "y": 52,
@@ -3277,7 +3939,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Süßgewässer"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=29&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 0.8
+        },
         "name": "Flusskrebs",
         "seo": false,
         "slug": "flusskrebs",
@@ -3294,7 +3961,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Lagunen & Feuchtgebiete"
         },
-        "img": "api/entry_image.php?id=30&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=30&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3316,7 +3983,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Strand & Hafen"
         },
-        "img": "api/entry_image.php?id=31&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=31&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3337,7 +4004,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Küste"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=32&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Brauner Pelikan",
         "seo": false,
         "slug": "brauner-pelikan",
@@ -3354,7 +4026,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Flüsse & Ufer"
         },
-        "img": "api/entry_image.php?id=33&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=33&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3376,7 +4048,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Hinterland & Wald"
         },
-        "img": "api/entry_image.php?id=34&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=34&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3398,11 +4070,11 @@
           "Erstmals": "Trailer",
           "Lebensraum": "abgelegenes Hochland"
         },
-        "img": "api/entry_image.php?id=35&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=35&v=2026-07-23+22%3A07%3A01",
         "imgfit": {
           "x": 50,
           "y": 50,
-          "zoom": 1.15
+          "zoom": 1
         },
         "name": "Puma",
         "seo": false,
@@ -3420,7 +4092,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Parks & Wald"
         },
-        "img": "api/entry_image.php?id=36&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=36&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3442,7 +4114,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=37&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=37&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3464,7 +4136,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=38&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=38&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 49,
           "y": 45,
@@ -3486,10 +4158,10 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=39&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=39&v=2026-07-23+22%3A07%3A01",
         "imgfit": {
-          "x": 49,
-          "y": 76,
+          "x": 50,
+          "y": 50,
           "zoom": 1
         },
         "name": "Chihuahua",
@@ -3508,7 +4180,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=40&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=40&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3529,7 +4201,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Weiden & Farmen"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=41&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.28
+        },
         "name": "Kuh",
         "seo": false,
         "slug": "kuh",
@@ -3545,7 +4222,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Feuchtgebiete"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=42&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 47,
+          "y": 25,
+          "zoom": 1
+        },
         "name": "Frosch",
         "seo": false,
         "slug": "frosch",
@@ -3562,7 +4244,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Küstengewässer"
         },
-        "img": "api/entry_image.php?id=43&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=43&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3584,7 +4266,12 @@
           "Lebensraum": "tiefe Gewässer",
           "Status": "gefährlich"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=44&v=2026-07-23+22%3A01%3A14",
+        "imgfit": {
+          "x": 49,
+          "y": 91,
+          "zoom": 1
+        },
         "name": "Tigerhai",
         "seo": false,
         "slug": "tigerhai",
@@ -3594,6 +4281,7 @@
       {
         "_id": 45,
         "cat": "Fische & Meerestiere",
+        "credit": "Rockstar",
         "desc": "Der Weiße Hai ist der Apex-Räuber der Ozeanzonen und wurde rund um den Reveal in Material gesichtet. Beim Tauchen ist er eine reale Gefahr.",
         "fields": {
           "Art": "Great White Shark",
@@ -3601,7 +4289,12 @@
           "Lebensraum": "offener Ozean",
           "Status": "gefährlich"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=45&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.16
+        },
         "name": "Weißer Hai",
         "seo": false,
         "slug": "weisser-hai",
@@ -3611,6 +4304,7 @@
       {
         "_id": 46,
         "cat": "Säugetiere",
+        "credit": "Rockstar",
         "desc": "Der Florida-Panther ist eine seltene, scheue Großkatze und in offiziellen Screenshots zu sehen. In der Realität ist die Art stark gefährdet, was ihr im Spiel besonderes Gewicht gibt.",
         "fields": {
           "Art": "Florida Panther",
@@ -3618,7 +4312,12 @@
           "Lebensraum": "Wald & Sumpfrand",
           "Status": "selten/gefährdet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=46&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.09
+        },
         "name": "Florida-Panther",
         "seo": false,
         "slug": "florida-panther",
@@ -3633,10 +4332,10 @@
         "fields": {
           "Art": "White-tailed Deer",
           "Bezug": "Jagd-System",
-          "Erstmals": "Screenshot / Trailer",
+          "Erstmals": "Trailer",
           "Lebensraum": "Wald"
         },
-        "img": "api/entry_image.php?id=47&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=47&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3658,7 +4357,7 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt & Vorort"
         },
-        "img": "api/entry_image.php?id=48&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=48&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 50,
@@ -3679,7 +4378,12 @@
           "Erstmals": "Screenshot",
           "Lebensraum": "Feuchtgebiete & Ufer"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=49&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 44,
+          "y": 50,
+          "zoom": 1.33
+        },
         "name": "Reiher",
         "seo": false,
         "slug": "reiher",
@@ -3695,7 +4399,12 @@
           "Erstmals": "Screenshot",
           "Lebensraum": "Feuchtgebiete"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=50&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Rosalöffler",
         "seo": false,
         "slug": "rosaloeffler",
@@ -3712,7 +4421,12 @@
           "Lebensraum": "Gewässer & Sumpf",
           "Status": "invasiv"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=51&v=2026-07-23+22%3A08%3A14",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.15
+        },
         "name": "Nutria",
         "seo": false,
         "slug": "nutria",
@@ -3728,7 +4442,12 @@
           "Erstmals": "Trailer",
           "Lebensraum": "Feuchtgebiete"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=52&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Stockente",
         "seo": false,
         "slug": "stockente",
@@ -3742,10 +4461,10 @@
         "desc": "Der Rottweiler wird auf einem Poster im Trailer angedeutet. Als klassische GTA-Hunderasse steht er in der Tradition von Chop aus GTA 5.",
         "fields": {
           "Art": "Rottweiler",
-          "Erstmals": "Poster",
+          "Erstmals": "Promo-Material",
           "Lebensraum": "Stadt"
         },
-        "img": "api/entry_image.php?id=53&v=2026-07-22+07%3A15%3A26",
+        "img": "api/entry_image.php?id=53&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 36,
           "y": 51,
@@ -3760,13 +4479,19 @@
       {
         "_id": 54,
         "cat": "Haustiere",
+        "credit": "Rockstar",
         "desc": "Der Zwergpinscher ist ein kleiner Hund, der im Trailer neben NPCs am Strand unterwegs ist. Man muss schon genau hinschauen, um ihn zu entdecken.",
         "fields": {
           "Art": "Miniature Pinscher",
           "Erstmals": "Trailer",
           "Lebensraum": "Stadt & Strand"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=54&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Zwergpinscher",
         "seo": false,
         "slug": "zwergpinscher",
@@ -3776,13 +4501,19 @@
       {
         "_id": 55,
         "cat": "Vögel",
+        "credit": "Rockstar",
         "desc": "Die Stadttaube war in Leak-Material von 2022 zu sehen. In früheren GTA-Teilen dienten Tauben als Sammelobjekte, eine ähnliche Rolle ist denkbar.",
         "fields": {
           "Art": "Pigeon",
           "Erstmals": "Leak",
           "Lebensraum": "Stadt"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=55&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.16
+        },
         "name": "Taube",
         "seo": false,
         "slug": "taube",
@@ -3798,7 +4529,12 @@
           "Erstmals": "Leak",
           "Lebensraum": "Stadt"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=56&v=2026-07-23+22%3A08%3A14",
+        "imgfit": {
+          "x": 67,
+          "y": 52,
+          "zoom": 1.14
+        },
         "name": "Ratte",
         "seo": false,
         "slug": "ratte",
@@ -3815,7 +4551,12 @@
           "Lebensraum": "Vorort & Wald",
           "Status": "unbestätigt"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=57&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.22
+        },
         "name": "Stinktier",
         "seo": false,
         "slug": "stinktier",
@@ -3825,14 +4566,19 @@
       {
         "_id": 58,
         "cat": "Säugetiere",
+        "credit": "Rockstar",
         "desc": "Der Florida-Schwarzbär kommt in Floridas Wäldern real vor und wäre als gefährliche Wildtier-Begegnung im Hochland naheliegend. Bestätigt ist er bisher nicht.",
         "fields": {
           "Art": "Florida Black Bear",
-          "Erstmals": "erwartet",
           "Lebensraum": "Wald & Hochland",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=58&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.12
+        },
         "name": "Florida-Schwarzbär",
         "seo": false,
         "slug": "florida-schwarzbaer",
@@ -3849,7 +4595,12 @@
           "Lebensraum": "Seen & Flüsse",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=59&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Forellenbarsch",
         "seo": false,
         "slug": "forellenbarsch",
@@ -3866,7 +4617,12 @@
           "Lebensraum": "Küste & Mangroven",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=60&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Snook",
         "seo": false,
         "slug": "snook",
@@ -3876,6 +4632,7 @@
       {
         "_id": 61,
         "cat": "Fische & Meerestiere",
+        "credit": "Outdoor Life",
         "desc": "Der Tarpon ist ein großer, kampfstarker Sportfisch und ein Aushängeschild von Floridas Angelkultur. Für ein Angel-System wäre er der Traumfang schlechthin.",
         "fields": {
           "Art": "Atlantic Tarpon",
@@ -3883,7 +4640,12 @@
           "Lebensraum": "Küste",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=61&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Tarpon",
         "seo": false,
         "slug": "tarpon",
@@ -3900,7 +4662,12 @@
           "Lebensraum": "Golfgewässer (Grund)",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=62&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Zackenbarsch",
         "seo": false,
         "slug": "zackenbarsch",
@@ -3917,7 +4684,12 @@
           "Lebensraum": "warme Küstengewässer",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=63&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 47,
+          "y": 0,
+          "zoom": 1.02
+        },
         "name": "Seekuh",
         "seo": false,
         "slug": "seekuh",
@@ -3934,7 +4706,12 @@
           "Lebensraum": "offene Küstengewässer",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=64&v=2026-07-23+21%3A57%3A02",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.14
+        },
         "name": "Mantarochen",
         "seo": false,
         "slug": "mantarochen",
@@ -3951,7 +4728,12 @@
           "Lebensraum": "offener Ozean",
           "Status": "unbestätigt"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=65&v=2026-07-23+22%3A01%3A14",
+        "imgfit": {
+          "x": 76,
+          "y": 51,
+          "zoom": 1.13
+        },
         "name": "Wal",
         "seo": false,
         "slug": "wal",
@@ -3967,7 +4749,12 @@
           "Lebensraum": "Hochland (Mount Kalaga)",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=66&v=2026-07-23+22%3A11%3A58",
+        "imgfit": {
+          "x": 43,
+          "y": 49,
+          "zoom": 1.57
+        },
         "name": "Weißkopfseeadler",
         "seo": false,
         "slug": "weisskopfseeadler",
@@ -3983,7 +4770,12 @@
           "Lebensraum": "Küste & Feuchtgebiete",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=67&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1
+        },
         "name": "Fischadler",
         "seo": false,
         "slug": "fischadler",
@@ -3993,13 +4785,19 @@
       {
         "_id": 68,
         "cat": "Vögel",
+        "credit": "Vecteezy",
         "desc": "Der Weiße Ibis ist ein Watvogel mit gebogenem Schnabel und ein häufiger Anblick in Floridas Parks und Feuchtgebieten. Er gehört zur typischen Vogelkulisse der Region.",
         "fields": {
           "Art": "American White Ibis",
           "Lebensraum": "Parks & Feuchtgebiete",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=68&v=2026-07-23+22%3A11%3A58",
+        "imgfit": {
+          "x": 18,
+          "y": 53,
+          "zoom": 1.11
+        },
         "name": "Weißer Ibis",
         "seo": false,
         "slug": "weisser-ibis",
@@ -4009,13 +4807,19 @@
       {
         "_id": 69,
         "cat": "Vögel",
+        "credit": "Rockstar",
         "desc": "Der Kormoran ist ein tauchender Wasservogel an Küsten und Seen. Häufig sitzt er mit ausgebreiteten Flügeln auf Pfählen, um zu trocknen.",
         "fields": {
           "Art": "Cormorant",
           "Lebensraum": "Küste & Seen",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=69&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.15
+        },
         "name": "Kormoran",
         "seo": false,
         "slug": "kormoran",
@@ -4031,7 +4835,12 @@
           "Lebensraum": "offenes Land",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=70&v=2026-07-23+22%3A10%3A47",
+        "imgfit": {
+          "x": 37,
+          "y": 52,
+          "zoom": 1.13
+        },
         "name": "Truthahngeier",
         "seo": false,
         "slug": "truthahngeier",
@@ -4041,13 +4850,19 @@
       {
         "_id": 71,
         "cat": "Säugetiere",
+        "credit": "Rockstar",
         "desc": "Der Kojote ist ein Wildhund der ländlichen und vorstädtischen Zonen und ein nachtaktiver Jäger. In den Randgebieten Leonidas wäre er gut aufgehoben.",
         "fields": {
           "Art": "Coyote",
           "Lebensraum": "Land & Vorort",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=71&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 53,
+          "y": 100,
+          "zoom": 1
+        },
         "name": "Kojote",
         "seo": false,
         "slug": "kojote",
@@ -4063,7 +4878,12 @@
           "Lebensraum": "Wald & Sumpf",
           "Status": "invasiv/erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=72&v=2026-07-23+22%3A11%3A58",
+        "imgfit": {
+          "x": 26,
+          "y": 51,
+          "zoom": 1.33
+        },
         "name": "Wildschwein",
         "seo": false,
         "slug": "wildschwein",
@@ -4079,7 +4899,12 @@
           "Lebensraum": "Vorort",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=73&v=2026-07-23+22%3A08%3A14",
+        "imgfit": {
+          "x": 37,
+          "y": 57,
+          "zoom": 1.21
+        },
         "name": "Opossum",
         "seo": false,
         "slug": "opossum",
@@ -4089,13 +4914,19 @@
       {
         "_id": 74,
         "cat": "Säugetiere",
+        "credit": "Rockstar",
         "desc": "Das Kaninchen ist ein kleiner Pflanzenfresser an Feldern und Waldrändern. Solche Kleintiere gehören in GTA und Red Dead traditionell zur belebten Fauna.",
         "fields": {
           "Art": "Rabbit",
           "Lebensraum": "Feld & Waldrand",
           "Status": "erwartet"
         },
-        "img": null,
+        "img": "api/entry_image.php?id=74&v=2026-07-23+22%3A07%3A01",
+        "imgfit": {
+          "x": 50,
+          "y": 50,
+          "zoom": 1.57
+        },
         "name": "Kaninchen",
         "seo": false,
         "slug": "kaninchen",
@@ -4112,7 +4943,7 @@
           "Lebensraum": "Farmen & Land",
           "Status": "erwartet"
         },
-        "img": "api/entry_image.php?id=75&v=2026-07-13+12%3A00%3A37",
+        "img": "api/entry_image.php?id=75&v=2026-07-23+17%3A46%3A37",
         "imgfit": {
           "x": 50,
           "y": 0,

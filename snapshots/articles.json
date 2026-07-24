@@ -2,6 +2,166 @@
   "articles": [
     {
       "author": null,
+      "cat": "story",
+      "content": [
+        "Die Musik von GTA 6 hat zwei Seiten. Auf der einen der lizenzierte Soundtrack mit echten Songs, auf der anderen eine erfundene Musikszene mitten in der Story. Diese zweite Seite ist ungewöhnlich tief ausgearbeitet und hängt direkt an mehreren Hauptfiguren.",
+        "### Only Raw Records, das Label im Zentrum",
+        "Only Raw Records ist ein Hip-Hop-Label in Vice City. Laut den offiziellen Rockstar-Bios führen es Dre'Quan Priest als Kopf und der Unternehmer Boobie Ike gemeinsam. Ike finanziert das Label über seinen Stripclub Jack of Hearts und dessen Nebengeschäfte. Dre'Quan wird als jemand beschrieben, der immer mehr Hustler als Gangster war und den Sprung ins Musikgeschäft als eigentliches Ziel hatte.",
+        "### Real Dimez und DWNPLY",
+        "Auf dem Roster steht das weibliche Rap-Duo Real Dimez, bestehend aus Bae-Luxe und Roxy. Die beiden machen seit der Highschool zusammen Musik, ihr viraler Hit liegt einige Jahre zurück, auf den zweiten großen Durchbruch warten sie noch. Dazu kommt der lokale Rapper DWNPLY. Wichtig zur Unterscheidung: diese Acts sind fiktiv, Teil der Spielwelt, nicht des echten Soundtracks.",
+        "table:Act|Art|Verbindung\nOnly Raw Records|Plattenlabel|Dre'Quan Priest und Boobie Ike\nReal Dimez|Rap-Duo|Bae-Luxe und Roxy, bei Only Raw\nDWNPLY|Rapper|Only Raw Records\nJack of Hearts|Stripclub|Boobie Ike, finanziert das Label",
+        "### Der echte Soundtrack ist eine eigene Sache",
+        "Davon getrennt steht der lizenzierte Soundtrack mit realen Songs. Rockstar hat bislang unter anderem Love is a Long Road von Tom Petty, Hot Together von den Pointer Sisters und Everybody Have Fun Tonight von Wang Chung bestätigt. Mehrere Künstler wie T-Pain und ScHoolboy Q haben zudem selbst eine Beteiligung angekündigt, wie GTABoom laufend zusammenträgt. Die bestätigten Sender und Songs sammeln wir separat in der Radio-Datenbank.",
+        "### Was das über GTA 6 verrät",
+        "Rockstar erfindet hier ein ganzes Label mit Backstory, Künstlern und Geldflüssen, statt einfach eine Playlist abzuspielen. Das zeigt die Richtung. Musik ist in Leonida Teil der Story, nicht bloß Kulisse. Die Figuren der Szene findest du in der Charaktere-Datenbank, die Labels und Clubs unter Marken & Unternehmen.",
+        "faq:Sind Real Dimez und DWNPLY echte Künstler?|Nein, sie sind fiktive Figuren der GTA-6-Welt und stehen so in den offiziellen Rockstar-Bios. Der lizenzierte Soundtrack mit echten Songs ist davon getrennt.",
+        "faq:Wer steckt hinter Only Raw Records?|Das fiktive Label wird laut Rockstar von Dre'Quan Priest und dem Unternehmer Boobie Ike geführt. Ike finanziert es über seinen Stripclub Jack of Hearts.",
+        "faq:Welche echten Songs sind für GTA 6 bestätigt?|Bestätigt sind unter anderem Love is a Long Road von Tom Petty, Hot Together von den Pointer Sisters und Everybody Have Fun Tonight von Wang Chung. Weitere Künstler haben eine Beteiligung angekündigt."
+      ],
+      "credit": "Rockstar",
+      "date": "2026-07-23T21:33",
+      "id": "gta-6-musik-szene",
+      "img": "api/article_image.php?id=gta-6-musik-szene&v=2026-07-23+19%3A42%3A57",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "Rockstar hat für GTA 6 ein komplettes fiktives Plattenlabel gebaut, Only Raw Records, und verankert es samt Künstlern direkt in den offiziellen Charakter-Bios.",
+      "meta": "Story",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "Rockstar Games: GTA VI (offizielle Bios)",
+          "url": "https://www.rockstargames.com/VI"
+        },
+        {
+          "title": "GTABoom: GTA 6 Soundtrack Tracker",
+          "url": "https://www.gtaboom.com/gta-6-soundtrack/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Die In-World-Musikszene stammt aus den offiziellen Rockstar-Bios. Beim lizenzierten Soundtrack ist bisher nur ein Teil bestätigt.",
+      "summary": "Die erfundene Musikszene von GTA 6 rund um Only Raw Records, Real Dimez und DWNPLY, direkt aus Rockstars Charakter-Bios.",
+      "title": "GTA 6 Musik: Only Raw Records und Leonidas Szene",
+      "tldr": [
+        "Only Raw Records ist ein fiktives Label aus Rockstars Charakter-Bios, geführt von Dre'Quan Priest und Boobie Ike.",
+        "Die In-Game-Acts Real Dimez und DWNPLY sind fiktiv, nicht Teil des lizenzierten Soundtracks.",
+        "Der echte Soundtrack ist getrennt, bestätigt sind Songs von Tom Petty, den Pointer Sisters und Wang Chung."
+      ],
+      "updated": "2026-07-23 19:42:57"
+    },
+    {
+      "author": null,
+      "cat": "story",
+      "content": [
+        "Leonida ist voll von Marken, aber keine davon ist echt. Take-Two-Chef Strauss Zelnick hat klargestellt, dass GTA 6 auf echte Produktplatzierung verzichtet und stattdessen eigene, parodistische Marken einsetzt. Das reicht von Fast-Food-Ketten über Getränke bis zum Nachrichtensender.",
+        "### Die Rückkehrer aus der Serie",
+        "Viele Marken sind alte Bekannte. Die Hähnchen-Kette Cluckin' Bell, die Limonaden eCola und Sprunk im ewigen Cola-Krieg, das Billigbier Pißwasser, die Waffenladen-Kette Ammu-Nation und der Nachrichtensender Weazel News gehören seit Jahren zur Reihe und kehren in Leonida zurück. Auch die Apple-Parodie iFruit ist wieder dabei, diesmal ergänzt um Fruit Pay.",
+        "### Neu in Leonida",
+        "Dazu kommen frische Marken, die erstmals im GTA-6-Material auftauchen. Die Orangenlimonade Fizz und die Stapelchips Jesters sind in Trailer 2 und auf Screenshots zu sehen. Sie fügen sich nahtlos in die Werbeflächen-Satire ein, für die die Reihe bekannt ist.",
+        "table:Marke|Typ|Reales Vorbild\nCluckin' Bell|Fast-Food|KFC und Popeyes\neCola|Getränk|Coca-Cola\nSprunk|Getränk|Sprite\nJesters|Snack|Pringles\nAmmu-Nation|Waffenladen|US-Waffengeschäfte\nWeazel News|Nachrichten|Fox News\niFruit|Elektronik|Apple",
+        "### Warum die Fake-Marken zählen",
+        "Die erfundenen Marken sind nicht nur Deko, sie sind ein Kernstück des GTA-Humors. Weazel News parodiert reißerische US-Kabelnachrichten, Cluckin' Bell die Fast-Food-Kultur, Ammu-Nation die amerikanische Waffenlobby. Wer genauer nachschlagen will, findet jede Marke mit Vorbild und Einordnung in unserer Marken & Unternehmen-Datenbank.",
+        "faq:Gibt es in GTA 6 echte Marken oder Produktwerbung?|Nein. Take-Two-Chef Strauss Zelnick hat bestätigt, dass GTA 6 ausschließlich fiktive, parodistische Marken nutzt und auf echte Produktplatzierung verzichtet.",
+        "faq:Welche Marken kehren aus früheren GTA-Teilen zurück?|Unter anderem Cluckin' Bell, eCola, Sprunk, Pißwasser, Ammu-Nation, Weazel News und iFruit sind alte Bekannte der Reihe und in Leonida wieder dabei.",
+        "faq:Welche Marken sind neu in GTA 6?|Neu im Material sind zum Beispiel die Limonade Fizz und die Chips-Marke Jesters, beide in Trailer 2 und auf Screenshots zu sehen."
+      ],
+      "credit": "KI-generiert / ViceGuide / Rockstar",
+      "date": "2026-07-23T21:33",
+      "id": "gta-6-marken-firmen",
+      "img": "api/article_image.php?id=gta-6-marken-firmen&v=2026-07-23+19%3A42%3A57",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "In GTA 6 gibt es keine echte Produktwerbung, Take-Two-Chef Strauss Zelnick hat bestätigt, dass Rockstar ausschließlich eigene, erfundene Marken nutzt.",
+      "meta": "Story",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "GTABase: GTA 6 Übersicht",
+          "url": "https://www.gtabase.com/gta-6/"
+        },
+        {
+          "title": "GamesRadar: GTA 6",
+          "url": "https://www.gamesradar.com/games/grand-theft-auto/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Ein Teil der Marken ist im Material bestätigt, andere sind als Serien-Rückkehrer erwartet. Details je Marke in der Datenbank.",
+      "summary": "Alle bekannten In-World-Marken von GTA 6, von Cluckin' Bell bis Weazel News, mit realem Vorbild und ehrlicher Einordnung.",
+      "title": "GTA 6 Marken: Die Firmen und Labels von Leonida",
+      "tldr": [
+        "GTA 6 nutzt laut Take-Two-Chef Zelnick ausschließlich fiktive Marken, keine echte Produktwerbung.",
+        "Klassiker wie Cluckin' Bell, eCola, Sprunk, Ammu-Nation und Weazel News kehren zurück.",
+        "Neu dabei sind unter anderem die Limonade Fizz und die Chips-Marke Jesters."
+      ],
+      "updated": "2026-07-23 19:42:57"
+    },
+    {
+      "author": null,
+      "cat": "news",
+      "content": [
+        "Rockstar hat für GTA 6 bis heute keine offizielle Waffenliste herausgegeben. Alles Gesicherte stammt aus den beiden Trailern und den offiziellen Screenshots. PC Gamer zählt daraus rund 19 klar erkennbare Schusswaffen, dazu kommen Nahkampfwaffen, Wurfwaffen und Ausrüstung. Wir trennen hier sauber, was wirklich zu sehen war und was bislang nur Erwartung aus früheren Teilen ist.",
+        "### Die bestätigten Waffen auf einen Blick",
+        "Diese Waffen sind in Trailer- oder Screenshot-Material aufgetaucht, die meisten mit einem klar erkennbaren realen Vorbild. Die Tabelle lässt sich per Klick auf eine Spalte sortieren.",
+        "table:Waffe|Klasse|Reales Vorbild|Quelle\nGirardi ES9|Pistole|Beretta 92FS|Trailer 2\nCapo|Pistole|Colt M1911|Trailer 1\nKlose K17|Pistole|Bersa Thunder 380|Screenshot\nMorgan Revolver|Revolver|Smith & Wesson 629|Ultimate Edition\nMustang Revolver|Revolver|Colt Python|Screenshot\nMP5|Maschinenpistole|Heckler & Koch MP5|Trailer 2\nDuke Arms Carbine|Sturmgewehr|M4-Karabiner|Trailer\nAK-Variante|Sturmgewehr|AK-47|Trailer\nSWAT-Karabiner|Behörden-Gewehr|SIG-Plattform|Trailer\nCombat MG|Leichtes MG|M249|Trailer 2\nGranatwerfer|Schwere Waffe|Milkor MGL|Trailer 2\nPump-Action Shotgun|Schrotflinte|Mossberg 590|Trailer",
+        "Die komplette Liste mit Einzelseiten, Bildern und Filtern findest du in unserer [[/waffen/|Waffen-Datenbank]].",
+        "### Pistolen und Revolver",
+        "Die Pistolen sind bisher am besten belegt. Jason zieht in Trailer 2 eine an der Beretta 92FS orientierte Pistole, im Spiel als Girardi ES9 geführt, und feuert sie auch aus dem fahrenden Auto. Lucia greift in einem Screenshot zur Klose K17, die in der Ultimate Edition ein besonderes Finish bekommt. Dazu kommen zwei kräftige Revolver mit Vice-City-Design, laut GamesRadar ebenfalls ein Ultimate-Edition-Extra.",
+        "### Maschinenpistolen und Gewehre",
+        "Das Herzstück der bisherigen Action ist die MP5. Beide Hauptfiguren tragen sie in der Raubszene zu Beginn von Trailer 2, Jasons Variante mit Red-Dot-Visier. An Gewehren zeigt das Material bislang eine AK-Variante, einen M4-nahen Karabiner und ein SIG-artiges Behörden-Gewehr, wie GamesRadar aus den Szenen zusammenträgt.",
+        "### Schwere Waffen, Scharfschützen und Schrotflinten",
+        "Im Ammu-Nation-Werbespot aus Trailer 2 hebt der Ladenbesitzer ein leichtes MG hoch, das dem Combat MG aus GTA 5 gleicht. Ebenfalls in Trailer 2 taucht ein Mehrschuss-Granatwerfer im Stil der Milkor MGL auf. Scharfschützengewehre und eine Pump-Action-Shotgun sind über Screenshots belegt, ohne dass Rockstar Details genannt hat.",
+        "### Nahkampf, Wurfwaffen und Ausrüstung",
+        "Aus dem Trailer-Material sind ein Baseballschläger und ein Hammer klar zu sehen, weitere Nahkampfwaffen wie Machete und Kampfmesser gelten als gesetzt, sind aber noch nicht gezeigt. Bei Wurfwaffen wie Handgranate und Molotow sowie bei Ausrüstung wie Fallschirm und Fernglas stützen wir uns auf die Serientradition, nicht auf einen bestätigten GTA-6-Auftritt.",
+        "### Was noch aussteht",
+        "Ein guter Teil der kursierenden Ausrüstung, etwa Dietrich-Sets, Tracker-Störsender oder ein Wegfahrsperren-Bypass, stammt aus dem Leak-Material von 2022 und ist damit unbestätigt. Wir führen solche Einträge bewusst als Gerücht, bis Rockstar sie zeigt. Eine belastbare Gesamtzahl gibt es erst, wenn das Spiel da ist oder Rockstar eine Liste veröffentlicht.",
+        "faq:Hat Rockstar eine offizielle GTA-6-Waffenliste veröffentlicht?|Nein. Rockstar hat bis heute keine offizielle Liste bestätigt. Alle bekannten Waffen stammen aus der Analyse der Trailer und offiziellen Screenshots, wie sie PC Gamer und GamesRadar zusammentragen.",
+        "faq:Welche Waffen sind in der Ultimate Edition exklusiv?|Bekannt sind ein besonderes Finish für die Klose-K17-Pistole und zwei Revolver mit Vice-City-Design. Sie sind ein Vorbesteller- und Ultimate-Edition-Extra, kein eigenes Waffenarsenal.",
+        "faq:Wie viele Waffen hat GTA 6?|Eine gesicherte Zahl steht nicht fest. PC Gamer kommt aktuell auf rund 19 klar erkennbare Schusswaffen aus dem Material, dazu Nahkampf- und Wurfwaffen. Die endgültige Menge zeigt sich erst zum Release am 19. November 2026."
+      ],
+      "credit": "Rockstar",
+      "date": "2026-07-23T12:00",
+      "id": "gta-6-waffen-ueberblick",
+      "img": "api/article_image.php?id=gta-6-waffen-ueberblick&v=2026-07-23+19%3A42%3A57",
+      "imgfit": {
+        "x": 50,
+        "y": 50,
+        "zoom": 1
+      },
+      "lead": "In Trailer 2 tragen Jason und Lucia eine an der MP5 orientierte Maschinenpistole, der bislang klarste Blick auf das Waffenarsenal von GTA 6.",
+      "meta": "Überblick",
+      "pinned": false,
+      "sources": [
+        {
+          "title": "PC Gamer: GTA 6 weapons list",
+          "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-weapons-list/"
+        },
+        {
+          "title": "GamesRadar: All GTA 6 weapons so far",
+          "url": "https://www.gamesradar.com/games/grand-theft-auto/gta-6-weapons/"
+        },
+        {
+          "title": "GTABase: GTA 6 Weapons",
+          "url": "https://www.gtabase.com/gta-6/weapons/"
+        }
+      ],
+      "status": "mixed",
+      "statusnote": "Rockstar hat keine offizielle Waffenliste bestätigt. Diese Übersicht beruht auf der Analyse der Trailer und offiziellen Screenshots.",
+      "summary": "Alle bisher in Trailern und Screenshots gezeigten GTA-6-Waffen mit realem Vorbild, sortierbar und ehrlich eingeordnet.",
+      "title": "GTA 6 Waffen: Alle bestätigten Waffen im Überblick",
+      "tldr": [
+        "Rockstar hat keine offizielle Waffenliste, alles stammt aus Trailer- und Screenshot-Analyse.",
+        "Rund 19 Schusswaffen sind klar erkennbar, viele mit realem Vorbild wie MP5, AK und Beretta 92FS.",
+        "Ultimate Edition bringt ein Klose-K17-Finish und zwei Vice-City-Revolver."
+      ],
+      "updated": "2026-07-23 19:42:57"
+    },
+    {
+      "author": null,
       "cat": "leaks",
       "content": [
         "Die Kennzeichen mit dem Kürzel GL und dem Zusatz USA tauchen im zweiten Trailer, in offiziellen Screenshots und schon im großen Leak von 2022 auf. Das ist der Ausgangspunkt für eine der hartnäckigsten Theorien der Community: dass Rockstar neben Leonida einen zweiten Bundesstaat in die Karte packt. Bestätigt ist das nicht. Die Schilder sind echt, ein spielbares Gloriana ist es bisher nicht.",
@@ -293,6 +453,7 @@
         "Es bleibt nicht bei den beiden. Datenbanken wie GTABase führen über zwanzig gesichtete Arten. An Land etwa Florida-Panther, Wildschwein und Leguan. In der Luft Flamingo, Pelikan und Reiher. Im Wasser Meeresschildkröte, Hai und Aal. Das ist eine deutlich dichtere Fauna als in früheren Teilen.",
         "### Was das fürs Spiel heißt",
         "Sicher ist das Sichtbare, offen bleibt das Spielerische. Wie Sportskeeda betont, ist ein Tier im Trailer noch keine bestätigte Spielmechanik. Ob man jagen, tauchen oder Tiere nur als Kulisse erlebt, hat Rockstar nicht gesagt. Die gepflegte Artenliste steht in unserer Wildtier-Datenbank, mehr zur Spielwelt in unserer [[die-karte-von-gta-6|Kartenübersicht]] und der [[gta-6-alles-was-wir-wissen|großen GTA-6-Übersicht]].",
+        "Alle gesichteten Arten mit Lebensraum und Quelle findest du in unserer [[/wildtiere/|Wildtiere-Datenbank]].",
         "faq:Welche Tiere gibt es in GTA 6?|In den Trailern wurden über zwanzig Arten gesichtet, darunter Alligator, Delfin, Flamingo, Pelikan, Meeresschildkröte, Hai, Florida-Panther, Wildschwein und Leguan.",
         "faq:Kann man in GTA 6 jagen oder mit Tieren interagieren?|Das ist offen. Rockstar hat keine Tier-Spielmechanik offiziell bestätigt. Die Tiere sind bislang nur in Trailern und Bildern zu sehen.",
         "faq:Gibt es Alligatoren in GTA 6?|Ja, der Alligator ist mehrfach in offiziellem Material zu sehen, unter anderem in den Sümpfen von Grassrivers und in einer Ladenszene."
@@ -300,7 +461,7 @@
       "credit": "Rockstar",
       "date": "2026-07-19T09:02",
       "id": "gta-6-wildtiere-leonida",
-      "img": "api/article_image.php?id=gta-6-wildtiere-leonida&v=2026-07-19+07%3A18%3A32",
+      "img": "api/article_image.php?id=gta-6-wildtiere-leonida&v=2026-07-23+19%3A39%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -328,7 +489,7 @@
         "Insgesamt haben Fans über zwanzig Arten in offiziellem Material entdeckt, von Flamingo bis Florida-Panther.",
         "Gesichtet ist nicht gleich bestätigt: Rockstar hat keine Tier-Spielmechanik offiziell benannt."
       ],
-      "updated": "2026-07-19 07:18:32"
+      "updated": "2026-07-23 19:39:26"
     },
     {
       "author": null,
@@ -343,6 +504,7 @@
         "In der Luft deuten die Sichtungen auf eine breite Palette hin, von kleinen Wasserflugzeugen bis zu Privatjets, dazu mehrere Hubschrauber. Rockstar zeigt in den Trailern immer wieder Luftaufnahmen über Vice City, ein Hinweis darauf, dass der Luftraum wieder eine eigene Spielwiese wird.",
         "### Gesichtet ist nicht bestätigt",
         "Ein Fahrzeug in einem Trailer zu sehen, heißt noch nicht, dass es fahrbar ist oder welche Rolle es spielt. Die großen Listen sind Fan-Fleißarbeit aus Standbildern, kein offizieller Katalog. Belastbar wird das erst mit dem Spiel. Die vollständige, gepflegte Aufstellung findest du in unserer Fahrzeug-Datenbank, den Gesamtstand zu GTA 6 in der [[gta-6-alles-was-wir-wissen|großen Übersicht]].",
+        "Die einzelnen Fahrzeuge mit Klasse und realem Vorbild pflegen wir in der [[/fahrzeuge/|Fahrzeug-Datenbank]].",
         "faq:Wie viele Fahrzeuge hat GTA 6?|In offiziellem Material sind über 200 Fahrzeuge aufgetaucht. Zum Launch werden über 300 erwartet, eine offizielle Endzahl hat Rockstar aber nicht genannt.",
         "faq:Gibt es in GTA 6 neue Fahrzeugtypen?|Ja, neu für die Serie ist das Airboat, ein Sumpfboot mit Heckpropeller, passend zu den Feuchtgebieten von Leonida.",
         "faq:Sind alle gesichteten Fahrzeuge bestätigt?|Nein. Viele stammen aus Standbildern der Trailer. Dass ein Fahrzeug zu sehen ist, sagt noch nichts über seine Rolle oder Fahrbarkeit im fertigen Spiel."
@@ -350,7 +512,7 @@
       "credit": "Rockstar",
       "date": "2026-07-19T09:02",
       "id": "gta-6-fahrzeuge-ueberblick",
-      "img": "api/article_image.php?id=gta-6-fahrzeuge-ueberblick&v=2026-07-19+07%3A18%3A32",
+      "img": "api/article_image.php?id=gta-6-fahrzeuge-ueberblick&v=2026-07-23+19%3A39%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -382,7 +544,7 @@
         "Neu für die Serie ist das Airboat, ein Sumpfboot passend zu den Feuchtgebieten von Leonida.",
         "Gesichtet heißt nicht bestätigt: die genaue Spielrolle vieler Fahrzeuge bleibt offen."
       ],
-      "updated": "2026-07-19 07:18:32"
+      "updated": "2026-07-23 19:39:26"
     },
     {
       "author": null,
@@ -857,7 +1019,7 @@
       "credit": "KI-generiert / ViceGuide",
       "date": "2026-07-18T21:57",
       "id": "gta-6-spielzeit-wie-lang",
-      "img": "api/article_image.php?id=gta-6-spielzeit-wie-lang&v=2026-07-21+08%3A39%3A17",
+      "img": "api/article_image.php?id=gta-6-spielzeit-wie-lang&v=2026-07-23+17%3A53%3A10",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -865,7 +1027,7 @@
       },
       "lead": "Rockstar hat zur Spielzeit von GTA 6 keine Zahl genannt, die kursierenden Schätzungen zur Hauptstory reichen von rund 45 bis 75 Stunden.",
       "meta": "Story-Analyse",
-      "pinned": true,
+      "pinned": false,
       "sources": [
         {
           "title": "ComicBook: GTA 6 story reportedly shorter than RDR2",
@@ -885,7 +1047,7 @@
         "Die 75-Stunden-Angabe stammt von einem anonymen Insider ohne Erfolgsbilanz, vorsichtigere Schätzungen liegen bei 45 bis 50 Stunden.",
         "Das Duo aus Jason und Lucia könnte die Kampagne durch getrennte Missionsstränge verlängern."
       ],
-      "updated": "2026-07-21 08:39:17"
+      "updated": "2026-07-23 17:53:10"
     },
     {
       "author": null,
@@ -1810,7 +1972,7 @@
       "credit": "KI-generiert / ViceGuide / Rockstar",
       "date": "2026-07-16T00:26",
       "id": "gta-6-deutsche-synchronisation",
-      "img": "api/article_image.php?id=gta-6-deutsche-synchronisation&v=2026-07-21+21%3A37%3A15",
+      "img": "api/article_image.php?id=gta-6-deutsche-synchronisation&v=2026-07-23+17%3A53%3A12",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1818,7 +1980,7 @@
       },
       "lead": "Eine deutsche Sprachausgabe für GTA 6 ist höchst unwahrscheinlich, deutsche Untertitel dagegen so gut wie sicher.",
       "meta": "News",
-      "pinned": false,
+      "pinned": true,
       "sources": [
         {
           "title": "GamePro (Kolumne zur Synchronisation)",
@@ -1838,7 +2000,7 @@
         "Deutsche Untertitel und Menütexte sind dagegen so gut wie sicher.",
         "Die Community wünscht sich eine Synchro deutlich, an Rockstars Linie ändert das bislang nichts."
       ],
-      "updated": "2026-07-21 21:37:15"
+      "updated": "2026-07-23 17:53:12"
     },
     {
       "author": null,
@@ -1918,7 +2080,7 @@
       "credit": "KI-generiert / Viceguide / Rockstar",
       "date": "2026-07-16T00:25",
       "id": "gta-6-altersfreigabe-usk",
-      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-21+21%3A28%3A53",
+      "img": "api/article_image.php?id=gta-6-altersfreigabe-usk&v=2026-07-23+17%3A53%3A22",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -1926,7 +2088,7 @@
       },
       "lead": "GTA 6 wird in Deutschland aller Voraussicht nach USK 18 tragen, wie jeder große Teil der Reihe zuvor.",
       "meta": "News",
-      "pinned": false,
+      "pinned": true,
       "sources": [
         {
           "title": "fettspielen: GTA 6 Altersfreigabe USK 18",
@@ -1954,7 +2116,7 @@
         "Von GTA 3 bis GTA 5 war die Reihe durchgängig USK 18, ein Bruch wäre eine echte Überraschung.",
         "International schon sichtbar: In den USA ist GTA 6 als ESRB Mature 17+ eingestuft."
       ],
-      "updated": "2026-07-21 21:28:53"
+      "updated": "2026-07-23 17:53:22"
     },
     {
       "author": null,
@@ -2170,7 +2332,7 @@
       "credit": "Rockstar",
       "date": "2026-07-15T18:34",
       "id": "gta-6-vorbestellen",
-      "img": "api/article_image.php?id=gta-6-vorbestellen&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=gta-6-vorbestellen&v=2026-07-23+17%3A53%3A21",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2178,7 +2340,7 @@
       },
       "lead": "Wer GTA 6 vorbestellen will, hat seit dem 25. Juni 2026 die Wahl zwischen zwei Editionen und sichert sich bei früher Bestellung einen Bonus.",
       "meta": "Vorbestellung",
-      "pinned": true,
+      "pinned": false,
       "sources": [
         {
           "title": "Rockstar Games Newswire",
@@ -2198,7 +2360,7 @@
         "Die Standard Edition kostet rund 80 Euro, die Ultimate rund 100 Euro, deren Extras sind noch nicht vollständig aufgeschlüsselt.",
         "Nur wer vor dem 20. November 2026 vorbestellt, bekommt das Vintage Vice City Pack gratis dazu."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-23 17:53:21"
     },
     {
       "author": null,
@@ -2749,6 +2911,7 @@
         "Raul Bautista wird von Rockstar als erfahrener Organisator von Raubzügen beschrieben, der gezielt Talente für riskante Coups anwirbt und mit seiner Risikobereitschaft den Einsatz nach oben treibt. Er ist auf dem offiziellen Cover-Art zu sehen. Brian Heder betreibt mit Brian's Boat Works and Marina in den Leonida Keys eine Schmuggel-Fassade, für die Jason als eine Art Handlanger arbeitet.",
         "### Was nur Leak ist, San4San und Co.",
         "In beiden Trailern taucht ein Emblem auf, das von der Community als Zeichen der Gang San4San gedeutet wird, offiziell hat Rockstar dazu nichts gesagt. Auch eine Verbindung zu den Haitians aus dem alten Vice City ist reine Spekulation, ebenso wie ein angebliches kolumbianisches Kartell oder Gefängnis-Gangs rund um Lucias Start in der Leonida Penitentiary. Nichts davon ist bestätigt, es lohnt sich aber, die Embleme im Auge zu behalten, sobald neues Bildmaterial erscheint.",
+        "Alle Gangs und Fraktionen mit Revier und Status findest du in der [[/gangs/|Gangs-Datenbank]].",
         "faq:Welche Gangs sind in GTA 6 offiziell bestätigt?|Bislang nur der Motorradclub Final Chapter MC in Ambrosia. Andere kriminelle Gruppen wie Only Raw Records um Boobie Ike und Dre'Quan Priest sind eher Geschäftsnetzwerke als klassische Straßengangs.",
         "faq:Gibt es eine Verbindung zu den Gangs aus GTA Vice City von 2002?|Nicht offiziell. GTA 6 gehört zu einem anderen Erzähl-Universum als das alte Vice City, eine direkte Fortsetzung der damaligen Gangs ist bislang reine Fan-Spekulation.",
         "faq:Was hat es mit dem San4San Emblem auf sich?|Das Emblem wurde in beiden Trailern gesichtet und von der Community als eigene Fraktion gedeutet. Rockstar hat dazu offiziell nichts bestätigt."
@@ -2756,7 +2919,7 @@
       "credit": "Rockstar",
       "date": "2026-07-12T18:44",
       "id": "gangs-fraktionen-leonida",
-      "img": "api/article_image.php?id=gangs-fraktionen-leonida&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=gangs-fraktionen-leonida&v=2026-07-23+19%3A39%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -2788,7 +2951,7 @@
         "Only Raw Records um Boobie Ike und Dre'Quan Priest ist eher ein Geschäftsnetzwerk als eine klassische Straßengang.",
         "Das San4San-Emblem und eine Verbindung zu den alten Vice-City-Gangs bleiben Spekulation."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-23 19:39:26"
     },
     {
       "author": null,
@@ -3273,6 +3436,7 @@
         "Bei Waffen hält sich Rockstar bedeckter. Konkret benannt sind die Hawk & Little Morgan Revolver aus der Ultimate Edition in einer Herren- und Damen-Variante, dazu personalisierte Pistolen: Jasons Girardi ES9 und Lucias Klose K17. Aus dem Vintage Vice City Pack kommt ein Waffenmuster im Stil von Tommy Vercettis Hawaiihemd. Eine vollständige Waffenliste hat Rockstar bislang nicht veröffentlicht.",
         "### Die Faustregel",
         "Alles, was im Ultimate-Edition-Katalog oder im Vorbesteller-Paket auftaucht, ist zu hundert Prozent bestätigt. Alles darüber hinaus stammt aus Trailer-Standbildern und Community-Recherche, spannend, aber mit Vorsicht zu genießen. Was genau im Vorbesteller-Paket steckt, steht in [[vorbesteller-boni|unserem Artikel dazu]].",
+        "Zum Nachschlagen gibt es die [[/charaktere/|Charaktere]], [[/fahrzeuge/|Fahrzeuge]] und [[/waffen/|Waffen]] jeweils als eigene Datenbank-Rubrik.",
         "faq:Welche Fahrzeuge sind in GTA 6 bestätigt?|Offiziell benannt sind vor allem die Fahrzeuge aus der Ultimate Edition und dem Vorbesteller-Paket, etwa der Grotti Cheetah und der Vapid Dominator Buggy. Größere Listen sind Community-Arbeit.",
         "faq:Gibt es schon eine vollständige Waffenliste?|Nein. Bestätigt sind nur einzelne Waffen aus der Ultimate Edition und dem Vorbesteller-Paket, eine komplette Liste fehlt.",
         "faq:Sind die kursierenden 100-Fahrzeuge-Listen echt?|Sie stammen aus Community-Recherche anhand von Trailern und Screenshots, nicht von Rockstar. Vieles ist plausibel, offiziell bestätigt ist es nicht."
@@ -3280,7 +3444,7 @@
       "credit": "Rockstar",
       "date": "2026-05-23T13:47",
       "id": "bestaetigte-fahrzeuge-waffen-charaktere",
-      "img": "api/article_image.php?id=bestaetigte-fahrzeuge-waffen-charaktere&v=2026-07-16+08%3A40%3A52",
+      "img": "api/article_image.php?id=bestaetigte-fahrzeuge-waffen-charaktere&v=2026-07-23+19%3A39%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -3308,7 +3472,7 @@
         "Jason und Lucia sind gesetzt, dazu Nebenfiguren wie Cal Hampton, Boobie Ike und Raul Bautista.",
         "Die kursierenden 100-Fahrzeuge-Listen sind Community-Arbeit, keine offizielle Rockstar-Liste."
       ],
-      "updated": "2026-07-16 08:40:52"
+      "updated": "2026-07-23 19:39:26"
     },
     {
       "author": null,
@@ -3437,6 +3601,7 @@
         "- Kelly County und Vice Dale County, zwei Bezirke mit jeweils eigener Identität und offenbar eigenen Polizeikräften",
         "- Mount Kalaga, ein Gebiet abseits der Küste, das sich für Geländefahrzeuge anbietet",
         "Zusätzlich haben Fans ein U-Bahn-artiges System entdeckt, das an Miamis Metrorail erinnert. Zur genauen Kartengröße gibt es keine offizielle Zahl. Community-Schätzungen auf Basis von Kennzeichen und Trailer-Material gehen von deutlich mehr als der doppelten Fläche von GTA 5 aus, das ist aber eine Hochrechnung, keine Rockstar-Angabe.",
+        "Einzelne Orte und Schauplätze der Regionen sammeln wir in der [[/orte/|Orte-Datenbank]].",
         "faq:Wo spielt GTA 6?|Im fiktiven US-Bundesstaat Leonida, angelehnt an Florida, mit Vice City als Hauptstadt.",
         "faq:Wie groß ist die Karte von GTA 6?|Rockstar hat keine offizielle Größe genannt. Community-Schätzungen gehen von mehr als der doppelten Fläche von GTA 5 aus, bestätigt ist das nicht.",
         "faq:Welche Regionen sind bestätigt?|Unter anderem Vice City, die Leonida Keys, die Grassrivers, Port Gellhorn, Ambrosia, Little Cuba sowie Kelly County und Vice Dale County."
@@ -3444,7 +3609,7 @@
       "credit": "KI-generiert / ViceGuide",
       "date": "2026-04-28T16:58",
       "id": "die-karte-von-gta-6",
-      "img": "api/article_image.php?id=die-karte-von-gta-6&v=2026-07-16+08%3A51%3A58",
+      "img": "api/article_image.php?id=die-karte-von-gta-6&v=2026-07-23+19%3A39%3A26",
       "imgfit": {
         "x": 50,
         "y": 50,
@@ -3472,7 +3637,7 @@
         "Bestätigt sind unter anderem Leonida Keys, Grassrivers, Port Gellhorn und Ambrosia.",
         "Eine offizielle Kartengröße fehlt, Community-Schätzungen gehen von mehr als der doppelten GTA-5-Fläche aus."
       ],
-      "updated": "2026-07-16 08:51:58"
+      "updated": "2026-07-23 19:39:26"
     },
     {
       "author": null,
