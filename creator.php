@@ -504,19 +504,17 @@ if ($favs) {
     echo '</div></section>';
 }
 // Für-deine-Videobeschreibung: kurzer, messbarer Link (utm ueber /c/<slug>).
-// Bewusst NICHT fuer normale Besucher. Dieser Block ist eine an den Creator
-// gerichtete Ansprache samt Kopier-Knopf, auf der oeffentlichen Partnerseite
-// (seo=1) wuerde ein Besucher eine Aufforderung lesen, die nicht an ihn geht.
-// Darum nur auf der Vorschau-/Demo-Seite (seo=0, dort greift der Creator seinen
-// Link) und fuer den eingeloggten Admin (kann den Link jederzeit kopieren).
-if ($preview || $isAdmin) {
+// NUR fuer den eingeloggten Admin, auf JEDER Seite (auch Demo/Vorschau). Der
+// Block ist eine an den Creator gerichtete Ansprache samt Kopier-Knopf, ein
+// normaler Besucher wuerde eine Aufforderung lesen, die nicht an ihn geht. Da
+// auch die Demo-/Vorschauseite (seo=0) oeffentlich per Link erreichbar ist,
+// reicht ein Preview-Gate nicht, es muss admin-only sein. Den fertigen Link
+// fuer einen Creator kopierst du dir hier heraus und schickst ihn per Mail.
+if ($isAdmin) {
     $shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
     $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
-    $shareNote = $preview
-        ? 'Deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.'
-        : 'Nur für dich als Redaktion sichtbar, Besucher sehen diesen Block nicht. Der fertige Link für den Creator.';
     echo '<section class="sbox"><h2 class="sbox-h">Für deine Videobeschreibung</h2>'
-       . '<p class="sec-lead" style="margin-bottom:10px">' . $shareNote . '</p>'
+       . '<p class="sec-lead" style="margin-bottom:10px">Nur für dich als Redaktion sichtbar, Besucher sehen diesen Block nicht. Der fertige Link für den Creator.</p>'
        . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
        . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
 }
