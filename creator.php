@@ -347,6 +347,7 @@ $twitch = trim((string)($c['twitch_login'] ?? ''));
 // seine Seite aussehen wird. Erst die oeffentliche Live-Seite (seo=1) bettet
 // echte Inhalte ein.
 $preview = $isDemo;
+$isAdmin = !$vgTrack;   // vg_is_admin() ist oben schon ausgewertet ($vgTrack = !admin)
 
 $title = $name . ($tagline !== '' ? ' - ' . $tagline : ' - Partner-Creator') ;
 if (mb_strlen($title . ' - ViceGuide') <= 60) $title .= ' - ViceGuide';
@@ -479,12 +480,22 @@ if ($favs) {
     echo '</div></section>';
 }
 // Für-deine-Videobeschreibung: kurzer, messbarer Link (utm ueber /c/<slug>).
-$shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
-$shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
-echo '<section class="sbox"><h2 class="sbox-h">Für deine Videobeschreibung</h2>'
-   . '<p class="sec-lead" style="margin-bottom:10px">Deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.</p>'
-   . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
-   . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
+// Bewusst NICHT fuer normale Besucher. Dieser Block ist eine an den Creator
+// gerichtete Ansprache samt Kopier-Knopf, auf der oeffentlichen Partnerseite
+// (seo=1) wuerde ein Besucher eine Aufforderung lesen, die nicht an ihn geht.
+// Darum nur auf der Vorschau-/Demo-Seite (seo=0, dort greift der Creator seinen
+// Link) und fuer den eingeloggten Admin (kann den Link jederzeit kopieren).
+if ($preview || $isAdmin) {
+    $shareUrl = 'https://viceguide.de/c/' . rawurlencode($c['slug']);
+    $shareTxt = '🎮 Deutsche GTA-6-Zentrale: Datenbank, News und Guides auf Deutsch. ' . $shareUrl;
+    $shareNote = $preview
+        ? 'Deine Community bekommt die deutsche GTA-6-Zentrale, und wir sehen, dass die Besucher von dir kommen.'
+        : 'Nur für dich als Redaktion sichtbar, Besucher sehen diesen Block nicht. Der fertige Link für den Creator.';
+    echo '<section class="sbox"><h2 class="sbox-h">Für deine Videobeschreibung</h2>'
+       . '<p class="sec-lead" style="margin-bottom:10px">' . $shareNote . '</p>'
+       . '<div class="sharebox"><code id="shareTxt">' . vg_cr_esc($shareTxt) . '</code>'
+       . '<button type="button" onclick="vgCopyShare(this)">Kopieren</button></div></section>';
+}
 echo '</aside>';
 
 echo '</div>'; // cgrid
